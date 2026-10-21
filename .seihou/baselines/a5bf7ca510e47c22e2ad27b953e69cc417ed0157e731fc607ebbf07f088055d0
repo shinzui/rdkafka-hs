@@ -1,0 +1,16 @@
+.claude/
+.agents/
+.seihou/manifest.json.tmp
+.codex/
+CLAUDE.local.md
+.envrc
+.envrc.local
+dist
+dist-*
+cabal-dev
+.direnv
+cabal.project.local
+db/
+result
+result-*
+.pre-commit-config.yaml

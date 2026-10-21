@@ -1,0 +1,6 @@
+---
+
+version: "0.5"
+log_level: debug
+log_location: ./.dev/process-compose.log
+processes:
