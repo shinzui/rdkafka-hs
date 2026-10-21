@@ -1,3 +1,5 @@
 .claude/
 .agents/
 .seihou/manifest.json.tmp
+.codex/
+CLAUDE.local.md
