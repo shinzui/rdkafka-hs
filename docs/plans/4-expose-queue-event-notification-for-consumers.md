@@ -23,6 +23,11 @@ provenance:
       at: 2026-10-22T00:00:20Z
       mode: "update"
       note: "Specify event draining, descriptor lifetime and release-owned request completion."
+    - model: "claude-opus-5-5"
+      harness: "claude-code"
+      at: 2026-10-22T00:52:52Z
+      mode: "implement"
+      note: "Implement EP-4: queue IO event binding, setConsumerQueueIOEvent and tests."
 ---
 
 # Expose queue event notification for consumers
