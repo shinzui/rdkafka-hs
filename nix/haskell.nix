@@ -97,14 +97,25 @@
         pkgs.zlib
         pkgs.just
         pkgs.pkg-config
+        # librdkafka (nixpkgs: rdkafka). hw-kafka-client links -lrdkafka; both
+        # the runtime lib and its .dev (headers + pkg-config) are needed.
+        pkgs.rdkafka
+        pkgs.rdkafka.dev
         pkgs.process-compose
       ];
 
       shellHook = ''
         ${config.pre-commit.installationScript}
+
+        # Make librdkafka discoverable to GHC's linker, the C preprocessor, and
+        # pkg-config (hw-kafka-client links -lrdkafka).
+        export CPATH="${pkgs.rdkafka.dev}/include''${CPATH:+:$CPATH}"
+        export LIBRARY_PATH="${pkgs.rdkafka}/lib''${LIBRARY_PATH:+:$LIBRARY_PATH}"
+        export PKG_CONFIG_PATH="${pkgs.rdkafka.dev}/lib/pkgconfig''${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
       '';
 
       runtimeLibraries = [ pkgs.zlib ]
+        ++ [ pkgs.rdkafka pkgs.rdkafka.dev ]
       ;
       runtimeShell =
         assert lib.assertMsg (inputs.haskell-nix.lib ? mkProjectDevShell && hsdev ? mkProjectShell)
