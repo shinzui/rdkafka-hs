@@ -7,6 +7,20 @@
 -- below uses explicit strategies.
 {-# OPTIONS_GHC -Wno-missing-export-lists -Wno-identities -Wno-missing-deriving-strategies #-}
 
+-- Conventions for this module:
+--
+-- * New bindings go in the section of their function's @name group in
+--   librdkafka's rdkafka.h; new sections follow the header's group order.
+--   docs/bindings.md lists every exported function under its group.
+-- * Plain calls use a {#fun ... as ^ ...#} directive.
+-- * Anything that needs buffers, finalizers or rd_kafka_error_t handling gets a
+--   hand-written wrapper directly below its {#fun#}. Bracket every non-null
+--   rd_kafka_error_t with rdKafkaErrorDestroy, and treat NULL as success.
+-- * Handles the caller must destroy are foreign pointers with the destroy
+--   function attached as a finalizer by a newRdKafka... helper.
+-- * After any change, run `just bindings-inventory` and commit
+--   docs/bindings.md; `just bindings-check` fails when it is stale.
+
 module Kafka.Internal.RdKafka where
 
 import Data.ByteString (ByteString)

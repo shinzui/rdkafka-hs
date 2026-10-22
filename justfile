@@ -63,11 +63,48 @@ fmt:
     nix fmt
 
 # Build and unit-test the package in the Nix sandbox, run the flake checks
-# (formatting, pre-commit) and validate the knowledge bundles.
+# (formatting, pre-commit), and validate the knowledge bundles and the binding
+# inventory.
 [group("build")]
-check: docs-check
+check: docs-check bindings-check
     nix build
     nix flake check
+
+
+# --- Bindings ---
+
+# Print the path of src/rdkafka.h in a cached clone of the librdkafka release
+# that pkg-config finds, cloning it on first use.
+[group("bindings")]
+librdkafka-source:
+    #!/bin/sh
+    set -eu
+    version=$(pkg-config --modversion rdkafka)
+    dir="${XDG_CACHE_HOME:-$HOME/.cache}/rdkafka-hs/librdkafka-v$version"
+    if [ ! -f "$dir/src/rdkafka.h" ]; then
+      git clone --quiet --depth 1 --branch "v$version" https://github.com/confluentinc/librdkafka.git "$dir" >&2
+    fi
+    echo "$dir/src/rdkafka.h"
+
+# Regenerate docs/bindings.md (RDKAFKA_SOURCE_HEADER overrides the header).
+[group("bindings")]
+bindings-inventory:
+    #!/bin/sh
+    set -eu
+    RDKAFKA_SOURCE_HEADER="${RDKAFKA_SOURCE_HEADER:-$(just librdkafka-source)}" scripts/binding-inventory.sh
+
+# Fail when docs/bindings.md does not match the binding module and header.
+[group("bindings")]
+bindings-check:
+    #!/bin/sh
+    set -eu
+    fresh=$(mktemp)
+    trap 'rm -f "$fresh"' EXIT
+    RDKAFKA_SOURCE_HEADER="${RDKAFKA_SOURCE_HEADER:-$(just librdkafka-source)}" scripts/binding-inventory.sh "$fresh"
+    if ! diff -u docs/bindings.md "$fresh"; then
+      echo "docs/bindings.md is stale; run 'just bindings-inventory'" >&2
+      exit 1
+    fi
 
 
 # --- Documentation ---

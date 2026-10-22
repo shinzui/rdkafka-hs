@@ -44,7 +44,15 @@ just build-examples   # build the example executable
 just fmt              # nix fmt: fourmolu, cabal-gild and nixpkgs-fmt
 just check            # sandboxed build and unit tests, formatting, docs-check
 just docs-check       # validate docs/adr and docs/improvement-requests
+just bindings-check   # verify docs/bindings.md against the binding module
 ```
+
+[docs/bindings.md](docs/bindings.md) lists every function librdkafka's public
+header exports and which of them this package binds. It is generated from the
+header of the librdkafka release that pkg-config finds (cloned once into
+`~/.cache/rdkafka-hs/`, or named by `RDKAFKA_SOURCE_HEADER`) and from
+`src/Kafka/Internal/RdKafka.chs`; regenerate it with `just bindings-inventory`
+after changing the bindings.
 
 `nix build` builds the package and runs its unit tests in the Nix sandbox.
 

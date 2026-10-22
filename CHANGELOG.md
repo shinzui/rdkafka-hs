@@ -32,6 +32,8 @@ hw-kafka-client 5.3.0.
 
 ### Added
 
+- `docs/bindings.md` inventories which librdkafka functions are bound, checked
+  by `just bindings-check`.
 - `Kafka.Version` reports the linked librdkafka version (`librdkafkaVersion`,
   `librdkafkaVersionNumber`, `librdkafkaVersionParts`).
 - The integration suite runs against a project-local Redpanda broker on Apple
