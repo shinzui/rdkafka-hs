@@ -34,6 +34,12 @@ hw-kafka-client 5.3.0.
 
 ### Added
 
+- `Kafka.Consumer.setConsumerQueueIOEvent` asks librdkafka to write to a
+  non-blocking file descriptor when records or events reach the queue
+  `pollMessage` reads, in both callback poll modes, so applications can wait
+  with `threadWaitRead` instead of polling on a timer (improvement request
+  IR-1). `Kafka.Internal.RdKafka` binds `rd_kafka_queue_io_event_enable`,
+  `rd_kafka_queue_cb_event_enable` and `rd_kafka_queue_get_consumer`.
 - `Kafka.Producer.flushProducerTimeout` (`rd_kafka_flush`) waits a bounded time
   for the outbound queue to drain, and `Kafka.Producer.purgeProducer`
   (`rd_kafka_purge`) purges queued or in-flight messages, reporting each to the

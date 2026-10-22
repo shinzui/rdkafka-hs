@@ -5,6 +5,7 @@ description: Bind rd_kafka_queue_io_event_enable and apply it to the queue the c
 generated:
   by: claude-code/claude-fable-5-1
   at: "2026-09-30T17:52:37Z"
+timestamp: 2026-10-22T01:00:17Z
 requestId: IR-1
 status: proposed
 origin: mori://shinzui/shibuya-kafka-adapter/okf/bug-reports/concepts/BUG-7
@@ -109,3 +110,31 @@ Once the binding exists, `mori://shinzui/kafka-effectful` needs an effect operat
 that exposes it, and `shibuya-kafka-adapter` then replaces its idle sleep with a wait
 on the descriptor; that last step is
 `mori://shinzui/shibuya-kafka-adapter/okf/improvement-requests/concepts/IR-1`.
+
+## Implementation evidence
+
+Implemented in `mori://shinzui/rdkafka-hs`, the fork's maintained successor, by
+`docs/plans/4-expose-queue-event-notification-for-consumers.md` there. The request
+stays open until AC-3 is met.
+
+- AC-1: `Kafka.Internal.RdKafka` binds `rd_kafka_queue_io_event_enable`
+  (`rdKafkaQueueIoEventEnable`), `rd_kafka_queue_cb_event_enable`
+  (`rdKafkaQueueCbEventEnable`, taking a `FunPtr` to the C callback type) and
+  `rd_kafka_queue_get_consumer`, and the library builds against librdkafka 2.15.0
+  with GHC 9.12.4; `docs/bindings.md` lists all three as bound.
+- AC-2: `Kafka.Consumer.setConsumerQueueIOEvent :: MonadIO m => KafkaConsumer ->
+  Maybe (Fd, ByteString) -> m ()` enables the event on the message queue in
+  `CallbackPollModeAsync` and on the consumer queue in `CallbackPollModeSync`, and
+  `Nothing` disables it. `test-integration/Kafka/Integration/QueueEventTest.hs`
+  passes in both modes: the pipe becomes readable before `pollMessage` returns the
+  record, and after disabling a further record leaves it unreadable for two
+  seconds. Further cases cover records queued before the event was enabled and one
+  wake-up covering several records. Enabling the event on the consumer queue in
+  async mode makes the async cases fail.
+- AC-3: the first tagged release of rdkafka-hs carries this change; it is cut by
+  `docs/plans/6-cut-the-first-rdkafka-hs-release-and-migration-guide.md`.
+
+librdkafka writes the payload when an op lands in the empty queue, at most once
+until the queue is next polled, and a wake-up can stand for a non-record event.
+The haddock documents the resulting wait protocol and that async applications
+still need bounded fatal-state checks.

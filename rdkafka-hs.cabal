@@ -142,6 +142,7 @@ test-suite rdkafka-hs-integration
     tasty ^>=1.5,
     tasty-hunit ^>=0.10,
     text,
+    unix,
 
   if !flag(integration)
     buildable: False
@@ -153,6 +154,7 @@ test-suite rdkafka-hs-integration
     Kafka.Integration.HeadersTest
     Kafka.Integration.LifecycleTest
     Kafka.Integration.PerMessageCommitTest
+    Kafka.Integration.QueueEventTest
     Kafka.Integration.StoreOffsetsTest
     Kafka.Integration.TopicTest
     Kafka.TestEnv

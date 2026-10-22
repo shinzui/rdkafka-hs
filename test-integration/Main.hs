@@ -7,6 +7,7 @@ import Kafka.Integration.FatalErrorTest qualified as FatalErrorTest
 import Kafka.Integration.HeadersTest qualified as HeadersTest
 import Kafka.Integration.LifecycleTest qualified as LifecycleTest
 import Kafka.Integration.PerMessageCommitTest qualified as PerMessageCommitTest
+import Kafka.Integration.QueueEventTest qualified as QueueEventTest
 import Kafka.Integration.StoreOffsetsTest qualified as StoreOffsetsTest
 import Kafka.Integration.TopicTest qualified as TopicTest
 import Kafka.TestEnv (checkBrokerReachable, newTestEnv, resolveBrokers)
@@ -38,6 +39,7 @@ main = do
             BatchTest.tests env,
             HeadersTest.tests env,
             FatalErrorTest.tests env,
+            QueueEventTest.tests env,
             TopicTest.tests env
           ]
       ]

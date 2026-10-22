@@ -54,14 +54,20 @@ three acceptance criteria are this plan's acceptance criteria.
 
 ## Progress
 
-- [ ] M1: `rd_kafka_queue_io_event_enable`, `rd_kafka_queue_cb_event_enable` and
+- [x] M1 (2026-10-22): `rd_kafka_queue_io_event_enable`, `rd_kafka_queue_cb_event_enable` and
       `rd_kafka_queue_get_consumer` bound; `setConsumerQueueIOEvent` enables and disables
       the IO event on the right queue in both callback poll modes; `docs/bindings.md`
-      regenerated (IR-1 AC-1).
-- [ ] M2: Integration test proves the pipe becomes readable before `pollMessage` returns
+      regenerated (IR-1 AC-1). Evidence: warning-free build; `just bindings-check`
+      passes with all three listed as bound. Commit `6d5f19d`.
+- [x] M2 (2026-10-22): Integration test proves the pipe becomes readable before `pollMessage` returns
       the record and stays unreadable after disabling, in both poll modes (IR-1 AC-2);
       IR-1 implementation evidence recorded with a `log.md` entry; CHANGELOG updated. AC-3 (a tagged
       commit) is satisfied by `docs/plans/6-cut-the-first-rdkafka-hs-release-and-migration-guide.md`.
+      Evidence: `queue event / async` and `/ sync` each pass three cases (idle wake-up
+      then quiet after disable, preloaded queue then rearm, one wake-up for several
+      records then rearm); `just test-it` reports `All 79 tests passed (57.68s)`. With
+      the async branch pointed at the consumer queue, all three async cases fail
+      (`expected: Just () but got: Nothing`). `okf validate` accepts the bundle.
 
 
 ## Surprises & Discoveries
@@ -69,6 +75,21 @@ three acceptance criteria are this plan's acceptance criteria.
 Review (2026-10-21): event registration is edge-triggered, so tests must drain
 old notifications and allow non-record events. Descriptor cleanup must disable the event
 before closing the pipe. IR-1 remains open until EP-6 records release acceptance.
+
+Implementation (2026-10-22):
+
+- librdkafka 2.15's `rd_kafka_q_io_event` writes when an op lands in an empty
+  queue (and on a yield), and at most once until the queue is next served
+  (`rd_kafka_q_mark_served`), not strictly on every empty-to-non-empty edge. The
+  haddock and IR-1 evidence state that rule.
+- The `unix` package has no `NonBlockingWrite`; `setFdOption fd NonBlockingRead True`
+  sets `O_NONBLOCK`, which governs writes too. `fdRead` in the locked `unix` 2.8.8
+  returns `(String, ByteCount)`, so the test reads with `fdReadBuf`.
+- cabal splits `--test-options` on spaces; filter with
+  `just test-it --test-option=-p '--test-option=/queue event/'`.
+- `setConsumerQueueIOEvent` holds the callback-poll status `MVar` and does nothing
+  once `closeConsumer` has disabled polling; `closeConsumer` destroys the message
+  queue but leaves it in the `IORef`, which EP-5's lifecycle state must clear.
 
 
 ## Decision Log
@@ -84,7 +105,15 @@ before closing the pipe. IR-1 remains open until EP-6 records release acceptance
 
 ## Outcomes & Retrospective
 
-(To be filled during and after implementation.)
+Completed 2026-10-22. Applications can register a non-blocking descriptor with
+`setConsumerQueueIOEvent` and wait with `threadWaitRead`, in both callback poll
+modes, and disable it again. The integration tests show the wake-up arriving before
+the record is polled, silence after disabling, and correct rearming; they fail when
+the event is registered on the wrong queue. IR-1's AC-1 and AC-2 are met and its
+evidence recorded; AC-3 and the request's completion belong to EP-6.
+
+The combined check with EP-5 (notification on a manually assigned consumer, then
+`destroyConsumer`) remains for EP-6 M1.
 
 
 ## Context and Orientation

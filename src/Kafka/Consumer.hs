@@ -277,8 +277,8 @@ consumerClosed c = liftIO $ rdKafkaConsumerClosed (getRdKafka c)
 --
 -- librdkafka's rules:
 --
--- * The descriptor must be non-blocking for writes (for a pipe, set
---   'System.Posix.IO.NonBlockingWrite' on the write end): librdkafka writes from
+-- * The descriptor must be non-blocking (for a pipe's write end, set
+--   'System.Posix.IO.NonBlockingRead', which sets @O_NONBLOCK@): librdkafka writes from
 --   an internal thread and ignores write errors.
 -- * IO-event and callback-event notification are mutually exclusive on one queue.
 -- * librdkafka copies the payload before this function returns. The descriptor
