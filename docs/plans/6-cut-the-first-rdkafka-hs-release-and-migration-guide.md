@@ -80,6 +80,15 @@ is absent and must not be recorded as successful.
   proof only needs to show the pin resolves and the rename is sufficient.
   Date: 2026-10-21
 
+- Decision: Make `shinzui/rdkafka-hs` public before pushing the tag, and fix the
+  `ConsumerProperties` poll-mode defect in 1.0.0.0.
+  Rationale: Both were the user's choices at the release gate (2026-10-22). Public
+  visibility lets the remote downstream proof and every dependent fetch the tag
+  without credentials; the fix (`cpCallbackPollMode :: Maybe CallbackPollMode`,
+  `effectiveCallbackPollMode`) lands before the candidate so its validation covers
+  it.
+  Date: 2026-10-22
+
 
 ## Outcomes & Retrospective
 

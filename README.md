@@ -22,6 +22,53 @@ version bounds in `build-depends`:
 build-depends: rdkafka-hs >=1.0 && <1.1
 ```
 
+## Migrating from hw-kafka-client
+
+rdkafka-hs is not on Hackage; depend on a release tag. In `cabal.project`,
+replace any `hw-kafka-client` pin with:
+
+```cabal
+source-repository-package
+  type: git
+  location: https://github.com/shinzui/rdkafka-hs.git
+  tag: v1.0.0.0
+```
+
+Then, in every component that depends on it (libraries, executables, test
+suites and benchmarks), replace the dependency and its bounds; keeping
+`>=5.3 && <6` would exclude rdkafka-hs's restarted version line:
+
+```diff
+-    hw-kafka-client >=5.3 && <6,
++    rdkafka-hs >=1.0 && <1.1,
+```
+
+Imports do not change: the modules are still `Kafka.Consumer`,
+`Kafka.Producer` and so on. GHC 9.12 and librdkafka 2.15 are required (see
+Requirements). Behaviour worth knowing when you switch:
+
+- A consumer fatal error (for example a static group member fenced by another
+  consumer with the same `group.instance.id`) is now reported by every poll as
+  `Left (KafkaResponseError RdKafkaRespErrFatal)`, in both callback poll modes;
+  `consumerFatalError` returns the cause. In `CallbackPollModeAsync` it used to
+  be unobservable. A fatal consumer must be recreated.
+- `callbackPollMode` is no longer reset by properties composed after it, so a
+  consumer configured as `callbackPollMode CallbackPollModeSync <> groupId g`
+  is now actually synchronous; under hw-kafka-client it ran in async mode. Code
+  that reads `cpCallbackPollMode` gets a `Maybe`; use
+  `effectiveCallbackPollMode`.
+- `flushProducer` uses `rd_kafka_flush`; it still blocks until the queue is
+  empty. `flushProducerTimeout` bounds the wait.
+- In `CallbackPollModeAsync`, partitions given to `assign` now deliver their
+  records to `pollMessage`.
+- `closeConsumer` leaves the group gracefully but never frees the client,
+  which waits for its garbage-collector finalizer; it can block against an
+  unresponsive broker. `destroyConsumer` frees the client immediately, within a
+  bound. Close first if you need a graceful departure.
+
+See [CHANGELOG.md](CHANGELOG.md) for everything that differs from
+hw-kafka-client 5.3.0.
+
 ## Requirements
 
 - GHC 9.12 or newer.

@@ -296,7 +296,7 @@ The cross-plan access gate is the decision on repository visibility before EP-6:
 GitHub repository is private, and downstream `source-repository-package` pins over
 HTTPS need either public visibility or authenticated access.
 
-- [ ] Repository visibility decided before EP-6 tags the release.
+- [x] Repository visibility decided before EP-6 tags the release (2026-10-22: public).
 
 ADR handles are now allocated: ADR-1 consumer queue and teardown ownership, ADR-2
 release validation, ADR-3 fork identity, ADR-4 toolchain floor, ADR-5 integration tests
@@ -452,6 +452,20 @@ EP-5 (2026-10-22), affecting EP-6:
   `kafka-effectful`. The inherited integration groups are order-dependent, so they are
   ported as `sequentialTestGroup` trees.
   Date: 2026-10-21
+
+
+- Decision: The repository is made public before `v1.0.0.0` is published.
+  Rationale: The user chose public visibility at the EP-6 gate, so downstream
+  `source-repository-package` pins over HTTPS work without credentials. Recorded in
+  [ADR-7](../adr/first-release-scope-and-distribution.md).
+  Date: 2026-10-22
+
+- Decision: The `ConsumerProperties` poll-mode defect found in EP-2 is fixed in
+  1.0.0.0, changing `cpCallbackPollMode` to `Maybe CallbackPollMode`.
+  Rationale: The user chose to fix it before release rather than document it; the
+  release already breaks the package name, and the defect silently turned sync
+  consumers async. EP-6 owns the change.
+  Date: 2026-10-22
 
 
 Revision note (2026-10-21): reviewed all six children against source and the skill
