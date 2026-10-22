@@ -53,9 +53,21 @@ The two improvement requests' final acceptance criteria (IR-1 AC-3 and IR-2 AC-5
 
 ## Progress
 
-- [ ] M1: `CHANGELOG.md` has a dated `1.0.0.0` section, `README.md` has the migration
+- [x] M1 (2026-10-22): `CHANGELOG.md` has a dated `1.0.0.0` section, `README.md` has the migration
       guide, and the full validation set, combined feature test and scratch downstream build
-      pass on the exact release candidate before publication.
+      pass on the exact release candidate before publication. Candidate
+      `63031a21d070819fe89afbacb6ce76238816748f`: clean tree; `cabal build all -f
+      examples --enable-tests` and the integration build exit 0 with 0 warnings; unit
+      suite `All 14 tests passed`; `just test-it` `All 98 tests passed (84.80s)`
+      including `observer / async` and `/ sync` (the combined EP-4/EP-5 case);
+      `just bindings-check` fresh; `nix build` passes and its log shows the 14 unit
+      tests; `nix fmt` leaves 0 changes; both bundles and `mori validate` pass; flake
+      checks pass; `cabal check` reports no errors or warnings; the sdist builds and
+      passes its unit tests in a fresh directory. Downstream: a local clone of
+      `kafka-effectful` pinned to the candidate with all five bounds changed builds
+      `rdkafka-hs-1.0.0.0` and `kafka-effectful-0.3.1.0`, and its broker-free suite
+      reports `All 44 tests passed`. The first candidate, `9143f6d`, failed that
+      downstream proof (see Surprises) and was never published.
 - [ ] M2: Annotated tag `v1.0.0.0` pushed to `origin`; GitHub release created from the
       changelog section; the published tag resolves to the verified candidate commit.
 - [ ] M3: A scratch clone of `kafka-effectful` switched to `rdkafka-hs` at `v1.0.0.0`
@@ -70,6 +82,21 @@ Review (2026-10-21): the downstream Cabal file contains five constraints
 Candidate proof now updates bounds and runs before publication. IR completion waits
 for remote tag verification. Mori registry refresh currently fails because its database
 is absent and must not be recorded as successful.
+
+Release candidate (2026-10-22):
+
+- The first candidate's downstream proof failed at configure time:
+  `Package 'libcurl', required by 'rdkafka', not found`. EP-3's
+  `pkgconfig-depends: rdkafka >=2.15` makes Cabal run `pkg-config --cflags rdkafka`,
+  which needs the `.pc` files of librdkafka's `Requires.private` libraries; the
+  shared `nix-haskell-flake` shells only expose librdkafka's, and this repository had
+  hidden that by adding them in `flake.module.nix`. The floor is now a build-time
+  `#error` on `RD_KAFKA_VERSION` with `extra-libraries: rdkafka`, the workaround is
+  gone, and ADR-4 and ADR-8 record why.
+- `cabal check` warned about missing upper bounds inherited from upstream; the library
+  now bounds `bifunctors`, `bytestring`, `containers`, `text`, `transformers` and
+  `unix` to the major versions the GHC 9.12 toolchain resolves.
+- The Mori registry is available; `mori register --local` succeeded during EP-1.
 
 
 ## Decision Log
