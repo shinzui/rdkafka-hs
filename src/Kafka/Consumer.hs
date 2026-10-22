@@ -66,6 +66,7 @@ module Kafka.Consumer
     seek,
     seekPartitions,
     pollMessage,
+    pollMessageAttributed,
     pollConsumerEvents,
     pollMessageBatch,
     consumerFatalError,
@@ -103,7 +104,7 @@ import Data.Text (Text)
 import Data.Text qualified as Text
 import Foreign hiding (void)
 import Kafka.Consumer.Callbacks (forwardPartitionsToMessageQueue)
-import Kafka.Consumer.Convert (fromMessagePtr, fromNativeTopicPartitionList'', offsetCommitToBool, offsetToInt64, toMap, toNativeTopicPartitionList, toNativeTopicPartitionList', topicPartitionFromMessageForCommit)
+import Kafka.Consumer.Convert (fromMessagePtr, fromMessagePtrAttributed, fromNativeTopicPartitionList'', offsetCommitToBool, offsetToInt64, toMap, toNativeTopicPartitionList, toNativeTopicPartitionList', topicPartitionFromMessageForCommit)
 import Kafka.Consumer.Types (KafkaConsumer (..))
 import Kafka.Internal.RdKafka (RdKafkaRespErrT (..), RdKafkaTopicPartitionListTPtr, RdKafkaTypeT (..), newRdKafkaT, newRdKafkaTopicPartitionListT, newRdKafkaTopicT, rdKafkaAssign, rdKafkaAssignment, rdKafkaAssignmentLost, rdKafkaCommit, rdKafkaCommitted, rdKafkaConfSetDefaultTopicConf, rdKafkaConsumeBatchQueue, rdKafkaConsumeQueue, rdKafkaConsumerClose, rdKafkaConsumerClosed, rdKafkaConsumerPoll, rdKafkaErrorCode, rdKafkaErrorDestroy, rdKafkaFatalError, rdKafkaMessageDestroy, rdKafkaOffsetsStore, rdKafkaPausePartitions, rdKafkaPollSetConsumer, rdKafkaPosition, rdKafkaQueueDestroy, rdKafkaQueueGetConsumer, rdKafkaQueueIoEventEnable, rdKafkaQueueNew, rdKafkaResumePartitions, rdKafkaSeek, rdKafkaSeekPartitions, rdKafkaSetLogLevel, rdKafkaSubscribe, rdKafkaSubscription, rdKafkaTopicConfDup, rdKafkaTopicPartitionListAdd)
 import Kafka.Internal.Setup (Callback (..), CallbackPollStatus (..), Kafka (..), KafkaConf (..), KafkaProps (..), TopicConf (..), TopicProps (..), getKafkaConf, getRdKafka, getRdMsgQueue, kafkaConf, topicConf)
@@ -236,6 +237,29 @@ pollMessage c@(KafkaConsumer _ (KafkaConf _ qr _)) (Timeout ms) =
         case mbq of
           Nothing -> rdKafkaConsumerPoll (getRdKafka c) ms >>= fromMessagePtr
           Just q -> rdKafkaConsumeQueue q ms >>= fromMessagePtr
+
+-- | Like 'pollMessage', but an error comes with the topic, partition and offset
+-- librdkafka attached to the errored message, so an application can tell, for
+-- example, which partition a 'RdKafkaRespErrPartitionEof' belongs to.
+--
+-- A raised fatal error is reported first, as by 'pollMessage', as
+-- @'ConsumerMessageError' ('KafkaResponseError' 'RdKafkaRespErrFatal')@ with
+-- no origin; so is a poll timeout, as 'RdKafkaRespErrTimedOut'.
+pollMessageAttributed ::
+  (MonadIO m) =>
+  KafkaConsumer ->
+  -- | the timeout, in milliseconds
+  Timeout ->
+  m (Either ConsumerMessageError (ConsumerRecord (Maybe BS.ByteString) (Maybe BS.ByteString)))
+pollMessageAttributed c@(KafkaConsumer _ (KafkaConf _ qr _)) (Timeout ms) =
+  liftIO $
+    pollFatalError c >>= \case
+      Just err -> pure (Left (ConsumerMessageError err Nothing Nothing Nothing))
+      Nothing -> do
+        mbq <- readIORef qr
+        case mbq of
+          Nothing -> rdKafkaConsumerPoll (getRdKafka c) ms >>= fromMessagePtrAttributed
+          Just q -> rdKafkaConsumeQueue q ms >>= fromMessagePtrAttributed
 
 -- | Polls up to 'BatchSize' messages.
 -- Unlike 'pollMessage' this function does not return usual "timeout" errors.

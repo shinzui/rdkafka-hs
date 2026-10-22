@@ -72,6 +72,11 @@ fencedStaticMember env mode = do
         again <- pollMessage a (Timeout 100)
         either Just (const Nothing) again @?= Just fatal
 
+        -- The attributed poll reports the same fatal error, with no origin.
+        pollMessageAttributed a (Timeout 100) >>= \case
+          Left err -> err @?= ConsumerMessageError fatal Nothing Nothing Nothing
+          Right record -> assertFailure ("unexpected record " <> show record)
+
         cause <- consumerFatalError a
         case cause of
           Just (err, description) -> do

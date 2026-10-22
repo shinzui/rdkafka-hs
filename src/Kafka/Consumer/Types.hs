@@ -22,6 +22,7 @@ module Kafka.Consumer.Types
     OffsetStoreMethod (..),
     TopicPartition (..),
     ConsumerRecord (..),
+    ConsumerMessageError (..),
     crMapKey,
     crMapValue,
     crMapKV,
@@ -44,7 +45,7 @@ import Data.String (IsString)
 import Data.Text (Text)
 import GHC.Generics (Generic)
 import Kafka.Internal.Setup (HasKafka (..), HasKafkaConf (..), Kafka (..), KafkaConf (..))
-import Kafka.Types (Headers, Millis (..), PartitionId (..), TopicName (..))
+import Kafka.Types (Headers, KafkaError, Millis (..), PartitionId (..), TopicName (..))
 
 -- | The main type for Kafka consumption, used e.g. to poll and commit messages.
 --
@@ -152,6 +153,22 @@ data TopicPartition = TopicPartition
   deriving stock (Show, Eq, Generic)
 
 -- | Represents a /received/ message from Kafka (i.e. used in a consumer)
+-- | A per-message error from 'Kafka.Consumer.pollMessageAttributed', with the
+-- topic, partition and offset librdkafka attached to the errored message.
+--
+-- For @'Kafka.Types.KafkaResponseError' 'Kafka.Consumer.RdKafkaRespErrPartitionEof'@
+-- (delivered when @enable.partition.eof@ is @true@) the offset is the
+-- partition's end offset. Each origin field is 'Nothing' when librdkafka did
+-- not set it, and all three are 'Nothing' for errors that belong to no message:
+-- a poll timeout or a raised fatal error.
+data ConsumerMessageError = ConsumerMessageError
+  { cmeError :: !KafkaError,
+    cmeTopic :: !(Maybe TopicName),
+    cmePartition :: !(Maybe PartitionId),
+    cmeOffset :: !(Maybe Offset)
+  }
+  deriving stock (Eq, Show, Generic)
+
 data ConsumerRecord k v = ConsumerRecord
   { -- | Kafka topic this message was received from
     crTopic :: !TopicName,

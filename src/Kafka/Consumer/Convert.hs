@@ -12,11 +12,14 @@ module Kafka.Consumer.Convert
     topicPartitionFromMessageForCommit,
     toMap,
     fromMessagePtr,
+    fromMessagePtrAttributed,
     offsetCommitToBool,
   )
 where
 
+import Control.Exception (finally)
 import Control.Monad ((>=>))
+import Data.Bifunctor (first)
 import Data.ByteString qualified as BS
 import Data.Either (fromRight)
 import Data.Int (Int64)
@@ -27,7 +30,7 @@ import Foreign.C.Error (getErrno)
 import Foreign.ForeignPtr (withForeignPtr)
 import Foreign.Ptr (Ptr, nullPtr)
 import Foreign.Storable (Storable (..))
-import Kafka.Consumer.Types (ConsumerRecord (..), Offset (..), OffsetCommit (..), OffsetStoreSync (..), PartitionOffset (..), TopicPartition (..))
+import Kafka.Consumer.Types (ConsumerMessageError (..), ConsumerRecord (..), Offset (..), OffsetCommit (..), OffsetStoreSync (..), PartitionOffset (..), TopicPartition (..))
 import Kafka.Internal.RdKafka
   ( RdKafkaMessageT (..),
     RdKafkaMessageTPtr,
@@ -159,19 +162,40 @@ toMap :: (Ord k) => [(k, v)] -> Map k [v]
 toMap kvs = fromListWith (++) [(k, [v]) | (k, v) <- kvs]
 
 fromMessagePtr :: RdKafkaMessageTPtr -> IO (Either KafkaError (ConsumerRecord (Maybe BS.ByteString) (Maybe BS.ByteString)))
-fromMessagePtr ptr =
+fromMessagePtr ptr = first cmeError <$> fromMessagePtrAttributed ptr
+
+-- | Convert a polled message and destroy it, exactly once even if conversion
+-- throws. A null pointer (a poll timeout) yields the errno-derived error with
+-- no origin; an errored message keeps the topic, partition and offset
+-- librdkafka set on it.
+fromMessagePtrAttributed :: RdKafkaMessageTPtr -> IO (Either ConsumerMessageError (ConsumerRecord (Maybe BS.ByteString) (Maybe BS.ByteString)))
+fromMessagePtrAttributed ptr =
   withForeignPtr ptr $ \realPtr ->
     if realPtr == nullPtr
-      then Left . kafkaRespErr <$> getErrno
-      else do
-        s <- peek realPtr
-        msg <-
-          if err'RdKafkaMessageT s /= RdKafkaRespErrNoError
-            then return . Left . KafkaResponseError $ err'RdKafkaMessageT s
-            else Right <$> mkRecord s realPtr
-        rdKafkaMessageDestroy realPtr
-        return msg
+      then (\err -> Left (ConsumerMessageError err Nothing Nothing Nothing)) . kafkaRespErr <$> getErrno
+      else
+        ( do
+            s <- peek realPtr
+            if err'RdKafkaMessageT s /= RdKafkaRespErrNoError
+              then Left <$> attributed s
+              else Right <$> mkRecord s realPtr
+        )
+          `finally` rdKafkaMessageDestroy realPtr
   where
+    attributed msg = do
+      topic <-
+        if topic'RdKafkaMessageT msg == nullPtr
+          then pure Nothing
+          else Just . TopicName <$> readTopic msg
+      let partition = partition'RdKafkaMessageT msg
+          offset = offset'RdKafkaMessageT msg
+      pure
+        ConsumerMessageError
+          { cmeError = KafkaResponseError (err'RdKafkaMessageT msg),
+            cmeTopic = topic,
+            cmePartition = if partition >= 0 then Just (PartitionId partition) else Nothing,
+            cmeOffset = if offset >= 0 then Just (Offset offset) else Nothing
+          }
     mkRecord msg rptr = do
       topic <- readTopic msg
       key <- readKey msg

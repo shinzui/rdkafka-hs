@@ -1,6 +1,7 @@
 module Main (main) where
 
 import Kafka.Integration.AssignOnlyTest qualified as AssignOnlyTest
+import Kafka.Integration.AttributedErrorTest qualified as AttributedErrorTest
 import Kafka.Integration.BatchTest qualified as BatchTest
 import Kafka.Integration.ConfigurationTest qualified as ConfigurationTest
 import Kafka.Integration.ConsumerTest qualified as ConsumerTest
@@ -42,6 +43,7 @@ main = do
             FatalErrorTest.tests env,
             QueueEventTest.tests env,
             AssignOnlyTest.tests env,
+            AttributedErrorTest.tests env,
             TopicTest.tests env
           ]
       ]
