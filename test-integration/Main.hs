@@ -11,6 +11,7 @@ import Kafka.Integration.HeadersTest qualified as HeadersTest
 import Kafka.Integration.LifecycleTest qualified as LifecycleTest
 import Kafka.Integration.PerMessageCommitTest qualified as PerMessageCommitTest
 import Kafka.Integration.QueueEventTest qualified as QueueEventTest
+import Kafka.Integration.ReadCommittedTest qualified as ReadCommittedTest
 import Kafka.Integration.StoreOffsetsTest qualified as StoreOffsetsTest
 import Kafka.Integration.TopicTest qualified as TopicTest
 import Kafka.TestEnv (checkBrokerReachable, newTestEnv, resolveBrokers)
@@ -46,6 +47,7 @@ main = do
             AssignOnlyTest.tests env,
             AttributedErrorTest.tests env,
             DestroyTest.tests env,
+            ReadCommittedTest.tests env,
             TopicTest.tests env
           ]
       ]

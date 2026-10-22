@@ -34,6 +34,14 @@ hw-kafka-client 5.3.0.
 
 ### Added
 
+- `Kafka.Consumer.newAssignedConsumer` creates a consumer that never subscribes
+  and so never joins its group; it reads only the partitions given to `assign`
+  (improvement request IR-2).
+- `Kafka.Consumer.pollMessageAttributed` and
+  `Kafka.Consumer.Types.ConsumerMessageError` report the topic, partition and
+  offset of an errored message, such as a partition EOF.
+- `Kafka.Consumer.destroyConsumer` destroys the librdkafka client synchronously
+  and exactly once, closing its broker connections before it returns.
 - `Kafka.Consumer.setConsumerQueueIOEvent` asks librdkafka to write to a
   non-blocking file descriptor when records or events reach the queue
   `pollMessage` reads, in both callback poll modes, so applications can wait
@@ -65,6 +73,12 @@ hw-kafka-client 5.3.0.
 
 ### Fixed
 
+- In `CallbackPollModeAsync`, records from partitions assigned with `assign`
+  are delivered to `pollMessage`; previously the background callback-poll loop
+  drained and discarded them.
+- `closeConsumer` is idempotent and no longer leaves a released message queue
+  reachable; polling messages destroys each message exactly once even if
+  conversion fails.
 - A raised consumer fatal error is reported in-band: `pollMessage` and
   `pollMessageBatch` return `KafkaResponseError RdKafkaRespErrFatal` in both
   callback poll modes instead of timing out indefinitely.

@@ -5,6 +5,7 @@ description: Let a consumer be built without subscribing, report which partition
 generated:
   by: claude-code/claude-opus-5-5
   at: "2026-10-21T22:08:35Z"
+timestamp: 2026-10-22T01:23:41Z
 requestId: IR-2
 status: proposed
 origin: mori://shinzui/shoko/plans/10-implement-the-kafka-topic-evidence-adapter
@@ -132,3 +133,36 @@ stanza, the convention `mori://shinzui/kafka-effectful` already uses for this fo
 It builds `Shoko.Adapter.Kafka`'s scanner on `newConsumer` with an empty
 subscription (or `newAssignedConsumer`), `assign`, `pollMessageAttributed`,
 `partitionWatermarkOffsets`, and `destroyConsumer` inside `bracket`.
+
+## Implementation evidence
+
+Implemented in `mori://shinzui/rdkafka-hs`, the fork's maintained successor, by
+`docs/plans/5-support-a-bounded-assign-only-observer-consumer.md` there. The request
+stays open until AC-5 is met.
+
+- AC-1: `Kafka.Consumer.newAssignedConsumer` (equivalently `newConsumer props
+  mempty`) never calls `rd_kafka_subscribe`. In `CallbackPollModeAsync`, `assign`
+  now forwards each partition queue to the queue `pollMessage` reads; before this,
+  manually assigned records were drained and discarded by the background loop.
+  `test-integration/Kafka/Integration/AssignOnlyTest.hs` passes in both modes,
+  including a reassignment at a second explicit offset, and the group id never
+  appears in `allConsumerGroupsInfo`.
+- AC-2: `Kafka.Consumer.pollMessageAttributed` returns
+  `Kafka.Consumer.Types.ConsumerMessageError` with the topic, partition and offset
+  librdkafka set on an errored message; `pollMessage` keeps its type.
+  `test-integration/Kafka/Integration/AttributedErrorTest.hs` passes in both modes:
+  exactly one partition-EOF names each of two partitions, the busy one at its end
+  offset 1.
+- AC-3: `Kafka.Consumer.destroyConsumer` stops polling, releases the message queue
+  and runs the client's `NO_CONSUMER_CLOSE` finalizer synchronously, exactly once,
+  without forcing garbage collection. `test-integration/Kafka/Integration/DestroyTest.hs`
+  passes in both modes against a listener that accepts and never answers: the
+  accepted connection reaches end-of-file within the one-second bound (measured at
+  49 ms async and under 1 ms sync), and repeated, concurrent and interrupted destroys
+  and close/destroy in either order are safe.
+- AC-4: `test-integration/Kafka/Integration/ReadCommittedTest.hs` passes:
+  `partitionWatermarkOffsets` on a `read_committed` consumer reports a high offset
+  below the `read_uncommitted` one while a transaction is open, and both converge
+  after commit.
+- AC-5: the first tagged release of rdkafka-hs carries these changes; it is cut by
+  `docs/plans/6-cut-the-first-rdkafka-hs-release-and-migration-guide.md`.

@@ -59,17 +59,29 @@ The consumer is `mori://shinzui/shoko`'s Kafka topic evidence adapter
 
 ## Progress
 
-- [ ] M1: `newAssignedConsumer` exists and an assign-only consumer with a fresh group id
+- [x] M1 (2026-10-22): `newAssignedConsumer` exists and an assign-only consumer with a fresh group id
       receives records without the group appearing in the broker's group list, in both
-      poll modes (IR-2 AC-1).
-- [ ] M2: `pollMessageAttributed` and `ConsumerMessageError` exist; with
+      poll modes (IR-2 AC-1). Evidence: `assign-only / async` and `/ sync` pass for both
+      constructors, including reassignment at offset 1. Before the routing change both
+      async cases failed (`no record arrived within 10 seconds`); forwarding only
+      before `rd_kafka_assign` still lost the reassigned record (`expected r1`). Commit
+      `7a89012`.
+- [x] M2 (2026-10-22): `pollMessageAttributed` and `ConsumerMessageError` exist; with
       `enable.partition.eof=true` a consumer assigned two partitions receives exactly one
       EOF per partition naming it, with the busy partition's EOF offset equal to its end
-      offset (IR-2 AC-2).
-- [ ] M3: `destroyConsumer` closes sockets before it returns, is safe to call twice, and
+      offset (IR-2 AC-2). Evidence: `attributed / async: OK (3.53s)`, `/ sync: OK (3.50s)`;
+      the fatal test also checks the attributed fatal result. Commit `bb38ead`.
+- [x] M3 (2026-10-22): `destroyConsumer` closes sockets before it returns, is safe to call twice, and
       leaves the finalizer a no-op (IR-2 AC-3); the consumer queue and teardown ADR updated.
-- [ ] M4: `read_committed` watermark test passes (IR-2 AC-4); IR-2 implementation evidence recorded, release criterion still open;
-      CHANGELOG updated.
+      Evidence: against a silent listener, `destroyConsumer returned after 49 ms; all 1
+      connection(s) closed after 49 ms` (async) and `0 ms` (sync); repeated,
+      concurrent, interrupted, close-then-destroy and destroy-then-close cases pass in
+      both modes; no GC is forced. Commit `0ce5ece`.
+- [x] M4 (2026-10-22): `read_committed` watermark test passes (IR-2 AC-4); IR-2 implementation evidence recorded, release criterion still open;
+      CHANGELOG updated. Evidence: `read_committed watermark stops before an open
+      transaction: OK (1.35s)`; the full suite reports `All 96 tests passed (81.24s)`;
+      `cabal build all -f examples --enable-tests` and the integration build are
+      warning-free; `just check` passes.
 
 
 ## Surprises & Discoveries
@@ -79,6 +91,31 @@ performed by the rebalance callback. The previous destroyed flag would cause gua
 close to skip cleanup, and graceful close would weaken bounded destruction. The updated
 plan follows recovered IR-2 and requires serialized, exception-safe cleanup. Source
 inspection confirms query-watermark isolation is passed to ListOffsets in v2.15.0.
+
+Implementation (2026-10-22):
+
+- Forwarding before `rd_kafka_assign` is not enough on reassignment. librdkafka
+  2.15 stops a reassigned partition's fetcher and clears its fetch queue's
+  forwarding when the stop is processed (`rd_kafka_toppar_fetch_stop`), after
+  `rd_kafka_assign` returns; because the application forward set `FWD_APP`,
+  `rd_kafka_toppar_op_fetch_start` then leaves the queue unforwarded. `assign` now
+  forwards again after an `rd_kafka_assignment` round trip, which the main thread
+  serves after the stop requests (`rkcg_ops` and each `rktp_ops` forward to
+  `rk_ops`). Records fetched in between wait on the partition queue and move with
+  the forward (`rd_kafka_q_fwd_set0` concatenates them).
+- `Kafka.Consumer.Callbacks` is re-exported wholesale through
+  `Kafka.Consumer.ConsumerProperties`' `module X`, so the shared forwarding helper
+  is hidden there to stay internal.
+- `closeConsumer` previously destroyed the message queue but left it in the
+  `IORef`; it now clears it, and `setConsumerQueueIOEvent` (EP-4) and the new
+  lifecycle state both rely on that.
+- An assign-only consumer against a listener that never answers connects at once,
+  so the socket test needs no group activity. `closeConsumer` against such a
+  listener was not exercised: it may block, which is the reason `destroyConsumer`
+  does not call it.
+- The deprecated `seek` creates topic handles with garbage-collector finalizers;
+  they are not tracked by the lifecycle state, which is another reason operations
+  after `destroyConsumer` are documented as invalid.
 
 
 ## Decision Log
@@ -97,9 +134,36 @@ inspection confirms query-watermark isolation is passed to ListOffsets in v2.15.
   Date: 2026-10-21
 
 
+- Decision: `assign` does not take the callback-poll lock.
+  Rationale: Forwarding before assignment keeps records off the consumer queue
+  without it, and taking the lock would deadlock applications that call `assign`
+  from a rebalance callback served by the background loop.
+  Date: 2026-10-22
+
+- Decision: Lifetime state is an `MVar ClientLifecycle` held for the whole close or
+  destroy transition (`modifyMVar` for close, `modifyMVarMasked_` for destroy).
+  Rationale: Holding it makes concurrent callers wait for completion, and its
+  exception-restoring semantics let an interrupted destroy be finished by the next
+  call because every step is idempotent.
+  Date: 2026-10-22
+
+
 ## Outcomes & Retrospective
 
-(To be filled during and after implementation.)
+Completed 2026-10-22. An application can build a bounded, read-only observer: a
+consumer from `newAssignedConsumer` reads explicitly assigned partitions in both
+poll modes without the broker recording its group, `pollMessageAttributed` names the
+partition and end offset of each partition EOF, and `destroyConsumer` closes the
+client's connections within tens of milliseconds, safely under repetition,
+concurrency and interruption. Watermarks on a `read_committed` consumer stop at the
+last stable offset. IR-2's AC-1 to AC-4 are evidenced; AC-5 and the request's
+completion belong to EP-6.
+
+The integration with EP-4 is in place in the code (manual assignment forwards to the
+message queue the IO event watches, and teardown clears that queue), but the combined
+assigned-consumer notification and destroy check is EP-6 M1's. The inherited async
+manual-assignment defect was real and only showed up with reassignment once the
+obvious fix was in; the assign-only test's second offset is what caught it.
 
 
 ## Context and Orientation

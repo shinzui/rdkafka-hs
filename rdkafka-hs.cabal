@@ -159,6 +159,7 @@ test-suite rdkafka-hs-integration
     Kafka.Integration.LifecycleTest
     Kafka.Integration.PerMessageCommitTest
     Kafka.Integration.QueueEventTest
+    Kafka.Integration.ReadCommittedTest
     Kafka.Integration.StoreOffsetsTest
     Kafka.Integration.TopicTest
     Kafka.TestEnv

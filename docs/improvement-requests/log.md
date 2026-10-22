@@ -1,6 +1,7 @@
 # Bundle Update Log
 
 ## 2026-10-22
+* **Update**: IR-2: implemented in rdkafka-hs by newAssignedConsumer, pollMessageAttributed and destroyConsumer, with integration evidence for AC-1 to AC-4; AC-5 awaits the first tagged release.
 * **Update**: IR-1: implemented in rdkafka-hs by setConsumerQueueIOEvent with integration evidence for AC-1 and AC-2; AC-3 awaits the first tagged release.
 * **Update**: IR-2 AC-5 now targets a tagged release of rdkafka-hs at https://github.com/shinzui/rdkafka-hs, the fork's maintained successor; request identity and origin are unchanged.
 
