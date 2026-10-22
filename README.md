@@ -5,27 +5,17 @@ Kafka bindings for Haskell backed by
 Apache Kafka.
 
 rdkafka-hs is the maintained successor of
-[hw-kafka-client](https://github.com/haskell-works/hw-kafka-client). Upstream
-has not been released since 5.3.0 (2023) and has not been pushed to since
-October 2025, while dependents need fixes it does not carry, most importantly
-that a consumer fatal error is now reported from every poll instead of being
-silently swallowed in the default callback poll mode. This repository contains
-the full upstream history, the unreleased upstream commits and those fixes.
-See [CHANGELOG.md](CHANGELOG.md) for everything that differs from
-hw-kafka-client 5.3.0.
+[hw-kafka-client](https://github.com/haskell-works/hw-kafka-client), whose last
+Hackage release, 5.3.0, dates from 2023. It contains the full upstream history,
+the upstream commits that were never released, and fixes dependents needed,
+most importantly that a consumer fatal error is reported from every poll
+instead of being silently swallowed in the default callback poll mode. See
+[CHANGELOG.md](CHANGELOG.md) for everything that differs from hw-kafka-client
+5.3.0.
 
-The `Kafka.*` module namespace, type names and record fields are unchanged, so
-migrating from hw-kafka-client means replacing the dependency name and its
-version bounds in `build-depends`:
+## Installation
 
-```cabal
-build-depends: rdkafka-hs >=1.0 && <1.1
-```
-
-## Migrating from hw-kafka-client
-
-rdkafka-hs is not on Hackage; depend on a release tag. In `cabal.project`,
-replace any `hw-kafka-client` pin with:
+rdkafka-hs is not on Hackage; depend on a release tag. In `cabal.project`:
 
 ```cabal
 source-repository-package
@@ -34,6 +24,18 @@ source-repository-package
   tag: v1.0.0.0
 ```
 
+and in each component's `build-depends`:
+
+```cabal
+build-depends: rdkafka-hs >=1.0 && <1.1
+```
+
+The modules are `Kafka.Consumer`, `Kafka.Producer`, `Kafka.Metadata`,
+`Kafka.Topic`, `Kafka.Transaction` and `Kafka.Version`.
+
+## Migrating from hw-kafka-client
+
+Replace any `hw-kafka-client` pin in `cabal.project` with the stanza above.
 Then, in every component that depends on it (libraries, executables, test
 suites and benchmarks), replace the dependency and its bounds; keeping
 `>=5.3 && <6` would exclude rdkafka-hs's restarted version line:
@@ -43,8 +45,8 @@ suites and benchmarks), replace the dependency and its bounds; keeping
 +    rdkafka-hs >=1.0 && <1.1,
 ```
 
-Imports do not change: the modules are still `Kafka.Consumer`,
-`Kafka.Producer` and so on. GHC 9.12 and librdkafka 2.15 are required (see
+Imports do not change: the `Kafka.*` module namespace, type names and record
+field names are the same. GHC 9.12 and librdkafka 2.15 are required (see
 Requirements). Behaviour worth knowing when you switch:
 
 - A consumer fatal error (for example a static group member fenced by another
@@ -66,9 +68,6 @@ Requirements). Behaviour worth knowing when you switch:
   unresponsive broker. `destroyConsumer` frees the client immediately, within a
   bound. Close first if you need a graceful departure.
 
-See [CHANGELOG.md](CHANGELOG.md) for everything that differs from
-hw-kafka-client 5.3.0.
-
 ## Requirements
 
 - GHC 9.12 or newer.
@@ -77,94 +76,20 @@ hw-kafka-client 5.3.0.
   `Kafka.Version.librdkafkaVersion` reports the library a program is actually
   linked against.
 - [c2hs](https://hackage.haskell.org/package/c2hs), used to generate the FFI
-  bindings at build time.
-
-## Development
-
-The Nix flake provides GHC, HLS, cabal, c2hs and librdkafka. Enter the shell
-with `nix develop` (or let direnv load it), then:
-
-```bash
-just build            # cabal build all
-just test             # cabal test rdkafka-hs-test (unit tests, no broker)
-just build-examples   # build the example executable
-just fmt              # nix fmt: fourmolu, cabal-gild and nixpkgs-fmt
-just check            # sandboxed build and unit tests, formatting, docs-check
-just docs-check       # validate docs/adr and docs/improvement-requests
-just bindings-check   # verify docs/bindings.md against the binding module
-```
-
-[docs/bindings.md](docs/bindings.md) lists every function librdkafka's public
-header exports and which of them this package binds. It is generated from the
-header of the librdkafka release that pkg-config finds (cloned once into
-`~/.cache/rdkafka-hs/`, or named by `RDKAFKA_SOURCE_HEADER`) and from
-`src/Kafka/Internal/RdKafka.chs`; regenerate it with `just bindings-inventory`
-after changing the bindings.
-
-`nix build` builds the package and runs its unit tests in the Nix sandbox.
-
-## Integration tests
-
-The integration suite `rdkafka-hs-integration` needs a running Kafka broker and
-is disabled unless the manual `integration` flag is set, so `cabal build all`,
-`cabal test` and `nix build` never need one.
-
-The suite runs against a private Redpanda broker owned by this project. It never
-uses the machine-wide broker at `127.0.0.1:9092`, and refuses to start if
-`RDKAFKA_TEST_BROKER` names it, because the tests create and delete topics.
-
-Requirements: an Apple Silicon Mac on macOS 26 or newer with
-[Apple Container](https://github.com/apple/container) installed and its service
-running (`container system start`).
-
-```bash
-just test-it          # start the broker if needed, then run the suite
-just redpanda-up      # start the broker (idempotent)
-just redpanda-status  # exits non-zero unless the broker is serving
-just redpanda-logs    # tail the broker logs
-just redpanda-down    # stop the broker, keeping its data
-just redpanda-purge   # delete its containers, network and volume
-```
-
-`process-compose up` also starts the broker. The dev shell exports
-`RDKAFKA_TEST_BROKER=127.0.0.1:39092` unless it is already set. Every topic and
-consumer group a run creates carries a random per-run prefix, so runs do not
-interfere with each other.
-
-| Service          | Host port | Container            |
-|------------------|-----------|----------------------|
-| Kafka            | 39092     | `rdkafka-hs-rp-0`    |
-| Admin API        | 39644     | `rdkafka-hs-rp-0`    |
-| Schema Registry  | 38081     | `rdkafka-hs-rp-0`    |
-| HTTP Proxy       | 38082     | `rdkafka-hs-rp-0`    |
-
-The ports are the `redpanda.*-port` variables in `.seihou/manifest.json`,
-rendered into `nix/redpanda.nix` by `seihou run nix-haskell-flake`; changing one
-means changing it there, in `flake.module.nix` and in
-`test-integration/Kafka/TestEnv.hs`.
+  bindings at build time. Cabal builds it automatically through
+  `build-tool-depends`.
 
 ## Consumer
 
-High level consumers are supported by `librdkafka` starting from version 0.9.
-High-level consumers provide an abstraction for consuming messages from multiple
-partitions and topics. They also address scalability (up to a number of partitions)
-by providing automatic rebalancing functionality. When a new consumer joins a consumer
-group the set of consumers attempts to "rebalance" the load to assign partitions to each consumer.
-
-### Consumer example
-
-```bash
-cabal build --flag examples
-```
-
-or
+A high-level consumer joins a consumer group and has partitions assigned to it
+by the group; when consumers join or leave, the group rebalances the
+partitions among them. A working example is in
+[ConsumerExample.hs](example/ConsumerExample.hs). The examples connect to a
+broker at `localhost:9092`; build and run them with:
 
 ```bash
 cabal run kafka-client-example --flag examples
 ```
-
-A working consumer example can be found here: [ConsumerExample.hs](example/ConsumerExample.hs)</br>
-To run an example please compile with the `examples` flag.
 
 ```haskell
 import Control.Exception (bracket)
@@ -206,49 +131,163 @@ processMessages kafka = do
     return $ Right ()
 ```
 
+The examples in the sections below assume `import Kafka.Consumer` (or
+`import Kafka.Producer`) and the `LambdaCase` and `OverloadedStrings`
+extensions.
+
+### Callback poll modes
+
+librdkafka reports rebalances, offset commits, errors, logs and statistics
+through callbacks, which run only while something polls the client. A consumer
+has one of two callback poll modes, set with `callbackPollMode`:
+
+- `CallbackPollModeAsync` (the default): a background thread polls every
+  100 ms to serve callbacks, and records are redirected to a separate queue
+  that `pollMessage` reads. Callbacks keep running while the application is
+  busy, so librdkafka's `max.poll.interval.ms` cannot detect an application
+  that has stopped polling.
+- `CallbackPollModeSync`: callbacks run inside the application's own
+  `pollMessage` calls, and nothing runs between them. `pollMessageBatch` is not
+  available in this mode.
+
+```haskell
+syncProps :: ConsumerProperties
+syncProps = brokersList ["localhost:9092"]
+         <> groupId "my-group"
+         <> callbackPollMode CallbackPollModeSync
+```
+
+### Fatal errors
+
+Some errors are permanent: once librdkafka raises a fatal error on a consumer,
+it stops all group activity, and the only remedy is a new consumer. Every poll
+then returns `Left (KafkaResponseError RdKafkaRespErrFatal)`, in both poll modes,
+and `consumerFatalError` returns the underlying cause:
+
+```haskell
+consumeLoop :: KafkaConsumer -> IO ()
+consumeLoop consumer =
+  pollMessage consumer (Timeout 1000) >>= \case
+    Right record -> print (crValue record) >> consumeLoop consumer
+    Left (KafkaResponseError RdKafkaRespErrTimedOut) -> consumeLoop consumer
+    Left (KafkaResponseError RdKafkaRespErrFatal) -> do
+      cause <- consumerFatalError consumer
+      putStrLn ("consumer is permanently broken: " <> show cause)
+      -- close or destroy it, then create a new consumer
+    Left err -> print err >> consumeLoop consumer
+```
+
+### Waiting for records without polling
+
+`setConsumerQueueIOEvent` makes librdkafka write a payload to a non-blocking
+file descriptor when records or events reach the queue `pollMessage` reads, so
+an application can wait with `threadWaitRead` instead of polling on a timer.
+The notification is edge-triggered: one wake-up can stand for several records,
+or for an event that is not a record. Discard pending wake-ups, poll the queue
+empty, then wait, and bound the wait so a fatal error is still noticed:
+
+```haskell
+import Control.Concurrent (threadWaitRead)
+import Control.Exception (bracket, try)
+import Control.Monad (when)
+import Data.ByteString (ByteString)
+import Foreign.Marshal.Alloc (allocaBytes)
+import System.Posix.IO (FdOption (..), closeFd, createPipe, fdReadBuf, setFdOption)
+import System.Posix.Types (ByteCount, Fd)
+import System.Timeout (timeout)
+
+-- | Handle records as librdkafka announces them, waking at least once a second.
+-- Returns when the consumer turns fatal.
+waitAndConsume :: KafkaConsumer -> (ConsumerRecord (Maybe ByteString) (Maybe ByteString) -> IO ()) -> IO ()
+waitAndConsume consumer handle =
+  bracket createPipe release $ \(readEnd, writeEnd) -> do
+    -- NonBlockingRead sets O_NONBLOCK, which librdkafka's writes need too.
+    setFdOption readEnd NonBlockingRead True
+    setFdOption writeEnd NonBlockingRead True
+    setConsumerQueueIOEvent consumer (Just (writeEnd, "1"))
+    let drain =
+          pollMessage consumer (Timeout 0) >>= \case
+            Right record -> handle record >> drain
+            Left (KafkaResponseError RdKafkaRespErrTimedOut) -> pure True -- queue empty
+            Left (KafkaResponseError RdKafkaRespErrFatal) -> pure False
+            Left _ -> drain -- a non-record event
+        loop = do
+          discardWakeups readEnd -- before draining, so no wake-up is lost
+          alive <- drain
+          when alive $ do
+            _ <- timeout 1000000 (threadWaitRead readEnd)
+            loop
+    loop
+  where
+    release (readEnd, writeEnd) = do
+      setConsumerQueueIOEvent consumer Nothing -- before closing the descriptor
+      closeFd readEnd
+      closeFd writeEnd
+
+discardWakeups :: Fd -> IO ()
+discardWakeups fd =
+  allocaBytes 64 $ \buf ->
+    (try (fdReadBuf fd buf 64) :: IO (Either IOError ByteCount)) >>= \case
+      Right n | n > 0 -> discardWakeups fd
+      _ -> pure ()
+```
+
+### Reading partitions without joining a group
+
+`newAssignedConsumer` creates a consumer that never subscribes, so it never
+joins its consumer group: it reads only the partitions given to `assign`, from
+the offsets given there. With `enable.partition.eof` set, librdkafka reports when
+a partition's end is reached, and `pollMessageAttributed` says which partition
+and offset each such error belongs to. Together they make a read-only scanner:
+
+```haskell
+-- | Print partition 0 of "events" from its first offset to its current end.
+scanPartition :: IO ()
+scanPartition =
+  bracket (newAssignedConsumer props) (either (const (pure ())) destroyConsumer) $ \case
+    Left err -> print err
+    Right consumer -> do
+      _ <- assign consumer [TopicPartition "events" (PartitionId 0) PartitionOffsetBeginning]
+      let loop =
+            pollMessageAttributed consumer (Timeout 1000) >>= \case
+              Right record -> print (crOffset record, crValue record) >> loop
+              Left ConsumerMessageError {cmeError = KafkaResponseError RdKafkaRespErrPartitionEof, cmeOffset} ->
+                putStrLn ("reached the end at " <> show cmeOffset)
+              Left ConsumerMessageError {cmeError = KafkaResponseError RdKafkaRespErrTimedOut} -> loop
+              Left err -> print err
+      loop
+  where
+    props = brokersList ["localhost:9092"]
+         <> groupId "events-observer" -- required by librdkafka; never joined
+         <> noAutoCommit
+         <> extraProp "enable.partition.eof" "true"
+```
+
+### Shutting down a consumer
+
+`closeConsumer` is the graceful close: it leaves the consumer group (letting the
+group rebalance at once) and commits offsets if auto-commit is enabled. It does
+not free the librdkafka client, which otherwise waits for a garbage collection,
+and it can block against an unresponsive broker. `destroyConsumer` stops the
+consumer's threads and closes its broker connections before it returns; every
+other operation on the consumer is invalid afterwards. Closing and destroying
+are each safe to repeat.
+
+```haskell
+shutdownConsumer :: KafkaConsumer -> IO ()
+shutdownConsumer consumer = do
+  _ <- closeConsumer consumer -- leave the group; commits if auto-commit is on
+  destroyConsumer consumer    -- free the client and close its connections now
+```
+
+To bound shutdown when the broker may not answer, call only `destroyConsumer`;
+the group then notices the departure when the consumer's session times out.
+
 ## Producer
 
-The producer supports sending messages to multiple topics.
-Target topic name is a part of each message that is to be sent by `produceMessage`.
-
-A working producer example can be found here: [ProducerExample.hs](example/ProducerExample.hs)
-
-### Delivery reports
-
-Kafka Producer maintains its own internal queue for outgoing messages. Calling `produceMessage`
-does not mean that the message is actually written to Kafka, it only means that the message is put
-to that outgoing queue and that the producer will (eventually) push it to Kafka.
-
-However, it is not always possible for the producer to send messages to Kafka. Network problems
-or Kafka cluster being offline can prevent the producer from doing it.
-
-When a message cannot be sent to Kafka for some time (see `message.timeout.ms` [configuration](https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md) option),
-the message is *dropped from the outgoing queue* and the *delivery report* indicating an error is raised.
-
-It is possible to configure the producer with an infinite message timeout so the message is
-never dropped from the queue:
-
-```haskell
-producerProps :: ProducerProperties
-producerProps = brokersList ["localhost:9092"]
-             <> sendTimeout (Timeout 0)           -- for librdkafka "0" means "infinite" (see https://github.com/edenhill/librdkafka/issues/2015)
-```
-
-*Delivery reports* provide the way to detect when producer experiences problems sending messages
-to Kafka.
-
-Currently the producer only supports delivery error callbacks:
-
-```haskell
-producerProps :: ProducerProperties
-producerProps = brokersList ["localhost:9092"]
-             <> setCallback (deliveryCallback print)
-```
-
-In the example above when the producer cannot deliver the message to Kafka,
-the error will be printed (and the message will be dropped).
-
-### Producer example
+The producer sends messages to any number of topics; the target topic is part
+of each `ProducerRecord` given to `produceMessage`. A working example is in
+[ProducerExample.hs](example/ProducerExample.hs).
 
 ```haskell
 {-# LANGUAGE OverloadedStrings #-}
@@ -297,56 +336,158 @@ mkMessage k v = ProducerRecord
                   }
 ```
 
+### Delivery reports
+
+The producer keeps its own queue of outgoing messages. `produceMessage`
+returning means the message is queued, not that it has reached Kafka. A message
+that cannot be sent within `message.timeout.ms` (see librdkafka's
+[configuration](https://github.com/confluentinc/librdkafka/blob/master/CONFIGURATION.md))
+is dropped from the queue and reported as failed. `sendTimeout (Timeout 0)`
+makes the timeout infinite, so messages are never dropped:
+
+```haskell
+producerProps :: ProducerProperties
+producerProps = brokersList ["localhost:9092"]
+             <> sendTimeout (Timeout 0) -- for librdkafka "0" means "infinite"
+```
+
+`deliveryCallback` receives a `DeliveryReport` for every message: delivered at an
+offset, failed with an error, or an error librdkafka could not attach to a
+message. Callbacks run while the producer is polled, for example by
+`flushProducer`:
+
+```haskell
+producerProps :: ProducerProperties
+producerProps = brokersList ["localhost:9092"]
+             <> setCallback (deliveryCallback report)
+  where
+    report = \case
+      DeliverySuccess record offset -> putStrLn ("delivered to " <> show (prTopic record) <> " at " <> show offset)
+      DeliveryFailure _ err -> putStrLn ("not delivered: " <> show err)
+      NoMessageError err -> putStrLn ("delivery error: " <> show err)
+```
+
 ### Synchronous sending of messages
 
-Because of the asynchronous nature of librdkafka, there is no API to provide
-synchronous production of messages. It is, however, possible to combine the
-delivery reports feature with that of callbacks. This can be done using the
-`Kafka.Producer.produceMessage'` function.
+librdkafka has no synchronous produce call, but `produceMessage'` takes a
+callback for the message's own delivery report, which an `MVar` turns into a
+synchronous send:
 
 ```haskell
-produceMessage' :: MonadIO m
-                => KafkaProducer
-                -> ProducerRecord
-                -> (DeliveryReport -> IO ())
-                -> m (Either ImmediateError ())
-```
+{-# LANGUAGE LambdaCase #-}
+import Control.Concurrent.MVar (newEmptyMVar, putMVar, takeMVar)
+import Control.Monad.IO.Class (MonadIO (liftIO))
+import Kafka.Consumer (Offset)
+import Kafka.Producer
 
-Using this function, you can provide a callback which will be invoked upon the
-produced message's delivery report. With a little help of `MVar`s or similar,
-you can in fact, create a synchronous-like interface.
-
-```haskell
-sendMessageSync :: MonadIO m
-                => KafkaProducer
-                -> ProducerRecord
-                -> m (Either KafkaError Offset)
+sendMessageSync :: MonadIO m => KafkaProducer -> ProducerRecord -> m (Either KafkaError Offset)
 sendMessageSync producer record = liftIO $ do
-  -- Create an empty MVar:
   var <- newEmptyMVar
-
-  -- Produce the message and use the callback to put the delivery report in the
-  -- MVar:
   res <- produceMessage' producer record (putMVar var)
-
   case res of
-    Left (ImmediateError err) ->
-      pure (Left err)
+    Left (ImmediateError err) -> pure (Left err)
     Right () -> do
-      -- Flush producer queue to make sure you don't get stuck waiting for the
-      -- message to send:
+      -- Flush so the delivery report is served rather than waited for forever.
       flushProducer producer
-
-      -- Wait for the message's delivery report and map accordingly:
-      takeMVar var >>= return . \case
-        DeliverySuccess _ offset -> Right offset
-        DeliveryFailure _ err    -> Left err
-        NoMessageError err       -> Left err
+      takeMVar var >>= \case
+        DeliverySuccess _ offset -> pure (Right offset)
+        DeliveryFailure _ err -> pure (Left err)
+        NoMessageError err -> pure (Left err)
 ```
 
-_Note:_ this is a semi-naive solution as this waits forever (or until
-librdkafka times out). You should make sure that your configuration reflects
-the behavior you want out of this functionality.
+`flushProducer` waits until the queue is empty, which against an unreachable
+broker can take as long as `message.timeout.ms`.
+
+### Bounded shutdown
+
+`closeProducer` flushes the queue without a time limit. To bound shutdown, flush
+with `flushProducerTimeout` and purge whatever is left; purged messages are
+reported to the delivery callback as failed
+(`RdKafkaRespErrPurgeQueue` or `RdKafkaRespErrPurgeInflight`):
+
+```haskell
+shutdownProducer :: KafkaProducer -> IO ()
+shutdownProducer producer =
+  flushProducerTimeout producer (Timeout 5000) >>= \case
+    Nothing -> pure ()
+    Just _ -> do
+      _ <- purgeProducer producer [PurgeQueue, PurgeInFlight]
+      _ <- flushProducerTimeout producer (Timeout 1000) -- serves the purged reports
+      pure ()
+```
+
+## Development
+
+The Nix flake provides GHC, HLS, cabal, c2hs and librdkafka. Enter the shell
+with `nix develop` (or let direnv load it), then:
+
+```bash
+just build            # cabal build all
+just test             # cabal test rdkafka-hs-test (unit tests, no broker)
+just test-it          # integration tests against the private broker (below)
+just build-examples   # build the example executable
+just fmt              # nix fmt: fourmolu, cabal-gild and nixpkgs-fmt
+just check            # sandboxed build and unit tests, formatting, docs and bindings checks
+just docs-check       # validate docs/adr and docs/improvement-requests
+just bindings-check   # verify docs/bindings.md against the binding module
+```
+
+`nix build` builds the package and runs its unit tests in the Nix sandbox.
+
+[docs/bindings.md](docs/bindings.md) lists every function librdkafka's public
+header exports and which of them this package binds. It is generated from the
+header of the librdkafka release that pkg-config finds (cloned once into
+`~/.cache/rdkafka-hs/`, or named by `RDKAFKA_SOURCE_HEADER`) and from
+`src/Kafka/Internal/RdKafka.chs`; regenerate it with `just bindings-inventory`
+after changing the bindings.
+
+Design decisions are recorded in [docs/adr/](docs/adr/index.md).
+
+## Integration tests
+
+The integration suite `rdkafka-hs-integration` needs a running Kafka broker and
+is disabled unless the manual `integration` flag is set, so `cabal build all`,
+`cabal test` and `nix build` never need one.
+
+The suite runs against a private Redpanda broker owned by this project. It never
+uses the machine-wide broker at `127.0.0.1:9092`, and refuses to start if
+`RDKAFKA_TEST_BROKER` names it, because the tests create and delete topics.
+
+Requirements: an Apple Silicon Mac on macOS 26 or newer with
+[Apple Container](https://github.com/apple/container) installed and its service
+running (`container system start`).
+
+```bash
+just test-it          # start the broker if needed, then run the suite
+just redpanda-up      # start the broker (idempotent)
+just redpanda-status  # exits non-zero unless the broker is serving
+just redpanda-logs    # tail the broker logs
+just redpanda-down    # stop the broker, keeping its data
+just redpanda-purge   # delete its containers, network and volume
+```
+
+Arguments after `just test-it` go to cabal; to run one group, for example:
+
+```bash
+just test-it --test-option=-p '--test-option=/queue event/'
+```
+
+`process-compose up` also starts the broker. The dev shell exports
+`RDKAFKA_TEST_BROKER=127.0.0.1:39092` unless it is already set. Every topic and
+consumer group a run creates carries a random per-run prefix, so runs do not
+interfere with each other.
+
+| Service          | Host port | Container            |
+|------------------|-----------|----------------------|
+| Kafka            | 39092     | `rdkafka-hs-rp-0`    |
+| Admin API        | 39644     | `rdkafka-hs-rp-0`    |
+| Schema Registry  | 38081     | `rdkafka-hs-rp-0`    |
+| HTTP Proxy       | 38082     | `rdkafka-hs-rp-0`    |
+
+The ports are the `redpanda.*-port` variables in `.seihou/manifest.json`,
+rendered into `nix/redpanda.nix` by `seihou run nix-haskell-flake`; changing one
+means changing it there, in `flake.module.nix` and in
+`test-integration/Kafka/TestEnv.hs`.
 
 ## Credits
 

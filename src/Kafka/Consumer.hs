@@ -333,11 +333,15 @@ consumerClosed c = liftIO $ rdKafkaConsumerClosed (getRdKafka c)
 -- error, or a wake-up with an empty queue. Wait like this:
 --
 -- 1. Enable the notification.
--- 2. Poll until the queue is empty (records may have arrived before the
---    notification was enabled), then read and discard the pending payload
---    bytes from the descriptor.
--- 3. Wait for the descriptor to become readable, discard its bytes, and go back
---    to polling until the queue is empty.
+-- 2. Read and discard the pending payload bytes from the descriptor, then poll
+--    until the queue is empty (records may have arrived before the notification
+--    was enabled, or since the last wake-up).
+-- 3. Wait, with a timeout, for the descriptor to become readable, and go back to
+--    step 2.
+--
+-- Discard the bytes before polling, not after: a record that arrives after the
+-- last poll writes a fresh wake-up, and discarding it afterwards would leave
+-- the application waiting while that record sits in the queue.
 --
 -- A wake-up is not a promise of a record, and a fatal error need not produce
 -- one: in 'CallbackPollModeAsync' a raised fatal error is delivered on

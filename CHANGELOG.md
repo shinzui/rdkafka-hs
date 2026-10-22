@@ -7,6 +7,12 @@ this project adheres to the [Haskell Package Versioning Policy](https://pvp.hask
 
 ## [Unreleased]
 
+### Fixed
+
+- The `setConsumerQueueIOEvent` documentation described a wait protocol that
+  discarded pending wake-ups after draining the queue, which can lose the
+  wake-up for a record that arrives in between. It now discards them first.
+
 ## [1.0.0.0] - 2026-10-22
 
 rdkafka-hs is the maintained successor of
