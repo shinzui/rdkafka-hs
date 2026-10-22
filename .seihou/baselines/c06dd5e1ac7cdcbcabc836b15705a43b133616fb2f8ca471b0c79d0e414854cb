@@ -15,3 +15,13 @@ result
 result-*
 .pre-commit-config.yaml
 .mina/
+
+# Build artifacts from the inherited hw-kafka-client layout
+*.o
+*.hi
+*.chi
+*.chs.h
+dist-docs*
+.ghc.environment.*
+.librdkafka/
+.DS_Store

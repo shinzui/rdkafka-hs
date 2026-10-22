@@ -48,8 +48,42 @@ just docs-check       # validate docs/adr and docs/improvement-requests
 ## Integration tests
 
 The integration suite `rdkafka-hs-integration` needs a running Kafka broker and
-is disabled unless the manual `integration` flag is set. Instructions for
-running it against a project-local broker are not written yet.
+is disabled unless the manual `integration` flag is set, so `cabal build all`,
+`cabal test` and `nix build` never need one.
+
+The suite runs against a private Redpanda broker owned by this project. It never
+uses the machine-wide broker at `127.0.0.1:9092`, and refuses to start if
+`RDKAFKA_TEST_BROKER` names it, because the tests create and delete topics.
+
+Requirements: an Apple Silicon Mac on macOS 26 or newer with
+[Apple Container](https://github.com/apple/container) installed and its service
+running (`container system start`).
+
+```bash
+just test-it          # start the broker if needed, then run the suite
+just redpanda-up      # start the broker (idempotent)
+just redpanda-status  # exits non-zero unless the broker is serving
+just redpanda-logs    # tail the broker logs
+just redpanda-down    # stop the broker, keeping its data
+just redpanda-purge   # delete its containers, network and volume
+```
+
+`process-compose up` also starts the broker. The dev shell exports
+`RDKAFKA_TEST_BROKER=127.0.0.1:39092` unless it is already set. Every topic and
+consumer group a run creates carries a random per-run prefix, so runs do not
+interfere with each other.
+
+| Service          | Host port | Container            |
+|------------------|-----------|----------------------|
+| Kafka            | 39092     | `rdkafka-hs-rp-0`    |
+| Admin API        | 39644     | `rdkafka-hs-rp-0`    |
+| Schema Registry  | 38081     | `rdkafka-hs-rp-0`    |
+| HTTP Proxy       | 38082     | `rdkafka-hs-rp-0`    |
+
+The ports are the `redpanda.*-port` variables in `.seihou/manifest.json`,
+rendered into `nix/redpanda.nix` by `seihou run nix-haskell-flake`; changing one
+means changing it there, in `flake.module.nix` and in
+`test-integration/Kafka/TestEnv.hs`.
 
 ## Consumer
 

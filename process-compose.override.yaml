@@ -1,0 +1,8 @@
+# Project processes merged over the seihou-managed process-compose.yaml.
+version: "0.5"
+processes:
+  # Starts (or finds) the private Redpanda broker and exits once it is ready.
+  redpanda:
+    command: redpanda-local-up
+    availability:
+      restart: "no"

@@ -6,6 +6,13 @@
     # c2hs preprocesses src/Kafka/Internal/RdKafka.chs against rdkafka.h.
     haskellProject.extraDevPackages = [ pkgs.haskellPackages.c2hs ];
 
+    # Private test broker for the integration suite. The port is
+    # redpanda.kafka-port in .seihou/manifest.json; keep it in sync with
+    # test-integration/Kafka/TestEnv.hs and README.md.
+    haskellProject.shellHook = ''
+      export RDKAFKA_TEST_BROKER="''${RDKAFKA_TEST_BROKER:-127.0.0.1:39092}"
+    '';
+
     # seihou owns these files and rewrites them on every `seihou run`; formatting
     # them would turn each regeneration into a conflict, and the generated
     # nix/haskell.nix is not nixpkgs-fmt clean.
