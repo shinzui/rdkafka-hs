@@ -66,7 +66,7 @@ common common-options
 library
   import: common-options
   hs-source-dirs: src
-  pkgconfig-depends: rdkafka >=2.15
+  extra-libraries: rdkafka
   build-depends:
     base >=4.21 && <5,
     bifunctors >=5.6 && <5.7,

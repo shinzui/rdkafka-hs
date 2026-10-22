@@ -72,10 +72,10 @@ hw-kafka-client 5.3.0.
 ## Requirements
 
 - GHC 9.12 or newer.
-- librdkafka 2.15 or newer, with its headers and pkg-config file. Cabal checks
-  the version through pkg-config and refuses an older library at configure
-  time. `Kafka.Version.librdkafkaVersion` reports the library a program is
-  actually linked against.
+- librdkafka 2.15 or newer, with its headers. The build stops with
+  `rdkafka-hs requires librdkafka 2.15 or newer` on an older header.
+  `Kafka.Version.librdkafkaVersion` reports the library a program is actually
+  linked against.
 - [c2hs](https://hackage.haskell.org/package/c2hs), used to generate the FFI
   bindings at build time.
 

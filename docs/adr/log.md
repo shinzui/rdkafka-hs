@@ -1,6 +1,7 @@
 # Bundle Update Log
 
 ## 2026-10-22
+* **Amendment**: ADR-4: enforce the librdkafka floor with a build-time header check instead of pkgconfig-depends, which fails in downstream dev shells; ADR-8 notes that the dev shell must match downstream ones.
 * **Addition**: ADR-7 records the first release's tag-based public distribution and deliberate exclusions; ADR-8 records that the Nix scaffold is seihou-managed and how to reconfigure it.
 * **Update**: ADR-1: record the implemented queue routing for manual assignment, the ClientLifecycle teardown state and destroyConsumer, and why a second destroy path was rejected.
 * **Amendment**: ADR-4: the librdkafka floor is enforced with pkgconfig-depends, and newer releases are adopted by moving the Nix pin and regenerating the binding inventory.

@@ -46,6 +46,14 @@ import System.Posix.Types (Fd(..))
 
 #include <librdkafka/rdkafka.h>
 
+-- The supported floor, checked against the header at build time. A pkg-config
+-- bound would check it at configure time, but `pkg-config --cflags rdkafka`
+-- also needs the .pc files of librdkafka's private dependencies, which the
+-- shared Nix dev shells do not provide.
+#if RD_KAFKA_VERSION < 0x020f0000
+#error "rdkafka-hs requires librdkafka 2.15 or newer"
+#endif
+
 type CInt64T = {#type int64_t #}
 type CInt32T = {#type int32_t #}
 

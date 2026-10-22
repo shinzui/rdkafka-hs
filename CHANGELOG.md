@@ -25,9 +25,8 @@ hw-kafka-client 5.3.0. See the README's "Migrating from hw-kafka-client".
 - GHC 9.12 or newer is required. Every component uses the `GHC2024` language
   edition with `DeriveAnyClass`, `DuplicateRecordFields`, `OverloadedLabels` and
   `OverloadedStrings` enabled, and every `deriving` clause names its strategy.
-- librdkafka 2.15 or newer is required and is found through pkg-config
-  (`pkgconfig-depends: rdkafka >=2.15`) instead of `extra-libraries`, so an
-  older library is rejected at configure time.
+- librdkafka 2.15 or newer is required; building against an older header stops
+  with `rdkafka-hs requires librdkafka 2.15 or newer`.
 - `cpCallbackPollMode` is now `Maybe CallbackPollMode` (`Nothing` until
   `callbackPollMode` sets it); `effectiveCallbackPollMode` returns the mode a
   consumer uses. See the poll-mode fix below.

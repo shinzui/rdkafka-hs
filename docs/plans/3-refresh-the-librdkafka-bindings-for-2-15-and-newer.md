@@ -28,6 +28,11 @@ provenance:
       at: 2026-10-22T00:39:17Z
       mode: "implement"
       note: "Implement EP-3: librdkafka floor and version API, binding inventory, lifecycle bindings."
+    - model: "claude-opus-5-5"
+      harness: "claude-code"
+      at: 2026-10-22T01:46:05Z
+      mode: "update"
+      note: "Record that EP-6 replaced pkgconfig-depends with a build-time floor check."
 ---
 
 # Refresh the librdkafka bindings for 2.15 and newer
@@ -120,6 +125,18 @@ Implementation (2026-10-22):
   builds against. `pkgconfig-depends` gives a configure-time check and lets cabal2nix add
   `pkg-config` automatically; librdkafka ships `rdkafka.pc`.
   Date: 2026-10-21
+
+- Decision (superseded 2026-10-22 by EP-6): the floor is no longer declared through
+  `pkgconfig-depends`; the library links with `extra-libraries: rdkafka` and
+  `src/Kafka/Internal/RdKafka.chs` stops the build with an `#error` when the header's
+  `RD_KAFKA_VERSION` is below `0x020f0000`.
+  Rationale: Cabal's `pkg-config --cflags rdkafka` needs the `.pc` files of
+  librdkafka's private dependencies, which downstream `nix-haskell-flake` shells do
+  not provide; EP-6's downstream proof failed on `Package 'libcurl', required by
+  'rdkafka', not found`. The dev-shell workaround in `flake.module.nix` was removed so
+  this repository's shell matches downstream ones. See
+  [ADR-4](../adr/toolchain-floor-is-ghc-9-12-and-librdkafka-2-15.md).
+  Date: 2026-10-22
 
 - Decision: The inventory uses a verified upstream header matching the linked library version,
   held outside `/nix/store`.
