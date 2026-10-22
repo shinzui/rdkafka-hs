@@ -1,43 +1,45 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 -----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+
 -- |
 -- Module with producer properties types and functions.
------------------------------------------------------------------------------
 module Kafka.Producer.ProducerProperties
-( ProducerProperties(..)
-, brokersList
-, setCallback
-, logLevel
-, compression
-, topicCompression
-, sendTimeout
-, statisticsInterval
-, extraProps
-, extraProp
-, suppressDisconnectLogs
-, extraTopicProps
-, debugOptions
-, module Kafka.Producer.Callbacks
-)
+  ( ProducerProperties (..),
+    brokersList,
+    setCallback,
+    logLevel,
+    compression,
+    topicCompression,
+    sendTimeout,
+    statisticsInterval,
+    extraProps,
+    extraProp,
+    suppressDisconnectLogs,
+    extraTopicProps,
+    debugOptions,
+    module Kafka.Producer.Callbacks,
+  )
 where
 
-import           Data.Text                (Text)
-import qualified Data.Text                as Text
-import           Control.Monad            (MonadPlus(mplus))
-import           Data.Map                 (Map)
-import qualified Data.Map                 as M
-import           Data.Semigroup           as Sem
-import           Kafka.Types              (KafkaDebug(..), Timeout(..), KafkaCompressionCodec(..), KafkaLogLevel(..), BrokerAddress(..), kafkaDebugToText, kafkaCompressionCodecToText, Millis(..))
+import Control.Monad (MonadPlus (mplus))
+import Data.Map (Map)
+import Data.Map qualified as M
+import Data.Semigroup as Sem
+import Data.Text (Text)
+import Data.Text qualified as Text
+import Kafka.Types (BrokerAddress (..), KafkaCompressionCodec (..), KafkaDebug (..), KafkaLogLevel (..), Millis (..), Timeout (..), kafkaCompressionCodecToText, kafkaDebugToText)
 
-import           Kafka.Producer.Callbacks
+import Kafka.Producer.Callbacks
 
 -- | Properties to create 'Kafka.Producer.Types.KafkaProducer'.
 data ProducerProperties = ProducerProperties
-  { ppKafkaProps :: Map Text Text
-  , ppTopicProps :: Map Text Text
-  , ppLogLevel   :: Maybe KafkaLogLevel
-  , ppCallbacks  :: [Callback]
+  { ppKafkaProps :: Map Text Text,
+    ppTopicProps :: Map Text Text,
+    ppLogLevel :: Maybe KafkaLogLevel,
+    ppCallbacks :: [Callback]
   }
 
 instance Sem.Semigroup ProducerProperties where
@@ -47,12 +49,13 @@ instance Sem.Semigroup ProducerProperties where
 
 -- | /Right biased/ so we prefer newer properties over older ones.
 instance Monoid ProducerProperties where
-  mempty = ProducerProperties
-    { ppKafkaProps     = M.empty
-    , ppTopicProps     = M.empty
-    , ppLogLevel       = Nothing
-    , ppCallbacks      = []
-    }
+  mempty =
+    ProducerProperties
+      { ppKafkaProps = M.empty,
+        ppTopicProps = M.empty,
+        ppLogLevel = Nothing,
+        ppCallbacks = []
+      }
   {-# INLINE mempty #-}
   mappend = (Sem.<>)
   {-# INLINE mappend #-}
@@ -71,12 +74,12 @@ brokersList bs =
 -- * 'logCallback'
 -- * 'statsCallback'
 setCallback :: Callback -> ProducerProperties
-setCallback cb = mempty { ppCallbacks = [cb] }
+setCallback cb = mempty {ppCallbacks = [cb]}
 
 -- | Sets the logging level.
 -- Usually is used with 'debugOptions' to configure which logs are needed.
 logLevel :: KafkaLogLevel -> ProducerProperties
-logLevel ll = mempty { ppLogLevel = Just ll }
+logLevel ll = mempty {ppLogLevel = Just ll}
 
 -- | Set the <https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md compression.codec> for the producer.
 compression :: KafkaCompressionCodec -> ProducerProperties
@@ -101,12 +104,12 @@ statisticsInterval (Millis t) =
 -- | Any configuration options that are supported by /librdkafka/.
 -- The full list can be found <https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md here>
 extraProps :: Map Text Text -> ProducerProperties
-extraProps m = mempty { ppKafkaProps = m }
+extraProps m = mempty {ppKafkaProps = m}
 
 -- | Any configuration options that are supported by /librdkafka/.
 -- The full list can be found <https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md here>
 extraProp :: Text -> Text -> ProducerProperties
-extraProp k v = mempty { ppKafkaProps = M.singleton k v }
+extraProp k v = mempty {ppKafkaProps = M.singleton k v}
 {-# INLINE extraProp #-}
 
 -- | Suppresses producer disconnects logs.
@@ -120,7 +123,7 @@ suppressDisconnectLogs =
 -- | Any *topic* configuration options that are supported by /librdkafka/.
 -- The full list can be found <https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md#topic-configuration-properties here>
 extraTopicProps :: Map Text Text -> ProducerProperties
-extraTopicProps m = mempty { ppTopicProps = m }
+extraTopicProps m = mempty {ppTopicProps = m}
 
 -- | Sets <https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md debug> features for the producer
 -- Usually is used with 'logLevel'.

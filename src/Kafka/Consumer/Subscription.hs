@@ -1,25 +1,27 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 -----------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+
 -- |
 -- Module with subscription types and functions.
------------------------------------------------------------------------------
 module Kafka.Consumer.Subscription
-( Subscription(..)
-, topics
-, offsetReset
-, extraSubscriptionProps
-)
+  ( Subscription (..),
+    topics,
+    offsetReset,
+    extraSubscriptionProps,
+  )
 where
 
-import           Data.Map             (Map)
-import qualified Data.Map             as M
-import           Data.Semigroup       as Sem
-import           Data.Set             (Set)
-import qualified Data.Set             as Set
-import           Data.Text            (Text)
-import           Kafka.Consumer.Types (OffsetReset (..))
-import           Kafka.Types          (TopicName (..))
+import Data.Map (Map)
+import Data.Map qualified as M
+import Data.Semigroup as Sem
+import Data.Set (Set)
+import Data.Set qualified as Set
+import Data.Text (Text)
+import Kafka.Consumer.Types (OffsetReset (..))
+import Kafka.Types (TopicName (..))
 
 -- | A consumer subscription to a topic.
 --
@@ -56,8 +58,8 @@ topics ts = Subscription (Set.fromList ts) M.empty
 offsetReset :: OffsetReset -> Subscription
 offsetReset o =
   let o' = case o of
-             Earliest -> "earliest"
-             Latest   -> "latest"
+        Earliest -> "earliest"
+        Latest -> "latest"
    in Subscription Set.empty (M.fromList [("auto.offset.reset", o')])
 
 -- | Build a subscription by giving extra properties only

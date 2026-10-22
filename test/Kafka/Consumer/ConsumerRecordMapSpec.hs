@@ -1,36 +1,42 @@
-{-# LANGUAGE OverloadedStrings #-}
+-- These tests cover the deprecated crMapKey, crMapValue and crMapKV.
+{-# OPTIONS_GHC -Wno-deprecations #-}
+
 module Kafka.Consumer.ConsumerRecordMapSpec
-( spec
-) where
+  ( tests,
+  )
+where
 
 import Data.Bitraversable
 import Data.Text
 import Kafka.Consumer.Types
 import Kafka.Types
-import Test.Hspec
+import Test.Tasty (TestTree, testGroup)
+import Test.Tasty.HUnit (testCase, (@?=))
 
 testKey, testValue :: Text
-testKey   = "some-key"
+testKey = "some-key"
 testValue = "some-value"
 
 testRecord :: ConsumerRecord (Maybe Text) (Maybe Text)
-testRecord = ConsumerRecord
-  { crTopic     = "some-topic"
-  , crPartition = PartitionId 0
-  , crOffset    = Offset 5
-  , crTimestamp = NoTimestamp
-  , crHeaders   = mempty
-  , crKey       = Just testKey
-  , crValue     = Just testValue
-  }
+testRecord =
+  ConsumerRecord
+    { crTopic = "some-topic",
+      crPartition = PartitionId 0,
+      crOffset = Offset 5,
+      crTimestamp = NoTimestamp,
+      crHeaders = mempty,
+      crKey = Just testKey,
+      crValue = Just testValue
+    }
 
-spec :: Spec
-spec = describe "Kafka.Consumer.ConsumerRecordSpec" $ do
-    it "should exract key" $
-      bitraverse id pure testRecord `shouldBe` Just (crMapKey (const testKey) testRecord)
-
-    it "should extract value" $
-      sequence testRecord `shouldBe` Just (crMapValue (const testValue) testRecord)
-
-    it "should extract both key and value" $
-      bisequence testRecord `shouldBe` Just (crMapKV (const testKey) (const testValue) testRecord)
+tests :: TestTree
+tests =
+  testGroup
+    "Kafka.Consumer.ConsumerRecordMapSpec"
+    [ testCase "should extract key" $
+        bitraverse id pure testRecord @?= Just (crMapKey (const testKey) testRecord),
+      testCase "should extract value" $
+        sequence testRecord @?= Just (crMapValue (const testValue) testRecord),
+      testCase "should extract both key and value" $
+        bisequence testRecord @?= Just (crMapKV (const testKey) (const testValue) testRecord)
+    ]

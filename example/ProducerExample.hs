@@ -1,49 +1,57 @@
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module ProducerExample
+  ( producerProps,
+    targetTopic,
+    mkMessage,
+    runProducerExample,
+    sendMessages,
+    sendMessageSync,
+  )
 where
 
 import Control.Concurrent.MVar (newEmptyMVar, putMVar, takeMVar)
-import Control.Exception       (bracket)
-import Control.Monad           (forM_)
-import Control.Monad.IO.Class  (MonadIO(..))
-import Data.ByteString         (ByteString)
-import Data.ByteString.Char8   (pack)
-import Kafka.Consumer          (Offset)
+import Control.Exception (bracket)
+import Control.Monad (forM_)
+import Control.Monad.IO.Class (MonadIO (..))
+import Data.ByteString (ByteString)
+import Data.ByteString.Char8 (pack)
+import Kafka.Consumer (Offset)
 import Kafka.Producer
-import Data.Text               (Text)
 
 -- Global producer properties
 producerProps :: ProducerProperties
-producerProps = brokersList ["localhost:9092"]
-             <> sendTimeout (Timeout 10000)
-             <> setCallback (deliveryCallback print)
-             <> logLevel KafkaLogDebug
+producerProps =
+  brokersList ["localhost:9092"]
+    <> sendTimeout (Timeout 10000)
+    <> setCallback (deliveryCallback print)
+    <> logLevel KafkaLogDebug
 
 -- Topic to send messages to
 targetTopic :: TopicName
 targetTopic = "kafka-client-example-topic"
 
 mkMessage :: Maybe ByteString -> Maybe ByteString -> ProducerRecord
-mkMessage k v = ProducerRecord
-                  { prTopic = targetTopic
-                  , prPartition = UnassignedPartition
-                  , prKey = k
-                  , prValue = v
-                  , prHeaders = mempty
-                  }
+mkMessage k v =
+  ProducerRecord
+    { prTopic = targetTopic,
+      prPartition = UnassignedPartition,
+      prKey = k,
+      prValue = v,
+      prHeaders = mempty
+    }
 
 -- Run an example
 runProducerExample :: IO ()
 runProducerExample =
-    bracket mkProducer clProducer runHandler >>= print
-    where
-      mkProducer = newProducer producerProps
-      clProducer (Left _)     = return ()
-      clProducer (Right prod) = closeProducer prod
-      runHandler (Left err)   = return $ Left err
-      runHandler (Right prod) = sendMessages prod
+  bracket mkProducer clProducer runHandler >>= print
+  where
+    mkProducer = newProducer producerProps
+    clProducer (Left _) = return ()
+    clProducer (Right prod) = closeProducer prod
+    runHandler (Left err) = return $ Left err
+    runHandler (Right prod) = sendMessages prod
 
 sendMessages :: KafkaProducer -> IO (Either KafkaError ())
 sendMessages prod = do
@@ -62,8 +70,10 @@ sendMessages prod = do
   putStrLn "And the last one..."
   msg3 <- getLine
   err3 <- produceMessage prod (mkMessage (Just "key3") (Just $ pack msg3))
+  forM_ err3 print
 
-  err4 <- produceMessage prod ((mkMessage (Just "key4") (Just $ pack msg3)) { prHeaders = headersFromList [("fancy", "header")]})
+  err4 <- produceMessage prod ((mkMessage (Just "key4") (Just $ pack msg3)) {prHeaders = headersFromList [("fancy", "header")]})
+  forM_ err4 print
 
   -- forM_ errs (print . snd)
 
@@ -72,11 +82,11 @@ sendMessages prod = do
 
 -- | An example for sending messages synchronously using the 'produceMessage''
 --   function
---
-sendMessageSync :: MonadIO m
-                => KafkaProducer
-                -> ProducerRecord
-                -> m (Either KafkaError Offset)
+sendMessageSync ::
+  (MonadIO m) =>
+  KafkaProducer ->
+  ProducerRecord ->
+  m (Either KafkaError Offset)
 sendMessageSync producer record = liftIO $ do
   -- Create an empty MVar:
   var <- newEmptyMVar
@@ -94,7 +104,8 @@ sendMessageSync producer record = liftIO $ do
       flushProducer producer
 
       -- Wait for the message's delivery report and map accordingly:
-      takeMVar var >>= return . \case
-        DeliverySuccess _ offset -> Right offset
-        DeliveryFailure _ err    -> Left err
-        NoMessageError err       -> Left err
+      takeMVar var
+        >>= return . \case
+          DeliverySuccess _ offset -> Right offset
+          DeliveryFailure _ err -> Left err
+          NoMessageError err -> Left err

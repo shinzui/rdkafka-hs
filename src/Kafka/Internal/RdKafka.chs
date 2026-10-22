@@ -1,16 +1,22 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 {-# LANGUAGE EmptyDataDecls #-}
+-- This module re-exports every c2hs-generated binding, so it has no export
+-- list, and c2hs marshalling emits fromIntegral calls between identical C
+-- integer types and strategy-less `deriving (Enum)` clauses for contiguous
+-- enums; neither can be changed from the .chs source. Hand-written deriving
+-- below uses explicit strategies.
+{-# OPTIONS_GHC -Wno-missing-export-lists -Wno-identities -Wno-missing-deriving-strategies #-}
 
 module Kafka.Internal.RdKafka where
 
 import Data.ByteString (ByteString)
-import qualified Data.ByteString as BS
+import Data.ByteString qualified as BS
 import Data.Text (Text)
-import qualified Data.Text as Text
+import Data.Text qualified as Text
 import Control.Monad (liftM)
 import Data.Int (Int32, Int64)
 import Data.Word (Word8)
-import qualified Foreign.Concurrent as Concurrent
+import Foreign.Concurrent qualified as Concurrent
 import Foreign.Marshal.Alloc (alloca, allocaBytes)
 import Foreign.Marshal.Array (peekArray, allocaArray, withArrayLen)
 import Foreign.Storable (Storable(..))
@@ -34,10 +40,19 @@ type CInt32T = {#type int32_t #}
 type Word8Ptr = Ptr Word8
 type CCharBufPointer  = Ptr CChar
 
-{#enum rd_kafka_type_t as ^ {underscoreToCase} deriving (Show, Eq) #}
-{#enum rd_kafka_conf_res_t as ^ {underscoreToCase} deriving (Show, Eq) #}
-{#enum rd_kafka_resp_err_t as ^ {underscoreToCase} deriving (Show, Eq, Bounded) #}
-{#enum rd_kafka_timestamp_type_t as ^ {underscoreToCase} deriving (Show, Eq) #}
+{#enum rd_kafka_type_t as ^ {underscoreToCase} #}
+deriving stock instance Show RdKafkaTypeT
+deriving stock instance Eq RdKafkaTypeT
+{#enum rd_kafka_conf_res_t as ^ {underscoreToCase} #}
+deriving stock instance Show RdKafkaConfResT
+deriving stock instance Eq RdKafkaConfResT
+{#enum rd_kafka_resp_err_t as ^ {underscoreToCase} #}
+deriving stock instance Show RdKafkaRespErrT
+deriving stock instance Eq RdKafkaRespErrT
+deriving stock instance Bounded RdKafkaRespErrT
+{#enum rd_kafka_timestamp_type_t as ^ {underscoreToCase} #}
+deriving stock instance Show RdKafkaTimestampTypeT
+deriving stock instance Eq RdKafkaTimestampTypeT
 
 type RdKafkaMsgFlag = Int
 rdKafkaMsgFlagFree :: RdKafkaMsgFlag
@@ -94,7 +109,8 @@ data RdKafkaTopicPartitionT = RdKafkaTopicPartitionT
     , metadataSize'RdKafkaTopicPartitionT :: Int
     , opaque'RdKafkaTopicPartitionT :: Word8Ptr
     , err'RdKafkaTopicPartitionT :: RdKafkaRespErrT
-    } deriving (Show, Eq)
+    }
+    deriving stock (Show, Eq)
 
 instance Storable RdKafkaTopicPartitionT where
     alignment _ = {#alignof rd_kafka_topic_partition_t#}
@@ -122,7 +138,8 @@ data RdKafkaTopicPartitionListT = RdKafkaTopicPartitionListT
     { cnt'RdKafkaTopicPartitionListT   :: Int
     , size'RdKafkaTopicPartitionListT  :: Int
     , elems'RdKafkaTopicPartitionListT :: Ptr RdKafkaTopicPartitionT
-    } deriving (Show, Eq)
+    }
+    deriving stock (Show, Eq)
 
 {#pointer *rd_kafka_topic_partition_list_t as RdKafkaTopicPartitionListTPtr foreign -> RdKafkaTopicPartitionListT #}
 
@@ -152,7 +169,7 @@ data RdKafkaMessageT = RdKafkaMessageT
     , key'RdKafkaMessageT :: Word8Ptr
     , opaque'RdKafkaMessageT :: Ptr ()
     }
-    deriving (Show, Eq)
+    deriving stock (Show, Eq)
 
 instance Storable RdKafkaMessageT where
     alignment _ = {#alignof rd_kafka_message_t#}
@@ -184,7 +201,8 @@ data RdKafkaMetadataBrokerT = RdKafkaMetadataBrokerT
   { id'RdKafkaMetadataBrokerT  :: Int
   , host'RdKafkaMetadataBrokerT :: CString
   , port'RdKafkaMetadataBrokerT :: Int
-  } deriving (Show, Eq)
+  }
+  deriving stock (Show, Eq)
 
 {#pointer *rd_kafka_metadata_broker_t as RdKafkaMetadataBrokerTPtr -> RdKafkaMetadataBrokerT #}
 
@@ -206,7 +224,8 @@ data RdKafkaMetadataPartitionT = RdKafkaMetadataPartitionT
   , replicas'RdKafkaMetadataPartitionT :: Ptr CInt32T
   , isrCnt'RdKafkaMetadataPartitionT :: Int
   , isrs'RdKafkaMetadataPartitionT :: Ptr CInt32T
-  } deriving (Show, Eq)
+  }
+  deriving stock (Show, Eq)
 
 instance Storable RdKafkaMetadataPartitionT where
   alignment _ = {#alignof rd_kafka_metadata_partition_t#}
@@ -229,7 +248,8 @@ data RdKafkaMetadataTopicT = RdKafkaMetadataTopicT
   , partitionCnt'RdKafkaMetadataTopicT :: Int
   , partitions'RdKafkaMetadataTopicT :: Ptr RdKafkaMetadataPartitionT
   , err'RdKafkaMetadataTopicT :: RdKafkaRespErrT
-  } deriving (Show, Eq)
+  }
+  deriving stock (Show, Eq)
 
 instance Storable RdKafkaMetadataTopicT where
   alignment _ = {#alignof rd_kafka_metadata_topic_t#}
@@ -249,7 +269,8 @@ data RdKafkaMetadataT = RdKafkaMetadataT
   , topicCnt'RdKafkaMetadataT :: Int
   , topics'RdKafkaMetadataT :: RdKafkaMetadataTopicTPtr
   , origBrokerId'RdKafkaMetadataT :: CInt32T
-  } deriving (Show, Eq)
+  }
+  deriving stock (Show, Eq)
 
 instance Storable RdKafkaMetadataT where
   alignment _ = {#alignof rd_kafka_metadata_t#}
@@ -1037,7 +1058,9 @@ data RdKafkaHeadersT
 
 --- Produceva api
 
-{#enum rd_kafka_vtype_t as ^ {underscoreToCase} deriving (Show, Eq) #}
+{#enum rd_kafka_vtype_t as ^ {underscoreToCase} #}
+deriving stock instance Show RdKafkaVtypeT
+deriving stock instance Eq RdKafkaVtypeT
 
 data RdKafkaVuT
     = Topic'RdKafkaVu CString
@@ -1184,7 +1207,9 @@ rdKafkaErrorTxnRequiresAbort :: RdKafkaErrorTPtr -> IO Bool
 rdKafkaErrorTxnRequiresAbort ptr = boolFromCInt <$> rdKafkaErrorTxnRequiresAbort' ptr
 
 -- Topics
-{#enum rd_kafka_admin_op_t as ^ {underscoreToCase} deriving (Show, Eq) #}
+{#enum rd_kafka_admin_op_t as ^ {underscoreToCase} #}
+deriving stock instance Show RdKafkaAdminOpT
+deriving stock instance Eq RdKafkaAdminOpT
 
 data RdKafkaTopicResultT
 {#pointer *rd_kafka_topic_result_t as RdKafkaTopicResultTPtr foreign -> RdKafkaTopicResultT#}
@@ -1342,6 +1367,7 @@ cIntConv :: (Integral a, Num b) =>  a -> b
 cIntConv = fromIntegral
 {-# INLINE cIntConv #-}
 
+cIntToRespEither :: CInt -> Either RdKafkaRespErrT ()
 cIntToRespEither err =
   case cIntToEnum err of
     RdKafkaRespErrNoError -> Right ()
