@@ -2,7 +2,7 @@
 type: Architecture Decision Record
 title: Consumer queue and teardown ownership
 description: Manual assignment shares subscription queue routing, and destroyConsumer synchronously stops polling, releases queue references and destroys the client without a graceful group close.
-timestamp: 2026-10-22T00:05:10Z
+timestamp: 2026-10-22T01:21:16Z
 generated:
   by: codex-cli/gpt-6-astra
   at: "2026-10-22T00:05:10Z"
@@ -40,6 +40,43 @@ librdkafka callback. Event descriptors must stay open until notification has bee
 disabled or the client has been destroyed. A queue notification indicates a queue
 transition, not a promise of a record or notification of every fatal state; async
 applications retain bounded fatal-state checks when waiting for records.
+
+## Implementation
+
+Implemented on 2026-10-22 by
+[the assign-only observer plan](../plans/5-support-a-bounded-assign-only-observer-consumer.md).
+
+Queue routing lives in `Kafka.Consumer.Callbacks.forwardPartitionsToMessageQueue`,
+used by both the rebalance callback and `Kafka.Consumer.assign`, and it releases
+each partition-queue reference as soon as the forward is set. Manual assignment
+forwards before `rd_kafka_assign`, so no record can reach librdkafka's consumer
+queue (which the async background loop drains and discards). It forwards again
+after an `rd_kafka_assignment` round trip: reassigning a partition stops its
+fetcher, and librdkafka clears the partition queue's forwarding when that stop is
+processed on its main thread, after `rd_kafka_assign` has returned. Because the
+stop requests and the `rd_kafka_assignment` request are served in order by that
+thread, the second forward follows the stop; records fetched in between wait on
+the partition queue, which librdkafka does not re-forward once the application
+has forwarded it, and move with the forward.
+
+Lifetime state is a `ClientLifecycle` (`ClientOpen`, `ClientClosed`,
+`ClientDestroyed`) in an `MVar` on the internal `KafkaConf`. `closeConsumer`
+moves an open consumer to closed and is otherwise a no-op returning `Nothing`; it
+now also clears the message-queue reference it releases. `destroyConsumer`
+holds the `MVar` for the whole teardown with asynchronous exceptions masked:
+it disables callback polling (waiting for an in-flight poll), clears and
+releases the message queue, and runs `finalizeForeignPtr` on the client, whose
+`NO_CONSUMER_CLOSE` finalizer remains the only deallocator. Concurrent callers
+block on the `MVar` until the teardown is done. An interrupted teardown leaves
+the previous state in place, and every step is safe to repeat, so the next call
+completes it. The garbage-collector finalizer is now only a safety net for
+consumers that are never destroyed.
+
+A second, explicit `rd_kafka_destroy` path was rejected: alongside the
+registered finalizer it would allow a double free, and finalizing the existing
+foreign pointer keeps a single deallocator with the same callback-safe concurrent
+finalizer. `setConsumerQueueIOEvent` does nothing once polling is disabled, so a
+notification cannot be registered on a released queue.
 
 ## Consequences
 

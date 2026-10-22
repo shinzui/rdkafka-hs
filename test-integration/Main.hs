@@ -5,6 +5,7 @@ import Kafka.Integration.AttributedErrorTest qualified as AttributedErrorTest
 import Kafka.Integration.BatchTest qualified as BatchTest
 import Kafka.Integration.ConfigurationTest qualified as ConfigurationTest
 import Kafka.Integration.ConsumerTest qualified as ConsumerTest
+import Kafka.Integration.DestroyTest qualified as DestroyTest
 import Kafka.Integration.FatalErrorTest qualified as FatalErrorTest
 import Kafka.Integration.HeadersTest qualified as HeadersTest
 import Kafka.Integration.LifecycleTest qualified as LifecycleTest
@@ -44,6 +45,7 @@ main = do
             QueueEventTest.tests env,
             AssignOnlyTest.tests env,
             AttributedErrorTest.tests env,
+            DestroyTest.tests env,
             TopicTest.tests env
           ]
       ]

@@ -9,6 +9,7 @@ module Kafka.Internal.Setup
     HasTopicConf (..),
     Callback (..),
     CallbackPollStatus (..),
+    ClientLifecycle (..),
     getRdKafka,
     getRdKafkaConf,
     getRdMsgQueue,
@@ -62,6 +63,13 @@ newtype Callback = Callback (KafkaConf -> IO ())
 data CallbackPollStatus = CallbackPollEnabled | CallbackPollDisabled
   deriving stock (Show, Eq)
 
+-- | Where a consumer is in its teardown. 'Kafka.Consumer.closeConsumer' moves
+-- an open consumer to 'ClientClosed'; 'Kafka.Consumer.destroyConsumer' moves
+-- any consumer to 'ClientDestroyed'. Both hold the 'MVar' for the whole
+-- transition, so a concurrent caller waits for it to finish.
+data ClientLifecycle = ClientOpen | ClientClosed | ClientDestroyed
+  deriving stock (Show, Eq)
+
 data KafkaConf = KafkaConf
   { -- | A pointer to a native Kafka configuration
     kcfgKafkaConfPtr :: RdKafkaConfTPtr,
@@ -69,7 +77,9 @@ data KafkaConf = KafkaConf
     kcfgMessagesQueue :: IORef (Maybe RdKafkaQueueTPtr),
     -- | A mutex to prevent handling callbacks from multiple threads
     -- which can be dangerous in some cases.
-    kcfgCallbackPollStatus :: MVar CallbackPollStatus
+    kcfgCallbackPollStatus :: MVar CallbackPollStatus,
+    -- | Serializes consumer close and destroy.
+    kcfgLifecycle :: MVar ClientLifecycle
   }
 
 class HasKafka a where
@@ -98,12 +108,12 @@ getRdKafka k = let (Kafka k') = getKafka k in k'
 {-# INLINE getRdKafka #-}
 
 getRdKafkaConf :: (HasKafkaConf k) => k -> RdKafkaConfTPtr
-getRdKafkaConf k = let (KafkaConf k' _ _) = getKafkaConf k in k'
+getRdKafkaConf k = let (KafkaConf k' _ _ _) = getKafkaConf k in k'
 {-# INLINE getRdKafkaConf #-}
 
 getRdMsgQueue :: (HasKafkaConf k) => k -> IO (Maybe RdKafkaQueueTPtr)
 getRdMsgQueue k =
-  let (KafkaConf _ rq _) = getKafkaConf k
+  let (KafkaConf _ rq _ _) = getKafkaConf k
    in readIORef rq
 
 getRdTopicConf :: (HasTopicConf t) => t -> RdKafkaTopicConfTPtr
@@ -114,7 +124,7 @@ newTopicConf :: IO TopicConf
 newTopicConf = TopicConf <$> newRdKafkaTopicConfT
 
 newKafkaConf :: IO KafkaConf
-newKafkaConf = KafkaConf <$> newRdKafkaConfT <*> newIORef Nothing <*> newMVar CallbackPollEnabled
+newKafkaConf = KafkaConf <$> newRdKafkaConfT <*> newIORef Nothing <*> newMVar CallbackPollEnabled <*> newMVar ClientOpen
 
 kafkaConf :: KafkaProps -> IO KafkaConf
 kafkaConf overrides = do
@@ -139,7 +149,7 @@ checkConfSetValue err charPtr = case err of
     throw $ KafkaUnknownConfigurationKey (Text.pack str)
 
 setKafkaConfValue :: KafkaConf -> Text -> Text -> IO ()
-setKafkaConfValue (KafkaConf confPtr _ _) key value =
+setKafkaConfValue (KafkaConf confPtr _ _ _) key value =
   allocaBytes nErrorBytes $ \charPtr -> do
     err <- rdKafkaConfSet confPtr (Text.unpack key) (Text.unpack value) charPtr (fromIntegral nErrorBytes)
     checkConfSetValue err charPtr

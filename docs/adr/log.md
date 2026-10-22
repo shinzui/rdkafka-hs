@@ -1,6 +1,7 @@
 # Bundle Update Log
 
 ## 2026-10-22
+* **Update**: ADR-1: record the implemented queue routing for manual assignment, the ClientLifecycle teardown state and destroyConsumer, and why a second destroy path was rejected.
 * **Amendment**: ADR-4: the librdkafka floor is enforced with pkgconfig-depends, and newer releases are adopted by moving the Nix pin and regenerating the binding inventory.
 * **Addition**: ADR-5 runs integration tests only against the project-local Redpanda behind the integration flag; ADR-6 records that consumer fatal errors are surfaced in-band in both poll modes.
 * **Addition**: ADR-3 records rdkafka-hs as the maintained fork of hw-kafka-client; ADR-4 records the GHC 9.12 and librdkafka 2.15 toolchain floor.

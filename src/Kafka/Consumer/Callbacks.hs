@@ -24,7 +24,7 @@ import Data.Text qualified as Text
 -- | Sets a callback that is called when rebalance is needed.
 rebalanceCallback :: (KafkaConsumer -> RebalanceEvent -> IO ()) -> Callback
 rebalanceCallback callback =
-  Callback $ \kc@(KafkaConf con _ _) -> rdKafkaConfSetRebalanceCb con (realCb kc)
+  Callback $ \kc@(KafkaConf con _ _ _) -> rdKafkaConfSetRebalanceCb con (realCb kc)
   where
     realCb kc k err pl = do
       k' <- newForeignPtr_ k
@@ -41,7 +41,7 @@ rebalanceCallback callback =
 -- an error.
 offsetCommitCallback :: (KafkaConsumer -> KafkaError -> [TopicPartition] -> IO ()) -> Callback
 offsetCommitCallback callback =
-  Callback $ \kc@(KafkaConf conf _ _) -> rdKafkaConfSetOffsetCommitCb conf (realCb kc)
+  Callback $ \kc@(KafkaConf conf _ _ _) -> rdKafkaConfSetOffsetCommitCb conf (realCb kc)
   where
     realCb kc k err pl = do
       k' <- newForeignPtr_ k

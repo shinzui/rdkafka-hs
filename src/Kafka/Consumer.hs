@@ -81,13 +81,14 @@ module Kafka.Consumer
     storeOffsetMessage,
     rewindConsumer,
     closeConsumer,
+    destroyConsumer,
     -- ReExport Types
     RdKafkaRespErrT (..),
   )
 where
 
 import Control.Arrow (left, (&&&))
-import Control.Concurrent (forkIO, modifyMVar, rtsSupportsBoundThreads, withMVar)
+import Control.Concurrent (forkIO, modifyMVar, modifyMVarMasked_, rtsSupportsBoundThreads, withMVar)
 import Control.Exception (bracket)
 import Control.Monad (forM_, unless, void, when)
 import Control.Monad.IO.Class (MonadIO (liftIO))
@@ -95,7 +96,7 @@ import Control.Monad.Trans.Except (ExceptT (ExceptT), runExceptT)
 import Data.Bifunctor (bimap, first)
 import Data.ByteString qualified as BS
 import Data.ByteString.Unsafe (unsafeUseAsCStringLen)
-import Data.IORef (readIORef, writeIORef)
+import Data.IORef (IORef, atomicModifyIORef', readIORef, writeIORef)
 import Data.Map qualified as M hiding (foldr, map)
 import Data.Maybe (fromMaybe, isJust)
 import Data.Set (Set)
@@ -106,8 +107,8 @@ import Foreign hiding (void)
 import Kafka.Consumer.Callbacks (forwardPartitionsToMessageQueue)
 import Kafka.Consumer.Convert (fromMessagePtr, fromMessagePtrAttributed, fromNativeTopicPartitionList'', offsetCommitToBool, offsetToInt64, toMap, toNativeTopicPartitionList, toNativeTopicPartitionList', topicPartitionFromMessageForCommit)
 import Kafka.Consumer.Types (KafkaConsumer (..))
-import Kafka.Internal.RdKafka (RdKafkaRespErrT (..), RdKafkaTopicPartitionListTPtr, RdKafkaTypeT (..), newRdKafkaT, newRdKafkaTopicPartitionListT, newRdKafkaTopicT, rdKafkaAssign, rdKafkaAssignment, rdKafkaAssignmentLost, rdKafkaCommit, rdKafkaCommitted, rdKafkaConfSetDefaultTopicConf, rdKafkaConsumeBatchQueue, rdKafkaConsumeQueue, rdKafkaConsumerClose, rdKafkaConsumerClosed, rdKafkaConsumerPoll, rdKafkaErrorCode, rdKafkaErrorDestroy, rdKafkaFatalError, rdKafkaMessageDestroy, rdKafkaOffsetsStore, rdKafkaPausePartitions, rdKafkaPollSetConsumer, rdKafkaPosition, rdKafkaQueueDestroy, rdKafkaQueueGetConsumer, rdKafkaQueueIoEventEnable, rdKafkaQueueNew, rdKafkaResumePartitions, rdKafkaSeek, rdKafkaSeekPartitions, rdKafkaSetLogLevel, rdKafkaSubscribe, rdKafkaSubscription, rdKafkaTopicConfDup, rdKafkaTopicPartitionListAdd)
-import Kafka.Internal.Setup (Callback (..), CallbackPollStatus (..), Kafka (..), KafkaConf (..), KafkaProps (..), TopicConf (..), TopicProps (..), getKafkaConf, getRdKafka, getRdMsgQueue, kafkaConf, topicConf)
+import Kafka.Internal.RdKafka (RdKafkaQueueTPtr, RdKafkaRespErrT (..), RdKafkaTopicPartitionListTPtr, RdKafkaTypeT (..), newRdKafkaT, newRdKafkaTopicPartitionListT, newRdKafkaTopicT, rdKafkaAssign, rdKafkaAssignment, rdKafkaAssignmentLost, rdKafkaCommit, rdKafkaCommitted, rdKafkaConfSetDefaultTopicConf, rdKafkaConsumeBatchQueue, rdKafkaConsumeQueue, rdKafkaConsumerClose, rdKafkaConsumerClosed, rdKafkaConsumerPoll, rdKafkaErrorCode, rdKafkaErrorDestroy, rdKafkaFatalError, rdKafkaMessageDestroy, rdKafkaOffsetsStore, rdKafkaPausePartitions, rdKafkaPollSetConsumer, rdKafkaPosition, rdKafkaQueueDestroy, rdKafkaQueueGetConsumer, rdKafkaQueueIoEventEnable, rdKafkaQueueNew, rdKafkaResumePartitions, rdKafkaSeek, rdKafkaSeekPartitions, rdKafkaSetLogLevel, rdKafkaSubscribe, rdKafkaSubscription, rdKafkaTopicConfDup, rdKafkaTopicPartitionListAdd)
+import Kafka.Internal.Setup (Callback (..), CallbackPollStatus (..), ClientLifecycle (..), Kafka (..), KafkaConf (..), KafkaProps (..), TopicConf (..), TopicProps (..), getKafkaConf, getRdKafka, getRdMsgQueue, kafkaConf, topicConf)
 import Kafka.Internal.Shared (kafkaErrorToMaybe, maybeToLeft, rdKafkaErrorToEither, setSaslCredentials')
 import System.Posix.Types (Fd (..))
 
@@ -150,7 +151,7 @@ newConsumer props (Subscription ts tp) = liftIO $ do
   let cp = case cpCallbackPollMode props of
         CallbackPollModeAsync -> setCallback (rebalanceCallback (\_ _ -> return ())) <> props
         CallbackPollModeSync -> props
-  kc@(KafkaConf kc' qref _) <- newConsumerConf cp
+  kc@(KafkaConf kc' qref _ _) <- newConsumerConf cp
   tp' <- topicConf (TopicProps tp)
   _ <- setDefaultTopicConf kc tp'
   rdk <- newRdKafkaT RdKafkaConsumer kc'
@@ -228,7 +229,7 @@ pollMessage ::
   Timeout ->
   -- | Left on error or timeout, right for success
   m (Either KafkaError (ConsumerRecord (Maybe BS.ByteString) (Maybe BS.ByteString)))
-pollMessage c@(KafkaConsumer _ (KafkaConf _ qr _)) (Timeout ms) =
+pollMessage c@(KafkaConsumer _ (KafkaConf _ qr _ _)) (Timeout ms) =
   liftIO $
     pollFatalError c >>= \case
       Just err -> pure (Left err)
@@ -251,7 +252,7 @@ pollMessageAttributed ::
   -- | the timeout, in milliseconds
   Timeout ->
   m (Either ConsumerMessageError (ConsumerRecord (Maybe BS.ByteString) (Maybe BS.ByteString)))
-pollMessageAttributed c@(KafkaConsumer _ (KafkaConf _ qr _)) (Timeout ms) =
+pollMessageAttributed c@(KafkaConsumer _ (KafkaConf _ qr _ _)) (Timeout ms) =
   liftIO $
     pollFatalError c >>= \case
       Just err -> pure (Left (ConsumerMessageError err Nothing Nothing Nothing))
@@ -279,7 +280,7 @@ pollMessageBatch ::
   Timeout ->
   BatchSize ->
   m [Either KafkaError (ConsumerRecord (Maybe BS.ByteString) (Maybe BS.ByteString))]
-pollMessageBatch c@(KafkaConsumer _ (KafkaConf _ qr _)) (Timeout ms) (BatchSize b) =
+pollMessageBatch c@(KafkaConsumer _ (KafkaConf _ qr _ _)) (Timeout ms) (BatchSize b) =
   liftIO $
     pollFatalError c >>= \case
       Just err -> pure [Left err]
@@ -347,7 +348,7 @@ consumerClosed c = liftIO $ rdKafkaConsumerClosed (getRdKafka c)
 -- Serialize this with 'closeConsumer' and assignment changes: do not call it
 -- concurrently with them, nor from a librdkafka callback.
 setConsumerQueueIOEvent :: (MonadIO m) => KafkaConsumer -> Maybe (Fd, BS.ByteString) -> m ()
-setConsumerQueueIOEvent c@(KafkaConsumer _ (KafkaConf _ qr statusVar)) event =
+setConsumerQueueIOEvent c@(KafkaConsumer _ (KafkaConf _ qr statusVar _)) event =
   liftIO $ withMVar statusVar $ \case
     CallbackPollDisabled -> pure ()
     CallbackPollEnabled ->
@@ -582,20 +583,64 @@ pollConsumerEvents :: KafkaConsumer -> Maybe Timeout -> IO ()
 pollConsumerEvents k timeout =
   void . withCallbackPollEnabled k $ pollConsumerEvents' k timeout
 
--- | Closes the consumer.
+-- | Closes the consumer gracefully (@rd_kafka_consumer_close@): stops the
+-- background callback-poll loop, releases the message queue, and leaves the
+-- consumer group, committing offsets if auto-commit is enabled and serving the
+-- final rebalance callback. Against an unresponsive broker this can block; use
+-- 'destroyConsumer' to tear the client down within a bound.
+--
+-- Closing does not free the librdkafka client; its finalizer does that when
+-- the consumer is garbage collected, or 'destroyConsumer' does it now. Closing
+-- again, or after 'destroyConsumer', does nothing and returns 'Nothing'.
 --
 -- See 'newConsumer'
 closeConsumer :: (MonadIO m) => KafkaConsumer -> m (Maybe KafkaError)
-closeConsumer (KafkaConsumer (Kafka k) (KafkaConf _ qr statusVar)) = liftIO $
-  -- because closing the consumer will raise callbacks,
-  -- prevent the async loop from doing it at the same time
-  modifyMVar statusVar $ \_ -> do
-    -- librdkafka says:
-    --   Prior to destroying the client instance, loose your reference to the
-    --   background queue by calling rd_kafka_queue_destroy()
-    readIORef qr >>= mapM_ rdKafkaQueueDestroy
-    res <- kafkaErrorToMaybe . KafkaResponseError <$> rdKafkaConsumerClose k
-    pure (CallbackPollDisabled, res)
+closeConsumer (KafkaConsumer (Kafka k) (KafkaConf _ qr statusVar lifecycle)) = liftIO $
+  modifyMVar lifecycle $ \case
+    ClientOpen -> do
+      -- because closing the consumer will raise callbacks,
+      -- prevent the async loop from doing it at the same time
+      res <- modifyMVar statusVar $ \_ -> do
+        -- librdkafka says:
+        --   Prior to destroying the client instance, loose your reference to the
+        --   background queue by calling rd_kafka_queue_destroy()
+        releaseMessageQueue qr
+        res <- kafkaErrorToMaybe . KafkaResponseError <$> rdKafkaConsumerClose k
+        pure (CallbackPollDisabled, res)
+      pure (ClientClosed, res)
+    state -> pure (state, Nothing)
+
+-- | Destroys the consumer's librdkafka client now, synchronously and exactly
+-- once: stops the background callback-poll loop (waiting for a poll in
+-- progress), releases the message queue, and runs the client's finalizer,
+-- @rd_kafka_destroy_flags@ with @RD_KAFKA_DESTROY_F_NO_CONSUMER_CLOSE@. When it
+-- returns, librdkafka's threads have stopped and its broker connections are
+-- closed, without waiting for a garbage collection.
+--
+-- It does not leave the consumer group gracefully or commit offsets; call
+-- 'closeConsumer' first for that. Destroying again, or closing after
+-- destroying, does nothing; concurrent calls wait until the destruction has
+-- finished. If a destroy is interrupted by an asynchronous exception, a later
+-- call completes it.
+--
+-- Every other operation on the consumer is invalid once this has been called,
+-- including 'consumerClosed'. Serialize normal operations with teardown, and do
+-- not call this from a librdkafka callback.
+destroyConsumer :: (MonadIO m) => KafkaConsumer -> m ()
+destroyConsumer (KafkaConsumer (Kafka k) (KafkaConf _ qr statusVar lifecycle)) = liftIO $
+  modifyMVarMasked_ lifecycle $ \case
+    ClientDestroyed -> pure ClientDestroyed
+    _ -> do
+      -- Each step is safe to repeat, so a destroy interrupted before it
+      -- published ClientDestroyed can be completed by the next call.
+      modifyMVarMasked_ statusVar (const (pure CallbackPollDisabled))
+      releaseMessageQueue qr
+      finalizeForeignPtr k
+      pure ClientDestroyed
+
+-- | Release the async message queue, if any, exactly once.
+releaseMessageQueue :: IORef (Maybe RdKafkaQueueTPtr) -> IO ()
+releaseMessageQueue qr = atomicModifyIORef' qr (Nothing,) >>= mapM_ rdKafkaQueueDestroy
 
 -- | Rewind consumer's consume position to the last committed offsets for the current assignment.
 -- NOTE: follows https://github.com/edenhill/librdkafka/blob/master/examples/transactions.c#L166
@@ -654,7 +699,7 @@ subscribe (KafkaConsumer (Kafka k) _) ts = do
   return $ kafkaErrorToMaybe res
 
 setDefaultTopicConf :: KafkaConf -> TopicConf -> IO ()
-setDefaultTopicConf (KafkaConf kc _ _) (TopicConf tc) =
+setDefaultTopicConf (KafkaConf kc _ _ _) (TopicConf tc) =
   rdKafkaTopicConfDup tc >>= rdKafkaConfSetDefaultTopicConf kc
 
 commitOffsets :: OffsetCommit -> KafkaConsumer -> RdKafkaTopicPartitionListTPtr -> IO (Maybe KafkaError)

@@ -117,7 +117,7 @@ runProducer props f =
 -- A newly created producer must be closed with 'closeProducer' function.
 newProducer :: (MonadIO m) => ProducerProperties -> m (Either KafkaError KafkaProducer)
 newProducer pps = liftIO $ do
-  kc@(KafkaConf kc' _ _) <- kafkaConf (KafkaProps $ (ppKafkaProps pps))
+  kc@(KafkaConf kc' _ _ _) <- kafkaConf (KafkaProps $ (ppKafkaProps pps))
   tc <- topicConf (TopicProps $ (ppTopicProps pps))
 
   -- add default delivery report callback

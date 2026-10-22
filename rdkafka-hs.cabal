@@ -137,6 +137,7 @@ test-suite rdkafka-hs-integration
     base >=4.21 && <5,
     bytestring,
     containers,
+    network,
     random,
     rdkafka-hs,
     tasty ^>=1.5,
@@ -152,6 +153,7 @@ test-suite rdkafka-hs-integration
     Kafka.Integration.BatchTest
     Kafka.Integration.ConfigurationTest
     Kafka.Integration.ConsumerTest
+    Kafka.Integration.DestroyTest
     Kafka.Integration.FatalErrorTest
     Kafka.Integration.HeadersTest
     Kafka.Integration.LifecycleTest
