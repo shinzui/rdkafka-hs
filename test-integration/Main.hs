@@ -9,6 +9,7 @@ import Kafka.Integration.DestroyTest qualified as DestroyTest
 import Kafka.Integration.FatalErrorTest qualified as FatalErrorTest
 import Kafka.Integration.HeadersTest qualified as HeadersTest
 import Kafka.Integration.LifecycleTest qualified as LifecycleTest
+import Kafka.Integration.ObserverTest qualified as ObserverTest
 import Kafka.Integration.PerMessageCommitTest qualified as PerMessageCommitTest
 import Kafka.Integration.QueueEventTest qualified as QueueEventTest
 import Kafka.Integration.ReadCommittedTest qualified as ReadCommittedTest
@@ -48,6 +49,7 @@ main = do
             AttributedErrorTest.tests env,
             DestroyTest.tests env,
             ReadCommittedTest.tests env,
+            ObserverTest.tests env,
             TopicTest.tests env
           ]
       ]

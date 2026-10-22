@@ -50,8 +50,6 @@ fencedStaticMember env mode = do
         consumerProps env
           <> groupId (makeGroupId env ("fatal-" <> label))
           <> extraProps (Map.fromList [("group.instance.id", prefixedName env ("fatal-" <> label <> "-member"))])
-          -- Last: the ConsumerProperties semigroup takes the right operand's
-          -- poll mode.
           <> callbackPollMode mode
 
   admin <- mkProducer env

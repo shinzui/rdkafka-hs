@@ -25,6 +25,7 @@ module Kafka.Consumer.ConsumerProperties
     debugOptions,
     queuedMaxMessagesKBytes,
     callbackPollMode,
+    effectiveCallbackPollMode,
     module X,
   )
 where
@@ -32,6 +33,7 @@ where
 import Control.Monad (MonadPlus (mplus))
 import Data.Map (Map)
 import Data.Map qualified as M
+import Data.Maybe (fromMaybe)
 import Data.Semigroup as Sem
 import Data.Text (Text)
 import Data.Text qualified as Text
@@ -65,12 +67,13 @@ data ConsumerProperties = ConsumerProperties
   { cpProps :: Map Text Text,
     cpLogLevel :: Maybe KafkaLogLevel,
     cpCallbacks :: [Callback],
-    cpCallbackPollMode :: CallbackPollMode
+    -- | 'Nothing' until 'callbackPollMode' sets it; see 'effectiveCallbackPollMode'.
+    cpCallbackPollMode :: Maybe CallbackPollMode
   }
 
 instance Sem.Semigroup ConsumerProperties where
-  (ConsumerProperties m1 ll1 cb1 _) <> (ConsumerProperties m2 ll2 cb2 cup2) =
-    ConsumerProperties (M.union m2 m1) (ll2 `mplus` ll1) (cb1 `mplus` cb2) cup2
+  (ConsumerProperties m1 ll1 cb1 cup1) <> (ConsumerProperties m2 ll2 cb2 cup2) =
+    ConsumerProperties (M.union m2 m1) (ll2 `mplus` ll1) (cb1 `mplus` cb2) (cup2 `mplus` cup1)
   {-# INLINE (<>) #-}
 
 -- | /Right biased/ so we prefer newer properties over older ones.
@@ -80,7 +83,7 @@ instance Monoid ConsumerProperties where
       { cpProps = M.empty,
         cpLogLevel = Nothing,
         cpCallbacks = [],
-        cpCallbackPollMode = CallbackPollModeAsync
+        cpCallbackPollMode = Nothing
       }
   {-# INLINE mempty #-}
   mappend = (Sem.<>)
@@ -183,5 +186,13 @@ queuedMaxMessagesKBytes kBytes =
 {-# INLINE queuedMaxMessagesKBytes #-}
 
 -- | Set the callback poll mode. Default value is 'CallbackPollModeAsync'.
+--
+-- Like every property, a later setting overrides an earlier one, and
+-- composing properties that do not set the mode leaves it unchanged.
 callbackPollMode :: CallbackPollMode -> ConsumerProperties
-callbackPollMode mode = mempty {cpCallbackPollMode = mode}
+callbackPollMode mode = mempty {cpCallbackPollMode = Just mode}
+
+-- | The callback poll mode a consumer created with these properties uses:
+-- the last one set with 'callbackPollMode', or 'CallbackPollModeAsync'.
+effectiveCallbackPollMode :: ConsumerProperties -> CallbackPollMode
+effectiveCallbackPollMode = fromMaybe CallbackPollModeAsync . cpCallbackPollMode

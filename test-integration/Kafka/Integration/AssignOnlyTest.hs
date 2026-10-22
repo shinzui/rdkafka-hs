@@ -46,8 +46,6 @@ scenario env mode label construct =
           consumerProps env
             <> groupId group
             <> noAutoCommit
-            -- Last: the ConsumerProperties semigroup takes the right operand's
-            -- poll mode.
             <> callbackPollMode mode
     consumer <- construct props >>= either (assertFailure . ("constructor: " <>) . show) pure
     flip finally (void (closeConsumer consumer)) $ do

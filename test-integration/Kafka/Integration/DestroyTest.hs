@@ -106,8 +106,6 @@ silentConsumer env mode label broker =
     ( brokersList [BrokerAddress ("127.0.0.1:" <> Text.pack (show (sbPort broker)))]
         <> groupId (makeGroupId env (Text.pack ("destroy-" <> label)))
         <> noAutoCommit
-        -- Last: the ConsumerProperties semigroup takes the right operand's
-        -- poll mode.
         <> callbackPollMode mode
     )
     >>= either (assertFailure . ("newAssignedConsumer: " <>) . show) pure

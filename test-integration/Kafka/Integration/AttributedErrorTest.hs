@@ -35,8 +35,6 @@ scenario env mode label =
             <> groupId (makeGroupId env (Text.pack ("attributed-" <> label)))
             <> noAutoCommit
             <> extraProps (Map.fromList [("enable.partition.eof", "true")])
-            -- Last: the ConsumerProperties semigroup takes the right operand's
-            -- poll mode.
             <> callbackPollMode mode
     consumer <- newAssignedConsumer props >>= either (assertFailure . ("newAssignedConsumer: " <>) . show) pure
     flip finally (void (closeConsumer consumer)) $ do

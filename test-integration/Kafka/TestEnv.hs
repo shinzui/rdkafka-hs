@@ -208,11 +208,6 @@ mkProducer env =
 -- record can be fetched and discarded) while it waits. In
 -- 'CallbackPollModeAsync' the consumer's background loop serves it, and
 -- polling here could discard a record that races the partition-queue redirect.
---
--- The rebalance callback is composed to the /left/ of @props@: the
--- 'ConsumerProperties' semigroup takes the right operand's poll mode, and every
--- builder carries the default 'CallbackPollModeAsync', so composing anything
--- after @props@ would silently reset a requested 'CallbackPollModeSync'.
 mkConsumerWith :: TestEnv -> ConsumerProperties -> IO KafkaConsumer
 mkConsumerWith env = mkConsumerFor (teTopic env)
 
@@ -221,7 +216,7 @@ mkConsumerFor :: TopicName -> ConsumerProperties -> IO KafkaConsumer
 mkConsumerFor topic props = do
   assigned <- newEmptyMVar
   let props' = C.setCallback (rebalanceCallback (\_ evt -> onRebalance assigned evt)) <> props
-      driveCallbacks c = case cpCallbackPollMode props' of
+      driveCallbacks c = case effectiveCallbackPollMode props' of
         CallbackPollModeSync -> pollConsumerEvents c Nothing
         CallbackPollModeAsync -> pure ()
   consumer <-

@@ -148,7 +148,7 @@ newConsumer ::
   Subscription ->
   m (Either KafkaError KafkaConsumer)
 newConsumer props (Subscription ts tp) = liftIO $ do
-  let cp = case cpCallbackPollMode props of
+  let cp = case effectiveCallbackPollMode props of
         CallbackPollModeAsync -> setCallback (rebalanceCallback (\_ _ -> return ())) <> props
         CallbackPollModeSync -> props
   kc@(KafkaConf kc' qref _ _) <- newConsumerConf cp
@@ -163,7 +163,7 @@ newConsumer props (Subscription ts tp) = liftIO $ do
       let kafka =
             KafkaConsumer (Kafka rdk') kc
 
-      when (cpCallbackPollMode props == CallbackPollModeAsync) $ do
+      when (effectiveCallbackPollMode props == CallbackPollModeAsync) $ do
         messageQueue <- rdKafkaQueueNew rdk'
         writeIORef qref (Just messageQueue)
 
@@ -185,7 +185,7 @@ newConsumer props (Subscription ts tp) = liftIO $ do
 
           case subscribeError of
             Nothing -> do
-              when (cpCallbackPollMode props == CallbackPollModeAsync) $
+              when (effectiveCallbackPollMode props == CallbackPollModeAsync) $
                 runConsumerLoop kafka (Just $ Timeout 100)
               return (Right kafka)
             Just err -> do

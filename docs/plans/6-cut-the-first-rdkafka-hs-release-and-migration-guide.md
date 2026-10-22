@@ -23,6 +23,11 @@ provenance:
       at: 2026-10-22T00:00:20Z
       mode: "update"
       note: "Validate exact candidate and downstream version bounds before publication; defer completion to remote proof."
+    - model: "claude-opus-5-5"
+      harness: "claude-code"
+      at: 2026-10-22T01:27:25Z
+      mode: "implement"
+      note: "Implement EP-6 M1: release candidate, migration guide, combined check, downstream proof."
 ---
 
 # Cut the first rdkafka-hs release and migration guide

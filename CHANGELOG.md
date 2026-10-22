@@ -16,6 +16,9 @@ hw-kafka-client 5.3.0.
 
 ### Changed
 
+- `cpCallbackPollMode` is now `Maybe CallbackPollMode` (`Nothing` until
+  `callbackPollMode` sets it); `effectiveCallbackPollMode` returns the mode a
+  consumer uses.
 - The package is renamed from `hw-kafka-client` to `rdkafka-hs` and its version
   restarts at `1.0.0.0`. The `Kafka.*` module namespace, public type names and
   record field names are unchanged, so dependents migrate by changing the
@@ -73,6 +76,11 @@ hw-kafka-client 5.3.0.
 
 ### Fixed
 
+- Composing `ConsumerProperties` no longer resets the callback poll mode:
+  every builder used to carry the default `CallbackPollModeAsync` and the
+  semigroup took the right operand's mode, so
+  `callbackPollMode CallbackPollModeSync <> groupId g` silently produced an
+  async consumer. A mode now changes only when `callbackPollMode` sets it.
 - In `CallbackPollModeAsync`, records from partitions assigned with `assign`
   are delivered to `pollMessage`; previously the background callback-poll loop
   drained and discarded them.

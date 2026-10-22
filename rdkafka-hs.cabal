@@ -157,6 +157,7 @@ test-suite rdkafka-hs-integration
     Kafka.Integration.FatalErrorTest
     Kafka.Integration.HeadersTest
     Kafka.Integration.LifecycleTest
+    Kafka.Integration.ObserverTest
     Kafka.Integration.PerMessageCommitTest
     Kafka.Integration.QueueEventTest
     Kafka.Integration.ReadCommittedTest
@@ -183,6 +184,7 @@ test-suite rdkafka-hs-test
     text,
 
   other-modules:
+    Kafka.Consumer.ConsumerPropertiesSpec
     Kafka.Consumer.ConsumerRecordMapSpec
     Kafka.Consumer.ConsumerRecordTraverseSpec
     Kafka.VersionTest

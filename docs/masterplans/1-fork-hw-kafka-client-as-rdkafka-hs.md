@@ -156,7 +156,7 @@ repository, preserving the original request identity and origin.
 | 3 | Refresh the librdkafka bindings for 2.15 and newer | docs/plans/3-refresh-the-librdkafka-bindings-for-2-15-and-newer.md | EP-1; EP-2 (M3 only) | None | Complete |
 | 4 | Expose queue event notification for consumers | docs/plans/4-expose-queue-event-notification-for-consumers.md | EP-2, EP-3 | None | Complete |
 | 5 | Support a bounded assign-only observer consumer | docs/plans/5-support-a-bounded-assign-only-observer-consumer.md | EP-2, EP-3 | None | Complete |
-| 6 | Cut the first rdkafka-hs release and migration guide | docs/plans/6-cut-the-first-rdkafka-hs-release-and-migration-guide.md | EP-1, EP-2, EP-3, EP-4, EP-5 | None | Not Started |
+| 6 | Cut the first rdkafka-hs release and migration guide | docs/plans/6-cut-the-first-rdkafka-hs-release-and-migration-guide.md | EP-1, EP-2, EP-3, EP-4, EP-5 | None | In Progress |
 
 Status values: Not Started, In Progress, Complete, Cancelled.
 Hard Deps and Soft Deps reference other rows by their # prefix (e.g., EP-1, EP-3).
