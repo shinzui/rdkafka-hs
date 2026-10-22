@@ -5,6 +5,7 @@ import Kafka.Integration.ConfigurationTest qualified as ConfigurationTest
 import Kafka.Integration.ConsumerTest qualified as ConsumerTest
 import Kafka.Integration.FatalErrorTest qualified as FatalErrorTest
 import Kafka.Integration.HeadersTest qualified as HeadersTest
+import Kafka.Integration.LifecycleTest qualified as LifecycleTest
 import Kafka.Integration.PerMessageCommitTest qualified as PerMessageCommitTest
 import Kafka.Integration.StoreOffsetsTest qualified as StoreOffsetsTest
 import Kafka.Integration.TopicTest qualified as TopicTest
@@ -25,6 +26,7 @@ main = do
     $ testGroup
       "rdkafka-hs-integration"
       [ ConfigurationTest.tests,
+        LifecycleTest.tests env,
         -- The groups share the run's topic and consumer group, so later groups
         -- depend on the records and offsets earlier ones leave behind.
         dependentTestGroup

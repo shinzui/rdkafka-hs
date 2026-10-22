@@ -87,6 +87,8 @@ consumerChecks env getConsumer =
     check "should return assignment" $ \k -> do
       res <- assignment k
       res @?= Right (fromList [(testTopic, [PartitionId 0])]),
+    check "assignment is not lost" $ \k ->
+      assignmentLost k >>= (@?= False),
     check "should return all topics metadata" $ \k -> do
       res <- allTopicsMetadata k (Timeout 1000)
       assertBool (show res) (isRight res)

@@ -2,7 +2,7 @@
 type: Architecture Decision Record
 title: Toolchain floor is GHC 9.12 and librdkafka 2.15
 description: rdkafka-hs supports only GHC 9.12 and newer with the GHC2024 edition and one shared common stanza, and requires librdkafka 2.15, the version the locked Nix toolchain provides.
-timestamp: 2026-10-22T00:30:00Z
+timestamp: 2026-10-22T00:51:05Z
 generated:
   by: claude-code/claude-opus-5-5
   at: "2026-10-22T00:30:00Z"
@@ -47,11 +47,22 @@ The librdkafka floor is 2.15, the version the locked nixpkgs provides, not the
 newest upstream release. The binding is compiled and tested there first; newer
 headers are additive.
 
+The floor is enforced, not only documented: the library declares
+`pkgconfig-depends: rdkafka >=2.15`, so Cabal's solver rejects an older
+librdkafka at configure time, and `Kafka.Version` reports the library actually
+linked at run time. A newer librdkafka release is adopted by moving the Nix pin
+(through a new `nix-haskell-flake` release), raising this bound only if the
+binding comes to need it, and regenerating `docs/bindings.md` from that release's
+header with `just bindings-inventory`, which shows what the release added.
+(Amended 2026-10-22 by
+[the binding refresh plan](../plans/3-refresh-the-librdkafka-bindings-for-2-15-and-newer.md).)
+
 ## Consequences
 
 `DeriveAnyClass` combined with strategy-less deriving would silently derive empty
 instances on newtypes (for example `Num`, `IsString`, `Semigroup`), so explicit
 strategies are a correctness requirement here, not only style. Anyone building
 outside Nix must supply GHC 9.12 or newer, c2hs and librdkafka 2.15 headers
-themselves. Raising either floor is a deliberate decision recorded by amending
-this record.
+with pkg-config files for librdkafka and the libraries its `rdkafka.pc` lists
+under `Requires.private`; the dev shell adds those through `flake.module.nix`.
+Raising either floor is a deliberate decision recorded by amending this record.

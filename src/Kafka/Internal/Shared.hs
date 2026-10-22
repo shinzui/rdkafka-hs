@@ -16,6 +16,7 @@ module Kafka.Internal.Shared
     readKey,
     readTimestamp,
     readBS,
+    setSaslCredentials',
   )
 where
 
@@ -33,9 +34,17 @@ import Foreign.Marshal.Utils (copyBytes)
 import Foreign.Ptr (Ptr, nullPtr)
 import Foreign.Storable (Storable (peek))
 import Kafka.Consumer.Types (Timestamp (..))
-import Kafka.Internal.RdKafka (RdKafkaMessageT (..), RdKafkaMessageTPtr, RdKafkaRespErrT (..), RdKafkaTimestampTypeT (..), Word8Ptr, rdKafkaErrno2err, rdKafkaHeaderGetAll, rdKafkaMessageHeaders, rdKafkaMessageTimestamp, rdKafkaPoll, rdKafkaTopicName)
+import Kafka.Internal.RdKafka (RdKafkaMessageT (..), RdKafkaMessageTPtr, RdKafkaRespErrT (..), RdKafkaTimestampTypeT (..), Word8Ptr, rdKafkaErrno2err, rdKafkaHeaderGetAll, rdKafkaMessageHeaders, rdKafkaMessageTimestamp, rdKafkaPoll, rdKafkaSaslSetCredentials, rdKafkaTopicName)
 import Kafka.Internal.Setup (HasKafka (..), Kafka (..))
 import Kafka.Types (Headers, KafkaError (..), Millis (..), Timeout (..), headersFromList)
+
+-- | Replace a client's SASL username and password
+-- (@rd_kafka_sasl_set_credentials@).
+setSaslCredentials' :: (HasKafka a) => a -> Text -> Text -> IO (Maybe KafkaError)
+setSaslCredentials' a username password =
+  let Kafka k = getKafka a
+   in kafkaErrorToMaybe . KafkaResponseError
+        <$> rdKafkaSaslSetCredentials k (Text.unpack username) (Text.unpack password)
 
 pollEvents :: (HasKafka a) => a -> Maybe Timeout -> IO ()
 pollEvents a tm =

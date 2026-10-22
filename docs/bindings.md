@@ -7,8 +7,8 @@ changing the binding module, and `just bindings-check` to verify.
 - librdkafka: 2.15.0
 - Header: `src/rdkafka.h`, sha256 `33cca14d9fc87117100ce90bd84f2006b8ba521c788055db6af614d0f2f7ca2f`
 - Exported functions: 495
-- Bound: 126
-- Unbound: 369
+- Bound: 131
+- Unbound: 364
 
 ## librdkafka version
 
@@ -240,21 +240,21 @@ changing the binding module, and `just bindings-check` to verify.
 
 ## Queue API
 
-4 of 15 bound.
+5 of 15 bound.
 
 | C function | Haskell binding |
 | --- | --- |
 | `rd_kafka_queue_new` | `rdKafkaQueueNew` |
 | `rd_kafka_queue_destroy` | `rdKafkaQueueDestroy`, `rdKafkaQueueDestroyF` (finalizer pointer) |
+| `rd_kafka_sasl_set_credentials` | `rdKafkaSaslSetCredentials'` |
 | `rd_kafka_queue_get_partition` | `rdKafkaQueueGetPartition'` |
 | `rd_kafka_queue_forward` | `rdKafkaQueueForward` |
 
-<details><summary>Unbound (11)</summary>
+<details><summary>Unbound (10)</summary>
 
 - `rd_kafka_queue_get_main`
 - `rd_kafka_queue_get_sasl`
 - `rd_kafka_sasl_background_callbacks_enable`
-- `rd_kafka_sasl_set_credentials`
 - `rd_kafka_queue_get_consumer`
 - `rd_kafka_queue_get_background`
 - `rd_kafka_set_log_queue`
@@ -317,7 +317,7 @@ changing the binding module, and `just bindings-check` to verify.
 
 ## KafkaConsumer (C)
 
-16 of 28 bound.
+18 of 28 bound.
 
 | C function | Haskell binding |
 | --- | --- |
@@ -326,11 +326,13 @@ changing the binding module, and `just bindings-check` to verify.
 | `rd_kafka_subscription` | `rdKafkaSubscription'` |
 | `rd_kafka_consumer_poll` | `rdKafkaConsumerPoll` |
 | `rd_kafka_consumer_close` | `rdKafkaConsumerClose` |
+| `rd_kafka_consumer_closed` | `rdKafkaConsumerClosed` |
 | `rd_kafka_incremental_assign` | `rdKafkaIncrementalAssign` |
 | `rd_kafka_incremental_unassign` | `rdKafkaIncrementalUnassign` |
 | `rd_kafka_rebalance_protocol` | `rdKafkaRebalanceProtocol` |
 | `rd_kafka_assign` | `rdKafkaAssign` |
 | `rd_kafka_assignment` | `rdKafkaAssignment'` |
+| `rd_kafka_assignment_lost` | `rdKafkaAssignmentLost` |
 | `rd_kafka_commit` | `rdKafkaCommit` |
 | `rd_kafka_commit_message` | `rdKafkaCommitMessage` |
 | `rd_kafka_committed` | `rdKafkaCommitted` |
@@ -338,11 +340,9 @@ changing the binding module, and `just bindings-check` to verify.
 | `rd_kafka_consumer_group_metadata` | `rdKafkaConsumerGroupMetadata` |
 | `rd_kafka_consumer_group_metadata_destroy` | `rdKafkaConsumerGroupMetadataDestroy` |
 
-<details><summary>Unbound (12)</summary>
+<details><summary>Unbound (10)</summary>
 
 - `rd_kafka_consumer_close_queue`
-- `rd_kafka_consumer_closed`
-- `rd_kafka_assignment_lost`
 - `rd_kafka_commit_queue`
 - `rd_kafka_consumer_group_metadata_new`
 - `rd_kafka_consumer_group_metadata_new_with_genid`
@@ -357,19 +357,19 @@ changing the binding module, and `just bindings-check` to verify.
 
 ## Producer API
 
-3 of 6 bound.
+5 of 6 bound.
 
 | C function | Haskell binding |
 | --- | --- |
 | `rd_kafka_produce` | `rdKafkaProduce` |
 | `rd_kafka_produceva` | `rdKafkaMessageProduceVa'` |
 | `rd_kafka_produce_batch` | `rdKafkaProduceBatch` |
+| `rd_kafka_flush` | `rdKafkaFlush` |
+| `rd_kafka_purge` | `rdKafkaPurge` |
 
-<details><summary>Unbound (3)</summary>
+<details><summary>Unbound (1)</summary>
 
 - `rd_kafka_producev`
-- `rd_kafka_flush`
-- `rd_kafka_purge`
 
 </details>
 

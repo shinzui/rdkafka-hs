@@ -63,6 +63,9 @@ module Kafka.Producer
     produceMessage,
     produceMessage',
     flushProducer,
+    flushProducerTimeout,
+    purgeProducer,
+    setSaslCredentials,
     closeProducer,
     RdKafkaRespErrT (..),
   )
@@ -71,17 +74,19 @@ where
 import Control.Exception (bracket)
 import Control.Monad (forM_)
 import Control.Monad.IO.Class (MonadIO (liftIO))
+import Data.Bits ((.|.))
 import Data.ByteString qualified as BS
 import Data.ByteString.Internal qualified as BSI
+import Data.Text (Text)
 import Data.Text qualified as Text
 import Foreign.C.String (withCString)
 import Foreign.ForeignPtr (withForeignPtr)
 import Foreign.Marshal.Utils (withMany)
 import Foreign.Ptr (Ptr, nullPtr, plusPtr)
 import Foreign.StablePtr (castStablePtrToPtr, newStablePtr)
-import Kafka.Internal.RdKafka (RdKafkaRespErrT (..), RdKafkaTypeT (..), RdKafkaVuT (..), newRdKafkaT, rdKafkaErrorCode, rdKafkaErrorDestroy, rdKafkaMessageProduceVa, rdKafkaOutqLen, rdKafkaSetLogLevel)
-import Kafka.Internal.Setup (Callback (..), Kafka (..), KafkaConf (..), KafkaProps (..), TopicProps (..), kafkaConf, topicConf)
-import Kafka.Internal.Shared (pollEvents)
+import Kafka.Internal.RdKafka (RdKafkaRespErrT (..), RdKafkaTypeT (..), RdKafkaVuT (..), newRdKafkaT, rdKafkaErrorCode, rdKafkaErrorDestroy, rdKafkaFlush, rdKafkaMessageProduceVa, rdKafkaPurge, rdKafkaPurgeFInflight, rdKafkaPurgeFNonBlocking, rdKafkaPurgeFQueue, rdKafkaSetLogLevel)
+import Kafka.Internal.Setup (Callback (..), Kafka (..), KafkaConf (..), KafkaProps (..), TopicProps (..), getRdKafka, kafkaConf, topicConf)
+import Kafka.Internal.Shared (kafkaErrorToMaybe, pollEvents, setSaslCredentials')
 import Kafka.Producer.Convert (copyMsgFlags, handleProduceErrT, producePartitionCInt)
 import Kafka.Producer.Types (KafkaProducer (..))
 
@@ -187,16 +192,65 @@ produceMessage' kp@(KafkaProducer (Kafka k) _ _) msg cb =
 closeProducer :: (MonadIO m) => KafkaProducer -> m ()
 closeProducer = flushProducer
 
--- | Drains the outbound queue for a producer.
---  This function is also called automatically when the producer is closed
+-- | Drains the outbound queue for a producer, blocking until every queued
+-- message has been delivered or has failed and its delivery report has been
+-- served.
+--
+-- This function is also called automatically when the producer is closed
 -- with 'closeProducer' to ensure that all queued messages make it to Kafka.
+-- It never gives up; use 'flushProducerTimeout' to bound the wait.
 flushProducer :: (MonadIO m) => KafkaProducer -> m ()
-flushProducer kp = liftIO $ do
-  pollEvents kp (Just $ Timeout 100)
-  l <- outboundQueueLength (kpKafkaPtr kp)
-  if (l == 0)
-    then pollEvents kp (Just $ Timeout 0) -- to be sure that all the delivery reports are fired
-    else flushProducer kp
+flushProducer kp = liftIO go
+  where
+    go =
+      flushProducerTimeout kp (Timeout 1000) >>= \case
+        Just (KafkaResponseError RdKafkaRespErrTimedOut) -> go
+        _ -> pure ()
+
+-- | Waits up to the timeout for every queued message to be delivered or to
+-- fail (@rd_kafka_flush@), serving delivery callbacks meanwhile.
+--
+-- Returns 'Nothing' once the outbound queue is empty, and
+-- @'Just' ('KafkaResponseError' 'RdKafkaRespErrTimedOut')@ when messages are
+-- still outstanding after the timeout.
+flushProducerTimeout :: (MonadIO m) => KafkaProducer -> Timeout -> m (Maybe KafkaError)
+flushProducerTimeout kp (Timeout ms) =
+  liftIO $ kafkaErrorToMaybe . KafkaResponseError <$> rdKafkaFlush (getRdKafka kp) ms
+
+-- | Purges messages from the producer (@rd_kafka_purge@): those still queued
+-- with 'PurgeQueue', those awaiting a broker response with 'PurgeInFlight'.
+-- An empty list purges nothing.
+--
+-- Purged messages are not lost silently: each is reported to the delivery
+-- callback as a 'DeliveryFailure' with
+-- @'KafkaResponseError' 'RdKafkaRespErrPurgeQueue'@ or
+-- @'KafkaResponseError' 'RdKafkaRespErrPurgeInflight'@, the next time
+-- callbacks are served (for example by 'flushProducer'). A purge does not
+-- abort an in-flight request; its response is ignored. Unless
+-- 'PurgeNonBlocking' is given, the call waits for librdkafka's background
+-- threads to acknowledge the purge.
+purgeProducer :: (MonadIO m) => KafkaProducer -> [PurgeFlag] -> m (Maybe KafkaError)
+purgeProducer kp flags =
+  liftIO $ kafkaErrorToMaybe . KafkaResponseError <$> rdKafkaPurge (getRdKafka kp) (foldr ((.|.) . purgeFlagBits) 0 flags)
+  where
+    purgeFlagBits = \case
+      PurgeQueue -> rdKafkaPurgeFQueue
+      PurgeInFlight -> rdKafkaPurgeFInflight
+      PurgeNonBlocking -> rdKafkaPurgeFNonBlocking
+
+-- | Replaces the SASL username and password the producer uses for future
+-- authentications (@rd_kafka_sasl_set_credentials@); existing connections
+-- are not re-authenticated. librdkafka stores the credentials whether or not
+-- SASL is configured.
+setSaslCredentials ::
+  (MonadIO m) =>
+  KafkaProducer ->
+  -- | username
+  Text ->
+  -- | password
+  Text ->
+  m (Maybe KafkaError)
+setSaslCredentials kp username password = liftIO $ setSaslCredentials' kp username password
 
 ------------------------------------------------------------------------------------
 
@@ -213,6 +267,3 @@ withBS Nothing f = f nullPtr 0
 withBS (Just bs) f =
   let (d, o, l) = BSI.toForeignPtr bs
    in withForeignPtr d $ \p -> f (p `plusPtr` o) l
-
-outboundQueueLength :: Kafka -> IO Int
-outboundQueueLength (Kafka k) = rdKafkaOutqLen k

@@ -55,16 +55,31 @@ they add their own bindings.
 
 ## Progress
 
-- [ ] M1: `pkgconfig-depends: rdkafka >=2.15` replaces `extra-libraries`; `Kafka.Version`
+- [x] M1 (2026-10-22): `pkgconfig-depends: rdkafka >=2.15` replaces `extra-libraries`; `Kafka.Version`
       exposes the linked library's version; a unit test asserts it is at least 2.15.0;
-      `nix build` still succeeds.
-- [ ] M2: `scripts/binding-inventory.sh` regenerates `docs/bindings.md` from the pinned
+      `nix build` still succeeds. Evidence: `cabal repl` prints
+      `("2.15.0",LibrdkafkaVersion {versionMajor = 2, versionMinor = 15, versionRevision = 0})`;
+      with the bound temporarily `>=99` Cabal stops with `pkg-config package
+      rdkafka>=99, not found in the pkg-config database`; unit suite `All 10 tests
+      passed`; `nix build` passes. Commit `6d5bc87`.
+- [x] M2 (2026-10-22): `scripts/binding-inventory.sh` regenerates `docs/bindings.md` from the pinned
       header and the c2hs module; `just bindings-check` fails on a stale inventory and
       passes on a fresh one; the binding module's section conventions are documented at
-      the top of the file.
-- [ ] M3: `flushProducerTimeout`, `purgeProducer`, `assignmentLost`, `consumerClosed` and
+      the top of the file. Evidence: header from the `v2.15.0` tag (commit
+      `9a94e11452cdeb0a844db44ee5dd01ccbe17d3ab`, sha256
+      `33cca14d9fc87117100ce90bd84f2006b8ba521c788055db6af614d0f2f7ca2f`); 495 exported
+      functions (500 `RD_EXPORT` matches less five preprocessor lines); with
+      `rd_kafka_version_str`'s directive disabled, `just bindings-check` prints a diff
+      and exits 1. Commit `b940ae6`.
+- [x] M3 (2026-10-22): `flushProducerTimeout`, `purgeProducer`, `assignmentLost`, `consumerClosed` and
       `setSaslCredentials` exist, are documented, and pass their tests (pure unit tests and lifecycle integration tests); ADR-4 amended with the
-      librdkafka floor rationale; CHANGELOG updated.
+      librdkafka floor rationale; CHANGELOG updated. Evidence: `just test-it` reports
+      `All 73 tests passed (42.21s)`, including the `lifecycle` group (the flush against
+      `127.0.0.1:1` returns `RdKafkaRespErrTimedOut` in `0.50s`, the purge empties the
+      queue and reports `RdKafkaRespErrPurgeQueue` to the delivery callback) and
+      `assignment is not lost` in both poll modes; `docs/bindings.md` shows 131 of 495
+      bound with all seven named functions bound and `rd_kafka_queue_io_event_enable`
+      unbound; `just check` passes.
 
 
 ## Surprises & Discoveries
@@ -74,6 +89,27 @@ Review (2026-10-21): verified the locked nixpkgs package expression declares
 accepts non-null credentials even without SASL configured. Inventory inputs now come
 from a verified source checkout outside the Nix store, and configure-time enforcement
 cannot be replaced by a unit test.
+
+Implementation (2026-10-22):
+
+- `rd_kafka_version` and `rd_kafka_version_str` were already bound (as `pure`
+  c2hs functions); M1 only added the public module. Before this plan the module
+  bound 113 functions by the inventory's count (c2hs `fun` and `call` directives
+  plus hand-written imports and finalizer pointers), not 99; it now binds 131.
+- `rdkafka.pc` lists librdkafka's own libraries under `Requires.private`, and
+  Cabal runs `pkg-config --cflags`, which needs their `.pc` files. The sandboxed
+  `nix build` had them; the dev shell did not, so `flake.module.nix` adds
+  `map lib.getDev pkgs.rdkafka.buildInputs` to `haskellProject.extraBuildInputs`.
+- The Mori corpus checkout of librdkafka is at a merge commit, not the release
+  commit, although its `src/rdkafka.h` is byte-identical to `v2.15.0`'s. The
+  inventory records the header's sha256, and `just librdkafka-source` clones the
+  tag matching `pkg-config --modversion rdkafka` into `~/.cache/rdkafka-hs/`.
+- Admin-API names contain capitals (`rd_kafka_event_CreateTopics_result`), and a
+  comment quoting a `{#fun ...#}` example was read as a binding; both were fixed in
+  the script and the comment.
+- `closeProducer` only flushes, so a test producer pointed at an unreachable broker
+  must purge before closing or it waits forever; `closeProducer` still never
+  destroys the client (left to its finalizer).
 
 
 ## Decision Log
@@ -94,9 +130,34 @@ cannot be replaced by a unit test.
   Date: 2026-10-21
 
 
+- Decision: `Kafka.Version` exposes `LibrdkafkaVersion` with prefixed fields
+  (`versionMajor`, `versionMinor`, `versionRevision`), and `setSaslCredentials` is
+  defined in both `Kafka.Consumer` and `Kafka.Producer`.
+  Rationale: Prefixed fields match the library's existing records and avoid
+  exporting generic names; `HasKafka` is internal, and same-named functions in the
+  two modules follow `brokersList` and `setCallback`.
+  Date: 2026-10-22
+
+- Decision: `just bindings-check` is part of `just check`, using a cached clone of
+  the release tag unless `RDKAFKA_SOURCE_HEADER` is set.
+  Rationale: The check must run without per-machine setup; the first run needs
+  network access once.
+  Date: 2026-10-22
+
+
 ## Outcomes & Retrospective
 
-(To be filled during and after implementation.)
+Completed 2026-10-22. The package rejects librdkafka older than 2.15 at configure
+time, reports the linked version through `Kafka.Version`, and documents its coverage
+in `docs/bindings.md` (131 of 495 exported functions), kept honest by
+`just bindings-check` in `just check`. Producers gain a bounded flush and a purge,
+consumers gain `assignmentLost` and `consumerClosed`, and both gain
+`setSaslCredentials`; `flushProducer` now uses `rd_kafka_flush`. ADR-4 records the
+enforcement and how newer releases are adopted.
+
+For EP-4: follow the conventions comment at the top of
+`src/Kafka/Internal/RdKafka.chs` and run `just bindings-inventory` after adding the
+queue event bindings.
 
 
 ## Context and Orientation

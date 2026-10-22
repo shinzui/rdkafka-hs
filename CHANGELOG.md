@@ -26,12 +26,23 @@ hw-kafka-client 5.3.0.
 - librdkafka 2.15 or newer is required and is found through pkg-config
   (`pkgconfig-depends: rdkafka >=2.15`) instead of `extra-libraries`, so an
   older library is rejected at configure time.
+- `flushProducer` is implemented with `rd_kafka_flush` and still blocks until
+  the outbound queue is empty.
 - The unit test suite (`rdkafka-hs-test`) uses tasty instead of hspec. The
   integration test suite is now `rdkafka-hs-integration`, behind the manual
   `integration` flag (formerly `it`).
 
 ### Added
 
+- `Kafka.Producer.flushProducerTimeout` (`rd_kafka_flush`) waits a bounded time
+  for the outbound queue to drain, and `Kafka.Producer.purgeProducer`
+  (`rd_kafka_purge`) purges queued or in-flight messages, reporting each to the
+  delivery callback with `RdKafkaRespErrPurgeQueue` or
+  `RdKafkaRespErrPurgeInflight`.
+- `Kafka.Consumer.assignmentLost` (`rd_kafka_assignment_lost`) and
+  `Kafka.Consumer.consumerClosed` (`rd_kafka_consumer_closed`).
+- `setSaslCredentials` in `Kafka.Consumer` and `Kafka.Producer`
+  (`rd_kafka_sasl_set_credentials`) replaces a client's SASL credentials.
 - `docs/bindings.md` inventories which librdkafka functions are bound, checked
   by `just bindings-check`.
 - `Kafka.Version` reports the linked librdkafka version (`librdkafkaVersion`,

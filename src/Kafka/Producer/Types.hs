@@ -15,6 +15,7 @@ module Kafka.Producer.Types
     ProducePartition (..),
     DeliveryReport (..),
     ImmediateError (..),
+    PurgeFlag (..),
   )
 where
 
@@ -75,3 +76,16 @@ data DeliveryReport
   | -- | An error occurred, but /librdkafka/ did not attach any sent message
     NoMessageError KafkaError
   deriving stock (Show, Eq, Generic)
+
+-- | What 'Kafka.Producer.purgeProducer' purges.
+data PurgeFlag
+  = -- | Messages still in the producer's queues, not yet sent to a broker
+    -- (@RD_KAFKA_PURGE_F_QUEUE@).
+    PurgeQueue
+  | -- | Messages sent to a broker and awaiting a response
+    -- (@RD_KAFKA_PURGE_F_INFLIGHT@).
+    PurgeInFlight
+  | -- | Do not wait for background threads to acknowledge the purge
+    -- (@RD_KAFKA_PURGE_F_NON_BLOCKING@).
+    PurgeNonBlocking
+  deriving stock (Show, Eq, Ord, Enum, Bounded, Generic)

@@ -27,6 +27,7 @@ import Data.ByteString (ByteString)
 import Data.ByteString qualified as BS
 import Data.Text (Text)
 import Data.Text qualified as Text
+import Control.Exception (finally)
 import Control.Monad (liftM)
 import Data.Int (Int32, Int64)
 import Data.Word (Word8)
@@ -656,6 +657,12 @@ pollRdKafkaConsumer k t = do
 {#fun rd_kafka_poll_set_consumer as ^
     {`RdKafkaTPtr'} -> `RdKafkaRespErrT' cIntToEnum #}
 
+{#fun rd_kafka_assignment_lost as ^
+    {`RdKafkaTPtr'} -> `Bool' #}
+
+{#fun rd_kafka_consumer_closed as ^
+    {`RdKafkaTPtr'} -> `Bool' #}
+
 -- rd_kafka_assign
 {#fun rd_kafka_assign as ^
     {`RdKafkaTPtr', `RdKafkaTopicPartitionListTPtr'}
@@ -988,6 +995,22 @@ rdKafkaConsumeStop topicPtr partition = do
 {#fun rd_kafka_produce_batch as ^
     {`RdKafkaTopicTPtr', cIntConv `CInt32T', `Int', `RdKafkaMessageTPtr', `Int'} -> `Int' #}
 
+-- Serves delivery callbacks while it waits, so it must be a safe call.
+{#fun rd_kafka_flush as ^
+    {`RdKafkaTPtr', `Int'} -> `RdKafkaRespErrT' cIntToEnum #}
+
+{#fun rd_kafka_purge as ^
+    {`RdKafkaTPtr', `Int'} -> `RdKafkaRespErrT' cIntToEnum #}
+
+rdKafkaPurgeFQueue :: Int
+rdKafkaPurgeFQueue = {#const RD_KAFKA_PURGE_F_QUEUE #}
+
+rdKafkaPurgeFInflight :: Int
+rdKafkaPurgeFInflight = {#const RD_KAFKA_PURGE_F_INFLIGHT #}
+
+rdKafkaPurgeFNonBlocking :: Int
+rdKafkaPurgeFNonBlocking = {#const RD_KAFKA_PURGE_F_NON_BLOCKING #}
+
 
 -- rd_kafka_metadata
 
@@ -1058,6 +1081,22 @@ data RdKafkaErrorT
 
 {#fun rd_kafka_error_destroy as ^
     {`RdKafkaErrorTPtr'} -> `()' #}
+
+-------------------------------------------------------------------------------------------------
+---- Security
+
+{#fun rd_kafka_sasl_set_credentials as rdKafkaSaslSetCredentials'
+    {`RdKafkaTPtr', `String', `String'} -> `RdKafkaErrorTPtr' #}
+
+-- | Replace the SASL username and password used for future authentications.
+-- A NULL error object means success; a non-NULL one is destroyed after its
+-- code is read.
+rdKafkaSaslSetCredentials :: RdKafkaTPtr -> String -> String -> IO RdKafkaRespErrT
+rdKafkaSaslSetCredentials k username password = do
+    err <- rdKafkaSaslSetCredentials' k username password
+    if err == nullPtr
+        then pure RdKafkaRespErrNoError
+        else rdKafkaErrorCode err `finally` rdKafkaErrorDestroy err
 -------------------------------------------------------------------------------------------------
 ---- Headers
 

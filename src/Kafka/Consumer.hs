@@ -68,6 +68,9 @@ module Kafka.Consumer
     pollConsumerEvents,
     pollMessageBatch,
     consumerFatalError,
+    assignmentLost,
+    consumerClosed,
+    setSaslCredentials,
     commitOffsetMessage,
     commitAllOffsets,
     commitPartitionsOffsets,
@@ -98,9 +101,9 @@ import Data.Text qualified as Text
 import Foreign hiding (void)
 import Kafka.Consumer.Convert (fromMessagePtr, fromNativeTopicPartitionList'', offsetCommitToBool, offsetToInt64, toMap, toNativeTopicPartitionList, toNativeTopicPartitionList', topicPartitionFromMessageForCommit)
 import Kafka.Consumer.Types (KafkaConsumer (..))
-import Kafka.Internal.RdKafka (RdKafkaRespErrT (..), RdKafkaTopicPartitionListTPtr, RdKafkaTypeT (..), newRdKafkaT, newRdKafkaTopicPartitionListT, newRdKafkaTopicT, rdKafkaAssign, rdKafkaAssignment, rdKafkaCommit, rdKafkaCommitted, rdKafkaConfSetDefaultTopicConf, rdKafkaConsumeBatchQueue, rdKafkaConsumeQueue, rdKafkaConsumerClose, rdKafkaConsumerPoll, rdKafkaErrorCode, rdKafkaErrorDestroy, rdKafkaFatalError, rdKafkaMessageDestroy, rdKafkaOffsetsStore, rdKafkaPausePartitions, rdKafkaPollSetConsumer, rdKafkaPosition, rdKafkaQueueDestroy, rdKafkaQueueNew, rdKafkaResumePartitions, rdKafkaSeek, rdKafkaSeekPartitions, rdKafkaSetLogLevel, rdKafkaSubscribe, rdKafkaSubscription, rdKafkaTopicConfDup, rdKafkaTopicPartitionListAdd)
+import Kafka.Internal.RdKafka (RdKafkaRespErrT (..), RdKafkaTopicPartitionListTPtr, RdKafkaTypeT (..), newRdKafkaT, newRdKafkaTopicPartitionListT, newRdKafkaTopicT, rdKafkaAssign, rdKafkaAssignment, rdKafkaAssignmentLost, rdKafkaCommit, rdKafkaCommitted, rdKafkaConfSetDefaultTopicConf, rdKafkaConsumeBatchQueue, rdKafkaConsumeQueue, rdKafkaConsumerClose, rdKafkaConsumerClosed, rdKafkaConsumerPoll, rdKafkaErrorCode, rdKafkaErrorDestroy, rdKafkaFatalError, rdKafkaMessageDestroy, rdKafkaOffsetsStore, rdKafkaPausePartitions, rdKafkaPollSetConsumer, rdKafkaPosition, rdKafkaQueueDestroy, rdKafkaQueueNew, rdKafkaResumePartitions, rdKafkaSeek, rdKafkaSeekPartitions, rdKafkaSetLogLevel, rdKafkaSubscribe, rdKafkaSubscription, rdKafkaTopicConfDup, rdKafkaTopicPartitionListAdd)
 import Kafka.Internal.Setup (Callback (..), CallbackPollStatus (..), Kafka (..), KafkaConf (..), KafkaProps (..), TopicConf (..), TopicProps (..), getKafkaConf, getRdKafka, kafkaConf, topicConf)
-import Kafka.Internal.Shared (kafkaErrorToMaybe, maybeToLeft, rdKafkaErrorToEither)
+import Kafka.Internal.Shared (kafkaErrorToMaybe, maybeToLeft, rdKafkaErrorToEither, setSaslCredentials')
 
 import Kafka.Consumer.ConsumerProperties as X
 import Kafka.Consumer.Subscription as X
@@ -243,6 +246,33 @@ pollMessageBatch c@(KafkaConsumer _ (KafkaConf _ qr _)) (Timeout ms) (BatchSize 
         case mbq of
           Nothing -> return [Left $ KafkaBadSpecification "Calling pollMessageBatch while CallbackPollMode is set to CallbackPollModeSync."]
           Just q -> whileNoCallbackRunning c $ rdKafkaConsumeBatchQueue q ms b >>= traverse fromMessagePtr
+
+-- | Whether the current assignment was lost involuntarily
+-- (@rd_kafka_assignment_lost@): the consumer was evicted from the group, for
+-- example after its session timed out, rather than revoked by a normal
+-- rebalance. Meaningful inside a rebalance callback handling a revocation, where
+-- offsets for a lost assignment must not be committed.
+assignmentLost :: (MonadIO m) => KafkaConsumer -> m Bool
+assignmentLost c = liftIO $ rdKafkaAssignmentLost (getRdKafka c)
+
+-- | Whether 'closeConsumer' has been called on this consumer
+-- (@rd_kafka_consumer_closed@).
+consumerClosed :: (MonadIO m) => KafkaConsumer -> m Bool
+consumerClosed c = liftIO $ rdKafkaConsumerClosed (getRdKafka c)
+
+-- | Replaces the SASL username and password the consumer uses for future
+-- authentications (@rd_kafka_sasl_set_credentials@); existing connections
+-- are not re-authenticated. librdkafka stores the credentials whether or not
+-- SASL is configured.
+setSaslCredentials ::
+  (MonadIO m) =>
+  KafkaConsumer ->
+  -- | username
+  Text ->
+  -- | password
+  Text ->
+  m (Maybe KafkaError)
+setSaslCredentials c username password = liftIO $ setSaslCredentials' c username password
 
 -- | Returns the underlying cause of the fatal error raised on this client,
 -- together with librdkafka's human readable description of it, or 'Nothing'
