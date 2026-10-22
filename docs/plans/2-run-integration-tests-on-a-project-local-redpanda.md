@@ -23,6 +23,11 @@ provenance:
       at: 2026-10-22T00:00:20Z
       mode: "update"
       note: "Correct sync fixture polling, private-broker rejection and batch fatal acceptance."
+    - model: "claude-opus-5-5"
+      harness: "claude-code"
+      at: 2026-10-22T00:24:50Z
+      mode: "implement"
+      note: "Implement EP-2: private Redpanda, tasty integration port, fatal regression test."
 ---
 
 # Run integration tests on a project-local Redpanda

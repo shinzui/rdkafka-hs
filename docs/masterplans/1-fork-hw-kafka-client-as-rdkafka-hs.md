@@ -151,8 +151,8 @@ repository, preserving the original request identity and origin.
 
 | # | Title | Path | Hard Deps | Soft Deps | Status |
 |---|-------|------|-----------|-----------|--------|
-| 1 | Bootstrap rdkafka-hs from the hw-kafka-client fork | docs/plans/1-bootstrap-rdkafka-hs-from-the-hw-kafka-client-fork.md | None | None | In Progress |
-| 2 | Run integration tests on a project-local Redpanda | docs/plans/2-run-integration-tests-on-a-project-local-redpanda.md | EP-1 | None | Not Started |
+| 1 | Bootstrap rdkafka-hs from the hw-kafka-client fork | docs/plans/1-bootstrap-rdkafka-hs-from-the-hw-kafka-client-fork.md | None | None | Complete |
+| 2 | Run integration tests on a project-local Redpanda | docs/plans/2-run-integration-tests-on-a-project-local-redpanda.md | EP-1 | None | In Progress |
 | 3 | Refresh the librdkafka bindings for 2.15 and newer | docs/plans/3-refresh-the-librdkafka-bindings-for-2-15-and-newer.md | EP-1; EP-2 (M3 only) | None | Not Started |
 | 4 | Expose queue event notification for consumers | docs/plans/4-expose-queue-event-notification-for-consumers.md | EP-2, EP-3 | None | Not Started |
 | 5 | Support a bounded assign-only observer consumer | docs/plans/5-support-a-bounded-assign-only-observer-consumer.md | EP-2, EP-3 | None | Not Started |
@@ -250,8 +250,9 @@ from the fork and adopts `docs/adr/` through the `adopt-architecture-decisions` 
 registering both in `mori.dhall`. EP-4 and EP-5 record implementation evidence while keeping the requests open.
 EP-6 verifies both bundles before tagging, then marks the requests `completed` only
 after remote tag acceptance. Preserve canonical origins and use `okf log add` when
-updating their timestamps. EP-1 adopts the two existing review ADRs before allocating
-new handles; numeric ADR handles in the original plans are provisional until allocated.
+updating their timestamps. EP-1 adopted the two existing review ADRs as ADR-1 and
+ADR-2 and wrote ADR-3 and ADR-4; later records take handles from `okf id next`, and
+`just docs-check` validates both bundles.
 
 **`CHANGELOG.md`.** EP-1 creates it with an `Unreleased` section listing what the fork
 carries beyond Hackage 5.3.0. Every later plan appends to `Unreleased`. EP-6 turns it into
@@ -276,15 +277,20 @@ reproducible fatal trigger before EP-4 and EP-5 begin, and record it here.
 
 ## Progress
 
-No child plan has started. The repository holds the seihou scaffold, `mori.dhall`,
-these plans and two review ADRs; there is no Cabal package yet. The review fetched the
-source branch and recovered its committed request bundle without switching its checkout. The next action is EP-1. The cross-plan access gate is
-the decision on repository visibility before EP-6. Registry refresh is also
-outstanding until Mori's database is available. For visibility, the GitHub repository is private, and
-downstream `source-repository-package` pins over HTTPS need either public visibility or
-authenticated access.
+EP-1 is Complete (2026-10-22): the repository is the `rdkafka-hs` package with the
+fork's full history, builds warning-free on GHC 9.12.4 and librdkafka 2.15.0, passes
+its unit tests locally and under `nix build`, and holds the profiled `docs/adr/`
+(ADR-1 to ADR-4) and `docs/improvement-requests/` bundles, registered in Mori. The next
+action is EP-2. The local Mori registry has been refreshed with `mori register --local`.
+The cross-plan access gate is the decision on repository visibility before EP-6: the
+GitHub repository is private, and downstream `source-repository-package` pins over
+HTTPS need either public visibility or authenticated access.
 
 - [ ] Repository visibility decided before EP-6 tags the release.
+
+ADR handles are now allocated: ADR-1 consumer queue and teardown ownership, ADR-2
+release validation, ADR-3 fork identity, ADR-4 toolchain floor. Records created by
+later plans take the next handle from `okf id next` (ADR-5 at EP-1 completion).
 
 
 ## Surprises & Discoveries
@@ -300,6 +306,28 @@ Source review found missing manual-assignment queue forwarding, a teardown guard
 would skip cleanup, a SASL test expecting an error the C implementation does not return,
 and a downstream rename retaining incompatible `>=5.3` bounds. The update corrects
 these and moves compatibility proof before publication. No implementation tests have run.
+
+EP-1 (2026-10-22), affecting later plans:
+
+- `DeriveAnyClass`, enabled by the standard, turns any strategy-less newtype
+  `deriving` of a non-stock class into an empty instance. Every plan adding types must
+  name deriving strategies; the warning set enforces it outside `RdKafka.chs`, which
+  disables `-Wmissing-deriving-strategies` because c2hs emits `deriving (Enum)`. New
+  hand-written instances in that file must still use explicit strategies (c2hs enum
+  instances use standalone `deriving stock instance`).
+- The seihou-generated Nix files are not nixpkgs-fmt clean; `flake.module.nix`
+  excludes `flake.nix` and `nix/*.nix` from treefmt. EP-2's regeneration with
+  `nix.redpanda=true` relies on that exclusion staying in place.
+- `nix flake check` does not build the package; `just check` runs `nix build`,
+  `nix flake check` and `just docs-check` (strict OKF validation and `mori validate`).
+  EP-2 and EP-3 add their recipes beside these.
+- ADR filenames are unnumbered slugs; the `docId` is the handle. The child plans'
+  provisional ADR paths were renamed accordingly.
+- Mori's registry now lists IR-1 and IR-2 under both
+  `mori://shinzui/hw-kafka-client/okf/improvement-requests` (the fork branch) and
+  `mori://shinzui/rdkafka-hs/okf/improvement-requests`. EP-6 closes the requests in
+  this repository; whether the fork's copies are marked superseded is a decision for
+  EP-6, since this initiative does not edit other repositories.
 
 
 ## Decision Log
