@@ -11,6 +11,18 @@ provenance:
     model: "claude-fable-5-1"
     harness: "claude-code"
     at: 2026-10-21T23:17:55Z
+  reviews:
+    - model: "gpt-6-astra"
+      harness: "codex-cli"
+      at: 2026-10-21T23:52:39Z
+      verdict: "changes-requested"
+      note: "Changes requested: sync assignment wait needs active polling; enforce private broker guard and cover batch fatal propagation."
+  revisions:
+    - model: "gpt-6-astra"
+      harness: "codex-cli"
+      at: 2026-10-22T00:00:20Z
+      mode: "update"
+      note: "Correct sync fixture polling, private-broker rejection and batch fatal acceptance."
 ---
 
 # Run integration tests on a project-local Redpanda
@@ -51,7 +63,9 @@ a broker because the integration suite sits behind a manual cabal flag.
 
 ## Surprises & Discoveries
 
-(None yet.)
+Review (2026-10-21): sync-mode assignment and fencing require active polling
+while awaiting callbacks. Added explicit shared-broker rejection and async batch-fatal
+acceptance. EP-1 owns the integration flag and disabled stanza; this plan ports them.
 
 
 ## Decision Log
@@ -94,8 +108,8 @@ suite deletes every user topic it can see, and
 `mori://shinzui/keiro-runtime-kenshou/okf/adrs/concepts/ADR-17` records the rule that
 local Kafka verification uses a disposable, run-owned broker.
 
-The seihou module `nix-haskell-flake` (applied here at version 0.34.0; its definition is
-at `/Users/shinzui/Keikaku/bokuno/seihou-modules/modules/haskell/nix-haskell-flake/`)
+The seihou module `nix-haskell-flake` (applied here at version 0.34.0; its owning project is `mori://shinzui/seihou-modules`, project-relative path
+`modules/haskell/nix-haskell-flake/`, artifact URI pending; its definition is at `/Users/shinzui/Keikaku/bokuno/seihou-modules/modules/haskell/nix-haskell-flake/`)
 has an opt-in variable `nix.redpanda`. When true, it generates `nix/redpanda.nix`, which
 reuses the lifecycle scripts of the `redpanda-container` flake (already a locked input of
 `flake.nix`) with project-specific names and ports and exposes them in the dev shell as
@@ -148,8 +162,11 @@ into the fatal `RdKafkaRespErrFencedInstanceId`. librdkafka also exposes
 `rd_kafka_test_fatal_error`, a public function that raises an arbitrary fatal for testing,
 which is the fallback trigger if Redpanda turns out not to fence.
 
-Local ADR context: `docs/adr/1-...` (fork identity) and `docs/adr/2-...` (toolchain floor)
-exist from EP-1; neither constrains this plan. This plan writes ADR-3 and ADR-4.
+Local ADR context: EP-1 creates the fork-identity and toolchain-floor records and
+adopts [consumer queue and teardown ownership](../adr/consumer-queue-and-teardown-ownership.md).
+Use the adopted handles from `okf id list`; allocate new records with `okf id next`,
+not by assuming ADR-3 and ADR-4 are free. Sync fixtures must drive callbacks while
+waiting for assignment, and cleanup must stay within each test deadline.
 
 
 ## Plan of Work
@@ -172,7 +189,8 @@ the port table, and the statement that the shared cluster is never used.
 **Milestone 2: the inherited suite, ported and green.** Replace `test-integration/Spec.hs`
 with `test-integration/Main.hs` that builds one `TestTree` under
 `localOption (NumThreads 1)` and runs `defaultMain`. Rewrite `Kafka/TestEnv.hs` to read
-`RDKAFKA_TEST_BROKER` (default `127.0.0.1:39092`) once in `main` and pass a `TestEnv`
+`RDKAFKA_TEST_BROKER` (default `127.0.0.1:39092`) once in `main`, reject the machine-global loopback endpoint on port 9092
+(including localhost and IPv6 aliases) before creating any client, and pass a `TestEnv`
 record (broker address, run prefix, functions to make prefixed topic and group names)
 into the tree, instead of `unsafePerformIO` globals; keep `consumerProps`,
 `producerProps`, the rebalance-wait consumer constructor, and add `withProducer`,
@@ -192,13 +210,15 @@ passes; `cabal build all` without the flag does not build the suite.
 with a group that runs once per callback poll mode. Each run: create a topic with the run
 prefix; create consumer A with a fresh prefixed group id, `group.instance.id` set to a
 prefixed value through `extraProps`, `noAutoCommit`, and a rebalance callback that
-signals assignment; wait for assignment; create consumer B with the same group id and
-instance id; poll A repeatedly (in sync mode the poll is also what drives librdkafka's
+signals assignment; drive polling while waiting with a deadline (especially in
+sync mode, where waiting only on the callback signal would deadlock); create consumer B with the same group id and
+instance id; actively poll both clients while waiting for fencing; poll A repeatedly (in sync mode the poll is also what drives librdkafka's
 callbacks) until `pollMessage` returns `Left (KafkaResponseError RdKafkaRespErrFatal)` or
 thirty seconds pass; assert the fatal arrived, assert a second poll returns the same
 value, and assert `consumerFatalError a` returns
 `Just (KafkaResponseError RdKafkaRespErrFencedInstanceId, description)` with a non-empty
-description; close both consumers. If the fence does not arrive within the deadline on
+description; also assert async `pollMessageBatch` repeatedly reports the singleton fatal
+error; close both consumers. If the fence does not arrive within the deadline on
 Redpanda, record the observation in Surprises & Discoveries, bind
 `rd_kafka_test_fatal_error` in `src/Kafka/Internal/RdKafka.chs`, expose it from a new
 exposed module `Kafka.Internal.Testing` documented as test support only, and make the test
@@ -223,7 +243,10 @@ Enable the private broker:
 seihou run nix-haskell-flake --var nix.redpanda=true --diff
 seihou run nix-haskell-flake --var nix.redpanda=true
 git add flake.nix nix/redpanda.nix .envrc .seihou/manifest.json
-git commit -m "chore(nix): add project-local Redpanda scripts"
+git commit -m "chore(nix): add project-local Redpanda scripts" \
+  --trailer "MasterPlan: docs/masterplans/1-fork-hw-kafka-client-as-rdkafka-hs.md" \
+  --trailer "ExecPlan: docs/plans/2-run-integration-tests-on-a-project-local-redpanda.md" \
+  --trailer "Intention: intention_01m5gc388wecfsq431s3pgg1dd"
 direnv reload            # or re-enter nix develop
 which redpanda-local-up  # expect a /nix/store path
 redpanda-local-up
@@ -308,15 +331,19 @@ With the Apple Container service running, `just test-it` from a clean checkout s
 finds) the broker and prints a passing tasty summary that includes groups named for every
 inherited scenario and a `fatal` group with two cases, `async` and `sync`. During the run,
 `container list` shows `rdkafka-hs-rp-0` and nothing named `redpanda-0` is created or
-stopped; `rpk topic list -X brokers=127.0.0.1:9092` before and after the run shows the
-shared cluster's topics unchanged (if the shared cluster is running). With the broker
+stopped; configuration tests prove the shared endpoint is rejected before network access;
+the suite never needs to connect to the shared broker for acceptance. With the broker
 stopped (`redpanda-local-down`), `cabal test rdkafka-hs-integration -f integration` fails
-within fifteen seconds with a message that names `just redpanda-up`. `nix build` succeeds
+within fifteen seconds including failure cleanup, with a message that names `just redpanda-up`. `nix build` succeeds
 without a broker. `RDKAFKA_TEST_BROKER=127.0.0.1:1 just test-it` fails fast rather than
 hanging.
 
+An explicit override naming localhost:9092, 127.0.0.1:9092 or [::1]:9092 must
+fail before connecting; verify this with configuration-level tests.
+
 The fatal test is the harness's representative producer/consumer check and must pass
-before `docs/plans/4-...` or `docs/plans/5-...` begin. Its evidence (the tasty lines for
+before `docs/plans/4-expose-queue-event-notification-for-consumers.md` or
+`docs/plans/5-support-a-bounded-assign-only-observer-consumer.md` begin. Its evidence (the tasty lines for
 both poll modes and the recovered cause) belongs in this plan's Progress entry for M3.
 
 
@@ -349,5 +376,7 @@ groups here), `test-integration/Kafka/TestEnv.hs` with the `TestEnv` record and 
 `withProducer`, `withConsumer`, `withKafka` fixtures and the prefixed-name helpers, the
 `RDKAFKA_TEST_BROKER` variable and its `127.0.0.1:39092` default, the `just test-it`
 recipe, and the optional `Kafka.Internal.Testing` module if the fallback trigger was
-needed. `docs/plans/3-...`, `docs/plans/4-...` and `docs/plans/5-...` add modules under
+needed. `docs/plans/3-refresh-the-librdkafka-bindings-for-2-15-and-newer.md`,
+`docs/plans/4-expose-queue-event-notification-for-consumers.md` and
+`docs/plans/5-support-a-bounded-assign-only-observer-consumer.md` add modules under
 `test-integration/Kafka/Integration/` and must use the run prefix.

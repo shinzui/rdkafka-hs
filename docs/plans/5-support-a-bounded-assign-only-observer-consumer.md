@@ -11,6 +11,18 @@ provenance:
     model: "claude-fable-5-1"
     harness: "claude-code"
     at: 2026-10-21T23:17:55Z
+  reviews:
+    - model: "gpt-6-astra"
+      harness: "codex-cli"
+      at: 2026-10-21T23:52:39Z
+      verdict: "changes-requested"
+      note: "Changes requested: manual async assignment lacks queue forwarding; destroyed flag skips close and permits incomplete concurrent teardown."
+  revisions:
+    - model: "gpt-6-astra"
+      harness: "codex-cli"
+      at: 2026-10-22T00:00:20Z
+      mode: "update"
+      note: "Repair async manual assignment and serialized bounded consumer destruction."
 ---
 
 # Support a bounded assign-only observer consumer
@@ -50,15 +62,18 @@ The consumer is `mori://shinzui/shoko`'s Kafka topic evidence adapter
       EOF per partition naming it, with the busy partition's EOF offset equal to its end
       offset (IR-2 AC-2).
 - [ ] M3: `destroyConsumer` closes sockets before it returns, is safe to call twice, and
-      leaves the finalizer a no-op (IR-2 AC-3); ADR-5 on explicit consumer teardown
-      written.
-- [ ] M4: `read_committed` watermark test passes (IR-2 AC-4); IR-2 moved to `completed`;
+      leaves the finalizer a no-op (IR-2 AC-3); the consumer queue and teardown ADR updated.
+- [ ] M4: `read_committed` watermark test passes (IR-2 AC-4); IR-2 implementation evidence recorded, release criterion still open;
       CHANGELOG updated.
 
 
 ## Surprises & Discoveries
 
-(None yet.)
+Review (2026-10-21): the imported `assign` omits async forwarding, which is only
+performed by the rebalance callback. The previous destroyed flag would cause guarded
+close to skip cleanup, and graceful close would weaken bounded destruction. The updated
+plan follows recovered IR-2 and requires serialized, exception-safe cleanup. Source
+inspection confirms query-watermark isolation is passed to ListOffsets in v2.15.0.
 
 
 ## Decision Log
@@ -68,11 +83,12 @@ The consumer is `mori://shinzui/shoko`'s Kafka topic evidence adapter
   `Either KafkaError (ConsumerRecord ...)`.
   Date: 2026-10-21
 
-- Decision: `destroyConsumer` performs `closeConsumer` first and then runs the existing
-  `rd_kafka_destroy_flags` finalizer through `finalizeForeignPtr`, guarded by a
-  destroyed flag in `KafkaConf`, rather than introducing a second destroy path.
-  Rationale: IR-2's proposed shape; one finalizer means one place where the handle is
-  freed, and the flag is what makes a second call safe instead of a use-after-free.
+- Decision: `destroyConsumer` quiesces callback polling and releases queue references, then
+  runs the existing `NO_CONSUMER_CLOSE` finalizer; it does not invoke graceful close.
+  Rationale: The recovered IR-2 requires bounded cleanup against a nonresponsive
+  endpoint. A serialized lifecycle state makes repeated calls wait for completed
+  destruction without skipping cleanup or running a second finalizer. See
+  [consumer queue and teardown ownership](../adr/consumer-queue-and-teardown-ownership.md).
   Date: 2026-10-21
 
 
@@ -126,7 +142,9 @@ adding a field is not an API change. `docs/plans/3-refresh-the-librdkafka-bindin
 added `consumerClosed :: KafkaConsumer -> m Bool` (from `rd_kafka_consumer_closed`).
 
 `Kafka.Metadata.partitionWatermarkOffsets` calls `rd_kafka_query_watermark_offsets`,
-which librdkafka documents as honouring the handle's `isolation.level`: on a
+whose v2.15.0 implementation passes the handle's `isolation.level` through
+`rd_kafka_ListOffsetsRequest` in `src/rdkafka_request.c` of
+`mori://confluentinc/librdkafka` (artifact-level source URI pending): on a
 `read_committed` consumer the high watermark reported is the last stable offset, which
 stops before an open transaction. `Kafka.Transaction` (`src/Kafka/Transaction.hs`)
 provides `initTransactions`, `beginTransaction`, `commitTransaction` and
@@ -146,7 +164,8 @@ requires every poll path to report a raised fatal in-band; `pollMessageAttribute
 call the same fatal check as `pollMessage`. Cross-repository,
 `mori://shinzui/keiro/okf/adrs/concepts/ADR-11` already states that "consumer close is
 scope-sequenced rather than left to the garbage collector" from the application's side;
-this plan writes the library-side ADR-5. The request's origin is
+this plan implements and updates the local
+[consumer queue and teardown ownership ADR](../adr/consumer-queue-and-teardown-ownership.md). The request's origin is
 `mori://shinzui/shoko/plans/10-implement-the-kafka-topic-evidence-adapter`.
 
 
@@ -162,13 +181,25 @@ newAssignedConsumer :: MonadIO m => ConsumerProperties -> m (Either KafkaError K
 newAssignedConsumer props = newConsumer props mempty
 ```
 
-Document on `newConsumer` that an empty subscription skips `rd_kafka_subscribe`. Add
+Document on `newConsumer` that an empty subscription skips `rd_kafka_subscribe`.
+The constructor alias alone is insufficient: the imported public `assign` only calls
+`rdKafkaAssign`, whereas async forwarding occurs in `Kafka.Consumer.Callbacks` only
+inside rebalance callbacks. Extract shared assignment/forwarding helpers and make manual
+assignment route every partition to the message queue in async mode, with balanced queue
+references. The inherited `rdKafkaQueueGetPartition` already attaches a finalizer,
+so use `finalizeForeignPtr` for early release rather than an additional raw destroy. Coordinate with the callback-poll lock so records cannot be discarded by the
+background loop during the assign/pause/forward/resume transition; verify partition
+queues are paused/forwarded before fetch results can escape to that loop. Handle errors
+and reassignment explicitly. Preserve the existing sync route and subscribed-consumer
+behavior. These helpers and queue ownership belong to EP-5. Add
 `test-integration/Kafka/Integration/AssignOnlyTest.hs`, one case per poll mode: create a
 prefixed topic with one partition; produce one record and flush; create an assigned
-consumer with a fresh prefixed group id, `noAutoCommit` and `offsetReset Earliest`;
-`assign` partition 0 at `PartitionOffsetBeginning`; poll until the record arrives (bounded
+consumer with a fresh prefixed group id, `noAutoCommit` (offset-reset is a Subscription property, so do not combine it
+with ConsumerProperties);
+`assign` partition 0 at explicit `PartitionOffset 0`; poll until the record arrives (bounded
 by ten seconds); then `allConsumerGroupsInfo` must not contain the group id; close the
-consumer.
+consumer. Exercise the original empty-subscription constructor as well as the new alias,
+and repeat assignment with another explicit offset to prove routing remains correct.
 
 **Milestone 2: attributed errors.** In `src/Kafka/Consumer/Types.hs` add and export:
 
@@ -186,13 +217,15 @@ In `src/Kafka/Consumer/Convert.hs` add `fromMessagePtrAttributed :: RdKafkaMessa
 IO (Either ConsumerMessageError (ConsumerRecord ...))`: a null pointer (timeout) yields
 the errno-derived error with all origin fields `Nothing`; an errored message yields the
 code plus the topic name (via `rdKafkaTopicName` when the topic pointer is non-null),
-partition and offset, then destroys the message; a good message is converted as today.
+partition and offset when meaningful (negative invalid sentinels become Nothing),
+then destroys the message exception-safely exactly once; a good message is converted as today.
 Refactor `fromMessagePtr` to share the record-building code. In `Kafka.Consumer` add and
 export `pollMessageAttributed :: MonadIO m => KafkaConsumer -> Timeout -> m (Either
 ConsumerMessageError (ConsumerRecord (Maybe ByteString) (Maybe ByteString)))`, which runs
 the same fatal-error check as `pollMessage` first (returning an attributed
 `RdKafkaRespErrFatal` with no origin) and then polls the same queue `pollMessage` would.
-Add `test-integration/Kafka/Integration/AttributedErrorTest.hs`: create a prefixed topic
+Test no-origin timeout/fatal results in both modes as well as successful records.
+Add `test-integration/Kafka/Integration/AttributedErrorTest.hs` in both callback modes: create a prefixed topic
 with two partitions; produce one record to partition 1 and flush; create an assigned
 consumer with `extraProps` setting `enable.partition.eof=true` and `noAutoCommit`;
 assign both partitions at `PartitionOffsetBeginning`; poll with `pollMessageAttributed`
@@ -201,32 +234,40 @@ exactly one EOF names partition 0 at offset 0 and exactly one names partition 1 
 offset 1 (the end offset after one record), both carrying the topic name, and that the
 record from partition 1 also arrived.
 
-**Milestone 3: deterministic destroy.** Add a destroyed flag to `KafkaConf` (an `IORef
-Bool` or an `MVar`), initialised false in `newKafkaConf`. In `Kafka.Consumer` add and
+**Milestone 3: deterministic destroy.** Add serialized lifecycle state to `KafkaConf`
+covering Open, Closed and Destroyed, plus any in-progress cleanup/completion state.
+Update every constructor and positional pattern match in Consumer, Callbacks, Producer
+and Internal.Setup. A bare test-and-set Bool is insufficient: concurrent callers must
+wait for cleanup completion, and cancellation must not leave cleanup permanently skipped. In `Kafka.Consumer` add and
 export:
 
 ```haskell
--- | Close the consumer and destroy the underlying librdkafka client now,
--- synchronously and exactly once. Every other operation on this consumer is
--- invalid afterwards. Safe to call more than once; later calls do nothing.
+-- | Stop polling and destroy the underlying librdkafka client now,
+-- synchronously and exactly once. Normal operations are invalid afterwards;
+-- close/destroy remain idempotent. Concurrent destroys wait for cleanup.
 destroyConsumer :: MonadIO m => KafkaConsumer -> m ()
 ```
 
-Implementation: atomically test-and-set the flag; if it was already set, return. Otherwise
-run `closeConsumer` (it disables the callback loop, destroys the message queue and leaves
-the group), then `finalizeForeignPtr` on the client pointer, which runs the registered
-`rd_kafka_destroy_flags` finalizer immediately; because `Foreign.Concurrent` finalizers
-are Haskell actions, `finalizeForeignPtr` runs them on the calling thread and the
-re-entrancy concern that motivated the concurrent finalizer (callbacks during destroy)
-is handled by `closeConsumer` having already disabled the loop. Make `closeConsumer`
-itself a no-op when the flag is set so `bracket`-style code that closes after destroying
-does not touch a freed handle. Add `test-integration/Kafka/Integration/DestroyTest.hs`:
+Implementation: serialize close/destroy transitions, mask asynchronous exceptions
+around ownership changes, and ensure interrupted cleanup can finish or be joined by
+a subsequent caller. Disable the async loop under its callback-poll mutex and wait
+until no poll is in flight; clear and release the message queue exactly once. Then
+`finalizeForeignPtr` the owning client pointer and publish Destroyed only after it
+returns. Do not call `closeConsumer` internally: that performs a graceful broker-facing
+close and defeats the nonresponsive-endpoint requirement. Keep the existing
+`NO_CONSUMER_CLOSE` finalizer as the sole client deallocator. Graceful close separately
+transitions Open to Closed; close after destroy and repeated close are harmless, and
+destroy after close still finalizes the client. Do not query `consumerClosed` after
+finalization. Applications must serialize normal operations with teardown and must not
+call teardown from a callback (which may hold the same mutex and carry a borrowed pointer). Add `test-integration/Kafka/Integration/DestroyTest.hs`:
 open a listening socket on `127.0.0.1` port 0 with `Network.Socket`, accept connections on
 a thread that reads and never writes; create a consumer whose `bootstrap.servers` is that
-address (librdkafka connects immediately); poll once with a 500 ms timeout; call
-`destroyConsumer`; the accepting thread must observe `recv` return an empty string
-(end-of-file) within one second of the call; call `destroyConsumer` again and assert it
-returns normally. Write `docs/adr/5-consumer-teardown-is-explicit-and-deterministic.md`:
+address (librdkafka connects immediately); wait for confirmed acceptance of at least one connection with a bounded poll; start
+a monotonic timer immediately before `destroyConsumer`; require both its return and
+`recv` EOF on all accepted connections within one second total, in both callback modes.
+Bound connection establishment and cleanup so an unopened socket cannot pass vacuously.
+Test repeated destroy, concurrent destroy (both await completion), close-then-destroy,
+destroy-then-close, and cleanup after an interrupted teardown, without forcing GC. Update [consumer queue and teardown ownership](../adr/consumer-queue-and-teardown-ownership.md):
 `closeConsumer` leaves the group, `destroyConsumer` frees the client now, the finalizer
 remains only as a safety net, and why a second destroy path was rejected.
 
@@ -239,9 +280,8 @@ read_committed` and one with `read_uncommitted`; `partitionWatermarkOffsets` on 
 show the read-committed high offset strictly below the read-uncommitted one while the
 transaction is open; `commitTransaction`; re-query until the read-committed high offset
 equals the read-uncommitted one (bounded by ten seconds). Then edit
-`docs/improvement-requests/2-support-a-bounded-assign-only-observer-consumer.md`: `status:
-completed`, a "Resolution" section naming the four functions and test modules and noting
-AC-5's tag comes from EP-6, plus a dated `docs/improvement-requests/log.md` entry. Append
+`docs/improvement-requests/2-support-a-bounded-assign-only-observer-consumer.md`: retain an open status while AC-5 is pending, add an "Implementation evidence" section naming the APIs and four test modules and noting
+AC-5's tag comes from EP-6, advance the timestamp and add a dated bundle entry with `okf log add`. Append
 the CHANGELOG entries under `Unreleased` / `Added`.
 
 
@@ -280,8 +320,9 @@ Intention: intention_01m5gc388wecfsq431s3pgg1dd
 Accepted when IR-2's AC-1 through AC-4 pass exactly as the request states them, through
 the four test modules above under `just test-it`; `cabal build all -f examples` is
 warning-free; `nix build` passes; `okf validate` accepts both bundles; and the
-`destroyConsumer` haddock and ADR-5 state that all other operations are invalid after it.
-The behaviour is visible beyond the tests: in the socket test transcript the accepted
+`destroyConsumer` haddock and the ownership ADR state that normal operations
+are invalid after it; repeated close/destroy are the documented exceptions.
+The behavior is visible beyond the tests: in the socket test transcript the accepted
 connection reaches end-of-file within one second of `destroyConsumer`, whereas with
 `closeConsumer` alone it stays open until a garbage collection.
 
@@ -293,16 +334,15 @@ costs one function.
 ## Idempotence and Recovery
 
 All edits are additive; `pollMessage` and `closeConsumer` keep their types and, apart from
-the destroyed-flag guard, their behaviour. The tests use run-prefixed names and create
+idempotent lifecycle guards, their behavior. Manual assignment gains correct async routing. The tests use run-prefixed names and create
 their own topics, so reruns need no cleanup. If the EOF assertions are flaky because
 Redpanda delivers the EOF for the empty partition before assignment settles, poll longer
 rather than loosening the exact-count assertion; the count is the point of AC-2. If the
 socket test cannot observe end-of-file on macOS because `recv` blocks, use a non-blocking
-socket with a bounded `timeout`; the one-second bound is part of AC-3. If `finalizeForeignPtr`
-proves unable to run a `Foreign.Concurrent` finalizer synchronously on the current GHC,
-record it in Surprises & Discoveries and replace the finalizer with one from
-`Foreign.ForeignPtr` paired with an explicit `rd_kafka_destroy_flags` call guarded by the
-same flag; the ADR must then be amended.
+socket with a bounded `timeout`; the one-second bound is part of AC-3. If synchronous finalization cannot be demonstrated, stop acceptance and investigate
+the ownership mechanism. Do not add an explicit C destroy alongside an independently
+registered finalizer: that permits double free. Any replacement must preserve one
+deallocator and revalidate callback safety before updating the ADR.
 
 
 ## Interfaces and Dependencies
@@ -310,9 +350,10 @@ same flag; the ADR must then be amended.
 Prerequisites: `docs/plans/2-run-integration-tests-on-a-project-local-redpanda.md`
 Complete (fixtures, `just test-it`, the private broker) and
 `docs/plans/3-refresh-the-librdkafka-bindings-for-2-15-and-newer.md` Complete
-(`consumerClosed`, binding conventions). Soft: `docs/plans/4-expose-queue-event-notification-for-consumers.md`
-edits the same `Kafka.Consumer` export list and `test-integration/Main.hs`; whichever
-lands second rebases.
+(binding conventions). Integration dependency: `docs/plans/4-expose-queue-event-notification-for-consumers.md`
+owns event registration on the queue this plan routes. Reconcile queue lifetime,
+Cabal dependencies, tests and changelog changes; EP-6 M1 verifies notifications with
+manual assignment and teardown after both features are combined.
 
 Libraries: `network` added to the integration suite for the socket test; `unix` and
 `base` otherwise.

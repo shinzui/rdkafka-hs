@@ -11,6 +11,18 @@ provenance:
     model: "claude-fable-5-1"
     harness: "claude-code"
     at: 2026-10-21T23:17:55Z
+  reviews:
+    - model: "gpt-6-astra"
+      harness: "codex-cli"
+      at: 2026-10-21T23:52:39Z
+      verdict: "changes-requested"
+      note: "Changes requested: rename retains incompatible >=5.3 bounds and proof occurs after publishing an immutable release."
+  revisions:
+    - model: "gpt-6-astra"
+      harness: "codex-cli"
+      at: 2026-10-22T00:00:20Z
+      mode: "update"
+      note: "Validate exact candidate and downstream version bounds before publication; defer completion to remote proof."
 ---
 
 # Cut the first rdkafka-hs release and migration guide
@@ -24,7 +36,7 @@ If durable project context changes, update or create ADRs in docs/adr/ in the sa
 
 After this plan, a downstream package can stop depending on Hackage's abandoned
 `hw-kafka-client` and depend on `rdkafka-hs` instead by pinning an immutable tag,
-`v1.0.0.0`, and changing one `build-depends` line. The tag exists on
+`v1.0.0.0`, and changing the dependency name and version range in every affected component. The tag exists on
 `https://github.com/shinzui/rdkafka-hs`, the `CHANGELOG.md` has a `1.0.0.0` section that
 tells a reader everything that differs from hw-kafka-client 5.3.0, the README has a
 migration guide, every validation the earlier plans introduced passes on the tagged
@@ -37,9 +49,10 @@ The two improvement requests' final acceptance criteria (IR-1 AC-3 and IR-2 AC-5
 ## Progress
 
 - [ ] M1: `CHANGELOG.md` has a dated `1.0.0.0` section, `README.md` has the migration
-      guide, and the full validation set passes on the release candidate.
+      guide, and the full validation set, combined feature test and scratch downstream build
+      pass on the exact release candidate before publication.
 - [ ] M2: Annotated tag `v1.0.0.0` pushed to `origin`; GitHub release created from the
-      changelog section; the improvement-request bundle's log records the tag.
+      changelog section; the published tag resolves to the verified candidate commit.
 - [ ] M3: A scratch clone of `kafka-effectful` switched to `rdkafka-hs` at `v1.0.0.0`
       builds, with the evidence recorded here; the MasterPlan's Outcomes & Retrospective
       and the ADR distillation pass are done.
@@ -47,7 +60,11 @@ The two improvement requests' final acceptance criteria (IR-1 AC-3 and IR-2 AC-5
 
 ## Surprises & Discoveries
 
-(None yet.)
+Review (2026-10-21): the downstream Cabal file contains five constraints
+`hw-kafka-client >=5.3 && <6`, so a name-only replacement excludes the fork's 1.0.0.0.
+Candidate proof now updates bounds and runs before publication. IR completion waits
+for remote tag verification. Mori registry refresh currently fails because its database
+is absent and must not be recorded as successful.
 
 
 ## Decision Log
@@ -72,10 +89,10 @@ By the time this plan starts, the five earlier child plans of
 EP-3), its unit suite runs under `cabal test rdkafka-hs-test` and `nix build`, its
 integration suite runs under `just test-it` against the project-local Redpanda (EP-2),
 `docs/bindings.md` is kept current by `just bindings-check` (EP-3), and the two
-improvement requests under `docs/improvement-requests/` are `completed` except for their
-tag criteria (EP-4, EP-5). `CHANGELOG.md` has an `Unreleased` section that every plan
-appended to; `rdkafka-hs.cabal` already says `version: 1.0.0.0`. `docs/adr/` holds ADR-1
-through ADR-5. The GitHub repository `shinzui/rdkafka-hs` was created private by seihou's
+improvement requests under `docs/improvement-requests/` have implementation evidence
+but remain open until release acceptance (EP-4, EP-5). `CHANGELOG.md` has an `Unreleased` section that every plan
+appended to; `rdkafka-hs.cabal` already says `version: 1.0.0.0`. `docs/adr/` holds the adopted review records and implementation decisions; resolve
+actual allocated handles rather than assuming consecutive ADR numbers. The GitHub repository `shinzui/rdkafka-hs` was created private by seihou's
 `git-init` module (`.seihou/manifest.json` records `git.githubVisibility = private`), and
 `origin` points at it.
 
@@ -90,7 +107,9 @@ others: its `cabal.project` already carries a `source-repository-package` stanza
 comment explaining why, and its `kafka-effectful.cabal` lists `hw-kafka-client` in
 `build-depends`. Because `rdkafka-hs` keeps the `Kafka.*` module namespace, migrating it
 means replacing that stanza with one pointing at `https://github.com/shinzui/rdkafka-hs.git`
-with `tag: v1.0.0.0` and replacing the dependency name; no import changes.
+with `tag: v1.0.0.0` and replacing every dependency entry with `rdkafka-hs >=1.0 && <1.1`; no import
+changes. The reviewed Cabal file has five `hw-kafka-client >=5.3 && <6` entries
+across components. A name-only replacement cannot solve against version 1.0.0.0.
 
 A `source-repository-package` pin over HTTPS to a private repository works only for a
 user whose git credential helper is authenticated (the `gh` CLI configures one), so the
@@ -100,11 +119,14 @@ tracks it as a gate. `gh release create` works for private repositories.
 Mori's registry is refreshed by re-registering the checkout; this author's documentation
 repositories use `mori register --local` for that.
 
-ADR context: all five local ADRs are relevant as inputs to the distillation pass this
+ADR context: [release validation before publication](../adr/release-validation-before-publication.md)
+requires candidate proof before publishing, and
+[consumer queue and teardown ownership](../adr/consumer-queue-and-teardown-ownership.md)
+requires combined event/assignment/teardown acceptance. All adopted local ADRs are relevant as inputs to the distillation pass this
 plan performs at the end; none constrains the release mechanics. The MasterPlan's Vision &
 Scope lists deliberate exclusions (no Hackage publication, no API field renames, no admin
 API expansion, no GitHub Actions, no Linux broker orchestration, no downstream edits) that
-this plan records as ADR-6 so the reasoning survives the plans.
+this plan records in a newly allocated ADR so the reasoning survives the plans.
 
 
 ## Plan of Work
@@ -119,32 +141,42 @@ notification (`setConsumerQueueIOEvent`); the observer consumer additions
 `destroyConsumer`); the lifecycle bindings (`flushProducerTimeout`, `purgeProducer`,
 `assignmentLost`, `consumerClosed`, `setSaslCredentials`); `Kafka.Version`; and the
 removed things (the `it` flag renamed to `integration`, hspec gone, legacy Nix files
-gone). Add a "Migrating from hw-kafka-client" section to `README.md` with the two edits
-(the `source-repository-package` stanza and the `build-depends` rename), a note that
+gone). Add a "Migrating from hw-kafka-client" section to `README.md` with the source pin and dependency edits
+(including version bounds in every library, test, benchmark or executable component), a note that
 imports are unchanged, the behavioural differences worth knowing (fatal errors now arrive
 in-band in async mode; `flushProducer` now uses `rd_kafka_flush`), and the requirements.
 Run the full validation set listed in Concrete Steps and record the results in Progress.
+Add a combined integration case in both poll modes: manually assign an idle consumer,
+register its queue event, produce and observe a wakeup and attributed record, disable
+the event, destroy the consumer, then close the descriptors. Reassignment must preserve
+notification delivery. This is EP-6's reconciliation of EP-4 and EP-5.
+
+Perform ADR distillation before the candidate commit, then build a scratch downstream
+checkout with a local source-repository-package location pinned to that exact commit.
+Update all five dependency ranges and build with tests enabled; run its broker-free
+tests. Record the candidate SHA and results. Any source change requires a new candidate
+and rerunning affected checks; publication must wait until these pass.
 
 **Milestone 2: the tag.** Create an annotated tag `v1.0.0.0` on the release commit with
 the changelog section as its message, push it, and create a GitHub release from the same
-text. Add a dated entry to `docs/improvement-requests/log.md` saying IR-1 AC-3 and IR-2
-AC-5 are met by `v1.0.0.0`, and update each request's "Resolution" section with the tag.
-Re-register the project with Mori so the registry reflects the bundles and the release.
+text. Check the remote tag resolves to the validated candidate SHA. Do not mark either
+request complete until Milestone 3 has fetched and built that published tag.
 
-**Milestone 3: proof and distillation.** Clone `kafka-effectful` into the scratchpad
+**Milestone 3: remote proof and completion evidence.** Clone `kafka-effectful` into the scratchpad
 directory, edit its `cabal.project` stanza to `location:
 https://github.com/shinzui/rdkafka-hs.git` and `tag: v1.0.0.0`, replace
-`hw-kafka-client` with `rdkafka-hs` in its `build-depends`, and build it inside its own
+`hw-kafka-client >=5.3 && <6` with `rdkafka-hs >=1.0 && <1.1`
+in every affected `build-depends` entry, and build it inside its own
 dev shell (`nix develop` in the clone; it provides librdkafka). Run its test-suite if it
-does not need a broker, and record in Progress which it was. If the HTTPS clone of a
-private repository fails for cabal, record that in Surprises & Discoveries, repeat the
-proof with `location: /Users/shinzui/Keikaku/bokuno/rdkafka-hs`, and raise the
-visibility gate with the user. Delete the clone. Then perform the distillation pass for the
-whole initiative: read the Decision Log, Surprises & Discoveries and Outcomes &
-Retrospective of the MasterPlan and all six child plans; promote durable context into
-`docs/adr/` (at minimum ADR-6, "Deliberate exclusions of the fork initiative", and
-amendments to ADR-1 through ADR-5 where implementation changed the reasoning); fill the
-MasterPlan's Outcomes & Retrospective; mark EP-6 Complete in the registry.
+does not need a broker, and record in Progress which it was. A local-path build is only M1 candidate evidence; it cannot replace this remote
+proof. If remote retrieval fails, keep M3 incomplete and resolve the documented access
+path without changing repository visibility implicitly. After successful remote proof,
+mark IR-1 and IR-2 completed, name the tag and resolved SHA in each Resolution section,
+advance timestamps and use `okf log add`. Validate both bundles and commit this
+post-release evidence separately; it is not part of the tagged source. Re-register
+with Mori when the registry is available, fill the MasterPlan retrospective and mark
+EP-6 Complete only when all acceptance, including registry refresh, is satisfied.
+Remove only the task-owned scratch directory after retaining the evidence.
 
 
 ## Concrete Steps
@@ -156,7 +188,7 @@ Release-candidate validation (Milestone 1), all of which must pass:
 
 ```bash
 git status --short                           # empty
-cabal build all -f examples 2>&1 | grep -c warning   # 0
+cabal build all -f examples   # require success and inspect for warnings
 cabal test rdkafka-hs-test
 just test-it
 just bindings-check
@@ -174,30 +206,53 @@ Prove the source distribution is complete (cabal2nix and downstream pins build f
 tree, but a missing `extra-source-files` entry would still bite a future Hackage upload):
 
 ```bash
-tar -xzf dist-newstyle/sdist/rdkafka-hs-1.0.0.0.tar.gz -C "$TMPDIR"
-(cd "$TMPDIR/rdkafka-hs-1.0.0.0" && cabal build)
+rdkafka_sdist_dir=$(mktemp -d)
+tar -xzf dist-newstyle/sdist/rdkafka-hs-1.0.0.0.tar.gz -C "$rdkafka_sdist_dir"
+(cd "$rdkafka_sdist_dir/rdkafka-hs-1.0.0.0" && cabal build)
 ```
 
-Tag and release (Milestone 2):
+Commit and prove the candidate before publication (Milestone 1):
 
 ```bash
-git commit -am "chore(release): rdkafka-hs 1.0.0.0"
+git add CHANGELOG.md README.md docs test-integration rdkafka-hs.cabal
+git commit -m "chore(release): rdkafka-hs 1.0.0.0" \
+  --trailer "MasterPlan: docs/masterplans/1-fork-hw-kafka-client-as-rdkafka-hs.md" \
+  --trailer "ExecPlan: docs/plans/6-cut-the-first-rdkafka-hs-release-and-migration-guide.md" \
+  --trailer "Intention: intention_01m5gc388wecfsq431s3pgg1dd"
+git rev-parse HEAD  # record this exact candidate SHA
+```
+
+Complete the M1 downstream proof below before executing publication (Milestone 2):
+
+```bash
 git tag -a v1.0.0.0 -F <(awk '/^## \[1.0.0.0\]/{f=1} /^## \[/&&!/1.0.0.0/{if(f)exit} f' CHANGELOG.md)
 git push origin master v1.0.0.0
 gh release create v1.0.0.0 --title "rdkafka-hs 1.0.0.0" \
   --notes-file <(awk '/^## \[1.0.0.0\]/{f=1} /^## \[/&&!/1.0.0.0/{if(f)exit} f' CHANGELOG.md)
-mori register --local
+git ls-remote origin refs/tags/v1.0.0.0 'refs/tags/v1.0.0.0^{}'
 ```
 
-Downstream proof (Milestone 3), from the scratchpad directory:
+Downstream proof runs twice in a task-owned temporary directory: M1 uses the local
+repository and candidate SHA; M3 uses the HTTPS repository and published tag. Choose a
+fresh directory with `mktemp -d` for each pass, and record its path before cloning. The
+following shows the M3 edit; for M1 substitute the local repository path and candidate
+SHA in `cabal.project`.
 
 ```bash
 git clone --local /Users/shinzui/Keikaku/bokuno/kafka-effectful kafka-effectful-proof
 cd kafka-effectful-proof
 sed -i '' 's#https://github.com/shinzui/hw-kafka-client.git#https://github.com/shinzui/rdkafka-hs.git#; s#tag: 6caed636898a78e9f6e5a9c93eeb5562cbb2580a#tag: v1.0.0.0#' cabal.project
-sed -i '' 's/hw-kafka-client/rdkafka-hs/' kafka-effectful.cabal
+python3 - <<'PYEDIT'
+from pathlib import Path
+p = Path('kafka-effectful.cabal')
+s = p.read_text()
+old = 'hw-kafka-client >=5.3 && <6'
+assert s.count(old) == 5, 'Inspect changed downstream dependency stanzas before proceeding'
+p.write_text(s.replace(old, 'rdkafka-hs >=1.0 && <1.1'))
+PYEDIT
 grep -n "rdkafka-hs" cabal.project kafka-effectful.cabal
-nix develop --command cabal build all
+nix develop --command cabal build all --enable-tests
+# Run the broker-free test components identified in the downstream Cabal file.
 ```
 
 Expected: cabal reports `Cloning into ...rdkafka-hs...`, checks out `v1.0.0.0`, builds
@@ -219,7 +274,9 @@ v1.0.0.0` shows the changelog text, `okf validate` accepts both bundles with IR-
 `completed` and their log entries naming the tag, and the `kafka-effectful` scratch build
 transcript (recorded in Progress) shows `rdkafka-hs-1.0.0.0` fetched from the tag and the
 downstream package compiled. The MasterPlan registry shows all six plans Complete and its
-Outcomes & Retrospective is written.
+Outcomes & Retrospective is written. The prepublication downstream proof must name the
+same SHA as the published tag; the final request completion records are explicitly
+post-release documentation. Registry refresh must succeed or remain an outstanding gate.
 
 
 ## Idempotence and Recovery

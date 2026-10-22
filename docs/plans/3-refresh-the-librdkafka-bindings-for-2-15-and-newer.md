@@ -11,6 +11,18 @@ provenance:
     model: "claude-fable-5-1"
     harness: "claude-code"
     at: 2026-10-21T23:17:55Z
+  reviews:
+    - model: "gpt-6-astra"
+      harness: "codex-cli"
+      at: 2026-10-21T23:52:39Z
+      verdict: "changes-requested"
+      note: "Changes requested: SASL negative test contradicts implementation; inventory traverses prohibited store paths and weakens configure-time floor."
+  revisions:
+    - model: "gpt-6-astra"
+      harness: "codex-cli"
+      at: 2026-10-22T00:00:20Z
+      mode: "update"
+      note: "Correct SASL/error ownership, network test placement and source-based binding inventory."
 ---
 
 # Refresh the librdkafka bindings for 2.15 and newer
@@ -46,14 +58,17 @@ they add their own bindings.
       passes on a fresh one; the binding module's section conventions are documented at
       the top of the file.
 - [ ] M3: `flushProducerTimeout`, `purgeProducer`, `assignmentLost`, `consumerClosed` and
-      `setSaslCredentials` exist, are documented, and pass their tests (unit tests without
-      a broker where possible, integration tests otherwise); ADR-2 amended with the
+      `setSaslCredentials` exist, are documented, and pass their tests (pure unit tests and lifecycle integration tests); ADR-2 amended with the
       librdkafka floor rationale; CHANGELOG updated.
 
 
 ## Surprises & Discoveries
 
-(None yet.)
+Review (2026-10-21): verified the locked nixpkgs package expression declares
+2.15.0 and upstream release tags include 2.16.0. The v2.15.0 SASL implementation
+accepts non-null credentials even without SASL configured. Inventory inputs now come
+from a verified source checkout outside the Nix store, and configure-time enforcement
+cannot be replaced by a unit test.
 
 
 ## Decision Log
@@ -65,12 +80,12 @@ they add their own bindings.
   `pkg-config` automatically; librdkafka ships `rdkafka.pc`.
   Date: 2026-10-21
 
-- Decision: The inventory is generated from the header that pkg-config resolves, not from
-  the Mori corpus checkout.
-  Rationale: The build links against the pkg-config header; the corpus at
-  `/Users/shinzui/Keikaku/hub/librdkafka-project/librdkafka` is for reading source and may
-  sit at a different version. The inventory records which header version it was generated
-  from.
+- Decision: The inventory uses a verified upstream header matching the linked library version,
+  held outside `/nix/store`.
+  Rationale: Repository instructions prohibit reading or traversing `/nix/store`. The
+  corpus `mori://confluentinc/librdkafka` may lag or lead the release. Record its exact
+  verified release tag, commit and header hash, and reject a version mismatch with
+  `pkg-config --modversion rdkafka`.
   Date: 2026-10-21
 
 
@@ -117,8 +132,10 @@ helper that attaches the destroy function as a finalizer (`newRdKafkaTopicPartit
 `newRdKafkaTopicConfT`, `newRdKafkaT`, which attaches `rd_kafka_destroy_flags` with
 `RD_KAFKA_DESTROY_F_NO_CONSUMER_CLOSE` through `Foreign.Concurrent` because the finalizer
 may re-enter Haskell). Functions returning `rd_kafka_error_t *` are turned into
-`Either KafkaError ()` or `Maybe KafkaError` by `Kafka.Internal.Shared.rdKafkaErrorToEither`
-and friends, which also destroy the error object. String results are read with
+an error code with `rdKafkaErrorCode`, then into `Either KafkaError ()` or
+`Maybe KafkaError` using `Kafka.Internal.Shared` helpers. Those helpers accept enum
+codes and do not free error objects: bracket each non-null object with
+`rdKafkaErrorDestroy`, and handle null success before dereferencing. String results are read with
 `peekCText` into `Text`. `Kafka.Internal.Setup` wraps the raw handles in `Kafka`,
 `KafkaConf` and `TopicConf` and provides the `HasKafka` class used by both
 `Kafka.Consumer.Types.KafkaConsumer` and `Kafka.Producer.Types.KafkaProducer`.
@@ -156,9 +173,9 @@ maps `pkgconfig-depends` to a `pkg-config` native build input and the `rdkafka` 
 argument, which `nix/haskell.nix` resolves from nixpkgs without changes.
 
 **Milestone 2: the inventory.** Write `scripts/binding-inventory.sh` (POSIX shell plus
-`awk`, both in the shell) that: locates the header through `pkg-config
---variable=includedir rdkafka`; records `pkg-config --modversion rdkafka`; normalizes the
-header by stripping comments and joining each declaration onto one line so multi-line
+`awk`, both in the shell) that: locates the header through an explicit `RDKAFKA_SOURCE_HEADER` path to a verified release
+checkout outside `/nix/store` (resolve symlinks and reject store paths before opening); records `pkg-config --modversion rdkafka`; captures doxygen group headings before stripping comments, then normalizes the
+header by joining each declaration onto one line so multi-line
 `RD_EXPORT` prototypes are not missed (the naive single-line regex finds 368 of the 500
 exports); extracts every `rd_kafka_[A-Za-z0-9_]*` function name together with the nearest
 preceding doxygen `@name` group heading; extracts the bound names from
@@ -175,9 +192,12 @@ exit non-zero, because such a binding would also fail to compile. Add `justfile`
 hand-written wrapper directly below its `{#fun#}`; new bindings go in the section of the
 function's header group; and every change to the file is followed by
 `just bindings-inventory`. Acceptance: `just bindings-check` passes on the committed tree,
-and fails after adding a dummy `{#fun rd_kafka_version ...#}` without regenerating.
+and fails after temporarily removing an existing unique binding from an inventory input
+copy without regenerating. Adding another version binding would not change the bound set.
+Also scan handwritten `foreign import ccall` symbols; report destroy/finalizer bindings
+and aliases rather than treating c2hs directives as the entire FFI surface.
 
-**Milestone 3: lifecycle bindings.** Bind and expose, with haddocks that quote the
+**Milestone 3: lifecycle bindings.** Bind and expose, with haddocks that explain the
 librdkafka semantics:
 
 `rd_kafka_flush` as `Kafka.Producer.flushProducerTimeout :: MonadIO m => KafkaProducer ->
@@ -200,19 +220,23 @@ KafkaConsumer -> m Bool`, meaningful inside a rebalance callback.
 KafkaConsumer -> m Bool`.
 
 `rd_kafka_sasl_set_credentials` as `Kafka.Types.setSaslCredentials :: (MonadIO m,
-HasKafka k) => k -> Text -> Text -> m (Maybe KafkaError)` (username, password), using the
-existing error-object conversion; `HasKafka` lives in `Kafka.Internal.Setup`, so either
+HasKafka k) => k -> Text -> Text -> m (Maybe KafkaError)` (username, password), using null-success handling and bracketed error-code extraction/destruction; `HasKafka` lives in `Kafka.Internal.Setup`, so either
 re-export the class from a public module or place the function in `Kafka.Consumer` and
 `Kafka.Producer` as two thin wrappers. Choose the latter if `HasKafka` is not already
 public.
 
-Tests. Unit (no broker): a producer configured with `bootstrap.servers` pointing at a
+Tests. Keep broker-free version checks in the unit suite. Put the following
+network-using lifecycle tests in the integration suite, since loopback listening and
+connection behavior may be unavailable in a Nix sandbox. A producer configured with `bootstrap.servers` pointing at a
 closed loopback port produces one message, `flushProducerTimeout (Timeout 500)` returns
 the timed-out error, `purgeProducer [PurgeQueue]` returns `Nothing` and a subsequent
 `flushProducerTimeout (Timeout 100)` returns `Nothing` because the queue is empty; a
-consumer on the same unreachable address reports `consumerClosed` `False`, then `True`
-after `closeConsumer`; `setSaslCredentials` on a client without SASL configured returns
-`Just` an error (librdkafka rejects it with an invalid-argument error). Integration: in the
+consumer with no subscription on the same unreachable address reports `consumerClosed` `False`, then `True`
+after `closeConsumer`; `setSaslCredentials` with non-null username/password on a client without SASL
+configured returns `Nothing`: upstream v2.15.0 stores the credentials and returns NULL
+without checking the security protocol. Test successive credential replacement, not
+a fabricated invalid-argument result. A raw null-argument error test belongs only at
+the C binding boundary; the public Text API cannot represent null pointers. Integration: in the
 inherited consumer group, `assignmentLost` is `False` after assignment; `flushProducer`
 still delivers the two-message scenario. Append the CHANGELOG entries and amend ADR-2 with
 the `pkgconfig-depends` enforcement and the rule that newer librdkafka releases are
@@ -227,7 +251,11 @@ Confirm the header and version the build will see:
 
 ```bash
 pkg-config --modversion rdkafka                                   # 2.15.0
-ls "$(pkg-config --variable=includedir rdkafka)/librdkafka/rdkafka.h"
+# After Mori discovery, use a release checkout outside /nix/store for inventory input.
+rdkafka_source_dir=$(mktemp -d)
+git clone --depth 1 --branch v2.15.0 https://github.com/confluentinc/librdkafka.git "$rdkafka_source_dir"
+git -C "$rdkafka_source_dir" rev-parse HEAD  # verify against upstream release tag
+export RDKAFKA_SOURCE_HEADER="$rdkafka_source_dir/src/rdkafka.h"
 ```
 
 After Milestone 1:
@@ -254,12 +282,12 @@ head -12 docs/bindings.md
 
 The head shows the librdkafka version, the number of exported functions found (expect
 around 500, matching `grep -c RD_EXPORT` on the header within a handful), and the number
-bound (99 before Milestone 3, 106 after).
+bound (record actual counts after version and lifecycle bindings; do not hard-code 99/106).
 
 After Milestone 3:
 
 ```bash
-cabal build all -f examples 2>&1 | grep -c warning   # 0
+cabal build all -f examples   # require success and inspect for warnings
 cabal test rdkafka-hs-test
 just test-it
 just bindings-check
@@ -277,14 +305,14 @@ Intention: intention_01m5gc388wecfsq431s3pgg1dd
 
 ## Validation and Acceptance
 
-Accepted when: `cabal test rdkafka-hs-test` passes including the version and
-producer-lifecycle tests; `just test-it` passes including the `assignmentLost` case;
+Accepted when: `cabal test rdkafka-hs-test` passes including the version test;
+`just test-it` passes including producer lifecycle, SASL and `assignmentLost` cases;
 `just bindings-check` passes and `docs/bindings.md` names librdkafka 2.15.0, lists
 `rd_kafka_flush`, `rd_kafka_purge`, `rd_kafka_assignment_lost`, `rd_kafka_consumer_closed`,
 `rd_kafka_sasl_set_credentials`, `rd_kafka_version` and `rd_kafka_version_str` as bound,
 and lists `rd_kafka_queue_io_event_enable` as unbound (EP-4 changes that); `nix build`
 passes; and a program linked against the package can print the librdkafka version. The
-behaviour beyond compilation is visible in the unit test transcript: a flush against an
+behaviour beyond compilation is visible in the integration test transcript: a flush against an
 unreachable broker times out in about half a second instead of hanging, and a purge empties
 the queue.
 
@@ -297,25 +325,24 @@ the gap visible for a later decision.
 
 Every step is an ordinary edit plus a rebuild. `scripts/binding-inventory.sh` is a pure
 function of the header and the c2hs module and can be rerun at will. If
-`pkgconfig-depends` breaks `nix build` because cabal2nix cannot find `rdkafka`, the
-fallback is `extra-libraries: rdkafka` plus a configure-time version check in the
-`Kafka.Version` unit test, recorded in Surprises & Discoveries; do not patch the managed
-`nix/haskell.nix`.
+`pkgconfig-depends` breaks `nix build` because cabal2nix cannot find `rdkafka`, fix package resolution through the unmanaged `flake.module.nix` application
+overlay while retaining `pkgconfig-depends`. A unit test is not a configure-time check
+and cannot replace the declared floor. Do not patch managed `nix/haskell.nix`.
 
 
 ## Interfaces and Dependencies
 
 Prerequisites: `docs/plans/1-bootstrap-rdkafka-hs-from-the-hw-kafka-client-fork.md`
 Complete for all milestones; `docs/plans/2-run-integration-tests-on-a-project-local-redpanda.md`
-Complete before Milestone 3 is accepted, because its integration checks run through
+Complete before Milestone 3 begins, because its integration checks run through
 `just test-it` and the fixtures in `test-integration/Kafka/TestEnv.hs`.
 
 Libraries: `c2hs` 0.28.8 (build tool), librdkafka 2.15.0 through `pkg-config`, `tasty`
-and `tasty-hunit` for tests, and `network` for the closed-loopback-port unit tests if a
+and `tasty-hunit` for tests, and `network` in the integration suite for closed-loopback-port tests if a
 plain unused port number is not reliable enough.
 
 Artifacts later plans consume: the section conventions and the inventory check for
 `src/Kafka/Internal/RdKafka.chs` (EP-4 adds the queue event bindings and must regenerate
-`docs/bindings.md`); `consumerClosed` (EP-5's `destroyConsumer` may use it);
+`docs/bindings.md`); `consumerClosed` (only valid before destruction);
 `Kafka.Version` (EP-6 cites it in the README); `just bindings-check` (EP-6 runs it before
 tagging).

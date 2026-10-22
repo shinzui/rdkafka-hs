@@ -10,6 +10,18 @@ provenance:
     model: "claude-fable-5-1"
     harness: "claude-code"
     at: 2026-10-21T23:17:55Z
+  reviews:
+    - model: "gpt-6-astra"
+      harness: "codex-cli"
+      at: 2026-10-21T23:52:39Z
+      verdict: "changes-requested"
+      note: "Changes requested: clarify queue/lifecycle ownership, defer IR completion to release, and validate downstream before publication."
+  revisions:
+    - model: "gpt-6-astra"
+      harness: "codex-cli"
+      at: 2026-10-22T00:00:20Z
+      mode: "update"
+      note: "Clarify shared ownership and release gates; cascade source-verified review fixes to all six children."
 ---
 
 # Fork hw-kafka-client as rdkafka-hs
@@ -33,8 +45,8 @@ it.
 
 When this initiative is complete, this repository is that maintained successor. It is a
 Haskell package named `rdkafka-hs`, built from the fork's history, that keeps the existing
-`Kafka.*` module namespace so downstream packages migrate by changing one `build-depends`
-line. It compiles only on GHC 9.12 and newer, uses the `GHC2024` language edition and the
+`Kafka.*` module namespace so downstream packages migrate by changing the source pin and the dependency name
+and version bounds in each affected Cabal component. It compiles only on GHC 9.12 and newer, uses the `GHC2024` language edition and the
 conventions catalogued in `mori://shinzui/haskell-jitsurei/docs/core-standards`, and is
 built and formatted by the seihou-managed Nix flake already scaffolded here. Its unit tests
 run under `cabal test` and `nix build`; its integration tests run against a private
@@ -84,7 +96,7 @@ EP-4 exposes librdkafka's queue event notification (IR-1) and EP-5 makes a bound
 assign-only observer consumer possible (IR-2). They are independent features with separate
 consumers downstream, so they are separate plans that can proceed in parallel once the
 harness and the binding conventions exist. Each adds bindings in its own section of the
-c2hs module and its own test module, and each closes its improvement request.
+c2hs module and its own test module, and each records implementation evidence; EP-6 closes the requests after release acceptance.
 
 The sixth concern is releasing. EP-6 finalizes the changelog, tags the first release, writes
 the migration guide, and proves the release by building `kafka-effectful` against the tag
@@ -101,8 +113,9 @@ alone. Drafting a separate plan for the public API modernization (unprefixed rec
 `#label` access) was rejected and recorded as an exclusion: it would break every downstream
 consumer for no functional gain, and it can be its own initiative later.
 
-ADR context. This repository has no `docs/adr/` directory yet, so no local ADR applies;
-EP-1 establishes the bundle. Three cross-repository records shape the decomposition and are
+ADR context. This review established [consumer queue and teardown ownership](../adr/consumer-queue-and-teardown-ownership.md)
+and [release validation before publication](../adr/release-validation-before-publication.md).
+EP-1 adopts these existing records when establishing the profiled bundle. Three cross-repository records shape the decomposition and are
 cited by their canonical Mori handles:
 
 - `mori://shinzui/keiro/okf/adrs/concepts/ADR-11` records, from the consumer's side, the
@@ -122,10 +135,11 @@ cited by their canonical Mori handles:
   `.seihou/manifest.json`.
 
 The two improvement requests are `mori://shinzui/hw-kafka-client/okf/improvement-requests/concepts/IR-1`
-and `mori://shinzui/hw-kafka-client/okf/improvement-requests/concepts/IR-2`; their files
-currently sit untracked in the fork checkout at
-`/Users/shinzui/Keikaku/bokuno/hw-kafka-client/docs/improvement-requests/` and EP-1 carries
-them into this repository's `docs/improvement-requests/`.
+and `mori://shinzui/hw-kafka-client/okf/improvement-requests/concepts/IR-2`; their bundle is committed in the fork branch at
+`fe5328a81941e92b93c3f47de14878346c9a5b43`, fetched during this review. EP-1 imports
+that exact commit, which contains the fatal fix `6caed636898a78e9f6e5a9c93eeb5562cbb2580a`
+and the request documents. It updates the copied IR-2 release target to this successor
+repository, preserving the original request identity and origin.
 
 
 ## Exec-Plan Registry
@@ -135,8 +149,8 @@ them into this repository's `docs/improvement-requests/`.
 | 1 | Bootstrap rdkafka-hs from the hw-kafka-client fork | docs/plans/1-bootstrap-rdkafka-hs-from-the-hw-kafka-client-fork.md | None | None | Not Started |
 | 2 | Run integration tests on a project-local Redpanda | docs/plans/2-run-integration-tests-on-a-project-local-redpanda.md | EP-1 | None | Not Started |
 | 3 | Refresh the librdkafka bindings for 2.15 and newer | docs/plans/3-refresh-the-librdkafka-bindings-for-2-15-and-newer.md | EP-1; EP-2 (M3 only) | None | Not Started |
-| 4 | Expose queue event notification for consumers | docs/plans/4-expose-queue-event-notification-for-consumers.md | EP-2, EP-3 | EP-5 | Not Started |
-| 5 | Support a bounded assign-only observer consumer | docs/plans/5-support-a-bounded-assign-only-observer-consumer.md | EP-2, EP-3 | EP-4 | Not Started |
+| 4 | Expose queue event notification for consumers | docs/plans/4-expose-queue-event-notification-for-consumers.md | EP-2, EP-3 | None | Not Started |
+| 5 | Support a bounded assign-only observer consumer | docs/plans/5-support-a-bounded-assign-only-observer-consumer.md | EP-2, EP-3 | None | Not Started |
 | 6 | Cut the first rdkafka-hs release and migration guide | docs/plans/6-cut-the-first-rdkafka-hs-release-and-migration-guide.md | EP-1, EP-2, EP-3, EP-4, EP-5 | None | Not Started |
 
 Status values: Not Started, In Progress, Complete, Cancelled.
@@ -147,7 +161,7 @@ accepted output is needed, name it explicitly (e.g., EP-1 M1) and explain it bel
 The one milestone-scoped dependency is EP-3 on EP-2: EP-3's first two milestones (the
 librdkafka floor and version API, and the binding inventory) need only a building package,
 but its third milestone adds client-lifecycle bindings whose acceptance is an integration
-test, so that milestone cannot be accepted until EP-2 is Complete.
+test, so that milestone cannot begin until EP-2 is Complete.
 
 
 ## Dependency Graph
@@ -158,13 +172,16 @@ EP-5 side by side, then EP-6.
 EP-2 needs EP-1 because its integration suite is a cabal test-suite of the package EP-1
 creates, and because EP-1 owns the `rdkafka-hs.cabal` common stanza, the `flake.module.nix`
 extension file, and the `justfile` that EP-2 extends. EP-3 needs EP-1 for the same reason,
-and needs EP-2 only to accept its third milestone, as the registry explains. EP-4 and EP-5
+and needs EP-2 before starting its third milestone, as the registry explains. The explicit execution order remains EP-1, EP-2, EP-3
+M1–M3, EP-4/EP-5, then EP-6; milestone granularity does not authorize overlap here. EP-4 and EP-5
 need EP-2 because every acceptance criterion they carry is a test against a real broker,
 and they need EP-3 because EP-3 defines the conventions for adding bindings to
 `src/Kafka/Internal/RdKafka.chs` and the inventory check that fails when a binding is added
-without updating `docs/bindings.md`. EP-4 and EP-5 do not depend on each other; they are
-soft dependencies only in the sense that whichever lands second must rebase its additions
-to the `Kafka.Consumer` export list and the integration test tree onto the other's. EP-6
+without updating `docs/bindings.md`. EP-4 and EP-5 have an integration dependency, not a soft ordering preference.
+EP-5 owns assignment routing and teardown; EP-4 owns event registration on the selected
+queue. Their combined acceptance is an assigned consumer that receives queue events and
+can be destroyed safely, owned by EP-6 M1. The contributor integrating second must
+reconcile shared code, test registration, Cabal dependencies and changelog entries. EP-6
 needs everything, because the release it cuts must carry all of it.
 
 EP-4 and EP-5 may be implemented in parallel by two sessions. Nothing else should be
@@ -177,15 +194,17 @@ overlapping them is smaller than the merge cost.
 **The cabal package description, `rdkafka-hs.cabal`.** EP-1 defines it: the package name,
 the `common` stanza carrying `GHC2024`, the warning set and the default extensions, the
 `examples` flag, the library's exposed and hidden module lists, and the unit test-suite
-`rdkafka-hs-test`. EP-2 adds the `integration` manual flag and the test-suite
-`rdkafka-hs-integration`. EP-3 adds `pkgconfig-depends: rdkafka >=2.15` and the exposed
+`rdkafka-hs-test`. EP-1 also renames the inherited manual flag to `integration`, default off, and
+creates the disabled `rdkafka-hs-integration` stanza; EP-2 ports that suite and its fixtures. EP-3 adds `pkgconfig-depends: rdkafka >=2.15` and the exposed
 module `Kafka.Version`. EP-4 and EP-5 add test modules to the integration suite's
 `other-modules`. Nobody after EP-1 changes the stanza structure or the warning set.
 
 **The c2hs binding module, `src/Kafka/Internal/RdKafka.chs`.** EP-3 owns its conventions:
 one commented section per librdkafka header region, `{#fun ...#}` for plain calls, hand
 written wrappers for anything needing buffers or finalizers, and the inventory script
-`scripts/binding-inventory.sh` that regenerates `docs/bindings.md`. EP-4 adds the queue
+`scripts/binding-inventory.sh` that regenerates `docs/bindings.md` from a verified
+release header outside `/nix/store`, matching the pkg-config version. EP-3 documents
+`RDKAFKA_SOURCE_HEADER`; every later binding check uses that same verified input. EP-4 adds the queue
 event bindings in its own section; EP-5 needs no new C binding. Any plan that touches the
 module must regenerate the inventory, and `just bindings-check` is the check that fails
 when it was forgotten.
@@ -199,9 +218,11 @@ groups sequentially. EP-3, EP-4 and EP-5 add their own test modules and register
 
 **The public consumer surface, `src/Kafka/Consumer.hs`.** EP-4 adds
 `setConsumerQueueIOEvent`; EP-5 adds `newAssignedConsumer`, `pollMessageAttributed`,
-`ConsumerMessageError`, and `destroyConsumer`. Both edit the same export list, which is
-the one place the two parallel plans collide; the collision is textual, not semantic, and
-whichever lands second resolves it. Both also rely on the fatal-error check that
+`ConsumerMessageError`, and `destroyConsumer`. EP-3 owns the baseline module and its lifecycle additions; EP-5 owns manual-assignment
+routing, shared forwarding helpers in `Kafka.Consumer.Callbacks`, and lifetime state in
+`Kafka.Internal.Setup`. EP-4 follows that queue ownership contract and owns event
+registration. They also share test registration, Cabal dependencies and CHANGELOG entries;
+EP-6 M1 runs the combined assigned-consumer event and teardown check. Both also rely on the fatal-error check that
 `pollMessage` already performs, and must not weaken it.
 
 **The seihou-managed Nix files.** `flake.nix`, `flake.lock`, `nix/haskell.nix`,
@@ -221,8 +242,11 @@ changing all four. EP-2 owns this contract.
 
 **The knowledge bundles under `docs/`.** EP-1 carries `docs/improvement-requests/` over
 from the fork and adopts `docs/adr/` through the `adopt-architecture-decisions` blueprint,
-registering both in `mori.dhall`. EP-4 and EP-5 move IR-1 and IR-2 to `completed` with
-`log.md` entries. EP-6 verifies both bundles with `okf validate` before tagging.
+registering both in `mori.dhall`. EP-4 and EP-5 record implementation evidence while keeping the requests open.
+EP-6 verifies both bundles before tagging, then marks the requests `completed` only
+after remote tag acceptance. Preserve canonical origins and use `okf log add` when
+updating their timestamps. EP-1 adopts the two existing review ADRs before allocating
+new handles; numeric ADR handles in the original plans are provisional until allocated.
 
 **`CHANGELOG.md`.** EP-1 creates it with an `Unreleased` section listing what the fork
 carries beyond Hackage 5.3.0. Every later plan appends to `Unreleased`. EP-6 turns it into
@@ -233,8 +257,9 @@ identity, package name, retained `Kafka.*` namespace and restarted version line 
 the toolchain floor of GHC 9.12 with `GHC2024` and librdkafka 2.15 (EP-1, amended by
 EP-3); integration tests run only against a project-local Redpanda behind a manual cabal
 flag (EP-2); consumer fatal errors are surfaced in-band and the message queue loop destroys
-what it polls, the library-side mirror of keiro's ADR-11 (EP-2); consumer teardown is
-explicit and deterministic rather than left to the garbage collector (EP-5); and the
+what it polls, the library-side mirror of keiro's ADR-11 (EP-2); consumer queue routing and teardown follow
+[the ownership ADR](../adr/consumer-queue-and-teardown-ownership.md) (EP-5);
+release validation follows [the publication ADR](../adr/release-validation-before-publication.md) (EP-6); and the
 deliberate exclusions listed in Vision & Scope (EP-6, at distillation).
 
 The early representative check is EP-2's third milestone, the fenced-static-member fatal
@@ -246,10 +271,11 @@ reproducible fatal trigger before EP-4 and EP-5 begin, and record it here.
 
 ## Progress
 
-No child plan has started. The repository holds only the seihou scaffold (Nix flake,
-formatter, pre-commit hooks, the plan skills) and `mori.dhall`; there is no cabal package
-yet. The next action is EP-1. The one cross-plan gate not represented by a child plan is
-the decision on repository visibility before EP-6: the GitHub repository is private, and
+No child plan has started. The repository holds the seihou scaffold, `mori.dhall`,
+these plans and two review ADRs; there is no Cabal package yet. The review fetched the
+source branch and recovered its committed request bundle without switching its checkout. The next action is EP-1. The cross-plan access gate is
+the decision on repository visibility before EP-6. Registry refresh is also
+outstanding until Mori's database is available. For visibility, the GitHub repository is private, and
 downstream `source-repository-package` pins over HTTPS need either public visibility or
 authenticated access.
 
@@ -258,7 +284,17 @@ authenticated access.
 
 ## Surprises & Discoveries
 
-(None yet.)
+Review findings (2026-10-21): the fork working tree is on `main`, but the required
+source and requests are available at `fe5328a81941e92b93c3f47de14878346c9a5b43`.
+Mori registry discovery fails because its PostgreSQL database `mori` is absent; local
+`mori show --full` succeeds. Existing cross-repository ADRs were read from their named
+checkouts, but registry handle resolution remains unverified. Do not treat registry
+refresh as completed until it succeeds.
+
+Source review found missing manual-assignment queue forwarding, a teardown guard that
+would skip cleanup, a SASL test expecting an error the C implementation does not return,
+and a downstream rename retaining incompatible `>=5.3` bounds. The update corrects
+these and moves compatibility proof before publication. No implementation tests have run.
 
 
 ## Decision Log
@@ -284,12 +320,12 @@ authenticated access.
 - Decision: The fork's git history is imported with `git merge --allow-unrelated-histories`
   rather than copying files.
   Rationale: A maintained fork should preserve upstream attribution and make
-  `git log` and `git blame` on inherited code meaningful. The merge touches only
-  `.gitignore` and `.envrc`, both resolved in favour of the seihou-managed versions.
+  `git log` and `git blame` on inherited code meaningful. Import the reviewed commit, inspect all actual conflicts, and retain the current
+  scaffold and plans. Do not assume a fixed conflict list or reset to an old scaffold commit.
   Date: 2026-10-21
 
 - Decision: Supported toolchain is GHC 9.12 and newer only, with `GHC2024`; the primary
-  compiler is 9.12.4 and 9.14.1 is exposed as a secondary shell without HLS.
+  compiler is 9.12.4 and a secondary 9.14.1 shell is only advertised after it is explicitly wired and validated.
   Rationale: The user's standing requirement, matching
   `mori://shinzui/haskell-jitsurei/docs/core-standards`, and what the pinned
   `haskell-nix-dev` toolchain provides (`supportedGhcs = [ "ghc9124" "ghc9141" ]`).
@@ -316,6 +352,12 @@ authenticated access.
   `kafka-effectful`. The inherited integration groups are order-dependent, so they are
   ported as `sequentialTestGroup` trees.
   Date: 2026-10-21
+
+
+Revision note (2026-10-21): reviewed all six children against source and the skill
+specifications, recovered the source bundle, clarified integration ownership, corrected
+consumer/test contracts and moved downstream proof ahead of publication. The six-plan
+decomposition and Not Started statuses remain unchanged.
 
 
 ## Outcomes & Retrospective

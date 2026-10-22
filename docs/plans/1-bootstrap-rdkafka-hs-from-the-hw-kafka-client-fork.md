@@ -11,6 +11,18 @@ provenance:
     model: "claude-fable-5-1"
     harness: "claude-code"
     at: 2026-10-21T23:17:55Z
+  reviews:
+    - model: "gpt-6-astra"
+      harness: "codex-cli"
+      at: 2026-10-21T23:52:39Z
+      verdict: "changes-requested"
+      note: "Changes requested: fork checkout and IR bundle claims are stale; import exact commit and recover source requests before acceptance."
+  revisions:
+    - model: "gpt-6-astra"
+      harness: "codex-cli"
+      at: 2026-10-22T00:00:20Z
+      mode: "update"
+      note: "Pin the recovered source/request commit and correct bootstrap, ADR adoption and compiler claims."
 ---
 
 # Bootstrap rdkafka-hs from the hw-kafka-client fork
@@ -57,7 +69,11 @@ upstream are carried over as files but are ported and run by the next plan,
 
 ## Surprises & Discoveries
 
-(None yet.)
+Review (2026-10-21): fetched the source branch and verified the committed IR
+bundle at `fe5328a81941e92b93c3f47de14878346c9a5b43`; the source checkout remains
+on `main`. The import is now commit-pinned and no longer depends on untracked files.
+The current flake exposes only default and ghc9124 shells, so secondary-compiler
+support must be proven before advertising it.
 
 
 ## Decision Log
@@ -107,13 +123,14 @@ it.
 with `callCabal2nix`, so the cabal file must be named `rdkafka-hs.cabal` and live at the
 root. `mori.dhall` already identifies the project as `shinzui/rdkafka-hs`, a Haskell
 library forked from `haskell-works/hw-kafka-client`, with one package `rdkafka-hs` at path
-`.`. There is no cabal file, no `src/`, no `docs/adr/`, no `README.md` and no
+`.`. There is no cabal file, no `src/`, two unprofiled review ADRs under `docs/adr/`, no `README.md` and no
 `CHANGELOG.md` yet.
 
 The source to import is the fork checkout at `/Users/shinzui/Keikaku/bokuno/hw-kafka-client`
-(Mori project `mori://shinzui/hw-kafka-client`). Its checked-out branch is
-`fix/async-consumer-fatal-observability` at commit
-`6caed636898a78e9f6e5a9c93eeb5562cbb2580a`. That commit is upstream's `main`
+(Mori project `mori://shinzui/hw-kafka-client`). The checkout is currently on `main`; do not import HEAD. Fetch branch
+`fix/async-consumer-fatal-observability` and import the reviewed commit
+`fe5328a81941e92b93c3f47de14878346c9a5b43`. Its parent, the implementation commit
+`6caed636898a78e9f6e5a9c93eeb5562cbb2580a`, is upstream's `main`
 (`56be4a6`, the last upstream push, 2025-10-03) plus one commit by this author,
 "fix(consumer): surface consumer fatal errors and stop leaking polled messages", which
 binds `rd_kafka_fatal_error`, reports a raised fatal in-band from `pollMessage` and
@@ -121,11 +138,11 @@ binds `rd_kafka_fatal_error`, reports a raised fatal in-band from `pollMessage` 
 destroy the messages it consumes. Upstream `main` itself carries twelve commits that
 Hackage's 5.3.0 release does not: admin-API topic creation and deletion
 (`Kafka.Topic`, `Kafka.Topic.Types`), a partition-list leak fix in `storeOffsets` and
-`storeOffsetMessage`, and skipping `rd_kafka_subscribe` when the topic set is empty. Two
-untracked files in that checkout, `docs/improvement-requests/1-expose-queue-event-notification-for-consumers.md`
+`storeOffsetMessage`, and skipping `rd_kafka_subscribe` when the topic set is empty. The reviewed import commit additionally tracks `docs/improvement-requests/1-expose-queue-event-notification-for-consumers.md`
 and `docs/improvement-requests/2-support-a-bounded-assign-only-observer-consumer.md`,
 together with that directory's `profile.dhall`, `index.md` and `log.md`, are an OKF
-improvement-request bundle that this plan carries over verbatim.
+improvement-request bundle that the history import brings into this repository. Preserve its request IDs and
+origins; update IR-2 AC-5 to name the successor release repository, logging that migration.
 
 The inherited layout is: `hw-kafka-client.cabal` (cabal-version 2.2, `Haskell2010`, a
 library of thirteen exposed and eight hidden modules under `src/Kafka/`, an example
@@ -147,7 +164,8 @@ newer, `default-language: GHC2024`, a `common` stanza enabling `DeriveAnyClass`,
 `DuplicateRecordFields`, `OverloadedLabels` and `OverloadedStrings`, postpositive
 `qualified` (`import Data.Text qualified as Text`), and never a strategy-less `deriving`
 clause (`-Wmissing-deriving-strategies` enforces it). The concrete cabal shape is the
-`haskell-library` seihou template at
+`haskell-library` template in `mori://shinzui/seihou-modules` (project-relative
+`modules/haskell/haskell-library/files/library.cabal.tpl`; artifact URI pending), readable at
 `/Users/shinzui/Keikaku/bokuno/seihou-modules/modules/haskell/haskell-library/files/library.cabal.tpl`:
 its `common common-options` stanza carries `-Wall -Wcompat -Widentities
 -Wincomplete-uni-patterns -Wincomplete-record-updates -Wredundant-constraints
@@ -158,15 +176,19 @@ its `common common-options` stanza carries `-Wall -Wcompat -Widentities
 `fourmolu.yaml`, run through `nix fmt` (treefmt also runs `cabal-gild` on the cabal file
 and `nixpkgs-fmt` on Nix).
 
-The toolchain is pinned by the flake: GHC 9.12.4 (with HLS) as the default shell and GHC
-9.14.1 (without HLS) available from the `haskell-nix-dev` base flake. The locked nixpkgs
+The toolchain is pinned by the flake: GHC 9.12.4 (with HLS) as the default shell. A 9.14.1 shell is not currently exposed here;
+verify the base flake capability before wiring it in the unmanaged extension. The locked nixpkgs
 provides librdkafka 2.15.0 and c2hs 0.28.8.
 
-ADR context: this repository has no ADRs. The cross-repository decision that explains why
+ADR context: the review added [consumer queue and teardown ownership](../adr/consumer-queue-and-teardown-ownership.md)
+and [release validation before publication](../adr/release-validation-before-publication.md).
+Adopt these existing records into the bundle; preserve their decisions and allocate
+handles with `okf id next`. All ADR numbers below are anticipated labels, not reserved
+handles. Resolve the final handles and paths in affected child plans after adoption. The cross-repository decision that explains why
 the fork exists is `mori://shinzui/keiro/okf/adrs/concepts/ADR-11` ("Kafka consumer fatal
 errors are surfaced in-band in both poll modes"), which states that the fix must live in
 the binding behind a fork pin because no downstream layer can observe a signal destroyed
-inside the binding. This plan writes the first two local ADRs; the shared workflow is in
+inside the binding. This plan additionally writes fork-identity and toolchain-floor ADRs; the shared workflow is in
 `agents/skills/exec-plan/ADR.md` and the adoption blueprint is `adopt-architecture-decisions`
 from `mori://shinzui/okf-profiles` (local checkout
 `/Users/shinzui/Keikaku/bokuno/okf-profiles/blueprints/adopt-architecture-decisions/`).
@@ -176,21 +198,24 @@ from `mori://shinzui/okf-profiles` (local checkout
 
 **Milestone 1: a package that builds.** Reconfigure the seihou module with
 `nix.kafka=true` so the dev shell contains librdkafka and its headers, and commit the
-regenerated managed files. Merge the fork branch into `master` with
-`--allow-unrelated-histories`, resolving `.gitignore` and `.envrc` in favour of the
+regenerated managed files. Merge the reviewed commit into the current branch with
+`--allow-unrelated-histories`, inspecting every conflict and resolving `.gitignore` and `.envrc` in favour of the
 seihou versions (append the useful upstream ignores such as `*.hi`, `*.o`, `.librdkafka/`
 if they are not already covered). Delete the legacy files listed above. Rename
 `hw-kafka-client.cabal` to `rdkafka-hs.cabal` with `git mv`, set `name: rdkafka-hs`,
 `version: 1.0.0.0`, `cabal-version: 3.0`, this author as maintainer, `homepage` and
 `bug-reports` to `https://github.com/shinzui/rdkafka-hs`, the `source-repository head`
-location likewise, and `tested-with: GHC == 9.12.4, GHC == 9.14.1`. Rename the test-suites
+location likewise, and initially `tested-with: GHC == 9.12.4`. Add 9.14.1 only after an actual
+secondary compiler build and unit test pass; the current flake exposes only default
+and ghc9124 shells. Wire a secondary shell in the unmanaged extension if needed. Rename the test-suites
 to `rdkafka-hs-test` and `rdkafka-hs-integration`, rename the flag `it` to `integration`,
 move `tests/` to `test/` and `tests-it/` to `test-integration/` with `git mv`, and
 change every `build-depends: hw-kafka-client` in the executable and test stanzas to
 `rdkafka-hs`. Create `flake.module.nix` from the example, adding
 `haskellProject.extraDevPackages = [ pkgs.haskellPackages.c2hs pkgs.just ]` so c2hs and
 the task runner are on the shell path. Add a `justfile` with `build`, `test`, `fmt` and
-`check` recipes modelled on `/Users/shinzui/Keikaku/bokuno/kafka-effectful/justfile`.
+`check` recipes modelled on project `mori://shinzui/kafka-effectful`, path `justfile`
+(artifact URI pending).
 Acceptance: `cabal build all` inside `nix develop` succeeds.
 
 **Milestone 2: a package that meets the standards.** Replace the per-stanza
@@ -230,7 +255,9 @@ namespace kept; GHC floor raised to 9.12 with `GHC2024`; test framework changed 
 and, carried from upstream main beyond 5.3.0, the admin topic create/delete API, the
 `storeOffsets` partition-list leak fix, the empty-subscription fix; and the fatal-error
 observability fix (`consumerFatalError`, in-band `RdKafkaRespErrFatal`, no leaked polled
-messages). Copy `docs/improvement-requests/` from the fork checkout verbatim. Adopt the
+messages). Retain the imported `docs/improvement-requests/` bundle. Amend IR-2 AC-5
+to point at `https://github.com/shinzui/rdkafka-hs`, retaining its original origin and
+recording the successor migration with `okf log add`. Adopt the
 ADR bundle by running the `adopt-architecture-decisions` blueprint (it creates
 `docs/adr/profile.dhall`, `index.md`, `log.md` and registers the bundle); then write
 `docs/adr/1-rdkafka-hs-is-a-maintained-fork-of-hw-kafka-client.md` (package name,
@@ -254,7 +281,10 @@ seihou run nix-haskell-flake --var nix.kafka=true --diff
 seihou run nix-haskell-flake --var nix.kafka=true
 git diff --stat
 git add flake.nix flake.lock nix .envrc .seihou/manifest.json
-git commit -m "chore(nix): enable librdkafka in the dev shell"
+git commit -m "chore(nix): enable librdkafka in the dev shell" \
+  --trailer "MasterPlan: docs/masterplans/1-fork-hw-kafka-client-as-rdkafka-hs.md" \
+  --trailer "ExecPlan: docs/plans/1-bootstrap-rdkafka-hs-from-the-hw-kafka-client-fork.md" \
+  --trailer "Intention: intention_01m5gc388wecfsq431s3pgg1dd"
 ```
 
 If `seihou run` prompts for a variable, answer with the value recorded for it in
@@ -272,21 +302,26 @@ Expected output: `2.15.0`.
 Import the fork's history:
 
 ```bash
-git remote add fork /Users/shinzui/Keikaku/bokuno/hw-kafka-client
-git fetch fork fix/async-consumer-fatal-observability
-git merge --allow-unrelated-histories --no-commit fork/fix/async-consumer-fatal-observability
+git status --short                         # require a clean working tree
+git rev-parse HEAD                        # record the pre-import recovery commit
+git fetch https://github.com/shinzui/hw-kafka-client.git fix/async-consumer-fatal-observability
+git cat-file -t fe5328a81941e92b93c3f47de14878346c9a5b43  # commit
+git merge --allow-unrelated-histories --no-commit fe5328a81941e92b93c3f47de14878346c9a5b43
 git checkout --ours .gitignore .envrc
 git add .gitignore .envrc
 git rm -q -r default.nix shell.nix nix/nixpkgs.nix nix/overrides.nix nix/sources.json nix/sources.nix \
   docker-compose.yml build scripts project.sh .github .vscode .stylish-haskell.yaml Setup.hs
-git commit -m "chore: import hw-kafka-client fork history"
-git remote remove fork
+git commit -m "chore: import hw-kafka-client fork history" \
+  --trailer "MasterPlan: docs/masterplans/1-fork-hw-kafka-client-as-rdkafka-hs.md" \
+  --trailer "ExecPlan: docs/plans/1-bootstrap-rdkafka-hs-from-the-hw-kafka-client-fork.md" \
+  --trailer "Intention: intention_01m5gc388wecfsq431s3pgg1dd"
 git log --oneline -3
 ```
 
-The three newest log lines should be the merge, then `76978b6 chore(seihou): apply
-nix-haskell-flake module`, and the fork's `6caed63 fix(consumer): ...` reachable as the
-merge's second parent (`git log --oneline -1 HEAD^2` prints it).
+Verify the merge retains the recorded pre-import HEAD as its first parent and
+`fe5328a81941e92b93c3f47de14878346c9a5b43` as its second parent. The fatal fix
+`6caed636898a78e9f6e5a9c93eeb5562cbb2580a` must remain reachable. Inspect actual
+conflicts before resolving them; stop if unexpected inherited files would overwrite plans.
 
 Rename and restructure:
 
@@ -300,7 +335,10 @@ cp flake.module.nix.example flake.module.nix
 Edit `rdkafka-hs.cabal` and `flake.module.nix` as described in Milestone 1, then:
 
 ```bash
-git add -A && git commit -m "feat!: rename package to rdkafka-hs"
+git add -A && git commit -m "feat!: rename package to rdkafka-hs" \
+  --trailer "MasterPlan: docs/masterplans/1-fork-hw-kafka-client-as-rdkafka-hs.md" \
+  --trailer "ExecPlan: docs/plans/1-bootstrap-rdkafka-hs-from-the-hw-kafka-client-fork.md" \
+  --trailer "Intention: intention_01m5gc388wecfsq431s3pgg1dd"
 nix develop --command cabal build all
 ```
 
@@ -310,7 +348,7 @@ it should finish with `rdkafka-hs-1.0.0.0` built and no `rd_kafka_*` link errors
 Apply the standards (Milestone 2), then:
 
 ```bash
-nix develop --command cabal build all -f examples 2>&1 | grep -c warning   # expect 0
+nix develop --command cabal build all -f examples   # require success and inspect for warnings
 nix develop --command cabal test rdkafka-hs-test
 nix build
 nix fmt && git status --short                                               # expect empty
@@ -322,9 +360,10 @@ hold two cases each; adjust the number to what was ported).
 Carry the knowledge bundles (Milestone 3):
 
 ```bash
-cp -R /Users/shinzui/Keikaku/bokuno/hw-kafka-client/docs/improvement-requests docs/
+git ls-files docs/improvement-requests   # bundle already included in the merge
 seihou agent run adopt-architecture-decisions
-okf id next docs/adr --profile docs/adr/profile.dhall ADR                   # expect ADR-1
+okf id list docs/adr --profile docs/adr/profile.dhall
+okf id next docs/adr --profile docs/adr/profile.dhall ADR  # use the allocated handle
 ```
 
 Write the two ADRs, then validate:
@@ -349,13 +388,12 @@ Intention: intention_01m5gc388wecfsq431s3pgg1dd
 The plan is accepted when all of the following hold on a clean checkout of `master`:
 
 `nix develop --command cabal build all -f examples` compiles the library, the example
-executable `kafka-client-example`, and both test-suites' dependencies without warnings.
+executable `kafka-client-example`, without warnings; the integration suite stays disabled until EP-2.
 `nix develop --command cabal test rdkafka-hs-test` reports every test passed. `nix build`
-succeeds and `ls result/lib` shows the `rdkafka-hs-1.0.0.0` library directory, proving
+succeeds, proving
 the sandboxed build found c2hs and librdkafka through cabal2nix's mapping of
 `build-tool-depends` and `extra-libraries`. `nix fmt` followed by `git status --short`
-prints nothing. A throwaway commit triggers the pre-commit treefmt hook and the
-commit-message hook. `git log --follow src/Kafka/Consumer.hs` shows upstream commits going
+prints nothing. Run the configured hooks on a real working commit; do not create a throwaway commit. `git log --follow src/Kafka/Consumer.hs` shows upstream commits going
 back to 2016. `okf validate` passes for both bundles and `mori validate` passes.
 `grep -rn "hw-kafka-client" rdkafka-hs.cabal` finds only the lineage note in the
 `description` field.
@@ -373,13 +411,12 @@ reports no changes. If it reports a conflict on a managed file, nobody should ha
 that file; inspect with `--diff` and accept the regenerated version.
 
 The history merge is the one step that is awkward to repeat. If it goes wrong before the
-merge commit, `git merge --abort` restores the tree. After the commit, `git reset --hard
-76978b6` returns to the scaffold (that is the "apply nix-haskell-flake module" commit; the
-seihou reconfiguration commit sits on top of it and must be redone or cherry-picked).
+merge commit, `git merge --abort` restores the tree. After committing, inspect the merge and use a reviewed corrective commit rather
+than resetting to the old scaffold, which would discard newer plans and configuration.
 Never force-push; the remote is private and the branch is `master`.
 
 Deleting legacy files and renaming the cabal file are plain git operations and can be
-redone. `cp -R` of the improvement-request bundle overwrites nothing that exists.
+redone. The request bundle is tracked in the import commit and needs no filesystem copy.
 `seihou agent run adopt-architecture-decisions` refuses to run twice once
 `docs/adr/profile.dhall` exists, which is the desired behaviour.
 

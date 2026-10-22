@@ -11,6 +11,18 @@ provenance:
     model: "claude-fable-5-1"
     harness: "claude-code"
     at: 2026-10-21T23:17:55Z
+  reviews:
+    - model: "gpt-6-astra"
+      harness: "codex-cli"
+      at: 2026-10-21T23:52:39Z
+      verdict: "changes-requested"
+      note: "Changes requested: handle edge-trigger draining and descriptor teardown; IR cannot be completed before tag acceptance."
+  revisions:
+    - model: "gpt-6-astra"
+      harness: "codex-cli"
+      at: 2026-10-22T00:00:20Z
+      mode: "update"
+      note: "Specify event draining, descriptor lifetime and release-owned request completion."
 ---
 
 # Expose queue event notification for consumers
@@ -28,8 +40,9 @@ records instead of polling on a timer. It registers a non-blocking file descript
 descriptor whenever the queue the consumer reads from goes from empty to non-empty. The
 application then waits with `threadWaitRead` and polls only when woken. The
 `shibuya-kafka-adapter` measurements that motivated this (idle CPU rising from 0.19% to
-3.6% as the sleep between empty polls shrinks from a blocking poll to 1 ms) go away: an
-idle consumer costs nothing. This closes improvement request IR-1 in
+3.6% as the sleep between empty polls shrinks from a blocking poll to 1 ms) motivate this API; this plan does not claim zero CPU or benchmark acceptance.
+The async callback loop continues running, and applications still need bounded
+fatal-state checks because a fatal on the consumer queue need not wake the message queue. This closes improvement request IR-1 in
 `docs/improvement-requests/1-expose-queue-event-notification-for-consumers.md`, whose
 three acceptance criteria are this plan's acceptance criteria.
 
@@ -42,13 +55,15 @@ three acceptance criteria are this plan's acceptance criteria.
       regenerated (IR-1 AC-1).
 - [ ] M2: Integration test proves the pipe becomes readable before `pollMessage` returns
       the record and stays unreadable after disabling, in both poll modes (IR-1 AC-2);
-      IR-1 moved to `completed` with a `log.md` entry; CHANGELOG updated. AC-3 (a tagged
+      IR-1 implementation evidence recorded with a `log.md` entry; CHANGELOG updated. AC-3 (a tagged
       commit) is satisfied by `docs/plans/6-cut-the-first-rdkafka-hs-release-and-migration-guide.md`.
 
 
 ## Surprises & Discoveries
 
-(None yet.)
+Review (2026-10-21): event registration is edge-triggered, so tests must drain
+old notifications and allow non-record events. Descriptor cleanup must disable the event
+before closing the pipe. IR-1 remains open until EP-6 records release acceptance.
 
 
 ## Decision Log
@@ -159,8 +174,15 @@ enable on `q`; `Nothing` means sync mode, so obtain the consumer queue with
 `bracket`. For `Just (fd, payload)` use `unsafeUseAsCStringLen` on the payload and the
 numeric fd; for `Nothing` pass fd `-1`, a null payload and size zero. The haddock must
 state the three librdkafka rules (non-blocking descriptor; final destination queue; IO and
-callback variants mutually exclusive) and that the setting persists until disabled or the
-consumer is closed. Run `just bindings-inventory` and commit `docs/bindings.md`.
+callback variants mutually exclusive) that librdkafka copies the payload before this call returns, and that the
+descriptor remains owned by the caller. Disable the notification while the consumer is
+valid before closing the descriptor, including assertion-failure cleanup. Serialize
+registration with assignment and teardown as described in
+[consumer queue and teardown ownership](../adr/consumer-queue-and-teardown-ownership.md).
+Document the edge-trigger protocol: register, drain pending queue work, drain notification
+bytes, recheck the queue, then wait; after waking, drain and recheck again. A notification
+may represent callbacks or errors instead of a record. Preserve bounded fatal checks
+in async mode; do not document indefinite waiting as a complete consumer loop. Run `just bindings-inventory` and commit `docs/bindings.md`.
 
 **Milestone 2: the test and the request.** Add
 `test-integration/Kafka/Integration/QueueEventTest.hs` with a group run once per poll
@@ -169,18 +191,20 @@ fixture that waits for assignment; drain any initial messages with a short poll;
 pipe with `createPipe`, set the write end non-blocking with `setFdOption wfd
 NonBlockingWrite True`; call `setConsumerQueueIOEvent consumer (Just (wfd, "1"))`;
 produce one record and flush; `timeout 10_000_000 (threadWaitRead rfd)` must return
-`Just ()`, then `fdRead rfd 1` returns `"1"`, and only then `pollMessage consumer
-(Timeout 1000)` must return `Right` the record (in sync mode the record may already have
+`Just ()`, then `fdRead rfd 1` returns `"1"`, and only then bounded polling must return `Right` the record, tolerating
+intervening callback/error events (in sync mode the record may already have
 been fetched by librdkafka's threads before the poll, which is fine; the assertion is that
-the pipe became readable before the application polled). Then
+the pipe became readable before the application polled). Then drain the queue and pending pipe bytes,
 `setConsumerQueueIOEvent consumer Nothing`, produce a second record and flush, and
 `timeout 2_000_000 (threadWaitRead rfd)` must return `Nothing`; finally `pollMessage`
 still returns the second record, proving disabling the event did not break delivery.
-Close the descriptors. Register the group in `test-integration/Main.hs`. Then edit
-`docs/improvement-requests/1-expose-queue-event-notification-for-consumers.md`: set
-`status: completed`, add a short "Resolution" section naming
+In bracketed cleanup, disable the event before closing either descriptor.
+Add a preloaded-queue case and a multi-record case to exercise draining and rearming;
+an event emitted before disable must be drained rather than counted as a new event. Register the group in `test-integration/Main.hs`. Then edit
+`docs/improvement-requests/1-expose-queue-event-notification-for-consumers.md`: retain
+an open status until release acceptance, add a short "Implementation evidence" section naming
 `Kafka.Consumer.setConsumerQueueIOEvent` and the test module, note that AC-3's tag is cut
-by EP-6, and add a dated entry to `docs/improvement-requests/log.md`. Append the
+by EP-6, advance the timestamp and use `okf log add` for the dated bundle entry. Append the
 CHANGELOG entry under `Unreleased` / `Added`.
 
 
@@ -189,8 +213,7 @@ CHANGELOG entry under `Unreleased` / `Added`.
 All commands run from `/Users/shinzui/Keikaku/bokuno/rdkafka-hs` inside the dev shell.
 
 ```bash
-grep -n "rd_kafka_queue_io_event_enable\|rd_kafka_queue_get_consumer" \
-  "$(pkg-config --variable=includedir rdkafka)/librdkafka/rdkafka.h"
+rg -n "rd_kafka_queue_io_event_enable|rd_kafka_queue_get_consumer" "$RDKAFKA_SOURCE_HEADER"
 ```
 
 Both names must appear. After Milestone 1:
@@ -235,8 +258,9 @@ tags the release that contains this commit.
 ## Idempotence and Recovery
 
 Enabling the event twice replaces the previous setting; disabling an event that was never
-enabled is harmless. The test closes its pipe descriptors in a `finally` so a failed
-assertion does not leak them into later cases. If `threadWaitRead` never wakes in async
+enabled is harmless. The test first disables notification while the consumer is alive, then closes its
+pipe descriptors in exception-safe cleanup. Closing a still-registered descriptor
+could write to a reused descriptor or a pipe without a reader. If `threadWaitRead` never wakes in async
 mode, the most likely cause is enabling the event on the consumer queue instead of the
 message queue; check which branch `getRdMsgQueue` took. If it never wakes in sync mode,
 confirm the consumer queue handle was obtained with `rd_kafka_queue_get_consumer` after
@@ -247,11 +271,13 @@ confirm the consumer queue handle was obtained with `rd_kafka_queue_get_consumer
 
 Prerequisites: `docs/plans/2-run-integration-tests-on-a-project-local-redpanda.md`
 Complete (fixtures and `just test-it`) and `docs/plans/3-refresh-the-librdkafka-bindings-for-2-15-and-newer.md`
-Complete (binding conventions, `just bindings-check`). Soft: `docs/plans/5-support-a-bounded-assign-only-observer-consumer.md`
-edits the same `Kafka.Consumer` export list and `test-integration/Main.hs`; whichever
-lands second rebases.
+Complete (binding conventions, `just bindings-check`). Integration dependency: `docs/plans/5-support-a-bounded-assign-only-observer-consumer.md`
+owns assignment routing and teardown, sharing `Kafka.Consumer`, test registration,
+Cabal dependencies and the changelog. Reconcile those changes and run EP-6 M1's combined
+assigned-consumer notification/teardown check before release.
 
-Libraries: `unix` (`System.Posix.IO`, `System.Posix.Types.Fd`), `bytestring`
+Libraries: add `unix` directly to the integration test-suite dependencies; a
+library dependency does not make its modules available to tests. `unix` (`System.Posix.IO`, `System.Posix.Types.Fd`), `bytestring`
 (`Data.ByteString.Unsafe.unsafeUseAsCStringLen`), `base` (`threadWaitRead`,
 `System.Timeout`).
 
