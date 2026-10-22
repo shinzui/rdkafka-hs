@@ -3,6 +3,7 @@ module Main (main) where
 import Kafka.Integration.BatchTest qualified as BatchTest
 import Kafka.Integration.ConfigurationTest qualified as ConfigurationTest
 import Kafka.Integration.ConsumerTest qualified as ConsumerTest
+import Kafka.Integration.FatalErrorTest qualified as FatalErrorTest
 import Kafka.Integration.HeadersTest qualified as HeadersTest
 import Kafka.Integration.PerMessageCommitTest qualified as PerMessageCommitTest
 import Kafka.Integration.StoreOffsetsTest qualified as StoreOffsetsTest
@@ -34,6 +35,7 @@ main = do
             ConsumerTest.tests env,
             BatchTest.tests env,
             HeadersTest.tests env,
+            FatalErrorTest.tests env,
             TopicTest.tests env
           ]
       ]

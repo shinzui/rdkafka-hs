@@ -30,6 +30,7 @@ module Kafka.TestEnv
     -- * Fixtures
     mkProducer,
     mkConsumerWith,
+    mkConsumerFor,
     withProducer,
     withConsumer,
     withKafka,
@@ -210,14 +211,18 @@ mkProducer env =
 -- builder carries the default 'CallbackPollModeAsync', so composing anything
 -- after @props@ would silently reset a requested 'CallbackPollModeSync'.
 mkConsumerWith :: TestEnv -> ConsumerProperties -> IO KafkaConsumer
-mkConsumerWith env props = do
+mkConsumerWith env = mkConsumerFor (teTopic env)
+
+-- | Like 'mkConsumerWith', subscribed to the given topic.
+mkConsumerFor :: TopicName -> ConsumerProperties -> IO KafkaConsumer
+mkConsumerFor topic props = do
   assigned <- newEmptyMVar
   let props' = C.setCallback (rebalanceCallback (\_ evt -> onRebalance assigned evt)) <> props
       driveCallbacks c = case cpCallbackPollMode props' of
         CallbackPollModeSync -> pollConsumerEvents c Nothing
         CallbackPollModeAsync -> pure ()
   consumer <-
-    newConsumer props' (testSubscription (teTopic env))
+    newConsumer props' (testSubscription topic)
       >>= either (throwIO . userError . ("newConsumer: " <>) . show) pure
   let awaitAssignment =
         tryReadMVar assigned >>= \case

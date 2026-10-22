@@ -44,11 +44,13 @@ build:
 test:
     cabal test rdkafka-hs-test
 
-# Run the integration suite against the project-local broker.
+# Run the integration suite against the project-local broker. Extra arguments
+# go to cabal, e.g. just test-it '--test-options=-p /fatal/'.
 [group("build")]
+[positional-arguments]
 test-it *ARGS:
     redpanda-local-up
-    cabal test rdkafka-hs-integration -f integration --test-show-details=direct {{ARGS}}
+    cabal test rdkafka-hs-integration -f integration --test-show-details=direct "$@"
 
 # Build the example executable.
 [group("build")]

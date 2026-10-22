@@ -55,15 +55,29 @@ a broker because the integration suite sits behind a manual cabal flag.
 
 ## Progress
 
-- [ ] M1: `nix.redpanda` enabled; `redpanda-local-up` starts a broker reachable at
+- [x] M1 (2026-10-22): `nix.redpanda` enabled; `redpanda-local-up` starts a broker reachable at
       `127.0.0.1:39092`; `process-compose.override.yaml`, `justfile` recipes and the
-      `RDKAFKA_TEST_BROKER` shell variable exist; README documents the flow.
-- [ ] M2: `rdkafka-hs-integration` (tasty, flag `integration`) ports every inherited
+      `RDKAFKA_TEST_BROKER` shell variable exist; README documents the flow. Evidence:
+      `rpk cluster info` lists broker 0 at `127.0.0.1:39092`, `redpanda-local-status`
+      exits 0, `container list` shows `rdkafka-hs-rp-0` beside the untouched
+      `redpanda-0` (started 2026-10-20). Commit `23bf716`.
+- [x] M2 (2026-10-22): `rdkafka-hs-integration` (tasty, flag `integration`) ports every inherited
       hspec scenario and passes against the private broker via `just test-it`;
-      `nix build` still passes without it.
-- [ ] M3: Fenced-static-member fatal regression test passes in both callback poll modes
+      `nix build` still passes without it. Evidence: `All 65 tests passed (35.45s)`
+      (9 configuration cases, 56 broker scenarios); with the broker stopped the suite
+      exits 1 after 10 s naming `just redpanda-up`; `RDKAFKA_TEST_BROKER=127.0.0.1:1`
+      fails after 12 s; `RDKAFKA_TEST_BROKER=localhost:9092` exits within 1 s before
+      creating a client; `cabal build all --dry-run` plans no integration suite.
+      Commit `fc2ffc3`.
+- [x] M3 (2026-10-22): Fenced-static-member fatal regression test passes in both callback poll modes
       and is the documented producer/consumer check for the harness; the private-broker
-      and fatal-errors-in-band ADRs written with handles from `okf id next`.
+      and fatal-errors-in-band ADRs written with handles from `okf id next`. Evidence:
+      `fatal / async: OK (3.85s)` and `fatal / sync: OK (3.47s)`, each asserting
+      `consumerFatalError` = `RdKafkaRespErrFencedInstanceId` with a non-empty
+      description; the full suite then reports `All 67 tests passed (42.04s)`. With the
+      pre-poll fatal check disabled, async fails (`consumer A did not report a fatal
+      error within 30 seconds`) and sync fails (second poll `RdKafkaRespErrTimedOut`).
+      ADR-5 and ADR-6 written; `just check` passes.
 
 
 ## Surprises & Discoveries
@@ -71,6 +85,31 @@ a broker because the integration suite sits behind a manual cabal flag.
 Review (2026-10-21): sync-mode assignment and fencing require active polling
 while awaiting callbacks. Added explicit shared-broker rejection and async batch-fatal
 acceptance. EP-1 owns the integration flag and disabled stanza; this plan ports them.
+
+Implementation (2026-10-22):
+
+- seihou did not keep EP-1's `--var nix.kafka=true`: reconfiguring with only
+  `nix.redpanda=true` reset `nix.kafka` to false and removed librdkafka from the
+  shell. Every reconfiguration must pass all non-default variables
+  (`--var nix.kafka=true --var nix.redpanda=true`).
+- The `ConsumerProperties` semigroup always takes the right operand's
+  `cpCallbackPollMode`, and every builder (`groupId`, `setCallback`, `extraProps`, …)
+  is `mempty` with the default `CallbackPollModeAsync`. So
+  `callbackPollMode CallbackPollModeSync <> x` silently yields async. The inherited
+  fixture appended its rebalance callback after the properties, which is why its
+  "sync" consumer never deadlocked: it was async. The fixtures now compose the
+  callback on the left and put `callbackPollMode` last. The library defect itself
+  is out of scope here (fixing it changes a public record field) and is recorded in
+  the MasterPlan.
+- tasty runs resource initializers outside the per-test timeout, so fixtures carry
+  their own 30 s assignment deadline. tasty runs a resource's release inside its last
+  user's test before marking it done, so each consumer leaves the group before the
+  next sequential group starts. `sequentialTestGroup` is deprecated in the locked
+  tasty; the suite uses `dependentTestGroup`.
+- Redpanda (v26.2.1) fences a duplicate `group.instance.id` within about a second,
+  so `rd_kafka_test_fatal_error` and `Kafka.Internal.Testing` were not needed.
+- A tasty `-p` filter also runs the selected tests' dependencies, so
+  `-p /fatal/` runs the whole `broker` group.
 
 
 ## Decision Log
@@ -90,10 +129,36 @@ acceptance. EP-1 owns the integration flag and disabled stanza; this plan ports 
   path of least resistance.
   Date: 2026-10-21
 
+- Decision: Top-level broker groups are ordered with `AllFinish`, and each inherited
+  group's steps with `AllSucceed`.
+  Rationale: Groups share the run's topic and consumer group, so order matters, but a
+  failure in one group should not hide the results of the rest.
+  Date: 2026-10-22
+
+- Decision: A loopback broker address with no port is rejected like port 9092, and
+  `KAFKA_TEST_TOPIC` is no longer read.
+  Rationale: librdkafka defaults a missing port to 9092, and a fixed topic would
+  defeat per-run isolation.
+  Date: 2026-10-22
+
+- Decision: `receiveMessages` gives up after thirty empty one-second polls.
+  Rationale: The inherited version looped forever when nothing arrived; a bound turns
+  a hang into a failing assertion without changing any passing scenario.
+  Date: 2026-10-22
+
 
 ## Outcomes & Retrospective
 
-(To be filled during and after implementation.)
+Completed 2026-10-22. `just test-it` starts the project's private Redpanda and runs
+67 tests: the configuration checks, every inherited scenario in both callback poll
+modes, and the fenced-static-member fatal test, which passes with the fork's fix and
+fails without it. The suite never needs the shared broker and rejects it before
+creating a client; `nix build` and plain `cabal test` are unaffected. ADR-5 and ADR-6
+record the test-environment rule and the library's fatal-error contract.
+
+The `ConsumerProperties` poll-mode defect was the significant surprise: upstream's own
+"sync" integration tests had been running in async mode. Later plans that test sync
+mode must compose `callbackPollMode` last until the library is fixed.
 
 
 ## Context and Orientation

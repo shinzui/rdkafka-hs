@@ -148,6 +148,7 @@ test-suite rdkafka-hs-integration
     Kafka.Integration.BatchTest
     Kafka.Integration.ConfigurationTest
     Kafka.Integration.ConsumerTest
+    Kafka.Integration.FatalErrorTest
     Kafka.Integration.HeadersTest
     Kafka.Integration.PerMessageCommitTest
     Kafka.Integration.StoreOffsetsTest

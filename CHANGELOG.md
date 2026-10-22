@@ -29,6 +29,11 @@ hw-kafka-client 5.3.0.
 
 ### Added
 
+- The integration suite runs against a project-local Redpanda broker on Apple
+  Container (`just test-it`), selected by `RDKAFKA_TEST_BROKER` (default
+  `127.0.0.1:39092`), and refuses the machine-global broker on port 9092. It
+  includes a regression test that fences a static group member in both callback
+  poll modes and checks the in-band fatal error and its cause.
 - Admin API topic creation and deletion: `Kafka.Topic` and `Kafka.Topic.Types`
   (from unreleased upstream `main`).
 - `consumerFatalError` reports the librdkafka fatal error raised on a consumer,
