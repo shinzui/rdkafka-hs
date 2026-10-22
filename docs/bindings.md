@@ -7,8 +7,8 @@ changing the binding module, and `just bindings-check` to verify.
 - librdkafka: 2.15.0
 - Header: `src/rdkafka.h`, sha256 `33cca14d9fc87117100ce90bd84f2006b8ba521c788055db6af614d0f2f7ca2f`
 - Exported functions: 495
-- Bound: 131
-- Unbound: 364
+- Bound: 134
+- Unbound: 361
 
 ## librdkafka version
 
@@ -240,27 +240,27 @@ changing the binding module, and `just bindings-check` to verify.
 
 ## Queue API
 
-5 of 15 bound.
+8 of 15 bound.
 
 | C function | Haskell binding |
 | --- | --- |
 | `rd_kafka_queue_new` | `rdKafkaQueueNew` |
 | `rd_kafka_queue_destroy` | `rdKafkaQueueDestroy`, `rdKafkaQueueDestroyF` (finalizer pointer) |
 | `rd_kafka_sasl_set_credentials` | `rdKafkaSaslSetCredentials'` |
+| `rd_kafka_queue_get_consumer` | `rdKafkaQueueGetConsumer` |
 | `rd_kafka_queue_get_partition` | `rdKafkaQueueGetPartition'` |
 | `rd_kafka_queue_forward` | `rdKafkaQueueForward` |
+| `rd_kafka_queue_io_event_enable` | `rdKafkaQueueIoEventEnable` |
+| `rd_kafka_queue_cb_event_enable` | `rdKafkaQueueCbEventEnable` |
 
-<details><summary>Unbound (10)</summary>
+<details><summary>Unbound (7)</summary>
 
 - `rd_kafka_queue_get_main`
 - `rd_kafka_queue_get_sasl`
 - `rd_kafka_sasl_background_callbacks_enable`
-- `rd_kafka_queue_get_consumer`
 - `rd_kafka_queue_get_background`
 - `rd_kafka_set_log_queue`
 - `rd_kafka_queue_length`
-- `rd_kafka_queue_io_event_enable`
-- `rd_kafka_queue_cb_event_enable`
 - `rd_kafka_queue_yield`
 
 </details>

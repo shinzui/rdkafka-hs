@@ -35,7 +35,7 @@ import Foreign.Concurrent qualified as Concurrent
 import Foreign.Marshal.Alloc (alloca, allocaBytes)
 import Foreign.Marshal.Array (peekArray, allocaArray, withArrayLen)
 import Foreign.Storable (Storable(..))
-import Foreign.Ptr (Ptr, FunPtr, castPtr, nullPtr)
+import Foreign.Ptr (Ptr, FunPtr, castFunPtr, castPtr, nullPtr)
 import Foreign.ForeignPtr (FinalizerPtr, addForeignPtrFinalizer, newForeignPtr_, withForeignPtr, ForeignPtr, newForeignPtr)
 import Foreign.C.Error (Errno(..), getErrno)
 import Foreign.C.String (CString, newCString, withCString, withCAString, peekCAString, peekCString)
@@ -576,6 +576,24 @@ data RdKafkaQueueT
 
 foreign import ccall unsafe "rdkafka.h &rd_kafka_queue_destroy"
     rdKafkaQueueDestroyF :: FinalizerPtr RdKafkaQueueT
+
+-- | A new reference to the consumer queue; release it with
+-- 'rdKafkaQueueDestroy'. NULL when the client has no consumer group.
+{#fun rd_kafka_queue_get_consumer as ^
+    {`RdKafkaTPtr'} -> `RdKafkaQueueTPtr' #}
+
+-- | Write the payload to the descriptor when an op lands in the empty queue,
+-- at most once until the queue is next served; fd -1 disables. librdkafka
+-- copies the payload.
+{#fun rd_kafka_queue_io_event_enable as ^
+    {`RdKafkaQueueTPtr', `Int', castPtr `Ptr Word8', cIntConv `CSize'} -> `()' #}
+
+-- | The callback runs on an internal librdkafka thread and must not call
+-- librdkafka for the same handle. Not wrapped by the public API.
+type QueueEventCallback = Ptr RdKafkaT -> Ptr () -> IO ()
+
+{#fun rd_kafka_queue_cb_event_enable as ^
+    {`RdKafkaQueueTPtr', castFunPtr `FunPtr QueueEventCallback', castPtr `Ptr ()'} -> `()' #}
 
 newRdKafkaQueue :: RdKafkaTPtr -> IO RdKafkaQueueTPtr
 newRdKafkaQueue k = do

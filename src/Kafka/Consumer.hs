@@ -70,6 +70,7 @@ module Kafka.Consumer
     consumerFatalError,
     assignmentLost,
     consumerClosed,
+    setConsumerQueueIOEvent,
     setSaslCredentials,
     commitOffsetMessage,
     commitAllOffsets,
@@ -91,6 +92,7 @@ import Control.Monad.IO.Class (MonadIO (liftIO))
 import Control.Monad.Trans.Except (ExceptT (ExceptT), runExceptT)
 import Data.Bifunctor (bimap, first)
 import Data.ByteString qualified as BS
+import Data.ByteString.Unsafe (unsafeUseAsCStringLen)
 import Data.IORef (readIORef, writeIORef)
 import Data.Map qualified as M hiding (foldr, map)
 import Data.Maybe (fromMaybe)
@@ -101,9 +103,10 @@ import Data.Text qualified as Text
 import Foreign hiding (void)
 import Kafka.Consumer.Convert (fromMessagePtr, fromNativeTopicPartitionList'', offsetCommitToBool, offsetToInt64, toMap, toNativeTopicPartitionList, toNativeTopicPartitionList', topicPartitionFromMessageForCommit)
 import Kafka.Consumer.Types (KafkaConsumer (..))
-import Kafka.Internal.RdKafka (RdKafkaRespErrT (..), RdKafkaTopicPartitionListTPtr, RdKafkaTypeT (..), newRdKafkaT, newRdKafkaTopicPartitionListT, newRdKafkaTopicT, rdKafkaAssign, rdKafkaAssignment, rdKafkaAssignmentLost, rdKafkaCommit, rdKafkaCommitted, rdKafkaConfSetDefaultTopicConf, rdKafkaConsumeBatchQueue, rdKafkaConsumeQueue, rdKafkaConsumerClose, rdKafkaConsumerClosed, rdKafkaConsumerPoll, rdKafkaErrorCode, rdKafkaErrorDestroy, rdKafkaFatalError, rdKafkaMessageDestroy, rdKafkaOffsetsStore, rdKafkaPausePartitions, rdKafkaPollSetConsumer, rdKafkaPosition, rdKafkaQueueDestroy, rdKafkaQueueNew, rdKafkaResumePartitions, rdKafkaSeek, rdKafkaSeekPartitions, rdKafkaSetLogLevel, rdKafkaSubscribe, rdKafkaSubscription, rdKafkaTopicConfDup, rdKafkaTopicPartitionListAdd)
+import Kafka.Internal.RdKafka (RdKafkaRespErrT (..), RdKafkaTopicPartitionListTPtr, RdKafkaTypeT (..), newRdKafkaT, newRdKafkaTopicPartitionListT, newRdKafkaTopicT, rdKafkaAssign, rdKafkaAssignment, rdKafkaAssignmentLost, rdKafkaCommit, rdKafkaCommitted, rdKafkaConfSetDefaultTopicConf, rdKafkaConsumeBatchQueue, rdKafkaConsumeQueue, rdKafkaConsumerClose, rdKafkaConsumerClosed, rdKafkaConsumerPoll, rdKafkaErrorCode, rdKafkaErrorDestroy, rdKafkaFatalError, rdKafkaMessageDestroy, rdKafkaOffsetsStore, rdKafkaPausePartitions, rdKafkaPollSetConsumer, rdKafkaPosition, rdKafkaQueueDestroy, rdKafkaQueueGetConsumer, rdKafkaQueueIoEventEnable, rdKafkaQueueNew, rdKafkaResumePartitions, rdKafkaSeek, rdKafkaSeekPartitions, rdKafkaSetLogLevel, rdKafkaSubscribe, rdKafkaSubscription, rdKafkaTopicConfDup, rdKafkaTopicPartitionListAdd)
 import Kafka.Internal.Setup (Callback (..), CallbackPollStatus (..), Kafka (..), KafkaConf (..), KafkaProps (..), TopicConf (..), TopicProps (..), getKafkaConf, getRdKafka, kafkaConf, topicConf)
 import Kafka.Internal.Shared (kafkaErrorToMaybe, maybeToLeft, rdKafkaErrorToEither, setSaslCredentials')
+import System.Posix.Types (Fd (..))
 
 import Kafka.Consumer.ConsumerProperties as X
 import Kafka.Consumer.Subscription as X
@@ -259,6 +262,67 @@ assignmentLost c = liftIO $ rdKafkaAssignmentLost (getRdKafka c)
 -- (@rd_kafka_consumer_closed@).
 consumerClosed :: (MonadIO m) => KafkaConsumer -> m Bool
 consumerClosed c = liftIO $ rdKafkaConsumerClosed (getRdKafka c)
+
+-- | Asks librdkafka to write a payload to a file descriptor when records or
+-- events become available on the queue 'pollMessage' and 'pollMessageBatch'
+-- read from, so an application can wait with
+-- 'Control.Concurrent.threadWaitRead' instead of polling on a timer
+-- (@rd_kafka_queue_io_event_enable@). 'Nothing' disables the notification.
+--
+-- The queue is the consumer's message queue in 'CallbackPollModeAsync' and
+-- librdkafka's consumer queue in 'CallbackPollModeSync'; in both cases it is
+-- the final destination of the partition queues, which is where librdkafka
+-- requires the event to be enabled. Enabling again replaces the previous
+-- descriptor and payload. After 'closeConsumer' this does nothing.
+--
+-- librdkafka's rules:
+--
+-- * The descriptor must be non-blocking for writes (for a pipe, set
+--   'System.Posix.IO.NonBlockingWrite' on the write end): librdkafka writes from
+--   an internal thread and ignores write errors.
+-- * IO-event and callback-event notification are mutually exclusive on one queue.
+-- * librdkafka copies the payload before this function returns. The descriptor
+--   stays owned by the caller: disable the notification (or destroy the
+--   consumer) before closing it, or librdkafka may write to a reused descriptor.
+--
+-- The notification is edge-triggered. librdkafka writes when an op lands in the
+-- empty queue, at most once until the queue is next polled, so a wake-up can
+-- stand for several records and is not repeated while records remain. It can
+-- also stand for something other than a record: a callback-serving event, an
+-- error, or a wake-up with an empty queue. Wait like this:
+--
+-- 1. Enable the notification.
+-- 2. Poll until the queue is empty (records may have arrived before the
+--    notification was enabled), then read and discard the pending payload
+--    bytes from the descriptor.
+-- 3. Wait for the descriptor to become readable, discard its bytes, and go back
+--    to polling until the queue is empty.
+--
+-- A wake-up is not a promise of a record, and a fatal error need not produce
+-- one: in 'CallbackPollModeAsync' a raised fatal error is delivered on
+-- librdkafka's consumer queue, not on the message queue this watches. Bound
+-- every wait with a timeout and poll (or call 'consumerFatalError') when it
+-- expires, so a fatal consumer is noticed; never wait indefinitely.
+--
+-- Serialize this with 'closeConsumer' and assignment changes: do not call it
+-- concurrently with them, nor from a librdkafka callback.
+setConsumerQueueIOEvent :: (MonadIO m) => KafkaConsumer -> Maybe (Fd, BS.ByteString) -> m ()
+setConsumerQueueIOEvent c@(KafkaConsumer _ (KafkaConf _ qr statusVar)) event =
+  liftIO $ withMVar statusVar $ \case
+    CallbackPollDisabled -> pure ()
+    CallbackPollEnabled ->
+      readIORef qr >>= \case
+        Just messageQueue -> enable messageQueue
+        Nothing ->
+          bracket (rdKafkaQueueGetConsumer (getRdKafka c)) releaseQueue $ \consumerQueue ->
+            withForeignPtr consumerQueue $ \p -> unless (p == nullPtr) (enable consumerQueue)
+  where
+    enable q = case event of
+      Nothing -> rdKafkaQueueIoEventEnable q (-1) nullPtr 0
+      Just (Fd fd, payload) ->
+        unsafeUseAsCStringLen payload $ \(bytes, size) ->
+          rdKafkaQueueIoEventEnable q (fromIntegral fd) (castPtr bytes) (fromIntegral size)
+    releaseQueue q = withForeignPtr q $ \p -> unless (p == nullPtr) (rdKafkaQueueDestroy q)
 
 -- | Replaces the SASL username and password the consumer uses for future
 -- authentications (@rd_kafka_sasl_set_credentials@); existing connections
