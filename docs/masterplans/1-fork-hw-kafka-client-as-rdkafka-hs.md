@@ -154,8 +154,8 @@ repository, preserving the original request identity and origin.
 | 1 | Bootstrap rdkafka-hs from the hw-kafka-client fork | docs/plans/1-bootstrap-rdkafka-hs-from-the-hw-kafka-client-fork.md | None | None | Complete |
 | 2 | Run integration tests on a project-local Redpanda | docs/plans/2-run-integration-tests-on-a-project-local-redpanda.md | EP-1 | None | Complete |
 | 3 | Refresh the librdkafka bindings for 2.15 and newer | docs/plans/3-refresh-the-librdkafka-bindings-for-2-15-and-newer.md | EP-1; EP-2 (M3 only) | None | Complete |
-| 4 | Expose queue event notification for consumers | docs/plans/4-expose-queue-event-notification-for-consumers.md | EP-2, EP-3 | None | In Progress |
-| 5 | Support a bounded assign-only observer consumer | docs/plans/5-support-a-bounded-assign-only-observer-consumer.md | EP-2, EP-3 | None | Not Started |
+| 4 | Expose queue event notification for consumers | docs/plans/4-expose-queue-event-notification-for-consumers.md | EP-2, EP-3 | None | Complete |
+| 5 | Support a bounded assign-only observer consumer | docs/plans/5-support-a-bounded-assign-only-observer-consumer.md | EP-2, EP-3 | None | In Progress |
 | 6 | Cut the first rdkafka-hs release and migration guide | docs/plans/6-cut-the-first-rdkafka-hs-release-and-migration-guide.md | EP-1, EP-2, EP-3, EP-4, EP-5 | None | Not Started |
 
 Status values: Not Started, In Progress, Complete, Cancelled.
@@ -277,7 +277,7 @@ reproducible fatal trigger before EP-4 and EP-5 begin, and record it here.
 
 ## Progress
 
-EP-1, EP-2 and EP-3 are Complete (2026-10-22). The repository is the `rdkafka-hs` package
+EP-1 to EP-4 are Complete (2026-10-22). The repository is the `rdkafka-hs` package
 with the fork's full history; it builds warning-free on GHC 9.12.4 and librdkafka
 2.15.0 and passes its unit tests locally and under `nix build`. `just test-it` runs 67
 integration tests against the project's private Redpanda, including the
@@ -287,7 +287,8 @@ both poll modes. The profiled `docs/adr/` (ADR-1 to ADR-6) and
 floor is enforced through pkg-config, `Kafka.Version` reports the linked library,
 `docs/bindings.md` inventories 131 of 495 exported functions (checked by
 `just bindings-check` inside `just check`), and the lifecycle bindings are tested.
-EP-4 is in progress; EP-5 follows in the same session. The local Mori registry has been refreshed with `mori register --local`.
+`setConsumerQueueIOEvent` wakes consumers through a descriptor in both poll modes
+(IR-1 AC-1 and AC-2 evidenced). EP-5 is in progress. The local Mori registry has been refreshed with `mori register --local`.
 The cross-plan access gate is the decision on repository visibility before EP-6: the
 GitHub repository is private, and downstream `source-repository-package` pins over
 HTTPS need either public visibility or authenticated access.
@@ -367,6 +368,17 @@ EP-3 (2026-10-22), affecting later plans:
   `flake.module.nix` provides them. Keep that line when editing the module.
 - `closeProducer` only flushes and never destroys the client. EP-5's deterministic
   `destroyConsumer` is consumer-only; producers still rely on their finalizer.
+
+EP-4 (2026-10-22), affecting EP-5 and EP-6:
+
+- `setConsumerQueueIOEvent` takes the callback-poll status `MVar`, enables the event
+  on the `IORef` message queue (async) or a temporary consumer-queue reference
+  (sync), and does nothing once polling is disabled. EP-5's manual-assignment
+  routing must forward partitions to that same message queue so the event fires for
+  assigned consumers, and EP-5's teardown must clear the `IORef` when it releases the
+  queue (`closeConsumer` currently leaves the destroyed queue in it).
+- librdkafka writes at most one wake-up per non-polling period. EP-6 M1's combined
+  check should follow the protocol in the `setConsumerQueueIOEvent` haddock.
 
 
 ## Decision Log

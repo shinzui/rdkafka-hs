@@ -23,6 +23,11 @@ provenance:
       at: 2026-10-22T00:00:20Z
       mode: "update"
       note: "Repair async manual assignment and serialized bounded consumer destruction."
+    - model: "claude-opus-5-5"
+      harness: "claude-code"
+      at: 2026-10-22T01:00:55Z
+      mode: "implement"
+      note: "Implement EP-5: assign-only routing, attributed errors, deterministic destroy, read_committed test."
 ---
 
 # Support a bounded assign-only observer consumer
