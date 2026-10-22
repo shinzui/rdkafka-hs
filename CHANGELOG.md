@@ -23,12 +23,17 @@ hw-kafka-client 5.3.0.
 - GHC 9.12 or newer is required. Every component uses the `GHC2024` language
   edition with `DeriveAnyClass`, `DuplicateRecordFields`, `OverloadedLabels` and
   `OverloadedStrings` enabled, and every `deriving` clause names its strategy.
+- librdkafka 2.15 or newer is required and is found through pkg-config
+  (`pkgconfig-depends: rdkafka >=2.15`) instead of `extra-libraries`, so an
+  older library is rejected at configure time.
 - The unit test suite (`rdkafka-hs-test`) uses tasty instead of hspec. The
   integration test suite is now `rdkafka-hs-integration`, behind the manual
   `integration` flag (formerly `it`).
 
 ### Added
 
+- `Kafka.Version` reports the linked librdkafka version (`librdkafkaVersion`,
+  `librdkafkaVersionNumber`, `librdkafkaVersionParts`).
 - The integration suite runs against a project-local Redpanda broker on Apple
   Container (`just test-it`), selected by `RDKAFKA_TEST_BROKER` (default
   `127.0.0.1:39092`), and refuses the machine-global broker on port 9092. It

@@ -66,7 +66,7 @@ common common-options
 library
   import: common-options
   hs-source-dirs: src
-  extra-libraries: rdkafka
+  pkgconfig-depends: rdkafka >=2.15
   build-depends:
     base >=4.21 && <5,
     bifunctors,
@@ -91,6 +91,7 @@ library
     Kafka.Topic.Types
     Kafka.Transaction
     Kafka.Types
+    Kafka.Version
 
   other-modules:
     Kafka.Callbacks
@@ -176,3 +177,4 @@ test-suite rdkafka-hs-test
   other-modules:
     Kafka.Consumer.ConsumerRecordMapSpec
     Kafka.Consumer.ConsumerRecordTraverseSpec
+    Kafka.VersionTest
