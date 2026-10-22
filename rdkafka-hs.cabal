@@ -147,6 +147,7 @@ test-suite rdkafka-hs-integration
   if !flag(integration)
     buildable: False
   other-modules:
+    Kafka.Integration.AssignOnlyTest
     Kafka.Integration.BatchTest
     Kafka.Integration.ConfigurationTest
     Kafka.Integration.ConsumerTest

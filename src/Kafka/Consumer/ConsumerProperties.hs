@@ -38,7 +38,7 @@ import Data.Text qualified as Text
 import Kafka.Consumer.Types (ConsumerGroupId (..))
 import Kafka.Types (BrokerAddress (..), ClientId (..), KafkaCompressionCodec (..), KafkaDebug (..), KafkaLogLevel (..), Millis (..), kafkaCompressionCodecToText, kafkaDebugToText)
 
-import Kafka.Consumer.Callbacks as X
+import Kafka.Consumer.Callbacks as X hiding (forwardPartitionsToMessageQueue)
 
 -- | Whether the callback polling should be done synchronously or not.
 data CallbackPollMode

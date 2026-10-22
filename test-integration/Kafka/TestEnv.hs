@@ -34,6 +34,8 @@ module Kafka.TestEnv
     withProducer,
     withConsumer,
     withKafka,
+    withTopic,
+    produceTo,
 
     -- * Messages
     receiveMessages,
@@ -45,7 +47,7 @@ where
 
 import Control.Concurrent (threadDelay)
 import Control.Concurrent.MVar (newEmptyMVar, tryPutMVar, tryReadMVar)
-import Control.Exception (throwIO)
+import Control.Exception (finally, throwIO)
 import Control.Monad (forM_, void)
 import Data.ByteString qualified as BS
 import Data.Char (isDigit)
@@ -55,6 +57,7 @@ import Data.Text qualified as Text
 import Kafka.Consumer as C
 import Kafka.Metadata (allTopicsMetadata)
 import Kafka.Producer as P
+import Kafka.Topic (NewTopic (..), PartitionCount (..), ReplicationFactor (..), createTopic, deleteTopic)
 import System.Random qualified as Rnd
 import System.Timeout (timeout)
 import Test.Tasty (TestTree, withResource)
@@ -252,6 +255,24 @@ withKafka env props =
   withResource
     ((,) <$> mkConsumerWith env props <*> mkProducer env)
     (\(consumer, producer) -> closeProducer producer >> void (closeConsumer consumer))
+
+-- | Create a topic named @<prefix>-<suffix>@ with the given number of
+-- partitions, run the action with it and a producer, then delete the topic.
+withTopic :: TestEnv -> Text -> Int -> (TopicName -> KafkaProducer -> IO a) -> IO a
+withTopic env suffix partitions action = do
+  let topic = TopicName (prefixedName env suffix)
+  producer <- mkProducer env
+  flip finally (void (deleteTopic producer topic) >> closeProducer producer) $ do
+    createTopic producer (NewTopic topic (PartitionCount partitions) (ReplicationFactor 1) mempty)
+      >>= either (throwIO . userError . ("createTopic: " <>) . show) (const (pure ()))
+    action topic producer
+
+-- | Produce one record to a partition and wait for its delivery.
+produceTo :: KafkaProducer -> TopicName -> Int -> BS.ByteString -> IO ()
+produceTo producer topic partition value = do
+  res <- produceMessage producer (ProducerRecord topic (SpecifiedPartition partition) Nothing (Just value) mempty)
+  forM_ res (throwIO . userError . ("produceMessage: " <>) . show)
+  flushProducer producer
 
 data ReadState = Skip | Read
 

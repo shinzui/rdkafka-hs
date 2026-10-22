@@ -55,6 +55,7 @@ module Kafka.Consumer
     module X,
     runConsumer,
     newConsumer,
+    newAssignedConsumer,
     assign,
     assignment,
     subscription,
@@ -95,16 +96,17 @@ import Data.ByteString qualified as BS
 import Data.ByteString.Unsafe (unsafeUseAsCStringLen)
 import Data.IORef (readIORef, writeIORef)
 import Data.Map qualified as M hiding (foldr, map)
-import Data.Maybe (fromMaybe)
+import Data.Maybe (fromMaybe, isJust)
 import Data.Set (Set)
 import Data.Set qualified as Set
 import Data.Text (Text)
 import Data.Text qualified as Text
 import Foreign hiding (void)
+import Kafka.Consumer.Callbacks (forwardPartitionsToMessageQueue)
 import Kafka.Consumer.Convert (fromMessagePtr, fromNativeTopicPartitionList'', offsetCommitToBool, offsetToInt64, toMap, toNativeTopicPartitionList, toNativeTopicPartitionList', topicPartitionFromMessageForCommit)
 import Kafka.Consumer.Types (KafkaConsumer (..))
 import Kafka.Internal.RdKafka (RdKafkaRespErrT (..), RdKafkaTopicPartitionListTPtr, RdKafkaTypeT (..), newRdKafkaT, newRdKafkaTopicPartitionListT, newRdKafkaTopicT, rdKafkaAssign, rdKafkaAssignment, rdKafkaAssignmentLost, rdKafkaCommit, rdKafkaCommitted, rdKafkaConfSetDefaultTopicConf, rdKafkaConsumeBatchQueue, rdKafkaConsumeQueue, rdKafkaConsumerClose, rdKafkaConsumerClosed, rdKafkaConsumerPoll, rdKafkaErrorCode, rdKafkaErrorDestroy, rdKafkaFatalError, rdKafkaMessageDestroy, rdKafkaOffsetsStore, rdKafkaPausePartitions, rdKafkaPollSetConsumer, rdKafkaPosition, rdKafkaQueueDestroy, rdKafkaQueueGetConsumer, rdKafkaQueueIoEventEnable, rdKafkaQueueNew, rdKafkaResumePartitions, rdKafkaSeek, rdKafkaSeekPartitions, rdKafkaSetLogLevel, rdKafkaSubscribe, rdKafkaSubscription, rdKafkaTopicConfDup, rdKafkaTopicPartitionListAdd)
-import Kafka.Internal.Setup (Callback (..), CallbackPollStatus (..), Kafka (..), KafkaConf (..), KafkaProps (..), TopicConf (..), TopicProps (..), getKafkaConf, getRdKafka, kafkaConf, topicConf)
+import Kafka.Internal.Setup (Callback (..), CallbackPollStatus (..), Kafka (..), KafkaConf (..), KafkaProps (..), TopicConf (..), TopicProps (..), getKafkaConf, getRdKafka, getRdMsgQueue, kafkaConf, topicConf)
 import Kafka.Internal.Shared (kafkaErrorToMaybe, maybeToLeft, rdKafkaErrorToEither, setSaslCredentials')
 import System.Posix.Types (Fd (..))
 
@@ -134,6 +136,10 @@ runConsumer cp sub f =
     runHandler (Right kc) = f kc
 
 -- | Create a `KafkaConsumer`. This consumer must be correctly released using 'closeConsumer'.
+--
+-- With an empty subscription (@mempty@) the consumer never calls
+-- @rd_kafka_subscribe@ and so never joins its consumer group; it reads only the
+-- partitions given to 'assign'. 'newAssignedConsumer' names that case.
 newConsumer ::
   (MonadIO m) =>
   ConsumerProperties ->
@@ -183,6 +189,16 @@ newConsumer props (Subscription ts tp) = liftIO $ do
             Just err -> do
               _ <- closeConsumer kafka
               return (Left err)
+
+-- | Create a consumer that never subscribes and therefore never joins a group:
+-- it reads only the partitions given to 'assign', from the offsets given there.
+--
+-- librdkafka still requires a @group.id@. With 'noAutoCommit', and without
+-- committing offsets explicitly, the consumer sends neither JoinGroup nor
+-- OffsetCommit, so the broker never records the group. Release the consumer with
+-- 'closeConsumer' or 'destroyConsumer'.
+newAssignedConsumer :: (MonadIO m) => ConsumerProperties -> m (Either KafkaError KafkaConsumer)
+newAssignedConsumer props = newConsumer props mempty
 
 -- | Polls a single message
 --
@@ -410,10 +426,32 @@ commitPartitionsOffsets o k ps =
 
 -- | Assigns the consumer to consume from the given topics, partitions,
 -- and offsets.
+--
+-- The new assignment replaces the previous one; an empty list unassigns every
+-- partition. In 'CallbackPollModeAsync' each partition's queue is forwarded to
+-- the queue 'pollMessage' reads before it is assigned, so no record is fetched
+-- onto librdkafka's consumer queue, where the background loop would discard it.
+-- Use this on a consumer from 'newAssignedConsumer'; on a subscribed consumer the
+-- rebalance callback assigns partitions.
 assign :: (MonadIO m) => KafkaConsumer -> [TopicPartition] -> m (Maybe KafkaError)
-assign (KafkaConsumer (Kafka k) _) ps = liftIO $ do
+assign c@(KafkaConsumer (Kafka k) conf) ps = liftIO $ do
+  let partitions = (tpTopicName &&& tpPartition) <$> ps
+  forwardPartitionsToMessageQueue c partitions
   tps <- toNativeTopicPartitionList ps
-  kafkaErrorToMaybe . KafkaResponseError <$> rdKafkaAssign k tps
+  err <- rdKafkaAssign k tps
+  -- Reassigning a partition stops its fetcher, and librdkafka clears the
+  -- partition queue's forwarding when that stop is processed, after
+  -- rd_kafka_assign has returned. The stop requests and rd_kafka_assignment's
+  -- request are served in order by librdkafka's main thread, so once
+  -- rd_kafka_assignment returns the stops are done and the forwarding can be
+  -- restored. Records fetched in between wait on the partition queue itself
+  -- (librdkafka does not re-forward an application-forwarded queue) and move
+  -- with the forward.
+  isAsync <- isJust <$> getRdMsgQueue conf
+  when (err == RdKafkaRespErrNoError && isAsync) $ do
+    void (rdKafkaAssignment k)
+    forwardPartitionsToMessageQueue c partitions
+  pure (kafkaErrorToMaybe (KafkaResponseError err))
 
 -- | Returns current consumer's assignment
 assignment :: (MonadIO m) => KafkaConsumer -> m (Either KafkaError (M.Map TopicName [PartitionId]))

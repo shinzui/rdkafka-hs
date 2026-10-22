@@ -3,13 +3,14 @@
 module Kafka.Consumer.Callbacks
   ( rebalanceCallback,
     offsetCommitCallback,
+    forwardPartitionsToMessageQueue,
     module X,
   )
 where
 
 import Control.Arrow ((&&&))
 import Control.Monad (forM_, void)
-import Foreign.ForeignPtr (newForeignPtr_)
+import Foreign.ForeignPtr (finalizeForeignPtr, newForeignPtr_)
 import Foreign.Ptr (nullPtr)
 import Kafka.Callbacks as X
 import Kafka.Consumer.Convert (fromNativeTopicPartitionList', fromNativeTopicPartitionList'')
@@ -48,12 +49,27 @@ offsetCommitCallback callback =
       callback (KafkaConsumer (Kafka k') kc) (KafkaResponseError err) pls
 
 -------------------------------------------------------------------------------
+
+-- | In 'Kafka.Consumer.ConsumerProperties.CallbackPollModeAsync', forward each
+-- partition's queue to the consumer's message queue, which 'Kafka.Consumer.pollMessage'
+-- reads; without this, records stay on librdkafka's consumer queue, where the
+-- background callback-poll loop discards them. Does nothing in sync mode.
+--
+-- The forwarding outlives the partition-queue reference, which is released
+-- here rather than left to the garbage collector. Forward before assigning a
+-- partition, or pause it around forwarding, so no record is fetched onto the
+-- consumer queue in between.
+forwardPartitionsToMessageQueue :: KafkaConsumer -> [(TopicName, PartitionId)] -> IO ()
+forwardPartitionsToMessageQueue k ps = do
+  mbq <- getRdMsgQueue (getKafkaConf k)
+  forM_ mbq $ \mq -> forM_ ps $ \(t, p) -> redirectPartitionQueue (getKafka k) t p mq
+
 redirectPartitionQueue :: Kafka -> TopicName -> PartitionId -> RdKafkaQueueTPtr -> IO ()
 redirectPartitionQueue (Kafka k) (TopicName t) (PartitionId p) q = do
   mpq <- rdKafkaQueueGetPartition k (Text.unpack t) p
   case mpq of
     Nothing -> return ()
-    Just pq -> rdKafkaQueueForward pq q
+    Just pq -> rdKafkaQueueForward pq q >> finalizeForeignPtr pq
 
 setRebalanceCallback ::
   (KafkaConsumer -> RebalanceEvent -> IO ()) ->
@@ -77,13 +93,13 @@ setRebalanceCallback f k e pls = do
       mbq <- getRdMsgQueue $ getKafkaConf k
       case mbq of
         Nothing -> pure ()
-        Just mq -> do
+        Just _ -> do
           {- Magnus Edenhill:
               If you redirect after assign() it means some messages may be forwarded to the single consumer queue,
               so either do it before assign() or do: assign(); pause(); redirect; resume()
           -}
           void $ rdKafkaPausePartitions kptr pls
-          forM_ ps (\tp -> redirectPartitionQueue (getKafka k) (tpTopicName tp) (tpPartition tp) mq)
+          forwardPartitionsToMessageQueue k assignment
           void $ rdKafkaResumePartitions kptr pls
 
       f k (RebalanceAssign assignment)
