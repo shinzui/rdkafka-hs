@@ -143,8 +143,8 @@ for it and `mori://shinzui/shibuya-kafka-adapter` replaces its idle sleep
 (`mori://shinzui/shibuya-kafka-adapter/okf/improvement-requests/concepts/IR-1`). Neither
 is edited by this plan.
 
-ADR context: `docs/adr/3-integration-tests-run-against-a-project-local-redpanda.md` and
-`docs/adr/4-consumer-fatal-errors-are-surfaced-in-band.md` apply (tests use the private
+ADR context: `docs/adr/integration-tests-run-against-a-project-local-redpanda.md` and
+`docs/adr/consumer-fatal-errors-are-surfaced-in-band.md` apply (tests use the private
 broker; the fatal check in `pollMessage` must stay in front of any new poll path). No
 cross-repository ADR constrains the design; the request originates from
 `mori://shinzui/shibuya-kafka-adapter/okf/bug-reports/concepts/BUG-7`.

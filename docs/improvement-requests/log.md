@@ -1,5 +1,8 @@
 # Bundle Update Log
 
+## 2026-10-22
+* **Update**: IR-2 AC-5 now targets a tagged release of rdkafka-hs at https://github.com/shinzui/rdkafka-hs, the fork's maintained successor; request identity and origin are unchanged.
+
 ## 2026-10-21
 * **Addition**: IR-2 requests assign-only consumer construction, partition-attributed per-message errors, and deterministic client destruction for Shōko's bounded Kafka observer.
 

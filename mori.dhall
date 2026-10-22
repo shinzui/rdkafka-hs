@@ -39,4 +39,47 @@ in  Schema.Project::{
     , dependencies = [ "confluentinc/librdkafka" ]
     , dependencyRefs =
       [ Schema.MoriRef::{ namespace = "confluentinc", name = "librdkafka" } ]
+    , okfBundles =
+      [ Schema.OkfBundle::{
+        , name = "adrs"
+        , path = "docs/adr"
+        , profileBinding = Some
+            ( Schema.ProfileBinding.Published
+                Schema.PinnedImport::{
+                , publisher = "shinzui/okf-profiles"
+                , publisherRef = Some Schema.MoriRef::{
+                  , namespace = "shinzui"
+                  , name = "okf-profiles"
+                  }
+                , export = Some "documentation.architectureDecisions"
+                , version = Some "v0.19.0"
+                , pin = Some
+                    "sha256:85176d78369b6d73c9f13c30277903b629d6bf048a4c7d71fc26e68b99c3eaa6"
+                }
+            )
+        , okfVersion = "0.2"
+        , description = Some "Durable architecture decisions"
+        }
+      , Schema.OkfBundle::{
+        , name = "improvement-requests"
+        , path = "docs/improvement-requests"
+        , profileBinding = Some
+            ( Schema.ProfileBinding.Published
+                Schema.PinnedImport::{
+                , publisher = "shinzui/okf-profiles"
+                , publisherRef = Some Schema.MoriRef::{
+                  , namespace = "shinzui"
+                  , name = "okf-profiles"
+                  }
+                , export = Some "coordination.improvementRequests"
+                , version = Some "v0.18.0"
+                , pin = Some
+                    "sha256:7d3a4a22be12fd0e697d6012ed1eb2efe4cb5dc4700d08fd49aa5e4c0e523df8"
+                }
+            )
+        , okfVersion = "0.2"
+        , description = Some
+            "Requested changes to rdkafka-hs, carried over from the hw-kafka-client fork, with stable IR-N handles"
+        }
+      ]
     }

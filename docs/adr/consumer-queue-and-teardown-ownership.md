@@ -1,8 +1,17 @@
+---
+type: Architecture Decision Record
+title: Consumer queue and teardown ownership
+description: Manual assignment shares subscription queue routing, and destroyConsumer synchronously stops polling, releases queue references and destroys the client without a graceful group close.
+timestamp: 2026-10-22T00:05:10Z
+generated:
+  by: codex-cli/gpt-6-astra
+  at: "2026-10-22T00:05:10Z"
+docId: ADR-1
+status: Accepted
+date: 2026-10-21
+---
+
 # Consumer queue and teardown ownership
-
-Date: 2026-10-21
-
-Status: Accepted
 
 ## Context
 

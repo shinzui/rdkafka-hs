@@ -58,7 +58,7 @@ they add their own bindings.
       passes on a fresh one; the binding module's section conventions are documented at
       the top of the file.
 - [ ] M3: `flushProducerTimeout`, `purgeProducer`, `assignmentLost`, `consumerClosed` and
-      `setSaslCredentials` exist, are documented, and pass their tests (pure unit tests and lifecycle integration tests); ADR-2 amended with the
+      `setSaslCredentials` exist, are documented, and pass their tests (pure unit tests and lifecycle integration tests); ADR-4 amended with the
       librdkafka floor rationale; CHANGELOG updated.
 
 
@@ -152,7 +152,7 @@ against the project-local Redpanda at `RDKAFKA_TEST_BROKER` (default `127.0.0.1:
 through `just test-it`, with fixtures in `test-integration/Kafka/TestEnv.hs` and one module
 per group under `test-integration/Kafka/Integration/`, all from EP-2.
 
-ADR context: `docs/adr/2-toolchain-floor-is-ghc-9-12-and-librdkafka-2-15.md` (from EP-1)
+ADR context: ADR-4, `docs/adr/toolchain-floor-is-ghc-9-12-and-librdkafka-2-15.md` (from EP-1),
 states the floor; this plan amends it with the enforcement mechanism and the policy on
 newer headers. No other local or cross-repository ADR constrains this plan.
 
@@ -238,7 +238,7 @@ without checking the security protocol. Test successive credential replacement, 
 a fabricated invalid-argument result. A raw null-argument error test belongs only at
 the C binding boundary; the public Text API cannot represent null pointers. Integration: in the
 inherited consumer group, `assignmentLost` is `False` after assignment; `flushProducer`
-still delivers the two-message scenario. Append the CHANGELOG entries and amend ADR-2 with
+still delivers the two-message scenario. Append the CHANGELOG entries and amend ADR-4 with
 the `pkgconfig-depends` enforcement and the rule that newer librdkafka releases are
 adopted by moving the Nix pin and rerunning the inventory.
 

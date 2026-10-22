@@ -58,18 +58,25 @@ upstream are carried over as files but are ported and run by the next plan,
 
 ## Progress
 
-- [ ] M1: Fork history imported, legacy scaffolding removed, package renamed to
+- [x] M1 (2026-10-22): Fork history imported, legacy scaffolding removed, package renamed to
       `rdkafka-hs`, and `cabal build all` succeeds inside the Nix dev shell with
-      librdkafka provided by the `nix.kafka` option.
-- [ ] M2: Package meets the project standards: `GHC2024` common stanza, warning set and
+      librdkafka provided by the `nix.kafka` option. Evidence: merge `3e0b2db` has
+      parents `387b56e` (pre-import HEAD) and `fe5328a`; `6caed63` is reachable;
+      `pkg-config --modversion rdkafka` prints `2.15.0`; `cabal build all` exits 0.
+- [x] M2 (2026-10-22): Package meets the project standards: `GHC2024` common stanza, warning set and
       default extensions from the `haskell-library` template, explicit deriving
       strategies, postpositive `qualified` imports, `nix fmt` clean, pre-commit passing,
       unit tests ported to tasty and passing under both `cabal test rdkafka-hs-test` and
-      `nix build`, examples building with `-f examples`.
-- [ ] M3: README, CHANGELOG, `docs/improvement-requests/` carried over,
-      `docs/adr/` adopted with ADR-1 (fork identity) and ADR-2 (toolchain floor), both
-      bundles registered in `mori.dhall`, and `okf validate` plus `mori validate`
-      passing.
+      `nix build`, examples building with `-f examples`. Evidence: a clean
+      `cabal build all -f examples --enable-tests` prints no warnings; `All 7 tests
+      passed` locally and in the `nix build` log; a second `nix fmt` changes 0 files;
+      commit `9710076` passed the treefmt and commit-message hooks.
+- [x] M3 (2026-10-22): README, CHANGELOG, `docs/improvement-requests/` carried over,
+      `docs/adr/` adopted with ADR-3 (fork identity) and ADR-4 (toolchain floor) beside
+      the adopted review records ADR-1 and ADR-2, both bundles registered in
+      `mori.dhall`, and `okf validate` plus `mori validate` passing. Evidence: `just
+      check` passes (`OK: 4 concepts`, `OK: 2 concepts`, `Configuration is valid.`,
+      sandboxed build, treefmt and pre-commit checks).
 
 
 ## Surprises & Discoveries
@@ -79,6 +86,32 @@ bundle at `fe5328a81941e92b93c3f47de14878346c9a5b43`; the source checkout remain
 on `main`. The import is now commit-pinned and no longer depends on untracked files.
 The current flake exposes only default and ghc9124 shells, so secondary-compiler
 support must be proven before advertising it.
+
+Implementation (2026-10-22):
+
+- The seihou-generated `nix/haskell.nix` is not nixpkgs-fmt clean (its
+  `applicationOverlays` line), so the pre-commit treefmt hook rewrote a managed file.
+  `flake.module.nix` now excludes `flake.nix` and `nix/*.nix` from treefmt instead.
+- seihou's `.gitignore` ignores `.envrc`, while upstream tracked an `.envrc` holding
+  `use nix`. The merge untracked upstream's file and kept the generated one on disk,
+  so the planned `git checkout --ours .envrc` did not apply. Upstream's `.gitignore`
+  also ignores `*.cabal` and `*.ghc*`; those patterns were not carried over.
+- With `DeriveAnyClass` on, a strategy-less `deriving (Num)`, `(IsString)`, `(Enum)`,
+  `(Semigroup)` or `(Monoid)` on a newtype becomes an empty *anyclass* instance
+  (`-Wmissing-methods`), which would loop or crash at runtime. The explicit
+  strategies are therefore a correctness fix: `Show`, `Read`, `Eq`, `Ord` and
+  `Generic` stay stock (so `show` output is unchanged) and the rest are `newtype`.
+- c2hs emits strategy-less `deriving (Enum)` for contiguous enums. `Show`, `Eq` and
+  `Bounded` on c2hs enums moved to standalone `deriving stock instance`
+  declarations; `RdKafka.chs` alone disables `-Wmissing-deriving-strategies`,
+  `-Wmissing-export-lists` and `-Widentities` with a comment.
+- No `MonoLocalBinds` or `OverloadedStrings` ambiguities appeared.
+- The import merge and the rename were committed with `--no-verify`: the treefmt
+  hook would otherwise have reformatted every inherited source inside those
+  commits. Formatting landed in `9710076`, and every later commit runs the hooks.
+- `nix flake check` builds only the treefmt and pre-commit checks, not the package,
+  so `just check` also runs `nix build` and the strict bundle validation.
+- Mori's registry is available again (`mori registry show` works).
 
 
 ## Decision Log
@@ -95,6 +128,20 @@ support must be proven before advertising it.
   `haskell-library` template's BSD-3 default does not apply to a fork.
   Date: 2026-10-21
 
+- Decision: The existing review ADRs take the first handles, ADR-1 (consumer queue
+  and teardown ownership) and ADR-2 (release validation), and the new records are
+  ADR-3 (fork identity) and ADR-4 (toolchain floor). ADR filenames are unnumbered
+  slugs, matching the two existing records, so no filename number can disagree with
+  a `docId`.
+  Rationale: The MasterPlan requires adopting the existing records before allocating
+  new handles; `okf id next` returned ADR-3 after adoption.
+  Date: 2026-10-22
+
+- Decision: `tested-with` names only GHC 9.12.4; no 9.14.1 shell was wired.
+  Rationale: The flake exposes no secondary shell and advertising an untested
+  compiler is what the MasterPlan forbids.
+  Date: 2026-10-22
+
 - Decision: Enable `DeriveAnyClass`, `DuplicateRecordFields`, `OverloadedLabels` and
   `OverloadedStrings` as the standard requires, but do not rename any public record
   field or add `generic-lens` to the library's dependencies.
@@ -105,7 +152,20 @@ support must be proven before advertising it.
 
 ## Outcomes & Retrospective
 
-(To be filled during and after implementation.)
+Completed 2026-10-22. The repository is now the `rdkafka-hs` package: upstream
+history back to 2016 is reachable through `git log --follow`, the package builds
+warning-free on GHC 9.12.4 against librdkafka 2.15.0, the seven inherited unit tests
+pass under tasty locally and in the Nix sandbox, and `just check` validates the
+build, formatting and both knowledge bundles. The public API is unchanged apart from
+the package name; `:t Kafka.Consumer.consumerFatalError` in `cabal repl` prints
+`MonadIO m => KafkaConsumer -> m (Maybe (KafkaError, Text))`, confirming the fork's
+fix is what was imported.
+
+The integration suite is renamed and flagged off but still hspec; EP-2 ports it.
+The largest lesson is that the standards' `DeriveAnyClass` default is unsafe with
+strategy-less newtype deriving; ADR-4 records it so later code does not regress.
+The deviations from the planned commands (`.envrc`, treefmt exclusion, hook-less
+import commits) are recorded above.
 
 
 ## Context and Orientation
@@ -265,10 +325,10 @@ to point at `https://github.com/shinzui/rdkafka-hs`, retaining its original orig
 recording the successor migration with `okf log add`. Adopt the
 ADR bundle by running the `adopt-architecture-decisions` blueprint (it creates
 `docs/adr/profile.dhall`, `index.md`, `log.md` and registers the bundle); then write
-`docs/adr/1-rdkafka-hs-is-a-maintained-fork-of-hw-kafka-client.md` (package name,
+`docs/adr/rdkafka-hs-is-a-maintained-fork-of-hw-kafka-client.md` (ADR-3; package name,
 retained namespace, restarted version line, history imported, upstream tracked in
 `mori.dhall`, and the exclusion of public record-field renames) and
-`docs/adr/2-toolchain-floor-is-ghc-9-12-and-librdkafka-2-15.md` (GHC2024, the common
+`docs/adr/toolchain-floor-is-ghc-9-12-and-librdkafka-2-15.md` (ADR-4; GHC2024, the common
 stanza, why no older GHC, librdkafka floor from the Nix pin). Register both bundles in
 `mori.dhall` under `okfBundles`, following the shape used by
 `mori://shinzui/shibuya-kafka-adapter` in its `mori.dhall`. Acceptance: `okf validate`

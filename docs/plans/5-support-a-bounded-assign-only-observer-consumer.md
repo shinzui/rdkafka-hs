@@ -159,7 +159,7 @@ with fixtures in `test-integration/Kafka/TestEnv.hs` and groups registered in
 Redpanda supports transactions and `read_committed` isolation. The socket test for
 `destroyConsumer` needs the `network` package in the integration suite.
 
-ADR context: `docs/adr/4-consumer-fatal-errors-are-surfaced-in-band.md` (from EP-2)
+ADR context: `docs/adr/consumer-fatal-errors-are-surfaced-in-band.md` (from EP-2)
 requires every poll path to report a raised fatal in-band; `pollMessageAttributed` must
 call the same fatal check as `pollMessage`. Cross-repository,
 `mori://shinzui/keiro/okf/adrs/concepts/ADR-11` already states that "consumer close is

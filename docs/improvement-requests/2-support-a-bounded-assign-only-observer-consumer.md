@@ -22,8 +22,8 @@ acceptanceCriteria:
     statement: The released partitionWatermarkOffsets on a consumer configured with isolation.level=read_committed reports the last stable offset as the high offset while a transaction is open.
     verification: A test opens a transaction holding one record, queries the watermark from a read_committed consumer and from a read_uncommitted one, sees the read_committed high offset stop before the open transaction, and sees it advance after commit.
   - id: AC-5
-    statement: A tagged commit of the fork carries AC-1 through AC-4 so downstream packages can pin it immutably.
-    verification: The tag exists on https://github.com/shinzui/hw-kafka-client and its commit builds against librdkafka 2.15.0 with GHC 9.12.
+    statement: A tagged release of rdkafka-hs, the maintained successor of the fork, carries AC-1 through AC-4 so downstream packages can pin it immutably.
+    verification: The tag exists on https://github.com/shinzui/rdkafka-hs and its commit builds against librdkafka 2.15.0 with GHC 9.12.
 reviews:
   - kind: model
     reviewer: claude-code/claude-opus-5-5

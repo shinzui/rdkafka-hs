@@ -26,7 +26,19 @@ build-examples:
 fmt:
     nix fmt
 
-# Build and test the package in the Nix sandbox and run the flake checks.
+# Build and unit-test the package in the Nix sandbox, run the flake checks
+# (formatting, pre-commit) and validate the knowledge bundles.
 [group("build")]
-check:
+check: docs-check
+    nix build
     nix flake check
+
+
+# --- Documentation ---
+
+# Validate the ADR and improvement-request bundles against their profiles.
+[group("docs")]
+docs-check:
+    okf validate docs/adr --strict --profile docs/adr/profile.dhall --profile-enforce --log-enforce
+    okf validate docs/improvement-requests --strict --profile docs/improvement-requests/profile.dhall --profile-enforce --log-enforce
+    mori validate

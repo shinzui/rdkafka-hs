@@ -57,8 +57,8 @@ a broker because the integration suite sits behind a manual cabal flag.
       hspec scenario and passes against the private broker via `just test-it`;
       `nix build` still passes without it.
 - [ ] M3: Fenced-static-member fatal regression test passes in both callback poll modes
-      and is the documented producer/consumer check for the harness; ADR-3 (private
-      broker for tests) and ADR-4 (fatal errors surfaced in-band) written.
+      and is the documented producer/consumer check for the harness; the private-broker
+      and fatal-errors-in-band ADRs written with handles from `okf id next`.
 
 
 ## Surprises & Discoveries
@@ -162,10 +162,15 @@ into the fatal `RdKafkaRespErrFencedInstanceId`. librdkafka also exposes
 `rd_kafka_test_fatal_error`, a public function that raises an arbitrary fatal for testing,
 which is the fallback trigger if Redpanda turns out not to fence.
 
-Local ADR context: EP-1 creates the fork-identity and toolchain-floor records and
-adopts [consumer queue and teardown ownership](../adr/consumer-queue-and-teardown-ownership.md).
-Use the adopted handles from `okf id list`; allocate new records with `okf id next`,
-not by assuming ADR-3 and ADR-4 are free. Sync fixtures must drive callbacks while
+Local ADR context: EP-1 adopted `docs/adr/` as a profiled OKF bundle holding ADR-1
+[consumer queue and teardown ownership](../adr/consumer-queue-and-teardown-ownership.md),
+ADR-2 [release validation precedes publication](../adr/release-validation-before-publication.md),
+ADR-3 [the fork identity](../adr/rdkafka-hs-is-a-maintained-fork-of-hw-kafka-client.md) and
+ADR-4 [the toolchain floor](../adr/toolchain-floor-is-ghc-9-12-and-librdkafka-2-15.md).
+ADR filenames are unnumbered slugs; the `docId` is the handle. Allocate new records
+with `okf id next` (ADR-5 was next when EP-1 completed), add them to `index.md` with
+`okf index docs/adr --write --okf-version 0.2`, log them with `okf log add`, and run
+`just docs-check`. Sync fixtures must drive callbacks while
 waiting for assignment, and cleanup must stay within each test deadline.
 
 
@@ -223,9 +228,9 @@ Redpanda, record the observation in Surprises & Discoveries, bind
 `rd_kafka_test_fatal_error` in `src/Kafka/Internal/RdKafka.chs`, expose it from a new
 exposed module `Kafka.Internal.Testing` documented as test support only, and make the test
 raise the fatal that way, keeping the static-membership scenario as a second, skippable
-case. Write `docs/adr/3-integration-tests-run-against-a-project-local-redpanda.md`
+case. Write `docs/adr/integration-tests-run-against-a-project-local-redpanda.md`
 (private cluster, ports, flag, no shared broker, Darwin only) and
-`docs/adr/4-consumer-fatal-errors-are-surfaced-in-band.md` (the library-side statement of
+`docs/adr/consumer-fatal-errors-are-surfaced-in-band.md` (the library-side statement of
 the contract in keiro's ADR-11: in-band `RdKafkaRespErrFatal` from every poll in both
 modes, cause from `consumerFatalError`, the background loop destroys what it polls, and
 the documented limitation that `max.poll.interval.ms` cannot detect a stuck application

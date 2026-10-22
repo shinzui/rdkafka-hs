@@ -1,13 +1,55 @@
-# hw-kafka-client
+# rdkafka-hs
 
-[![CircleCI](https://circleci.com/gh/haskell-works/hw-kafka-client.svg?style=svg&circle-token=5f3ada2650dd600bc0fd4787143024867b2afc4e)](https://circleci.com/gh/haskell-works/hw-kafka-client)
+Kafka bindings for Haskell backed by
+[librdkafka](https://github.com/confluentinc/librdkafka), the C client for
+Apache Kafka.
 
-Kafka bindings for Haskell backed by the
-[librdkafka C module](https://github.com/edenhill/librdkafka).
+rdkafka-hs is the maintained successor of
+[hw-kafka-client](https://github.com/haskell-works/hw-kafka-client). Upstream
+has not been released since 5.3.0 (2023) and has not been pushed to since
+October 2025, while dependents need fixes it does not carry, most importantly
+that a consumer fatal error is now reported from every poll instead of being
+silently swallowed in the default callback poll mode. This repository contains
+the full upstream history, the unreleased upstream commits and those fixes.
+See [CHANGELOG.md](CHANGELOG.md) for everything that differs from
+hw-kafka-client 5.3.0.
 
-## Ecosystem
+The `Kafka.*` module namespace, type names and record fields are unchanged, so
+migrating from hw-kafka-client means replacing the dependency name and its
+version bounds in `build-depends`:
 
-HaskellWorks Kafka ecosystem is described here: <https://github.com/haskell-works/hw-kafka>
+```cabal
+build-depends: rdkafka-hs >=1.0 && <1.1
+```
+
+## Requirements
+
+- GHC 9.12 or newer.
+- librdkafka 2.15 or newer, with its headers and pkg-config file.
+- [c2hs](https://hackage.haskell.org/package/c2hs), used to generate the FFI
+  bindings at build time.
+
+## Development
+
+The Nix flake provides GHC, HLS, cabal, c2hs and librdkafka. Enter the shell
+with `nix develop` (or let direnv load it), then:
+
+```bash
+just build            # cabal build all
+just test             # cabal test rdkafka-hs-test (unit tests, no broker)
+just build-examples   # build the example executable
+just fmt              # nix fmt: fourmolu, cabal-gild and nixpkgs-fmt
+just check            # sandboxed build and unit tests, formatting, docs-check
+just docs-check       # validate docs/adr and docs/improvement-requests
+```
+
+`nix build` builds the package and runs its unit tests in the Nix sandbox.
+
+## Integration tests
+
+The integration suite `rdkafka-hs-integration` needs a running Kafka broker and
+is disabled unless the manual `integration` flag is set. Instructions for
+running it against a project-local broker are not written yet.
 
 ## Consumer
 
@@ -18,8 +60,6 @@ by providing automatic rebalancing functionality. When a new consumer joins a co
 group the set of consumers attempts to "rebalance" the load to assign partitions to each consumer.
 
 ### Consumer example
-
-See [Running integration tests locally](#running-integration-tests-locally) to learn how to configure a local environment.
 
 ```bash
 cabal build --flag examples
@@ -36,6 +76,7 @@ To run an example please compile with the `examples` flag.
 
 ```haskell
 import Control.Exception (bracket)
+import Control.Monad (replicateM_)
 import Kafka.Consumer
 
 -- Global consumer properties
@@ -75,7 +116,7 @@ processMessages kafka = do
 
 ## Producer
 
-`kafka-client` producer supports sending messages to multiple topics.
+The producer supports sending messages to multiple topics.
 Target topic name is a part of each message that is to be sent by `produceMessage`.
 
 A working producer example can be found here: [ProducerExample.hs](example/ProducerExample.hs)
@@ -92,7 +133,7 @@ or Kafka cluster being offline can prevent the producer from doing it.
 When a message cannot be sent to Kafka for some time (see `message.timeout.ms` [configuration](https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md) option),
 the message is *dropped from the outgoing queue* and the *delivery report* indicating an error is raised.
 
-It is possible to configure `hw-kafka-client` to set an infinite message timeout so the message is
+It is possible to configure the producer with an infinite message timeout so the message is
 never dropped from the queue:
 
 ```haskell
@@ -104,7 +145,7 @@ producerProps = brokersList ["localhost:9092"]
 *Delivery reports* provide the way to detect when producer experiences problems sending messages
 to Kafka.
 
-Currently `hw-kafka-client` only supports delivery error callbacks:
+Currently the producer only supports delivery error callbacks:
 
 ```haskell
 producerProps :: ProducerProperties
@@ -215,27 +256,8 @@ _Note:_ this is a semi-naive solution as this waits forever (or until
 librdkafka times out). You should make sure that your configuration reflects
 the behavior you want out of this functionality.
 
-## Running integration tests locally
-
-[shell.nix](./shell.nix) can be used to provide a working environment that is enough to build and test `hw-kafka-client`.
-
-To be able to run tests locally, `$KAFKA_TEST_BROKER` environment variable is expected to be set (use [shell.nix](./shell.nix) or export manually).
-
-`$KAFKA_TEST_BROKER` should contain an IP address of an accessible Kafka broker that will be used to run integration tests against.
-
-With [Docker Compose](./docker-compose.yml) this variable is used to configure a Kafka broker with a UI on localhost:8080 to listen on this address:
-
-```
-$ docker-compose up
-```
-
-After that, integration tests can switched on with using 'it' flag:
-
-```
-$ cabal test --test-show-details=direct --flag it
-```
-
 ## Credits
 
-This project is inspired by [Haskakafka](https://github.com/cosbynator/haskakafka)
-which unfortunately doesn't seem to be actively maintained.
+rdkafka-hs is a fork of [hw-kafka-client](https://github.com/haskell-works/hw-kafka-client)
+by Alexey Raga and its contributors, which was itself inspired by
+[Haskakafka](https://github.com/cosbynator/haskakafka).

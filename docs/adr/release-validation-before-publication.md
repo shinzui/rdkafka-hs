@@ -1,8 +1,17 @@
+---
+type: Architecture Decision Record
+title: Release validation precedes publication
+description: The complete release candidate, including a scratch downstream build with renamed dependency and bounds, is validated before its tag is published, and requests close only after remote tag proof.
+timestamp: 2026-10-22T00:05:10Z
+generated:
+  by: codex-cli/gpt-6-astra
+  at: "2026-10-22T00:05:10Z"
+docId: ADR-2
+status: Accepted
+date: 2026-10-21
+---
+
 # Release validation precedes publication
-
-Date: 2026-10-21
-
-Status: Accepted
 
 ## Context
 
