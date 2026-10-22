@@ -23,6 +23,11 @@ provenance:
       at: 2026-10-22T00:00:20Z
       mode: "update"
       note: "Pin the recovered source/request commit and correct bootstrap, ADR adoption and compiler claims."
+    - model: "claude-opus-5-5"
+      harness: "claude-code"
+      at: 2026-10-22T00:07:13Z
+      mode: "implement"
+      note: "Implement EP-1 milestones: history import, standards, knowledge bundles."
 ---
 
 # Bootstrap rdkafka-hs from the hw-kafka-client fork

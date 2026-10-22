@@ -22,6 +22,11 @@ provenance:
       at: 2026-10-22T00:00:20Z
       mode: "update"
       note: "Clarify shared ownership and release gates; cascade source-verified review fixes to all six children."
+    - model: "claude-opus-5-5"
+      harness: "claude-code"
+      at: 2026-10-22T00:07:13Z
+      mode: "implement"
+      note: "Implement child plans in registry order; registry and progress kept current."
 ---
 
 # Fork hw-kafka-client as rdkafka-hs
@@ -146,7 +151,7 @@ repository, preserving the original request identity and origin.
 
 | # | Title | Path | Hard Deps | Soft Deps | Status |
 |---|-------|------|-----------|-----------|--------|
-| 1 | Bootstrap rdkafka-hs from the hw-kafka-client fork | docs/plans/1-bootstrap-rdkafka-hs-from-the-hw-kafka-client-fork.md | None | None | Not Started |
+| 1 | Bootstrap rdkafka-hs from the hw-kafka-client fork | docs/plans/1-bootstrap-rdkafka-hs-from-the-hw-kafka-client-fork.md | None | None | In Progress |
 | 2 | Run integration tests on a project-local Redpanda | docs/plans/2-run-integration-tests-on-a-project-local-redpanda.md | EP-1 | None | Not Started |
 | 3 | Refresh the librdkafka bindings for 2.15 and newer | docs/plans/3-refresh-the-librdkafka-bindings-for-2-15-and-newer.md | EP-1; EP-2 (M3 only) | None | Not Started |
 | 4 | Expose queue event notification for consumers | docs/plans/4-expose-queue-event-notification-for-consumers.md | EP-2, EP-3 | None | Not Started |
