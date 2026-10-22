@@ -125,7 +125,7 @@ executable kafka-client-example
 test-suite rdkafka-hs-integration
   import: common-options
   type: exitcode-stdio-1.0
-  main-is: Spec.hs
+  main-is: Main.hs
   hs-source-dirs: test-integration
   ghc-options:
     -threaded
@@ -134,23 +134,24 @@ test-suite rdkafka-hs-integration
 
   build-depends:
     base >=4.21 && <5,
-    bifunctors,
     bytestring,
     containers,
-    either,
-    hspec,
-    monad-loops,
     random,
     rdkafka-hs,
+    tasty ^>=1.5,
+    tasty-hunit ^>=0.10,
     text,
-    transformers,
-
-  build-tool-depends: hspec-discover:hspec-discover
 
   if !flag(integration)
     buildable: False
   other-modules:
-    Kafka.IntegrationSpec
+    Kafka.Integration.BatchTest
+    Kafka.Integration.ConfigurationTest
+    Kafka.Integration.ConsumerTest
+    Kafka.Integration.HeadersTest
+    Kafka.Integration.PerMessageCommitTest
+    Kafka.Integration.StoreOffsetsTest
+    Kafka.Integration.TopicTest
     Kafka.TestEnv
 
 test-suite rdkafka-hs-test
