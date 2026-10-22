@@ -5,9 +5,11 @@ description: Let a consumer be built without subscribing, report which partition
 generated:
   by: claude-code/claude-opus-5-5
   at: "2026-10-21T22:08:35Z"
-timestamp: 2026-10-22T01:23:41Z
+timestamp: 2026-10-22T01:54:19Z
 requestId: IR-2
-status: proposed
+status: completed
+completedAt: "2026-10-22T01:54:19Z"
+resolution: Released in rdkafka-hs v1.0.0.0 (commit 63031a21d070819fe89afbacb6ce76238816748f) at https://github.com/shinzui/rdkafka-hs; a kafka-effectful clone pinned to the tag builds and passes its tests.
 origin: mori://shinzui/shoko/plans/10-implement-the-kafka-topic-evidence-adapter
 acceptanceCriteria:
   - id: AC-1
@@ -166,3 +168,14 @@ stays open until AC-5 is met.
   after commit.
 - AC-5: the first tagged release of rdkafka-hs carries these changes; it is cut by
   `docs/plans/6-cut-the-first-rdkafka-hs-release-and-migration-guide.md`.
+
+## Resolution
+
+Completed on 2026-10-22 by the release `v1.0.0.0` of
+`https://github.com/shinzui/rdkafka-hs` (annotated tag object
+`e499013e3a8a84328834bb0b0755332263c4cdee`, commit
+`63031a21d070819fe89afbacb6ce76238816748f`), which satisfies AC-5. A clone of
+`mori://shinzui/kafka-effectful` pinned to that tag over HTTPS, with its five
+`hw-kafka-client >=5.3 && <6` dependencies changed to `rdkafka-hs >=1.0 && <1.1`,
+builds against librdkafka 2.15.0 with GHC 9.12.4 and passes its 44 broker-free
+tests.

@@ -5,9 +5,11 @@ description: Bind rd_kafka_queue_io_event_enable and apply it to the queue the c
 generated:
   by: claude-code/claude-fable-5-1
   at: "2026-09-30T17:52:37Z"
-timestamp: 2026-10-22T01:00:17Z
+timestamp: 2026-10-22T01:54:19Z
 requestId: IR-1
-status: proposed
+status: completed
+completedAt: "2026-10-22T01:54:19Z"
+resolution: Released in rdkafka-hs v1.0.0.0 (commit 63031a21d070819fe89afbacb6ce76238816748f) at https://github.com/shinzui/rdkafka-hs; a kafka-effectful clone pinned to the tag builds and passes its tests.
 origin: mori://shinzui/shibuya-kafka-adapter/okf/bug-reports/concepts/BUG-7
 acceptanceCriteria:
   - id: AC-1
@@ -138,3 +140,14 @@ librdkafka writes the payload when an op lands in the empty queue, at most once
 until the queue is next polled, and a wake-up can stand for a non-record event.
 The haddock documents the resulting wait protocol and that async applications
 still need bounded fatal-state checks.
+
+## Resolution
+
+Completed on 2026-10-22 by the release `v1.0.0.0` of
+`https://github.com/shinzui/rdkafka-hs` (annotated tag object
+`e499013e3a8a84328834bb0b0755332263c4cdee`, commit
+`63031a21d070819fe89afbacb6ce76238816748f`), which satisfies AC-3. A clone of
+`mori://shinzui/kafka-effectful` pinned to that tag over HTTPS, with its five
+`hw-kafka-client >=5.3 && <6` dependencies changed to `rdkafka-hs >=1.0 && <1.1`,
+builds against librdkafka 2.15.0 with GHC 9.12.4 and passes its 44 broker-free
+tests.

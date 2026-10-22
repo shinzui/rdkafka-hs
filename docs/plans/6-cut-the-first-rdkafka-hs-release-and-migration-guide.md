@@ -68,11 +68,27 @@ The two improvement requests' final acceptance criteria (IR-1 AC-3 and IR-2 AC-5
       `rdkafka-hs-1.0.0.0` and `kafka-effectful-0.3.1.0`, and its broker-free suite
       reports `All 44 tests passed`. The first candidate, `9143f6d`, failed that
       downstream proof (see Surprises) and was never published.
-- [ ] M2: Annotated tag `v1.0.0.0` pushed to `origin`; GitHub release created from the
+- [x] M2 (2026-10-22): Annotated tag `v1.0.0.0` pushed to `origin`; GitHub release created from the
       changelog section; the published tag resolves to the verified candidate commit.
-- [ ] M3: A scratch clone of `kafka-effectful` switched to `rdkafka-hs` at `v1.0.0.0`
+      Evidence: `gh repo edit --visibility public` (now `PUBLIC`); `git push origin
+      master v1.0.0.0` (`5fd8435..b2cdc57`, new tag); `git ls-remote` shows
+      `refs/tags/v1.0.0.0` = `e499013…` peeling to `63031a21d070819fe89afbacb6ce76238816748f`;
+      `gh release view v1.0.0.0` reports "rdkafka-hs 1.0.0.0", not draft, not
+      prerelease, at https://github.com/shinzui/rdkafka-hs/releases/tag/v1.0.0.0.
+- [x] M3 (2026-10-22): A scratch clone of `kafka-effectful` switched to `rdkafka-hs` at `v1.0.0.0`
       builds, with the evidence recorded here; the MasterPlan's Outcomes & Retrospective
-      and the ADR distillation pass are done.
+      and the ADR distillation pass are done. Evidence: a fresh HTTPS clone of `origin`
+      lists `v1.0.0.0` at `63031a2`. The `kafka-effectful` clone with
+      `location: https://github.com/shinzui/rdkafka-hs.git`, `tag: v1.0.0.0` and five
+      `rdkafka-hs >=1.0 && <1.1` bounds logs `From https://github.com/shinzui/rdkafka-hs
+      * tag v1.0.0.0 -> FETCH_HEAD`, `HEAD is now at 63031a2`, builds (exit 0) and its
+      broker-free `kafka-effectful-test` reports `All 44 tests passed`. Cabal reused the
+      store build of the byte-identical candidate, so the fetched checkout was also
+      built on its own in the downstream shell
+      (`libHSrdkafka-hs-1.0.0.0-inplace-ghc9.12.4.dylib`). IR-1 and IR-2 are
+      `completed` with `completedAt`, `resolution` and Resolution sections naming the
+      tag and commit; `okf validate` passes; `mori register --local` refreshed the
+      registry. ADR-7 and ADR-8 were added, ADR-1 and ADR-4 amended.
 
 
 ## Surprises & Discoveries
@@ -119,7 +135,20 @@ Release candidate (2026-10-22):
 
 ## Outcomes & Retrospective
 
-(To be filled during and after implementation.)
+Completed 2026-10-22. `rdkafka-hs` 1.0.0.0 is published as `v1.0.0.0` of the now
+public `https://github.com/shinzui/rdkafka-hs`, with release notes from the changelog
+and a migration guide in the README, and `kafka-effectful` builds and passes its
+tests against the tag after changing only its pin and dependency bounds. IR-1 and
+IR-2 are closed with the tag as evidence.
+
+The candidate discipline from ADR-2 paid for itself: the first candidate failed the
+local downstream proof because `pkgconfig-depends` needed `.pc` files that
+downstream dev shells lack, which had been masked by this repository's own shell.
+It was fixed and revalidated before anything was published. The user's release-gate
+decisions (public visibility; fixing the poll-mode composition defect) were
+implemented before the candidate, so its validation covers them. Leftover
+scratch directories were removed; the inventory's librdkafka clone in
+`~/.cache/rdkafka-hs/` is the documented cache and stays.
 
 
 ## Context and Orientation

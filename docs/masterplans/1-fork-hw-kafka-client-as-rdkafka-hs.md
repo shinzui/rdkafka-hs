@@ -156,7 +156,7 @@ repository, preserving the original request identity and origin.
 | 3 | Refresh the librdkafka bindings for 2.15 and newer | docs/plans/3-refresh-the-librdkafka-bindings-for-2-15-and-newer.md | EP-1; EP-2 (M3 only) | None | Complete |
 | 4 | Expose queue event notification for consumers | docs/plans/4-expose-queue-event-notification-for-consumers.md | EP-2, EP-3 | None | Complete |
 | 5 | Support a bounded assign-only observer consumer | docs/plans/5-support-a-bounded-assign-only-observer-consumer.md | EP-2, EP-3 | None | Complete |
-| 6 | Cut the first rdkafka-hs release and migration guide | docs/plans/6-cut-the-first-rdkafka-hs-release-and-migration-guide.md | EP-1, EP-2, EP-3, EP-4, EP-5 | None | In Progress |
+| 6 | Cut the first rdkafka-hs release and migration guide | docs/plans/6-cut-the-first-rdkafka-hs-release-and-migration-guide.md | EP-1, EP-2, EP-3, EP-4, EP-5 | None | Complete |
 
 Status values: Not Started, In Progress, Complete, Cancelled.
 Hard Deps and Soft Deps reference other rows by their # prefix (e.g., EP-1, EP-3).
@@ -277,32 +277,19 @@ reproducible fatal trigger before EP-4 and EP-5 begin, and record it here.
 
 ## Progress
 
-EP-1 to EP-5 are Complete (2026-10-22). The repository is the `rdkafka-hs` package
-with the fork's full history; it builds warning-free on GHC 9.12.4 and librdkafka
-2.15.0 and passes its unit tests locally and under `nix build`. `just test-it` runs 67
-integration tests against the project's private Redpanda, including the
-fenced-static-member fatal test, which is the representative early check and passes in
-both poll modes. The profiled `docs/adr/` (ADR-1 to ADR-6) and
-`docs/improvement-requests/` bundles are registered in Mori. The librdkafka 2.15
-floor is enforced through pkg-config, `Kafka.Version` reports the linked library,
-`docs/bindings.md` inventories 131 of 495 exported functions (checked by
-`just bindings-check` inside `just check`), and the lifecycle bindings are tested.
-`setConsumerQueueIOEvent` wakes consumers through a descriptor in both poll modes
-(IR-1 AC-1 and AC-2 evidenced). Assign-only observers work in both poll modes, errors
-carry their partition, and `destroyConsumer` closes connections within tens of
-milliseconds (IR-2 AC-1 to AC-4 evidenced). `just test-it` runs 96 tests. EP-6 is
-next; its publication milestones need the repository-visibility decision below. The local Mori registry has been refreshed with `mori register --local`.
-The cross-plan access gate is the decision on repository visibility before EP-6: the
-GitHub repository is private, and downstream `source-repository-package` pins over
-HTTPS need either public visibility or authenticated access.
+All six child plans are Complete (2026-10-22). `rdkafka-hs` 1.0.0.0 is published as the
+annotated tag `v1.0.0.0` (commit `63031a21d070819fe89afbacb6ce76238816748f`) of the now
+public `https://github.com/shinzui/rdkafka-hs`, with a GitHub release, and a clone of
+`kafka-effectful` builds and passes its 44 broker-free tests against the tag after
+changing only its pin and dependency bounds. IR-1 and IR-2 are completed. The local Mori
+registry is refreshed. No integration gate remains.
 
 - [x] Repository visibility decided before EP-6 tags the release (2026-10-22: public).
 
-ADR handles are now allocated: ADR-1 consumer queue and teardown ownership, ADR-2
-release validation, ADR-3 fork identity, ADR-4 toolchain floor, ADR-5 integration tests
-on the project-local Redpanda, ADR-6 consumer fatal errors surfaced in-band. Records
-created by later plans take the next handle from `okf id next` (ADR-7 at EP-2
-completion).
+ADR handles: ADR-1 consumer queue and teardown ownership, ADR-2 release validation,
+ADR-3 fork identity, ADR-4 toolchain floor, ADR-5 integration tests on the
+project-local Redpanda, ADR-6 consumer fatal errors surfaced in-band, ADR-7 first
+release scope and distribution, ADR-8 the seihou-managed Nix scaffold.
 
 
 ## Surprises & Discoveries
@@ -396,6 +383,20 @@ EP-5 (2026-10-22), affecting EP-6:
 - `closeConsumer` against an unresponsive broker was not tested and may block; the
   migration guide should point bounded shutdowns at `destroyConsumer`.
 
+EP-6 (2026-10-22):
+
+- The first release candidate failed the local downstream proof:
+  `Package 'libcurl', required by 'rdkafka', not found`. EP-3's `pkgconfig-depends`
+  makes Cabal run `pkg-config --cflags rdkafka`, which needs the `.pc` files of
+  librdkafka's private dependencies; downstream `nix-haskell-flake` shells only
+  expose librdkafka's, and this repository's `flake.module.nix` had masked it. The
+  floor became a build-time `#error`, the workaround was removed, and ADR-4 and ADR-8
+  record why. Lesson: the shell a library is developed in should be the one its
+  dependents use.
+- At the release gate the user chose public visibility and to fix the poll-mode
+  composition defect; `cpCallbackPollMode` is now `Maybe CallbackPollMode`.
+- `cabal check` required upper bounds; the library now has PVP bounds.
+
 
 ## Decision Log
 
@@ -476,4 +477,32 @@ decomposition and Not Started statuses remain unchanged.
 
 ## Outcomes & Retrospective
 
-(To be filled during and after implementation.)
+Completed 2026-10-22. The initiative's vision holds: this repository is the maintained
+successor of hw-kafka-client, published as `rdkafka-hs` `v1.0.0.0` with its full
+upstream history, the `Kafka.*` namespace intact, GHC 9.12 and `GHC2024`, librdkafka
+2.15 enforced, a 14-test unit suite and a 98-test integration suite on a private
+Redpanda, a binding inventory kept current by `just check`, and a migration that
+downstream packages perform by changing their pin and bounds. The fatal-error fix,
+IR-1 (queue event notification) and IR-2 (assign-only observer) shipped with
+regression tests that fail without them, and the release was proven on
+`kafka-effectful` before and after publication.
+
+What went well: the decomposition held. Every child plan produced an independently
+verifiable result, and EP-4 and EP-5 shared the consumer queue without rework
+because ADR-1 had fixed queue and teardown ownership before either started. EP-2's
+early representative check (the fenced static member) proved the harness before any
+new API was built on it.
+
+What the plans did not foresee, all found by tests rather than review: async manual
+assignment had never delivered records, and reassignment needed a second forward
+after librdkafka's asynchronous fetcher stop; the `ConsumerProperties` semigroup
+silently turned sync consumers async, so upstream's own sync tests had been async;
+`DeriveAnyClass` made strategy-less newtype deriving produce empty instances; and the
+configure-time librdkafka floor would have broken every downstream dev shell. Each is
+recorded in an ADR or the changelog.
+
+Follow-ups outside this initiative: the other dependents listed in EP-6 migrate in
+their own changes; `nix-haskell-flake` could expose librdkafka's private pkg-config
+dependencies so a configure-time floor can return; the producer still has no
+deterministic destroy; and Hackage publication, admin API expansion, CI and Linux
+broker orchestration remain the deliberate exclusions of ADR-7.
