@@ -152,8 +152,8 @@ repository, preserving the original request identity and origin.
 | # | Title | Path | Hard Deps | Soft Deps | Status |
 |---|-------|------|-----------|-----------|--------|
 | 1 | Bootstrap rdkafka-hs from the hw-kafka-client fork | docs/plans/1-bootstrap-rdkafka-hs-from-the-hw-kafka-client-fork.md | None | None | Complete |
-| 2 | Run integration tests on a project-local Redpanda | docs/plans/2-run-integration-tests-on-a-project-local-redpanda.md | EP-1 | None | In Progress |
-| 3 | Refresh the librdkafka bindings for 2.15 and newer | docs/plans/3-refresh-the-librdkafka-bindings-for-2-15-and-newer.md | EP-1; EP-2 (M3 only) | None | Not Started |
+| 2 | Run integration tests on a project-local Redpanda | docs/plans/2-run-integration-tests-on-a-project-local-redpanda.md | EP-1 | None | Complete |
+| 3 | Refresh the librdkafka bindings for 2.15 and newer | docs/plans/3-refresh-the-librdkafka-bindings-for-2-15-and-newer.md | EP-1; EP-2 (M3 only) | None | In Progress |
 | 4 | Expose queue event notification for consumers | docs/plans/4-expose-queue-event-notification-for-consumers.md | EP-2, EP-3 | None | Not Started |
 | 5 | Support a bounded assign-only observer consumer | docs/plans/5-support-a-bounded-assign-only-observer-consumer.md | EP-2, EP-3 | None | Not Started |
 | 6 | Cut the first rdkafka-hs release and migration guide | docs/plans/6-cut-the-first-rdkafka-hs-release-and-migration-guide.md | EP-1, EP-2, EP-3, EP-4, EP-5 | None | Not Started |
@@ -269,7 +269,7 @@ release validation follows [the publication ADR](../adr/release-validation-befor
 deliberate exclusions listed in Vision & Scope (EP-6, at distillation).
 
 The early representative check is EP-2's third milestone, the fenced-static-member fatal
-test. It is the first new integration test, it exercises two consumers, static membership
+test (passed 2026-10-22 in both poll modes on Redpanda v26.2.1). It is the first new integration test, it exercises two consumers, static membership
 and both poll modes, and it validates the carried fix before any new API is built on the
 harness. If Redpanda does not fence a duplicate `group.instance.id`, EP-2 must find another
 reproducible fatal trigger before EP-4 and EP-5 begin, and record it here.
@@ -277,11 +277,13 @@ reproducible fatal trigger before EP-4 and EP-5 begin, and record it here.
 
 ## Progress
 
-EP-1 is Complete (2026-10-22): the repository is the `rdkafka-hs` package with the
-fork's full history, builds warning-free on GHC 9.12.4 and librdkafka 2.15.0, passes
-its unit tests locally and under `nix build`, and holds the profiled `docs/adr/`
-(ADR-1 to ADR-4) and `docs/improvement-requests/` bundles, registered in Mori. The next
-action is EP-2. The local Mori registry has been refreshed with `mori register --local`.
+EP-1 and EP-2 are Complete (2026-10-22). The repository is the `rdkafka-hs` package
+with the fork's full history; it builds warning-free on GHC 9.12.4 and librdkafka
+2.15.0 and passes its unit tests locally and under `nix build`. `just test-it` runs 67
+integration tests against the project's private Redpanda, including the
+fenced-static-member fatal test, which is the representative early check and passes in
+both poll modes. The profiled `docs/adr/` (ADR-1 to ADR-6) and
+`docs/improvement-requests/` bundles are registered in Mori. EP-3 is in progress. The local Mori registry has been refreshed with `mori register --local`.
 The cross-plan access gate is the decision on repository visibility before EP-6: the
 GitHub repository is private, and downstream `source-repository-package` pins over
 HTTPS need either public visibility or authenticated access.
@@ -289,8 +291,10 @@ HTTPS need either public visibility or authenticated access.
 - [ ] Repository visibility decided before EP-6 tags the release.
 
 ADR handles are now allocated: ADR-1 consumer queue and teardown ownership, ADR-2
-release validation, ADR-3 fork identity, ADR-4 toolchain floor. Records created by
-later plans take the next handle from `okf id next` (ADR-5 at EP-1 completion).
+release validation, ADR-3 fork identity, ADR-4 toolchain floor, ADR-5 integration tests
+on the project-local Redpanda, ADR-6 consumer fatal errors surfaced in-band. Records
+created by later plans take the next handle from `okf id next` (ADR-7 at EP-2
+completion).
 
 
 ## Surprises & Discoveries
@@ -328,6 +332,25 @@ EP-1 (2026-10-22), affecting later plans:
   `mori://shinzui/rdkafka-hs/okf/improvement-requests`. EP-6 closes the requests in
   this repository; whether the fork's copies are marked superseded is a decision for
   EP-6, since this initiative does not edit other repositories.
+
+EP-2 (2026-10-22), affecting later plans:
+
+- Inherited library defect: the `ConsumerProperties` semigroup always takes the right
+  operand's `cpCallbackPollMode`, and every builder is `mempty` carrying the default
+  `CallbackPollModeAsync`, so `callbackPollMode CallbackPollModeSync <> groupId g`
+  silently yields an async consumer. Upstream's "sync" integration tests were in fact
+  async. EP-3, EP-4 and EP-5 tests must compose `callbackPollMode` last (the EP-2
+  fixtures already compose their callback on the left). Fixing the library changes
+  the public `cpCallbackPollMode` field or its semantics, which no child plan owns; it
+  needs a scope decision before EP-6 (for example a new child plan, or an EP-6
+  changelog warning).
+- Redpanda fences duplicate static members, so the early representative check holds:
+  no fallback fatal trigger or `Kafka.Internal.Testing` module exists.
+- seihou forgets earlier `--var` overrides: reconfigure with every non-default
+  variable (`--var nix.kafka=true --var nix.redpanda=true`).
+- `test-integration/Kafka/TestEnv.hs` provides `mkConsumerFor` (a consumer on any
+  topic) in addition to the planned fixtures, and the suite uses tasty's
+  `dependentTestGroup` (`sequentialTestGroup` is deprecated in the locked tasty).
 
 
 ## Decision Log

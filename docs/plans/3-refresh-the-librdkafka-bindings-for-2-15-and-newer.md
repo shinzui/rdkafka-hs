@@ -23,6 +23,11 @@ provenance:
       at: 2026-10-22T00:00:20Z
       mode: "update"
       note: "Correct SASL/error ownership, network test placement and source-based binding inventory."
+    - model: "claude-opus-5-5"
+      harness: "claude-code"
+      at: 2026-10-22T00:39:17Z
+      mode: "implement"
+      note: "Implement EP-3: librdkafka floor and version API, binding inventory, lifecycle bindings."
 ---
 
 # Refresh the librdkafka bindings for 2.15 and newer
