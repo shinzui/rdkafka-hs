@@ -9,6 +9,12 @@ this project adheres to the [Haskell Package Versioning Policy](https://pvp.hask
 
 ### Fixed
 
+- Consumed record headers were decoded in reverse wire order, so
+  `headersToList` returned the last header first and selecting the last
+  occurrence of a repeated name picked the first value the producer sent.
+  `pollMessage`, `pollMessageAttributed` and every other consumer path now
+  return the headers in the order the producer sent them, repeated names and
+  identical pairs included. The `Headers` API is unchanged.
 - The `setConsumerQueueIOEvent` documentation described a wait protocol that
   discarded pending wake-ups after draining the queue, which can lose the
   wake-up for a record that arrives in between. It now discards them first.

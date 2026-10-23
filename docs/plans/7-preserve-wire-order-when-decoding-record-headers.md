@@ -4,11 +4,18 @@ slug: preserve-wire-order-when-decoding-record-headers
 title: "Preserve wire order when decoding record headers"
 kind: exec-plan
 created_at: 2026-10-23T23:03:07Z
+intention: intention_01m5nggngpekcv4gvrrhe5chws
 provenance:
   created_by:
     model: "gpt-6-astra"
     harness: "codex-cli"
     at: 2026-10-23T23:03:07Z
+  revisions:
+    - model: "claude-opus-5-5"
+      harness: "claude-code"
+      at: 2026-10-23T23:11:28Z
+      mode: "implement"
+      note: "Implemented the decoder fix, broker regressions, release and downstream proofs"
 ---
 
 # Preserve wire order when decoding record headers
@@ -28,17 +35,18 @@ For the ordered fixture `event-type=Other, account=two, account=one, event-type=
 ## Progress
 
 
-- [ ] M1: Exact header order and last-occurrence selection pass broker regressions for both polling APIs and both callback modes, with unchanged public types.
+- [x] M1: Exact header order and last-occurrence selection pass broker regressions for both polling APIs and both callback modes, with unchanged public types. (2026-10-23) Before the fix, `just test-it '--test-options=-p /Headers/'` reported `12 out of 73 tests failed`: the interleaved, distinct and identical-pair fixtures failed in all four API/mode combinations (for example `expected: [("event-type","Other"),("account","two"),("account","one"),("event-type","Happened")] but got: [("event-type","Happened"),("account","one"),("account","two"),("event-type","Other")]`); single and empty fixtures passed. After `reverse acc` in `readHeaders`, the same command reported `All 73 tests passed`, the unit suite `All 14 tests passed`, and the full `just test-it` `All 116 tests passed`; the test module compiles without warnings.
 - [ ] M2: The complete release candidate passes repository release checks and Shoko's Kafka spike against that exact commit before publication.
 - [ ] M3: The published tag resolves to the validated commit, a fresh downstream checkout passes against the remote release, and IR-3 closes with that evidence.
 
-Creation only: implementation and broker validation have not started.
 
 
 ## Surprises & Discoveries
 
 
-(None yet.)
+2026-10-23: The first identical-pair fixture, `repeat=same, tail=end, repeat=same`, is a palindrome, so it passed against the reversing decoder and could not detect reversal. It is now `repeat=same, repeat=same, tail=end`, which fails under both reversal and deduplication; the pre-fix evidence above was taken with that fixture.
+
+2026-10-23: `-p /Headers/` also runs the earlier members of the `broker` group, because tasty includes the dependencies of a selected test in a `dependentTestGroup`. The focused run therefore reports 73 tests, of which 20 are the new header cases. The new cases use their own topics and groups and do not depend on those records.
 
 
 ## Decision Log

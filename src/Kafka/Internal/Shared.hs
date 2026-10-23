@@ -129,7 +129,7 @@ readHeaders msg = do
           alloca $ \szptr ->
             let go acc idx =
                   rdKafkaHeaderGetAll ptHeaders idx nptr vptr szptr >>= \case
-                    RdKafkaRespErrNoent -> return $ Right acc
+                    RdKafkaRespErrNoent -> return . Right $ reverse acc
                     RdKafkaRespErrNoError -> do
                       cstr <- peek nptr
                       wptr <- peek vptr

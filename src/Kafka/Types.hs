@@ -190,13 +190,22 @@ kafkaCompressionCodecToText c = case c of
   Lz4 -> "lz4"
   Zstd -> "zstd"
 
--- | Headers that might be passed along with a record
+-- | Headers that might be passed along with a record: an ordered list of
+-- @(name, value)@ pairs. Kafka allows a name to repeat, so the list keeps
+-- every pair, duplicates included, in wire order. A producer sends the pairs
+-- in list order and a consumer decodes them in the order they were sent;
+-- selecting a value for a repeated name (for example the last occurrence) is
+-- left to the caller.
 newtype Headers = Headers {unHeaders :: [(BS.ByteString, BS.ByteString)]}
   deriving stock (Eq, Show, Read, Generic)
   deriving newtype (Semigroup, Monoid)
 
+-- | Headers from @(name, value)@ pairs, sent in list order. Repeated names and
+-- identical pairs are kept.
 headersFromList :: [(BS.ByteString, BS.ByteString)] -> Headers
 headersFromList = Headers
 
+-- | The @(name, value)@ pairs in wire order, with every repeated name and
+-- identical pair the record carried.
 headersToList :: Headers -> [(BS.ByteString, BS.ByteString)]
 headersToList = unHeaders
