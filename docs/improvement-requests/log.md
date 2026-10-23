@@ -1,6 +1,7 @@
 # Bundle Update Log
 
 ## 2026-10-23
+* **Completion**: IR-3 completed by rdkafka-hs v1.0.0.1 (commit 45d9e21ad3c72b56c482173e17ca3fa2bd8b1bc7); a Shoko clone pinned to the release passes its wire-header-order spike.
 * **Addition**: IR-3 requests preserving consumed header wire order; the Shoko released-client spike found reversed duplicate-header semantics in v1.0.0.0.
 
 ## 2026-10-22

@@ -5,9 +5,11 @@ description: Return consumed Kafka headers in their original wire order so dupli
 generated:
   by: codex-cli/gpt-6.1-sol
   at: "2026-10-23T22:40:20Z"
-timestamp: 2026-10-23T22:40:20Z
+timestamp: 2026-10-23T23:36:01Z
 requestId: IR-3
-status: proposed
+status: completed
+completedAt: "2026-10-23T23:36:01Z"
+resolution: Released in rdkafka-hs v1.0.0.1 (commit 45d9e21ad3c72b56c482173e17ca3fa2bd8b1bc7) at https://github.com/shinzui/rdkafka-hs; a Shoko clone pinned to the release passes its wire-header-order spike.
 origin: mori://shinzui/shoko/plans/10-implement-the-kafka-topic-evidence-adapter
 acceptanceCriteria:
   - id: AC-1
@@ -70,3 +72,34 @@ Preserve wire order at the library decoding boundary and add direct broker
 roundtrip tests for repeated headers in both public polling APIs and callback
 modes. Publish a new release carrying the regression checks. Do not change the
 order accepted by producer `headersFromList` or ask callers to reverse lists.
+
+## Resolution
+
+Completed on 2026-10-23 by the release `v1.0.0.1` of
+`https://github.com/shinzui/rdkafka-hs` (annotated tag object
+`33e2ab5f31be57e14c9820d4ad99032d3e9b41f1`, commit
+`45d9e21ad3c72b56c482173e17ca3fa2bd8b1bc7`), implemented by
+[plan 7](../plans/7-preserve-wire-order-when-decoding-record-headers.md).
+`readHeaders` now reverses its accumulator once at the end of the native header
+list, so every consumer path returns headers in wire order; the `Headers` API is
+unchanged. [ADR-9](../adr/consumed-headers-preserve-wire-order.md) records the
+ordering contract.
+
+AC-1 and AC-2: `test-integration/Kafka/Integration/HeadersTest.hs` produces the
+fixture `event-type=Other, account=two, account=one, event-type=Happened`, plus
+distinct-name, identical-pair, single and empty fixtures, to the private
+Redpanda and compares the complete decoded list through `pollMessage` and
+`pollMessageAttributed` in both callback poll modes. Last-occurrence selection
+returns `Happened` and `one`, the sole value for unique names, and nothing for an
+absent name. Against the 1.0.0.0 decoder 12 of the 20 cases failed (every
+multi-pair fixture in all four combinations); with the fix all 20 pass.
+
+AC-3: a fresh HTTPS clone of `v1.0.0.1` resolves to the commit above and passes
+all 116 broker integration tests. A clone of
+`mori://shinzui/shoko` at commit `09204ad4d0894fda10220c68b81474b93ae720ce`,
+with only its `cabal.project` tag, `cabal.project.freeze` version and
+`flake.module.nix` `fetchFromGitHub` revision and hash moved to the release,
+fetched the source from GitHub, resolved `rdkafka-hs-1.0.0.1` and passed
+`nix develop --command just test-kafka` against Apache Kafka 4.3.1, including
+`wire header order preserves last duplicate selection` and its non-interference
+checks (37 of 37 tests). No caller reversal or local patch is involved.
