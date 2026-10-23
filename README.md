@@ -21,7 +21,7 @@ rdkafka-hs is not on Hackage; depend on a release tag. In `cabal.project`:
 source-repository-package
   type: git
   location: https://github.com/shinzui/rdkafka-hs.git
-  tag: v1.0.0.0
+  tag: v1.0.0.1
 ```
 
 and in each component's `build-depends`:

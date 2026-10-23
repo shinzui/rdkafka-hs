@@ -9,6 +9,7 @@ okf_version: "0.2"
 # Architecture Decision Record
 
 - [Consumer fatal errors are surfaced in-band](consumer-fatal-errors-are-surfaced-in-band.md) - Once librdkafka raises a fatal error on a consumer, pollMessage and pollMessageBatch return KafkaResponseError RdKafkaRespErrFatal on every call in both callback poll modes, consumerFatalError returns the cause, and the background loop destroys what it polls.
+- [Consumed headers preserve wire order](consumed-headers-preserve-wire-order.md) - Headers is an ordered list that keeps every pair, repeated names and identical pairs included, and the consumer decoder returns it in the order the producer sent it; selecting a value for a repeated name is the caller's choice.
 - [Consumer queue and teardown ownership](consumer-queue-and-teardown-ownership.md) - Manual assignment shares subscription queue routing, and destroyConsumer synchronously stops polling, releases queue references and destroys the client without a graceful group close.
 - [First release scope and distribution](first-release-scope-and-distribution.md) - rdkafka-hs 1.0.0.0 is distributed as a git tag of a public GitHub repository, not on Hackage, and deliberately excludes public API renames, admin API expansion, CI, Linux broker orchestration and downstream edits.
 - [Integration tests run against a project-local Redpanda](integration-tests-run-against-a-project-local-redpanda.md) - The integration suite runs only against this project's private Redpanda on Apple Container, behind a manual Cabal flag, and refuses the machine-global broker.

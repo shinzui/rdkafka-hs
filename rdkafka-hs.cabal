@@ -1,6 +1,6 @@
 cabal-version: 3.0
 name: rdkafka-hs
-version: 1.0.0.0
+version: 1.0.0.1
 synopsis: Kafka bindings for Haskell backed by librdkafka
 description:
   Apache Kafka bindings backed by the librdkafka C library.

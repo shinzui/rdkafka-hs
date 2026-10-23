@@ -7,6 +7,8 @@ this project adheres to the [Haskell Package Versioning Policy](https://pvp.hask
 
 ## [Unreleased]
 
+## [1.0.0.1] - 2026-10-23
+
 ### Fixed
 
 - Consumed record headers were decoded in reverse wire order, so

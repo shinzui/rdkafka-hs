@@ -1,5 +1,8 @@
 # Bundle Update Log
 
+## 2026-10-23
+* **Addition**: ADR-9 records that consumed headers preserve wire order, repeated names and identical pairs included, and that value selection is the caller's choice.
+
 ## 2026-10-22
 * **Amendment**: ADR-4: enforce the librdkafka floor with a build-time header check instead of pkgconfig-depends, which fails in downstream dev shells; ADR-8 notes that the dev shell must match downstream ones.
 * **Addition**: ADR-7 records the first release's tag-based public distribution and deliberate exclusions; ADR-8 records that the Nix scaffold is seihou-managed and how to reconfigure it.
