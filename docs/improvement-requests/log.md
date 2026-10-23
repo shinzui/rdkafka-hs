@@ -1,5 +1,8 @@
 # Bundle Update Log
 
+## 2026-10-23
+* **Addition**: IR-3 requests preserving consumed header wire order; the Shoko released-client spike found reversed duplicate-header semantics in v1.0.0.0.
+
 ## 2026-10-22
 * **Completion**: IR-1 and IR-2 completed by rdkafka-hs v1.0.0.0 (commit 63031a21d070819fe89afbacb6ce76238816748f); a kafka-effectful clone pinned to the tag builds and passes its tests.
 * **Update**: IR-2: implemented in rdkafka-hs by newAssignedConsumer, pollMessageAttributed and destroyConsumer, with integration evidence for AC-1 to AC-4; AC-5 awaits the first tagged release.
