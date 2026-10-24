@@ -5,6 +5,7 @@ module ConsumerExample
   ( consumerProps,
     consumerSub,
     runConsumerExample,
+    runConsumerExampleWith,
     processMessages,
     printingRebalanceCallback,
     printingOffsetCallback,
@@ -33,12 +34,16 @@ consumerSub =
 
 -- Running an example
 runConsumerExample :: IO ()
-runConsumerExample = do
-  print $ cpLogLevel consumerProps
+runConsumerExample = runConsumerExampleWith consumerProps consumerSub
+
+-- | Override configuration for a run-owned broker, topic and group.
+runConsumerExampleWith :: ConsumerProperties -> Subscription -> IO ()
+runConsumerExampleWith props subscription = do
+  print $ cpLogLevel props
   res <- bracket mkConsumer clConsumer runHandler
   print res
   where
-    mkConsumer = newConsumer consumerProps consumerSub
+    mkConsumer = newConsumer props subscription
     clConsumer (Left err) = return (Left err)
     clConsumer (Right kc) = maybe (Right ()) Left <$> closeConsumer kc
     runHandler (Left err) = return (Left err)

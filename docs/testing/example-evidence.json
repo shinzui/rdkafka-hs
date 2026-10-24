@@ -1,0 +1,48 @@
+{
+  "status": "accepted example checkpoint; EP-14 incomplete",
+  "sources": {
+    "example/Main.hs": "87c8bc1080e3364366309052c5596d50c07321394334f2e1bd519797e296fcd5",
+    "example/ConsumerExample.hs": "0e52d363aa18a148ec5fff4b6a1b363b10e8c19721406c80bc51bf4a57dcff4c",
+    "example/ProducerExample.hs": "68d963f2139720fcb46e04aee9760c1c8f8bbca89502f11887216584a7724be1"
+  },
+  "verification_source": "dist-mutations/example-verification/Probe.hs",
+  "verification_source_sha256": "0fc5a2d0b12ddb886d89a98f76d632c764a2d6b8677446efb11ed3aebae6d1c3",
+  "scope": [
+    "Actual kafka-client-example executable receives three stdin lines against a run-owned topic/group at 127.0.0.1:39092",
+    "Four independently read records have exact keys, values, ordered offsets 0 through 3 and fourth-record fancy header",
+    "Independent consumer query confirms committed next offset 4",
+    "Program completes within a thirty-second outer deadline; temporary process helper uses the existing Haskell fixture"
+  ],
+  "runs": {
+    "normal": {
+      "log": "/tmp/rdkafka-ep14-example-normal.log",
+      "sha256": "a1122f0082ab550984c587708a4558392d99de38839304fad035ee339fb24e7c",
+      "exact_records": 4,
+      "committed_offset": 4
+    },
+    "instrumented-haskell": {
+      "log": "/tmp/rdkafka-ep14-example-hpc.log",
+      "sha256": "401871eac55232a2e19c2bb1c41a5ed3b25c309828bbd8bf01636a308f0d52b4",
+      "exact_records": 4,
+      "committed_offset": 4
+    },
+    "instrumented-native": {
+      "log": "/tmp/rdkafka-ep14-example-asan.log",
+      "sha256": "9822f823ee7abe69fc69811fa4eaec9af968972bac2806f9e24d6b5ec02fdada",
+      "exact_records": 4,
+      "committed_offset": 4
+    }
+  },
+  "native_library": "mori://confluentinc/librdkafka",
+  "native_version": "2.15.0",
+  "leak_instrumentation": false,
+  "notes": [
+    "No-argument entry points retain existing defaults",
+    "The example prints expected idle timeouts and subsequent NoOffset commits; verification separately requires exact successful effects",
+    "Temporary verifier compilation required a uniquely renamed System.Process module because the shell exposed two process versions; failed compilation attempts are not test evidence"
+  ],
+  "required_checks": {
+    "log": "/tmp/rdkafka-ep14-example-check.log",
+    "sha256": "725c8e6056d13d77d3f8cf8d67b298d74ebd834f7f614d5684099813a4168253"
+  }
+}

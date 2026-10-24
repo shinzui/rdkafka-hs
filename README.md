@@ -88,7 +88,14 @@ partitions among them. A working example is in
 broker at `localhost:9092`; build and run them with:
 
 ```bash
-cabal run kafka-client-example --flag examples
+cabal run kafka-client-example -f examples
+```
+
+To select a broker, topic and consumer group, pass all three arguments. The
+program reads three input lines, produces four records and then consumes them:
+
+```bash
+cabal run kafka-client-example -f examples -- 127.0.0.1:39092 my-example-topic my-example-group
 ```
 
 ```haskell

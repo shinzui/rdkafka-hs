@@ -6,6 +6,7 @@ module ProducerExample
     targetTopic,
     mkMessage,
     runProducerExample,
+    runProducerExampleWith,
     sendMessages,
     sendMessageSync,
   )
@@ -44,41 +45,48 @@ mkMessage k v =
 
 -- Run an example
 runProducerExample :: IO ()
-runProducerExample =
+runProducerExample = runProducerExampleWith producerProps targetTopic
+
+-- | Use an isolated broker/topic while retaining the interactive example.
+runProducerExampleWith :: ProducerProperties -> TopicName -> IO ()
+runProducerExampleWith props topic =
   bracket mkProducer clProducer runHandler >>= print
   where
-    mkProducer = newProducer producerProps
+    mkProducer = newProducer props
     clProducer (Left _) = return ()
     clProducer (Right prod) = closeProducer prod
     runHandler (Left err) = return $ Left err
-    runHandler (Right prod) = sendMessages prod
+    runHandler (Right prod) = sendMessagesTo topic prod
 
 sendMessages :: KafkaProducer -> IO (Either KafkaError ())
-sendMessages prod = do
+sendMessages = sendMessagesTo targetTopic
+
+sendMessagesTo :: TopicName -> KafkaProducer -> IO (Either KafkaError ())
+sendMessagesTo topic prod = do
   putStrLn "Producer is ready, send your messages!"
   msg1 <- getLine
 
-  err1 <- produceMessage prod (mkMessage (Just "zero") (Just $ pack msg1))
+  err1 <- produceMessage prod (mkMessageFor (Just "zero") (Just $ pack msg1))
   forM_ err1 print
 
   putStrLn "One more time!"
   msg2 <- getLine
 
-  err2 <- produceMessage prod (mkMessage (Just "key") (Just $ pack msg2))
+  err2 <- produceMessage prod (mkMessageFor (Just "key") (Just $ pack msg2))
   forM_ err2 print
 
   putStrLn "And the last one..."
   msg3 <- getLine
-  err3 <- produceMessage prod (mkMessage (Just "key3") (Just $ pack msg3))
+  err3 <- produceMessage prod (mkMessageFor (Just "key3") (Just $ pack msg3))
   forM_ err3 print
 
-  err4 <- produceMessage prod ((mkMessage (Just "key4") (Just $ pack msg3)) {prHeaders = headersFromList [("fancy", "header")]})
+  err4 <- produceMessage prod ((mkMessageFor (Just "key4") (Just $ pack msg3)) {prHeaders = headersFromList [("fancy", "header")]})
   forM_ err4 print
-
-  -- forM_ errs (print . snd)
 
   putStrLn "Thank you."
   return $ Right ()
+  where
+    mkMessageFor k v = (mkMessage k v) {prTopic = topic}
 
 -- | An example for sending messages synchronously using the 'produceMessage''
 --   function
