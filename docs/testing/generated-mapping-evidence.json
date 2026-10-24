@@ -1,0 +1,37 @@
+{
+  "status": "accepted coverage-mapper correction; full candidate remeasurement pending",
+  "faults": [
+    "An internal blank in a generated enum prematurely advanced the origin into handwritten source",
+    "Hooks written with whitespace after # were not recognized as generated"
+  ],
+  "controls": {
+    "all_passed": 24,
+    "new_controls": 2,
+    "old_mapper_failed_both": true,
+    "current": {
+      "log": "/tmp/rdkafka-ep14-generated-map-controls.log",
+      "sha256": "38dc1482d68d976778a138400d0b52a8a5c01f84115d1b12db3a95771ee83e66"
+    },
+    "baseline": {
+      "log": "/tmp/rdkafka-ep14-generated-map-old-controls.log",
+      "sha256": "05a93d91ac0357c72bca07daa29041351d87bc9c20f0c90d14c3481392380dd5"
+    }
+  },
+  "real_generated_module": {
+    "result": {
+      "log": "/tmp/rdkafka-ep14-generated-map-real.log",
+      "sha256": "381931d45917a2bb5a75e4ceb0e54994182f96c0dcbde2f885a9f266cbad75d3"
+    },
+    "emitted_haskell_identical": true,
+    "haskell_sha256": "1bcb02aef8033efc572c817ce2261aba46d35fbc7c41a843223777beb20ae859",
+    "mapping_entries_changed": 743,
+    "manual_to_generated": 86,
+    "generated_to_manual": 0,
+    "all_handwritten_signatures_verified": true
+  },
+  "required_checks": {
+    "log": "/tmp/rdkafka-ep14-generated-map-check.log",
+    "sha256": "b56cd9255eaed8d0e07be255bf589db7a76d331129467b4fb5ce400652ac881c"
+  },
+  "scope": "Classification/source-map metadata only; emitted instrumented Haskell code is byte identical. All existing controls are retained. The next full mapped run must regenerate metrics and reconcile classification keys."
+}

@@ -20,7 +20,7 @@ def transform(original, text):
     generated = set()
     directive = False
     for number, line in enumerate(source, 1):
-        if re.match(r"^\s*\{#(?:fun|enum|pointer|typedef)\b", line):
+        if re.match(r"^\s*\{#\s*(?:fun|enum|pointer|typedef)\b", line):
             directive = True
         if directive:
             generated.add(number)
@@ -30,11 +30,13 @@ def transform(original, text):
     mapping = []
     origin = None
     line_number = 0
+    just_reset = False
     for physical, line in enumerate(text.splitlines(keepends=True), 1):
         match = re.fullmatch(r'{-# LINE (\d+) "([^"]+)" #-}\s*', line)
         if match:
             line_number = int(match[1])
             origin = match[2]
+            just_reset = True
             result.append("\n")
             mapping.append(None)
         else:
@@ -43,10 +45,11 @@ def transform(original, text):
             mapping.append({"file": origin, "line": line_number, "generated": is_generated})
             if not is_generated:
                 line_number += 1
-            elif 1 <= line_number <= len(source) and "#}" in source[line_number - 1] and not line.strip():
+            elif just_reset and 1 <= line_number <= len(source) and "#}" in source[line_number - 1] and not line.strip():
                 # c2hs resets to the closing hook line, emitting its suffix
                 # (usually blank) before continuing verbatim hand-written code.
                 line_number += 1
+            just_reset = False
     # Every explicitly typed hand-written declaration must map back to its
     # exact declaration line. This catches mapping drift around inline hooks.
     signatures = {match[1]: i for i, line in enumerate(source, 1)

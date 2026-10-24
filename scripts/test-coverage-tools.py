@@ -163,6 +163,25 @@ class GateControls(unittest.TestCase):
         self.assertNotIn('"src/Kafka/Internal/RdKafka.chs"', actual)
         self.assertIn('{-# LINE 1 "Generated.hs" #-}', actual)
 
+    def test_generated_enum_internal_blank_does_not_advance_into_manual_source(self):
+        source = (checker.ROOT / "src/Kafka/Internal/RdKafka.chs").read_text().splitlines()
+        hook = next(i for i, line in enumerate(source, 1) if line.startswith("{#enum rd_kafka_conf_res_t"))
+        text = f'{{-# LINE {hook} "src/Kafka/Internal/RdKafka.chs" #-}}\ndata Generated = A\ninstance Enum Generated where\n  fromEnum A = 0\n\n  toEnum 0 = A\n{{-# LINE {hook} "src/Kafka/Internal/RdKafka.chs" #-}}\n\nmanual = 1\n'
+        _, mapping = preprocessor.transform("Generated.hs", text)
+        self.assertTrue(all(mapping[index]["generated"] for index in range(1, 6)))
+        self.assertFalse(mapping[8]["generated"])
+        self.assertEqual(mapping[8]["line"], hook + 1)
+
+    def test_spaced_c2hs_hook_is_generated(self):
+        source = (checker.ROOT / "src/Kafka/Internal/RdKafka.chs").read_text().splitlines()
+        hook = next(i for i, line in enumerate(source, 1) if line.startswith("{# fun"))
+        end = next(i for i in range(hook, len(source) + 1) if "#}" in source[i - 1])
+        text = f'{{-# LINE {hook} "src/Kafka/Internal/RdKafka.chs" #-}}\ngenerated = 1\n\ngeneratedMore = 2\n{{-# LINE {end} "src/Kafka/Internal/RdKafka.chs" #-}}\n\nmanual = 3\n'
+        _, mapping = preprocessor.transform("Generated.hs", text)
+        self.assertTrue(all(mapping[index]["generated"] for index in range(1, 4)))
+        self.assertFalse(mapping[6]["generated"])
+        self.assertEqual(mapping[6]["line"], end + 1)
+
     def test_compiler_derived_temporary_export_is_rejected(self):
         with tempfile.TemporaryDirectory(prefix="rdkafka-export-control-") as directory:
             root = Path(directory)

@@ -42,6 +42,8 @@ Accepted source fingerprint: `3867af1e625927d5799e2c4f189ba7f999b778bb74a9dd89ef
 
 ## Surprises & Discoveries
 
+Maintenance during EP-14 found two conservative source-map defects: internal blanks in generated enum blocks advanced into handwritten source, and spaced `{# fun ...}` hooks were omitted from generated ranges. Only an explicit closing-hook LINE reset may advance past the hook suffix. Twenty-four controls pass, including two that both reject the old mapper. Applying both versions to the real generated module produces byte-identical instrumented Haskell while correcting 743 map entries (86 manual-to-generated, no generated-to-manual); every handwritten signature remains verified. Required checks pass. [Mapper evidence](../testing/generated-mapping-evidence.json) retains proof; subsequent full collection must regenerate metrics before final acceptance.
+
 
 The inherited `sendMessages` and `sendMessagesWithHeaders` ignored every `produceMessage` result and return `Right ()`. The inherited `receiveMessages` used `rights` and treated any error as an end condition, so it could not distinguish expected timeout from real failure. Several inherited tests assert only `isRight` or nonempty results. These false-success paths explain why the existing count cannot substantiate comprehensive coverage.
 
