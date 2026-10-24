@@ -1,0 +1,39 @@
+{
+  "status": "accepted deprecated-runner checkpoint; EP-14 incomplete",
+  "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+  "runs": {
+    "normal": {
+      "log": "/tmp/rdkafka-ep14-runners-normal-final.log",
+      "sha256": "62fa8a3677dc531f0a47e48b089ab8c8cdf7e9ce1c215d032522d4e8d3adab95",
+      "passed": 15
+    },
+    "instrumented-haskell": {
+      "log": "/tmp/rdkafka-ep14-runners-hpc.log",
+      "sha256": "fff393482c3c1a0f5aef38d1c4a196ff42acd110015dcb0fb0d13e0bbdb1bef6",
+      "passed": 15
+    },
+    "instrumented-native": {
+      "log": "/tmp/rdkafka-ep14-runners-asan.log",
+      "sha256": "b790dc47c1352c781989c28b36fb5e5ae9a6654cbc15897805bf7df33b0aa792",
+      "passed": 15
+    }
+  },
+  "mutations": "dist-mutations/20261024T210335Z-runners-32700-0/results.json",
+  "compiled_mutations_caught": 4,
+  "controls": 1,
+  "scope": [
+    "Producer flushes delivery callbacks after normal return, Left and thrown handler",
+    "Consumers close after all three handler outcomes in both callback modes",
+    "Native construction failures remain Left; configuration exceptions retain their types; handlers stay uncalled",
+    "Exported handle constructors and fields reconstruct working producer/consumer aliases"
+  ],
+  "native_library": "mori://confluentinc/librdkafka",
+  "native_version": "2.15.0",
+  "native_diagnostic_control": "docs/testing/callback-native-diagnostics.json",
+  "leak_instrumentation": false,
+  "remaining": "Examples, input boundaries, saved deprecated-seek diagnosis, whole-candidate inventory and remaining handwritten misses; EP-15 environments remain open.",
+  "required_checks": {
+    "log": "/tmp/rdkafka-ep14-runners-check.log",
+    "sha256": "bb09034a5c1baf4a7efcbe0bbf0fe8c623672476a374ee1a97a5eb966d588c51"
+  }
+}

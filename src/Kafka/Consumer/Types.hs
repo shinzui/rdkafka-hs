@@ -49,7 +49,7 @@ import Kafka.Types (Headers, KafkaError, Millis (..), PartitionId (..), TopicNam
 
 -- | The main type for Kafka consumption, used e.g. to poll and commit messages.
 --
--- Its constructor is intentionally not exposed, instead, one should use 'Kafka.Consumer.newConsumer' to acquire such a value.
+-- Use 'Kafka.Consumer.newConsumer' to acquire a managed consumer.
 data KafkaConsumer = KafkaConsumer
   { kcKafkaPtr :: !Kafka,
     kcKafkaConf :: !KafkaConf

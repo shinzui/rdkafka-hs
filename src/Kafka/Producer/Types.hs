@@ -27,7 +27,7 @@ import Kafka.Types (Headers, KafkaError (..), TopicName (..))
 
 -- | The main type for Kafka message production, used e.g. to send messages.
 --
--- Its constructor is intentionally not exposed, instead, one should used 'Kafka.Producer.newProducer' to acquire such a value.
+-- Use 'Kafka.Producer.newProducer' to acquire a managed producer.
 data KafkaProducer = KafkaProducer
   { kpKafkaPtr :: !Kafka,
     kpKafkaConf :: !KafkaConf,

@@ -141,6 +141,8 @@ EP-14 M1 is Complete: 65 unit and four focused native cases pass normally and in
 
 ## Surprises & Discoveries
 
+EP-14 deprecated wrappers now pass fifteen normal/Haskell/native-instrumented cleanup and result-contract cases. Four compiled mutations are caught and the unchanged control passes; [wrapper evidence](../testing/deprecated-runner-evidence.json) records the scope. Examples and remaining public contracts continue.
+
 EP-13 maintenance corrects generated-enum/spaced-hook coverage classification. All 24 controls pass; both new controls reject the old mapper, and emitted Haskell remains byte identical. [Mapping evidence](../testing/generated-mapping-evidence.json) records the comparison. The next full EP-14 collection must refresh metrics and exception keys; no public contract is closed by reclassification alone.
 
 EP-14 consumer commits now have eight exact native-flag, callback and broker-state cases in both modes, including empty/mixed/timeout cases. Normal/Haskell/native-instrumented runs and four compiled mutations pass; see [commit evidence](../testing/consumer-commit-evidence.json). Another 203 unused private union-reader/variant ticks are classified. Remaining public contracts and final inventory reconciliation continue.

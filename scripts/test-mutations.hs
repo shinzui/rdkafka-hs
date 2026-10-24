@@ -262,6 +262,13 @@ families "buffer" =
   ]
   where
     b label change test = mutation "public-contract" label consumer change test
+families "runners" =
+  [ control "unchanged-control" integration "deprecated-runners",
+    mutation "deprecated-runners" "producer-wrapper-skips-flush" producer (replace "clProducer (Right prod) = closeProducer prod" "clProducer (Right _) = pure ()") "producer flushes after Thrown",
+    mutation "deprecated-runners" "consumer-wrapper-skips-close" consumer (replace "clConsumer (Right kc) = maybeToLeft <$> closeConsumer kc" "clConsumer (Right _) = pure (Right ())") "sync consumer closes after Thrown",
+    mutation "deprecated-runners" "consumer-wrapper-throws-construction-error" consumer (section "runConsumer ::" "newConsumer ::" (replace "runHandler (Left err) = return (Left err)" "runHandler (Left err) = throwIO err") . replace "import Control.Exception (bracket," "import Control.Exception (bracket, throwIO,") "sync consumer preserves native construction failure",
+    mutation "deprecated-runners" "producer-wrapper-throws-handler-left" producer (section "runProducer ::" "newProducer ::" (replace "runHandler (Right prod) = f prod" "runHandler (Right prod) = f prod >>= either throwIO (pure . Right)") . replace "import Control.Exception (bracket," "import Control.Exception (bracket, throwIO,") "producer flushes after Refused"
+  ]
 families "consumer-commit" =
   [ control "unchanged-control" integration "consumer-commit",
     mutation "consumer-commit" "async-commit-submitted-synchronously" consumerConversion (replace "offsetCommitToBool OffsetCommitAsync = True" "offsetCommitToBool OffsetCommitAsync = False") "async commit modes preserve native flags callback offsets and broker state",
@@ -307,7 +314,7 @@ families "config" =
     mutation "config-strings" "c-string-key-guard-removed" "src/Kafka/Internal/Setup.hs" (replace "Text.any (== '\\0') key" "False") "producer topic rejects NUL key",
     mutation "config-strings" "c-string-value-guard-removed" "src/Kafka/Internal/Setup.hs" (replace "Text.any (== '\\0') value" "False") "producer global rejects NUL value"
   ]
-families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata, metadata-utf8, metadata-partitions, metadata-fields, consumer-commit, buffer, data or config")
+families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata, metadata-utf8, metadata-partitions, metadata-fields, consumer-commit, runners, buffer, data or config")
 
 replace :: String -> String -> String -> String
 replace old new source = case [i | (i, rest) <- zip [0 ..] (tails source), old `isPrefixOf` rest] of

@@ -193,6 +193,7 @@ test-suite rdkafka-hs-integration
     Kafka.Integration.ConsumerPropertyTest
     Kafka.Integration.ConsumerStateContractTest
     Kafka.Integration.ConsumerTest
+    Kafka.Integration.DeprecatedRunnerContractTest
     Kafka.Integration.DestroyTest
     Kafka.Integration.DiagnosticContractTest
     Kafka.Integration.FatalErrorTest
