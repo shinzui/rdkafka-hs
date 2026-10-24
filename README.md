@@ -137,6 +137,10 @@ extensions.
 
 ### Callback poll modes
 
+The default async mode requires an executable linked with `-threaded`.
+Without it, consumer construction returns `KafkaBadSpecification`; select
+`callbackPollMode CallbackPollModeSync` to use a nonthreaded executable.
+
 librdkafka reports rebalances, offset commits, errors, logs and statistics
 through callbacks, which run only while something polls the client. A consumer
 has one of two callback poll modes, set with `callbackPollMode`:

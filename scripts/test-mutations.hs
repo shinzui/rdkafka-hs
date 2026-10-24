@@ -228,7 +228,11 @@ families "diagnostics" =
   ]
   where
     d = mutation "diagnostics"
-families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state or diagnostics")
+families "runtime" =
+  [ control "nonthreaded-control" integration "runtime-contract",
+    mutation "runtime-contract" "async-runtime-guard-removed" consumer (replace "&& not rtsSupportsBoundThreads" "&& False") "RTS capability is observed by async construction"
+  ]
+families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics or runtime")
 
 replace :: String -> String -> String -> String
 replace old new source = case [i | (i, rest) <- zip [0 ..] (tails source), old `isPrefixOf` rest] of
@@ -276,7 +280,8 @@ runFamily family = do
   createDirectory package
   _ <- command root "tar" ["-xzf", archive, "--strip-components=1", "-C", package]
   writeFile (package </> "cabal.project") "packages: .\n"
-  let variants = families family
+  let nonthreaded = family == "runtime"
+      variants = families family
   originals <- forM (nub [path | m <- variants, (path, _) <- edits m]) $ \path -> (path,) <$> readUtf8 (package </> path)
   results <- forM variants $ \m -> do
     forM_ originals $ \(path, source) -> writeUtf8 (package </> path) source
@@ -290,7 +295,7 @@ runFamily family = do
         testLog = output </> name m <> ".test.log"
     withFile buildLog WriteMode $ \logHandle ->
       withCreateProcess
-        (proc "cabal" ["build", suite m, "-f", "integration"])
+        (proc "cabal" (["build", suite m, "-f", "integration"] <> ["--ghc-options=-single-threaded -with-rtsopts=-T" | nonthreaded]))
           { cwd = Just package,
             std_out = UseHandle logHandle,
             std_err = UseHandle logHandle
@@ -299,7 +304,7 @@ runFamily family = do
           waitForProcess child >>= \code -> unless (code == ExitSuccess) (die ("Build failed: " <> buildLog))
     binary <- command package "cabal" ["list-bin", suite m, "-f", "integration", "-v0"]
     environment <- getEnvironment
-    let options = ["-p", patternText m] <> ["--quickcheck-replay=20261024" | replay m] <> ["--quickcheck-tests=1000" | replay m] <> ["+RTS", "-N2", "-RTS"]
+    let options = ["-p", patternText m] <> ["--quickcheck-replay=20261024" | replay m] <> ["--quickcheck-tests=1000" | replay m] <> ["+RTS"] <> ["-N2" | not nonthreaded] <> ["-RTS"]
         key = if maybe False (isPrefixOf "callback safety probe") (safety m) then "RDKAFKA_TEST_CALLBACK_SAFETY_PROBE" else "RDKAFKA_TEST_PRODUCER_SAFETY_PROBE"
         extra = [(key, name m) | safety m /= Nothing]
         process args = (proc binary args) {cwd = Just package, env = Just (extra <> environment)}

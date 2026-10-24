@@ -145,59 +145,66 @@ runConsumer cp sub f =
 -- With an empty subscription (@mempty@) the consumer never calls
 -- @rd_kafka_subscribe@ and so never joins its consumer group; it reads only the
 -- partitions given to 'assign'. 'newAssignedConsumer' names that case.
+--
+-- Async callback polling (the default) requires an executable linked with
+-- @-threaded@. Without that runtime, choose 'CallbackPollModeSync'; requesting
+-- async polling returns 'KafkaBadSpecification' before allocating a client.
 newConsumer ::
   (MonadIO m) =>
   ConsumerProperties ->
   Subscription ->
   m (Either KafkaError KafkaConsumer)
-newConsumer props (Subscription ts tp) = liftIO $ mask $ \restore -> do
-  let cp = case effectiveCallbackPollMode props of
-        CallbackPollModeAsync -> setCallback (rebalanceCallback (\_ _ -> return ())) <> props
-        CallbackPollModeSync -> props
-  kc@(KafkaConf kc' qref _ _ _) <- newConsumerConf cp
-  flip onException (releaseUnattachedCallbacks (kcfgCallbackOwner kc)) $ restore $ do
-    -- Validate subscription values as topic properties, then merge only their
-    -- explicit keys so globally supplied topic settings remain effective.
-    _ <- topicConf (TopicProps tp)
-    setAllKafkaConfValues kc (KafkaProps tp)
-    rdk <- newRdKafkaT (kcfgCallbackOwner kc) RdKafkaConsumer kc'
-    case rdk of
-      Left err ->
-        return $
-          Left (KafkaError err)
-      Right rdk' -> do
-        let kafka =
-              KafkaConsumer (Kafka rdk') kc
+newConsumer props (Subscription ts tp)
+  | effectiveCallbackPollMode props == CallbackPollModeAsync && not rtsSupportsBoundThreads =
+      pure (Left (KafkaBadSpecification "Async callback polling requires -threaded; select CallbackPollModeSync for a nonthreaded runtime."))
+  | otherwise = liftIO $ mask $ \restore -> do
+      let cp = case effectiveCallbackPollMode props of
+            CallbackPollModeAsync -> setCallback (rebalanceCallback (\_ _ -> return ())) <> props
+            CallbackPollModeSync -> props
+      kc@(KafkaConf kc' qref _ _ _) <- newConsumerConf cp
+      flip onException (releaseUnattachedCallbacks (kcfgCallbackOwner kc)) $ restore $ do
+        -- Validate subscription values as topic properties, then merge only their
+        -- explicit keys so globally supplied topic settings remain effective.
+        _ <- topicConf (TopicProps tp)
+        setAllKafkaConfValues kc (KafkaProps tp)
+        rdk <- newRdKafkaT (kcfgCallbackOwner kc) RdKafkaConsumer kc'
+        case rdk of
+          Left err ->
+            return $
+              Left (KafkaError err)
+          Right rdk' -> do
+            let kafka =
+                  KafkaConsumer (Kafka rdk') kc
 
-        flip onException (destroyConsumer kafka) $ do
-          when (effectiveCallbackPollMode props == CallbackPollModeAsync) $ mask_ $ do
-            messageQueue <- rdKafkaQueueNew rdk'
-            writeIORef qref (Just messageQueue)
+            flip onException (destroyConsumer kafka) $ do
+              when (effectiveCallbackPollMode props == CallbackPollModeAsync) $ mask_ $ do
+                messageQueue <- rdKafkaQueueNew rdk'
+                writeIORef qref (Just messageQueue)
 
-          redErr <- redirectCallbacksPoll kafka
-          case redErr of
-            Just err -> do
-              _ <- closeConsumer kafka `finally` destroyConsumer kafka
-              return (Left err)
-            Nothing -> do
-              forM_ (cpLogLevel cp) $
-                setConsumerLogLevel kafka
-
-              subscribeError <-
-                if Set.null ts
-                  then
-                    pure Nothing
-                  else
-                    subscribe kafka ts
-
-              case subscribeError of
-                Nothing -> do
-                  when (effectiveCallbackPollMode props == CallbackPollModeAsync) $
-                    runConsumerLoop kafka (Just $ Timeout 100)
-                  return (Right kafka)
+              redErr <- redirectCallbacksPoll kafka
+              case redErr of
                 Just err -> do
                   _ <- closeConsumer kafka `finally` destroyConsumer kafka
                   return (Left err)
+                Nothing -> do
+                  forM_ (cpLogLevel cp) $
+                    setConsumerLogLevel kafka
+
+                  subscribeError <-
+                    if Set.null ts
+                      then
+                        pure Nothing
+                      else
+                        subscribe kafka ts
+
+                  case subscribeError of
+                    Nothing -> do
+                      when (effectiveCallbackPollMode props == CallbackPollModeAsync) $
+                        runConsumerLoop kafka (Just $ Timeout 100)
+                      return (Right kafka)
+                    Just err -> do
+                      _ <- closeConsumer kafka `finally` destroyConsumer kafka
+                      return (Left err)
 
 -- | Create a consumer that never subscribes and therefore never joins a group:
 -- it reads only the partitions given to 'assign', from the offsets given there.

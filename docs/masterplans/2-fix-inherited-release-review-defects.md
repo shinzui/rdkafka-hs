@@ -141,6 +141,8 @@ EP-14 M1 is Complete: 65 unit and four focused native cases pass normally and in
 
 ## Surprises & Discoveries
 
+EP-14 verifies actual threaded/nonthreaded executables. Async construction now rejects a runtime that cannot start its callback loop; sync consumption and deprecated runner close pass in both variants. Four focused cases and one compiled nonthreaded mutation verify the contract. See [runtime evidence](../testing/runtime-evidence.json). Remaining EP-14 contracts and EP-15 are open.
+
 EP-14 diagnostics close caller-handle consumption and native dump-array cancellation leaks: nine cases pass normally and with Haskell/native instrumentation, plus three compiled mutations. [Diagnostic evidence](../testing/diagnostic-evidence.json) includes native stream error and descriptor cleanup controls. The preceding state checkpoint passes 65 unit and 495 integration cases normally; final mapped coverage and remaining EP-14 contracts are still open.
 
 EP-14 adds 26 consumer-state cases with normal/Haskell/native-instrumented passes and four compiled mutation controls. Global consumer topic settings survive empty subscription properties; mixed partition errors are reported while successful effects persist. [State evidence](../testing/consumer-state-evidence.json) records corrected native preconditions. The saved intermittent deprecated-seek failure remains open despite repeated exact replay passing.

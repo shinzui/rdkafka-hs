@@ -9,6 +9,7 @@ okf_version: "0.2"
 # Architecture Decision Record
 
 - [Admin requests have scoped native ownership and configured deadlines](admin-requests-have-scoped-native-ownership-and-configured-deadlines.md) - Topic administration retains the native client, scopes each owned request and result, validates C representations, and follows the configured native request timeout.
+- [Async consumers require a threaded runtime](async-consumers-require-a-threaded-runtime.md) - Reject async consumer construction before allocation when the executable lacks the threaded runtime, while retaining synchronous consumers and runners.
 - [Consumed headers preserve wire order](consumed-headers-preserve-wire-order.md) - Headers is an ordered list that keeps every pair, repeated names and identical pairs included, and the consumer decoder returns it in the order the producer sent it; selecting a value for a repeated name is the caller's choice.
 - [Consumer fatal errors are surfaced in-band](consumer-fatal-errors-are-surfaced-in-band.md) - Once librdkafka raises a fatal error on a consumer, pollMessage and pollMessageBatch return KafkaResponseError RdKafkaRespErrFatal on every call in both callback poll modes, consumerFatalError returns the cause, and the background loop destroys what it polls.
 - [Consumer partition operations report member errors](consumer-partition-operations-report-member-errors.md) - Preserve overall native errors before the first failing partition and retain successful effects of mixed consumer requests.

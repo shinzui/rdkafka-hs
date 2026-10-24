@@ -64,3 +64,21 @@ Run `just test-mutations transaction` to require a passing 51-case control and t
 Remaining public data laws live in `Kafka.PublicPropertiesSpec` and `Kafka.Integration.ConsumerPropertyTest`. The consumer registration property uses real constructor log callbacks, and a native observer checks generated source next-offset fields across the representable signed 64-bit domain. Subscription maps now prefer later values by the user's explicit choice, while topic sets still accumulate; both consumer modes verify the resulting native reset policy. `just test-mutations public` catches eight generated semantic faults and replays their minimized tokens. [The focused M1 record](public-properties-evidence.json) distinguishes these property/HPC checks from the final full-candidate coverage gate.
 
 Polled-message ownership tests are in `public-contract.messages`. The test-only native observer records actual returned message objects and pauses at native-return or decoder boundaries; cancellation is injected only after the boundary and a blocked exception sender are observed. A retained-last-object control verifies the counter. `just test-mutations messages` catches omitted batch cleanup, unmasked single acquisition and suppressed header/acquisition errors. [The checkpoint evidence](message-ownership-evidence.json) records normal, Haskell-instrumented and native-instrumented results; remaining EP-14 API work and final global coverage are separate.
+
+### Actual runtime variants
+
+EP-14 checks async construction, synchronous record delivery and deprecated
+runner cleanup in actual threaded and nonthreaded executables:
+
+```bash
+nix develop -c cabal test rdkafka-hs-integration -f integration --test-show-details=direct --test-options='-p /runtime-contract/'
+nix develop -c cabal test rdkafka-hs-integration -f integration --builddir=dist-nonthreaded --ghc-options='-single-threaded -with-rtsopts=-T' --test-show-details=direct --test-options='-p /runtime-contract/'
+nix develop -c just test-mutations runtime
+```
+
+The nonthreaded command overrides the integration executable's usual threaded
+link and default `-N` options. Its observed RTS way is `rts_v`. The mutation
+runner applies the same flags to the runtime family and omits `-N2`; other
+families retain their original threaded invocation. See
+[runtime evidence](runtime-evidence.json). Focused instrumented results do not
+replace final full-candidate mapped coverage.

@@ -186,6 +186,8 @@ queuedMaxMessagesKBytes kBytes =
 {-# INLINE queuedMaxMessagesKBytes #-}
 
 -- | Set the callback poll mode. Default value is 'CallbackPollModeAsync'.
+-- Async polling requires a threaded runtime; 'CallbackPollModeSync' also works
+-- in executables linked without @-threaded@.
 --
 -- Like every property, a later setting overrides an earlier one, and
 -- composing properties that do not set the mode leaves it unchanged.

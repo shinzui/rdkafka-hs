@@ -1,0 +1,41 @@
+{
+  "status": "accepted M2 runtime checkpoint; EP-14 incomplete",
+  "fingerprint": "617dcc03cd792c1c6d67b8333b8a1b5b6991389253d635572d006662324ef22c",
+  "runs": {
+    "threaded": {
+      "log": "/tmp/rdkafka-ep14-runtime-threaded.log",
+      "sha256": "2a423c824c66822ed967b03ea1f562131029449440a454c80d32c566477a0a96",
+      "passed": 4,
+      "seconds": 0.8
+    },
+    "nonthreaded": {
+      "log": "/tmp/rdkafka-ep14-runtime-nonthreaded.log",
+      "sha256": "8c4fd155a17285f51b1b681026f6c83b27f4b85aa861a3150aa82885d99ef4f6",
+      "passed": 4,
+      "seconds": 0.8
+    },
+    "hpc": {
+      "log": "/tmp/rdkafka-ep14-runtime-hpc.log",
+      "sha256": "3efc5de756f69eb1d1a5cf2738a3293a3c18b2d2292e14c27986d9c2b0d5ee28",
+      "passed": 4,
+      "seconds": 0.82
+    }
+  },
+  "mutations": "dist-mutations/20261024T163256Z-runtime-57734-0/results.json",
+  "compiled_mutations_caught": 1,
+  "controls": 1,
+  "mutation_runtime": "Actual nonthreaded executable built with -single-threaded -with-rtsopts=-T; no -N runtime argument. Other mutation families retain their threaded build and runtime arguments.",
+  "baseline": {
+    "revision": "cc83145",
+    "async_log": "/tmp/rdkafka-ep14-nonthreaded-async.log",
+    "async_failed": 1,
+    "async_seconds": 10.25,
+    "sync_log": "/tmp/rdkafka-ep14-nonthreaded-sync.log",
+    "note": "The broad sync substring also selected async: async failed and sync alone passed (0.18s). Accepted fixed runs use the exact runtime-contract group."
+  },
+  "nonthreaded_rts_info": "/tmp/rdkafka-ep14-runtime-rts-info.log",
+  "rts_way": "rts_v",
+  "scope": "Default and explicit async guards; actual sync subscription record and deprecated runner close, in both runtimes.",
+  "required_checks": "/tmp/rdkafka-ep14-runtime-check.log",
+  "remaining": "Metadata and remaining public contracts, saved deprecated-seek failure, final mapped coverage/inventory reconciliation and EP-15 environments remain open."
+}

@@ -202,6 +202,7 @@ test-suite rdkafka-hs-integration
     Kafka.Integration.PublicConsumerContractTest
     Kafka.Integration.QueueEventTest
     Kafka.Integration.ReadCommittedTest
+    Kafka.Integration.RuntimeContractTest
     Kafka.Integration.SeekPartitionsTest
     Kafka.Integration.StoreOffsetsTest
     Kafka.Integration.TopicConfigurationTest

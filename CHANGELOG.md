@@ -9,6 +9,10 @@ this project adheres to the [Haskell Package Versioning Policy](https://pvp.hask
 
 ### Fixed
 
+- Async consumer construction now returns a clear `KafkaBadSpecification`
+  without a threaded runtime, instead of accepting a consumer whose callback
+  loop never starts. Link with `-threaded` or choose `CallbackPollModeSync`.
+
 - Diagnostic printing now flushes its native output and keeps the caller’s
   handle open. Native streams and duplicate descriptors are scoped through
   failures; configuration dump arrays are freed on cancellation and conversion
