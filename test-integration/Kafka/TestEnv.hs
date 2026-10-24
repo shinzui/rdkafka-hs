@@ -62,6 +62,7 @@ import Kafka.FixtureSupport (acquirePair, collectExactly, sendAndConfirm)
 import Kafka.Metadata (allTopicsMetadata)
 import Kafka.Producer as P
 import Kafka.Topic (NewTopic (..), PartitionCount (..), ReplicationFactor (..), createTopic, deleteTopic)
+import System.IO (hPutStrLn, stderr)
 import System.Random qualified as Rnd
 import System.Timeout (timeout)
 import Test.Tasty (TestTree, withResource)
@@ -135,6 +136,7 @@ isLoopback host =
 newTestEnv :: [BrokerAddress] -> IO TestEnv
 newTestEnv brokers = do
   prefix <- Text.pack . take 10 . Rnd.randomRs ('a', 'z') <$> Rnd.newStdGen
+  hPutStrLn stderr ("[fixture] run-prefix=" <> Text.unpack prefix)
   pure
     TestEnv
       { teBrokers = brokers,

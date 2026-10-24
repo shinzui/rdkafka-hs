@@ -1,5 +1,5 @@
 {
-  "status": "accepted queue-fixture checkpoint; EP-14 incomplete",
+  "status": "earlier checkpoint; refreshed queue observations accepted in final-boundaries-evidence.json",
   "fingerprint": "e60269df1b56e383003809e16cd6e9ec074ae17a069f8e1d992cb3aed12330bb",
   "runs": {
     "normal": {
@@ -62,5 +62,10 @@
   "required_checks": {
     "log": "/tmp/rdkafka-ep14-queue-check.log",
     "sha256": "9209fffbf1a9256b2f0982806deb034bc2baedcc4e2ffe62c7c2aaf960176ff7"
+  },
+  "prefetch_followup": {
+    "reason": "The scalar observer refresh argument was unused. Existing notification/error/teardown results remain recorded, but the earlier preload check could read a stale count. A new empty-payload case exposed the issue; the helper now calls refresh on every observation.",
+    "failure_log": "/tmp/rdkafka-ep14-final-boundaries-hpc.log",
+    "replacement_checks": "Accepted: final-boundaries-evidence.json; all five original queue mutations rerun plus stale-observer and binary-size regressions."
   }
 }

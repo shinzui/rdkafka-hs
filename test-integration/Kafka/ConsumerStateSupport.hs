@@ -50,8 +50,9 @@ queueEventStat index = fromIntegral <$> statQueue (fromIntegral index)
 awaitQueuedRecord :: IO () -> IO ()
 awaitQueuedRecord refresh = timeout 10000000 loop >>= maybe (assertFailure "record was not queued before enabling notification") pure
   where
-    loop =
-      queueEventStat 1 >>= \count ->
-        if count < 0
-          then assertFailure "notification destination queue was not observed"
-          else if count > 0 then pure () else threadDelay 1000 >> loop
+    loop = do
+      refresh
+      count <- queueEventStat 1
+      if count < 0
+        then assertFailure "notification destination queue was not observed"
+        else if count > 0 then pure () else threadDelay 1000 >> loop

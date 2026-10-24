@@ -180,7 +180,11 @@ tests =
                       allDistinct reports,
                       QC.conjoin (map generic reports),
                       generic message,
-                      P.ImmediateError K.KafkaInvalidReturnValue QC.=== P.ImmediateError K.KafkaInvalidReturnValue,
+                      QC.conjoin
+                        [ (P.ImmediateError (K.KafkaError name) == P.ImmediateError (K.KafkaError (name <> "x"))) QC.=== False,
+                          show (P.ImmediateError (K.KafkaError name)) QC.=== show (K.KafkaError name),
+                          (case P.ImmediateError (K.KafkaError name) of P.ImmediateError err -> err) QC.=== K.KafkaError name
+                        ],
                       QC.property (P.SpecifiedPartition partition /= P.UnassignedPartition),
                       map fromEnum [P.PurgeQueue, P.PurgeInFlight, P.PurgeNonBlocking] QC.=== [0, 1, 2],
                       [minBound .. maxBound :: P.PurgeFlag] QC.=== [P.PurgeQueue, P.PurgeInFlight, P.PurgeNonBlocking],

@@ -262,6 +262,16 @@ families "buffer" =
   ]
   where
     b label change test = mutation "public-contract" label consumer change test
+families "boundaries" =
+  families "queue"
+    <> [ control "unchanged-unit-control" unit "Public data contracts",
+         control "unchanged-redirect-control" integration "construction failure releases callbacks: redirect",
+         mutation "public-contract.queue" "notification-binary-payload-truncated" consumer (section "setConsumerQueueIOEvent ::" "setSaslCredentials ::" (replace "rdKafkaQueueIoEventEnable q (fromIntegral fd) (castPtr bytes) (fromIntegral size)" "rdKafkaQueueIoEventEnable q (fromIntegral fd) (castPtr bytes) 1")) "binary payloads retain every byte and empty payloads preserve records",
+         mutation "public-contract.queue" "fixture-prefetch-observer-is-stale" "test-integration/Kafka/ConsumerStateSupport.hs" (replace "      refresh\n" "      pure ()\n") "binary payloads retain every byte and empty payloads preserve records",
+         mutation "construction failure releases callbacks: redirect" "redirect-construction-error-suppressed" consumer (replace "kafkaErrorToMaybe . KafkaResponseError <$> rdKafkaPollSetConsumer k" "pure Nothing") "async construction failure releases callbacks: redirect",
+         mutation "construction failure releases callbacks: redirect" "redirect-client-cleanup-deferred-to-gc" consumer (section "redErr <- redirectCallbacksPoll kafka" "Nothing -> do" (replace "closeConsumer kafka `finally` destroyConsumer kafka" "closeConsumer kafka")) "async construction failure releases callbacks: redirect",
+         (mutation "Public data contracts" "immediate-error-show-adds-constructor" "src/Kafka/Producer/Types.hs" (replace "newtype ImmediateError = ImmediateError KafkaError\n  deriving newtype (Eq, Show)" "newtype ImmediateError = ImmediateError KafkaError\n  deriving stock (Eq, Show)") "producer records delivery variants and topic requests retain exact fields") {suite = unit, replay = True}
+       ]
 families "queue" =
   [ control "unchanged-control" integration "public-contract.queue",
     q "notification-watches-the-wrong-queue" (replace "readIORef qr" "pure Nothing") "wakes an idle consumer and stays quiet once disabled",
@@ -349,7 +359,7 @@ families "config" =
     mutation "config-strings" "c-string-key-guard-removed" "src/Kafka/Internal/Setup.hs" (replace "Text.any (== '\\0') key" "False") "producer topic rejects NUL key",
     mutation "config-strings" "c-string-value-guard-removed" "src/Kafka/Internal/Setup.hs" (replace "Text.any (== '\\0') value" "False") "producer global rejects NUL value"
   ]
-families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata, metadata-utf8, metadata-partitions, metadata-fields, consumer-commit, runners, inputs, consumer-edges, queue, buffer, data or config")
+families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata, metadata-utf8, metadata-partitions, metadata-fields, consumer-commit, runners, inputs, consumer-edges, queue, boundaries, buffer, data or config")
 
 replace :: String -> String -> String -> String
 replace old new source = case [i | (i, rest) <- zip [0 ..] (tails source), old `isPrefixOf` rest] of

@@ -1,0 +1,54 @@
+{
+  "status": "focused checkpoint accepted; whole-candidate reconciliation remains open",
+  "fingerprint": "2477c5e49a3f1d43743e330c51e287cfc619ce545d2957ce56b66a2e0b24f0ed",
+  "runs": {
+    "normal": {
+      "log": "/tmp/rdkafka-ep14-final-boundaries-normal.log",
+      "sha256": "1fe6ce35d2e2122896cbafafff0c149a97d8e5b791ceec0b948d2255ef3a2ecd",
+      "passed": 17
+    },
+    "instrumented-haskell": {
+      "log": "/tmp/rdkafka-ep14-final-boundaries-hpc-corrected.log",
+      "sha256": "da292798c9be2442c808f65960f222a2cf416588c7c0137d77d9870555bfab3d",
+      "passed": 17
+    },
+    "instrumented-native": {
+      "log": "/tmp/rdkafka-ep14-final-boundaries-asan.log",
+      "sha256": "3b9a0bed00ce8988795cc6d30ac24749abdb81939e4dedcd4272223db61af6ca",
+      "passed": 17
+    },
+    "unit-normal": {
+      "log": "/tmp/rdkafka-ep14-final-boundaries-unit.log",
+      "sha256": "aecbd5292a0e4fcbb45dc1ff350b19e0d61c536351290e1639833cc81249b934",
+      "passed": 78
+    },
+    "unit-haskell": {
+      "log": "/tmp/rdkafka-ep14-final-boundaries-unit-hpc.log",
+      "sha256": "9d2322d9c26555bf7486c5d17ebceae2fca824e9a1b03cbd776d77efd821e6df",
+      "passed": 78
+    }
+  },
+  "mutations": "dist-mutations/20261024T225516Z-boundaries-44042-0/results.json",
+  "compiled_mutations_caught": 10,
+  "controls": 3,
+  "scope": [
+    "All six inherited queue cases retained, now fifteen queue cases; refreshed scalar observation checks actual queued records on every loop",
+    "Binary notification bytes and empty payload record preservation in both callback modes",
+    "Native poll redirection failure returns UnknownGroup and releases callbacks, client and async message queue before GC in both modes",
+    "ImmediateError equality uses distinct wrapped errors, Show delegates to the error, unwrap preserves identity; generated cases use seed 20261024 and 1000 trials",
+    "Fixture run prefix is printed to stderr for exact crash resource ownership"
+  ],
+  "excluded_runs": [
+    {
+      "log": "/tmp/rdkafka-ep14-final-boundaries-hpc.log",
+      "reason": "Two new empty-payload assertions exposed an unused observer refresh argument; helper corrected and all focused runs repeated."
+    },
+    {
+      "results": "dist-mutations/20261024T223440Z-boundaries-19287-0",
+      "reason": "Redirect tests failed correctly, but mutation runner expected label omitted the async prefix. Correct full labels used in accepted rerun."
+    }
+  ],
+  "native_version": "2.15.0",
+  "leak_instrumentation": false,
+  "required_checks": "/tmp/rdkafka-ep14-final-boundaries-check.log"
+}

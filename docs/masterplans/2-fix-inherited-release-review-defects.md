@@ -123,6 +123,8 @@ Build and unit-test the emitted tarball from a fresh temporary extraction under 
 
 ## Progress
 
+The refreshed queue/constructor checkpoint passes seventeen focused cases normally, with Haskell coverage and with native AddressSanitizer, plus all 78 unit cases normally and mapped. Ten compiled mutations fail the intended assertions and three unchanged controls pass. The new binary/empty notification cases exposed an unused scalar-observer refresh argument; the corrected helper now observes a fresh native queue length each loop, and the original five queue mutations were rerun. Native poll-redirection failure releases callbacks/client/queue before GC in both modes. ImmediateError laws use distinct wrapped errors and delegated Show. See [boundary evidence](../testing/final-boundaries-evidence.json). Required package checks pass. This is focused evidence; M2/M3 and whole-candidate coverage remain open.
+
 
 EP-13 is Complete. Its accepted baseline passes 14 unit and 129 integration tests in normal and instrumented builds, plus 15 tooling controls. The compiler-derived inventory contains 174 distinct exports and 169 contract/resource/environment rows; 168 remain open. All 22 library modules appear in measured reports, including explicit zero coverage for unlinked functions. The final coverage gate correctly rejects open rows and 3,004 unexplained hand-written misses. See [EP-13](../plans/13-make-coverage-evidence-and-test-fixtures-reliable.md) and its [evidence manifest](../testing/coverage-evidence.json).
 

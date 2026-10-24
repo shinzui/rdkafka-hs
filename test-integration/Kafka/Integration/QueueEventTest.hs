@@ -78,6 +78,23 @@ modeGroup env label mode =
           send producer topic "four"
           timeout 10000000 (threadWaitRead rfd) >>= (@?= Just ())
           awaitRecord consumer topic 3 "four",
+      testCase "binary payloads retain every byte and empty payloads preserve records" $
+        withQueueEvent env mode (label <> "-payload") $ \consumer producer topic (rfd, wfd) -> do
+          let payload = BS.pack [0, 255, 0, 65, 66, 67, 0, 128]
+          setConsumerQueueIOEvent consumer (Just (wfd, payload))
+          drainQueue consumer topic >>= (@?= [])
+          _ <- drainPipe rfd
+          send producer topic "binary-payload"
+          timeout 10000000 (threadWaitRead rfd) >>= (@?= Just ())
+          fdRead rfd (BS.length payload) >>= (@?= payload)
+          awaitRecord consumer topic 0 "binary-payload"
+          drainPipe rfd >>= (@?= BS.empty)
+          setConsumerQueueIOEvent consumer (Just (wfd, BS.empty))
+          send producer topic "empty-payload"
+          awaitQueuedRecord (setConsumerQueueIOEvent consumer (Just (wfd, BS.empty)))
+          timeout 500000 (threadWaitRead rfd) >>= (@?= Nothing)
+          awaitRecord consumer topic 1 "empty-payload"
+          drainPipe rfd >>= (@?= BS.empty),
       testCase "native record errors are never treated as idle" $
         withQueueEvent env mode (label <> "-error") $ \consumer producer topic _ -> do
           send producer topic "error-record"

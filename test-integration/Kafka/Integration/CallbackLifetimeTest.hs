@@ -53,9 +53,17 @@ tests env =
              kind <- ["log", "stats"]
            ]
         <> [ testCase (label <> " construction failure releases callbacks: " <> stage) $
-               failedConsumerProbe env mode label stage >>= awaitCollected
+               if stage == "redirect"
+                 then withCallbackTracking 0 $ do
+                   weak <- failedConsumerProbe env mode label stage
+                   ( do
+                       mapM callbackStat [1, 2, 3] >>= (@?= [1, 1, 1])
+                       callbackStat 8 >>= (@?= if mode == C.CallbackPollModeAsync then 1 else 0)
+                     )
+                     `finally` awaitCollected weak
+                 else failedConsumerProbe env mode label stage >>= awaitCollected
            | (label, mode) <- [("async", C.CallbackPollModeAsync), ("sync", C.CallbackPollModeSync)],
-             stage <- ["topic", "native"]
+             stage <- ["topic", "native", "redirect"]
            ]
         <> [ testCase "producer native construction failure releases callbacks" $
                failedProducerProbe env >>= awaitCollected
@@ -216,13 +224,13 @@ failedConsumerProbe env mode label stage = do
   weak <- mkWeakIORef capture (pure ())
   let props =
         C.brokersList (teBrokers env)
-          <> C.groupId (makeGroupId env (Text.pack ("owner-failure-" <> label <> "-" <> stage)))
+          <> (if stage == "redirect" then mempty else C.groupId (makeGroupId env (Text.pack ("owner-failure-" <> label <> "-" <> stage))))
           <> C.noAutoCommit
           <> C.callbackPollMode mode
           <> C.setCallback (C.errorCallback (\_ _ -> atomicModifyIORef' capture (\n -> (n + 1, ()))))
       invalid = C.extraProps (M.fromList [("security.protocol", "sasl_plaintext"), ("sasl.mechanism", "PLAIN")])
       sub = C.extraSubscriptionProps (M.singleton "__ownership.invalid" "x")
-  result <- try @C.KafkaError $ if stage == "topic" then C.newConsumer props sub else C.newAssignedConsumer (props <> invalid)
+  result <- try @C.KafkaError $ if stage == "topic" then C.newConsumer props sub else C.newAssignedConsumer (if stage == "native" then props <> invalid else props)
   case result of
     Left (C.KafkaUnknownConfigurationKey message)
       | stage == "topic" ->
@@ -230,6 +238,8 @@ failedConsumerProbe env mode label stage = do
     Right (Left (C.KafkaError message))
       | stage == "native" ->
           assertBool (Text.unpack message) ("sasl.username and sasl.password must be set" `Text.isInfixOf` message)
+    Right (Left (C.KafkaResponseError C.RdKafkaRespErrUnknownGroup))
+      | stage == "redirect" -> pure ()
     Right (Right consumer) -> C.destroyConsumer consumer >> assertFailure "invalid constructor succeeded"
     other -> assertFailure ("unexpected constructor result: " <> case other of Left e -> show e; Right (Left e) -> show e)
   pure weak
