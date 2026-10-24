@@ -7,6 +7,7 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <librdkafka/rdkafka.h>
 
 typedef void (*rebalance_callback)(rd_kafka_t *, rd_kafka_resp_err_t,
@@ -135,4 +136,41 @@ rd_kafka_resp_err_t rd_kafka_commit(rd_kafka_t *rk, const rd_kafka_topic_partiti
   if (enabled && mode == 0 && rk == client) { commit_calls++; commit_async = async; }
   pthread_mutex_unlock(&lock);
   return real(rk, offsets, async);
+}
+
+/* A sync queue handle is a temporary wrapper. Observe its length within the
+ * call that borrows it; retain only scalar observations after that call. */
+static int queue_tracking, queue_calls, notification_length;
+static int queue_application_call(void *caller) {
+  Dl_info image;
+  if (!dladdr(caller, &image) || !image.dli_fname) abort();
+  const char *name = strrchr(image.dli_fname, '/');
+  name = name ? name + 1 : image.dli_fname;
+  return strncmp(name, "librdkafka.", 11) != 0;
+}
+void rdkafka_hs_test_queue_begin(void) {
+  pthread_mutex_lock(&lock);
+  if (queue_tracking) abort();
+  queue_tracking = 1; queue_calls = 0; notification_length = -1;
+  pthread_mutex_unlock(&lock);
+}
+void rdkafka_hs_test_queue_end(void) {
+  pthread_mutex_lock(&lock);
+  queue_tracking = 0; notification_length = -1;
+  pthread_mutex_unlock(&lock);
+}
+void rd_kafka_queue_io_event_enable(rd_kafka_queue_t *queue, int fd, const void *payload, size_t size) {
+  REAL(rd_kafka_queue_io_event_enable);
+  real(queue, fd, payload, size);
+  if (!queue_application_call(__builtin_return_address(0))) return;
+  pthread_mutex_lock(&lock);
+  if (queue_tracking) { notification_length = (int)rd_kafka_queue_length(queue); queue_calls++; }
+  pthread_mutex_unlock(&lock);
+}
+int rdkafka_hs_test_queue_stat(int index) {
+  pthread_mutex_lock(&lock);
+  int result = index == 0 ? queue_calls :
+    index == 1 && queue_tracking ? notification_length : -1;
+  pthread_mutex_unlock(&lock);
+  return result;
 }

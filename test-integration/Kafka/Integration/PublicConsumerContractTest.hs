@@ -21,6 +21,7 @@ import Kafka.Integration.DiagnosticContractTest qualified as DiagnosticContractT
 import Kafka.Integration.FatalErrorTest qualified as FatalErrorTest
 import Kafka.Integration.InputBoundaryContractTest qualified as InputBoundaryContractTest
 import Kafka.Integration.MetadataContractTest qualified as MetadataContractTest
+import Kafka.Integration.QueueEventTest qualified as QueueEventTest
 import Kafka.Integration.RuntimeContractTest qualified as RuntimeContractTest
 import Kafka.MessageTestSupport
 import Kafka.Producer qualified as P
@@ -155,6 +156,7 @@ tests testEnv =
       InputBoundaryContractTest.tests testEnv,
       DeprecatedRunnerContractTest.tests testEnv,
       FatalErrorTest.tests testEnv,
+      QueueEventTest.tests testEnv,
       RuntimeContractTest.tests testEnv,
       MetadataContractTest.tests testEnv,
       ConfigStringContractTest.tests testEnv

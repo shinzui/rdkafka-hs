@@ -262,6 +262,17 @@ families "buffer" =
   ]
   where
     b label change test = mutation "public-contract" label consumer change test
+families "queue" =
+  [ control "unchanged-control" integration "public-contract.queue",
+    q "notification-watches-the-wrong-queue" (replace "readIORef qr" "pure Nothing") "wakes an idle consumer and stays quiet once disabled",
+    q "notification-payload-is-empty" (replace "rdKafkaQueueIoEventEnable q (fromIntegral fd) (castPtr bytes) (fromIntegral size)" "rdKafkaQueueIoEventEnable q (fromIntegral fd) (castPtr bytes) 0") "wakes an idle consumer and stays quiet once disabled",
+    q "notification-disable-is-ignored" (replace "Nothing -> rdKafkaQueueIoEventEnable q (-1) nullPtr 0" "Nothing -> pure ()") "wakes an idle consumer and stays quiet once disabled",
+    fixture "fixture-descriptor-errors-swallowed" (section "fdRead ::" "drainPipe ::" (replace "Left err -> throwIO err" "Left _ -> pure BS.empty")) "empty pipes are idle but invalid descriptor errors are preserved",
+    fixture "fixture-record-errors-swallowed" (section "drainQueue ::" "fdRead ::" (replace "Left err -> throwIO err" "Left _ -> go (n - 1)")) "native record errors are never treated as idle"
+  ]
+  where
+    q label change test = mutation "public-contract.queue" label consumer (section "setConsumerQueueIOEvent ::" "setSaslCredentials ::" change) test
+    fixture label change test = mutation "public-contract.queue" label "test-integration/Kafka/Integration/QueueEventTest.hs" change test
 families "consumer-edges" =
   [ control "unchanged-metadata-control" integration "metadata-contract",
     control "unchanged-commit-control" integration "consumer-commit",
@@ -338,7 +349,7 @@ families "config" =
     mutation "config-strings" "c-string-key-guard-removed" "src/Kafka/Internal/Setup.hs" (replace "Text.any (== '\\0') key" "False") "producer topic rejects NUL key",
     mutation "config-strings" "c-string-value-guard-removed" "src/Kafka/Internal/Setup.hs" (replace "Text.any (== '\\0') value" "False") "producer global rejects NUL value"
   ]
-families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata, metadata-utf8, metadata-partitions, metadata-fields, consumer-commit, runners, inputs, consumer-edges, buffer, data or config")
+families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata, metadata-utf8, metadata-partitions, metadata-fields, consumer-commit, runners, inputs, consumer-edges, queue, buffer, data or config")
 
 replace :: String -> String -> String -> String
 replace old new source = case [i | (i, rest) <- zip [0 ..] (tails source), old `isPrefixOf` rest] of

@@ -1,40 +1,40 @@
--- | 'setConsumerQueueIOEvent' wakes a waiting application through a pipe
--- (improvement request IR-1, AC-2), in both callback poll modes.
---
--- librdkafka writes the payload when an op lands in the empty queue, at most
--- once until the queue is next polled, so every case follows the documented
--- protocol: enable, poll the queue empty, discard pending payload bytes, then
--- wait.
-module Kafka.Integration.QueueEventTest
-  ( tests,
-  )
-where
+-- | Pipe notifications for the actual queue read by the public polling APIs.
+module Kafka.Integration.QueueEventTest (tests) where
 
-import Control.Concurrent (threadDelay, threadWaitRead)
-import Control.Exception (bracket, finally, try)
-import Control.Monad (void)
+import Control.Concurrent (threadWaitRead)
+import Control.Exception (bracket, throwIO, try)
 import Data.ByteString (ByteString)
 import Data.ByteString qualified as BS
-import Data.Either (isRight)
 import Data.Text qualified as Text
+import Foreign.C.Error (Errno (..), eAGAIN, eBADF, eWOULDBLOCK)
 import Foreign.Marshal.Alloc (allocaBytes)
 import Foreign.Ptr (castPtr)
-import GHC.Clock (getMonotonicTime)
+import GHC.Clock (getMonotonicTimeNSec)
+import GHC.IO.Exception (ioe_errno)
 import Kafka.Consumer
-import Kafka.Producer (KafkaProducer, ProducePartition (..), ProducerRecord (..), closeProducer, flushProducer, produceMessage)
+import Kafka.ConsumerStateSupport (awaitQueuedRecord, queueEventStat, withQueueTracking)
+import Kafka.FixtureSupport (collectExactly)
+import Kafka.MessageTestSupport (messageStat, withMessageFault)
+import Kafka.Producer (KafkaProducer, ProducePartition (..), ProducerRecord (..))
 import Kafka.TestEnv
-import Kafka.Topic (NewTopic (..), PartitionCount (..), ReplicationFactor (..), createTopic, deleteTopic)
-import System.Posix.IO (FdOption (..), closeFd, createPipe, fdReadBuf, setFdOption)
-import System.Posix.Types (ByteCount, Fd)
+import System.Posix.IO (FdOption (..), closeFd, createPipe, fdReadBuf, fdWrite, setFdOption)
+import System.Posix.Types (ByteCount, Fd (..))
 import System.Timeout (timeout)
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.HUnit (Assertion, assertBool, assertFailure, testCase, (@?=))
+import Test.Tasty.HUnit (Assertion, assertFailure, testCase, (@?=))
 
 tests :: TestEnv -> TestTree
 tests env =
   testGroup
     "queue event"
-    [ modeGroup env "async" CallbackPollModeAsync,
+    [ testCase "empty pipes are idle but invalid descriptor errors are preserved" $
+        bracket createPipe closePipe $ \(rfd, _) -> do
+          setFdOption rfd NonBlockingRead True
+          fdRead rfd 1 >>= (@?= BS.empty)
+          try @IOError (fdRead (Fd (-1)) 1) >>= \case
+            Left err -> let Errno code = eBADF in ioe_errno err @?= Just code
+            Right bytes -> assertFailure ("invalid descriptor appeared idle: " <> show bytes),
+      modeGroup env "async" CallbackPollModeAsync,
       modeGroup env "sync" CallbackPollModeSync
     ]
 
@@ -43,149 +43,141 @@ modeGroup env label mode =
   testGroup
     label
     [ testCase "wakes an idle consumer and stays quiet once disabled" $
-        withQueueEvent env mode (label <> "-idle") $ \consumer producer topic (rfd, wfd) -> do
-          register consumer (rfd, wfd)
+        withQueueEvent env mode (label <> "-idle") $ \consumer producer topic pipe@(rfd, wfd) -> do
+          register consumer topic pipe
           send producer topic "first"
-          readable <- timeout 10000000 (threadWaitRead rfd)
-          readable @?= Just ()
+          timeout 10000000 (threadWaitRead rfd) >>= (@?= Just ())
           fdRead rfd 1 >>= (@?= "1")
-          awaitRecord consumer "first"
-
-          void (drainQueue consumer)
+          awaitRecord consumer topic 0 "first"
+          drainQueue consumer topic >>= (@?= [])
           setConsumerQueueIOEvent consumer Nothing
-          void (drainPipe rfd)
+          _ <- drainPipe rfd
           send producer topic "second"
-          quiet <- timeout 2000000 (threadWaitRead rfd)
-          quiet @?= Nothing
-          awaitRecord consumer "second",
+          timeout 2000000 (threadWaitRead rfd) >>= (@?= Nothing)
+          awaitRecord consumer topic 1 "second",
       testCase "finds records queued before it was enabled, then rearms" $
         withQueueEvent env mode (label <> "-preloaded") $ \consumer producer topic (rfd, wfd) -> do
-          -- Let the consumer fetch a record before the event is enabled; the
-          -- protocol's poll after enabling must find it without a wake-up.
           send producer topic "early"
-          threadDelay 3000000
+          -- Observe a real queued record, rather than infer prefetch from a delay.
+          awaitQueuedRecord (setConsumerQueueIOEvent consumer Nothing)
           setConsumerQueueIOEvent consumer (Just (wfd, "1"))
-          early <- drainQueue consumer
-          assertBool ("expected the queued record, got " <> show early) ("early" `elem` early)
-          void (drainPipe rfd)
-
+          drainQueue consumer topic >>= (@?= [(Offset 0, "early")])
+          _ <- drainPipe rfd
           send producer topic "later"
-          readable <- timeout 10000000 (threadWaitRead rfd)
-          readable @?= Just ()
-          awaitRecord consumer "later",
+          timeout 10000000 (threadWaitRead rfd) >>= (@?= Just ())
+          awaitRecord consumer topic 1 "later",
       testCase "one wake-up covers several records, then rearms" $
-        withQueueEvent env mode (label <> "-multiple") $ \consumer producer topic (rfd, wfd) -> do
-          register consumer (rfd, wfd)
+        withQueueEvent env mode (label <> "-multiple") $ \consumer producer topic pipe@(rfd, _) -> do
+          register consumer topic pipe
           sendAll producer topic ["one", "two", "three"]
-          readable <- timeout 10000000 (threadWaitRead rfd)
-          readable @?= Just ()
+          timeout 10000000 (threadWaitRead rfd) >>= (@?= Just ())
           drainPipe rfd >>= (@?= "1")
-          collected <- collect consumer 3
-          collected @?= ["one", "two", "three"]
-          void (drainQueue consumer)
-          void (drainPipe rfd)
-
+          collect consumer topic 3 >>= (@?= [(Offset 0, "one"), (Offset 1, "two"), (Offset 2, "three")])
+          drainQueue consumer topic >>= (@?= [])
+          _ <- drainPipe rfd
           send producer topic "four"
-          rearmed <- timeout 10000000 (threadWaitRead rfd)
-          rearmed @?= Just ()
-          awaitRecord consumer "four"
+          timeout 10000000 (threadWaitRead rfd) >>= (@?= Just ())
+          awaitRecord consumer topic 3 "four",
+      testCase "native record errors are never treated as idle" $
+        withQueueEvent env mode (label <> "-error") $ \consumer producer topic _ -> do
+          send producer topic "error-record"
+          awaitQueuedRecord (setConsumerQueueIOEvent consumer Nothing)
+          withMessageFault (if mode == CallbackPollModeAsync then 12 else 15) $ do
+            result <- try @KafkaError (drainQueue consumer topic)
+            result @?= Left (KafkaResponseError RdKafkaRespErrBadMsg)
+            mapM messageStat [1, 2] >>= (@?= [1, 1]),
+      testCase "close stops notifications and keeps caller descriptors open" $
+        withQueueEvent env mode (label <> "-close") $ \consumer _ topic pipe@(rfd, wfd) -> do
+          register consumer topic pipe
+          closeConsumer consumer >>= (@?= Nothing)
+          consumerClosed consumer >>= (@?= True)
+          calls <- queueEventStat 0
+          setConsumerQueueIOEvent consumer (Just (wfd, "1"))
+          queueEventStat 0 >>= (@?= calls)
+          _ <- drainPipe rfd
+          timeout 500000 (threadWaitRead rfd) >>= (@?= Nothing)
+          assertPipeOwned pipe,
+      testCase "destroy stops notifications and keeps caller descriptors open" $
+        withQueueEvent env mode (label <> "-destroy") $ \consumer _ topic pipe@(rfd, _) -> do
+          register consumer topic pipe
+          destroyConsumer consumer
+          _ <- drainPipe rfd
+          timeout 500000 (threadWaitRead rfd) >>= (@?= Nothing)
+          assertPipeOwned pipe
     ]
 
--- | The wait protocol's first step: enable the event, poll the queue empty and
--- discard pending payload bytes.
-register :: KafkaConsumer -> (Fd, Fd) -> IO ()
-register consumer (rfd, wfd) = do
+register :: KafkaConsumer -> TopicName -> (Fd, Fd) -> IO ()
+register consumer topic (rfd, wfd) = do
   setConsumerQueueIOEvent consumer (Just (wfd, "1"))
-  void (drainQueue consumer)
-  void (drainPipe rfd)
+  drainQueue consumer topic >>= (@?= [])
+  _ <- drainPipe rfd
+  pure ()
 
--- | Create a topic, a consumer subscribed to it and a producer, and open a
--- pipe whose ends are non-blocking. Cleanup disables the event before
--- closing the pipe, then releases the clients and deletes the topic.
-withQueueEvent ::
-  TestEnv ->
-  CallbackPollMode ->
-  String ->
-  (KafkaConsumer -> KafkaProducer -> TopicName -> (Fd, Fd) -> Assertion) ->
-  Assertion
-withQueueEvent env mode label body = do
-  let topic = TopicName (prefixedName env ("queue-event-" <> Text.pack label))
-      props =
-        consumerProps env
-          <> groupId (makeGroupId env ("queue-event-" <> Text.pack label))
-          <> callbackPollMode mode
-  producer <- mkProducer env
-  flip finally (void (deleteTopic producer topic) >> closeProducer producer) $ do
-    created <- createTopic producer (NewTopic topic (PartitionCount 1) (ReplicationFactor 1) mempty)
-    assertBool ("createTopic: " <> show created) (isRight created)
-    consumer <- mkConsumerFor topic props
-    flip finally (void (closeConsumer consumer)) $
-      bracket createPipe (closePipe consumer) $ \(rfd, wfd) -> do
-        -- NonBlockingRead sets O_NONBLOCK, which governs writes too.
-        setFdOption wfd NonBlockingRead True
-        setFdOption rfd NonBlockingRead True
-        void (drainQueue consumer)
-        body consumer producer topic (rfd, wfd)
-  where
-    closePipe consumer (rfd, wfd) = do
-      setConsumerQueueIOEvent consumer Nothing
-      closeFd rfd
-      closeFd wfd
+-- Descriptors outlive consumer destruction, including failing test actions.
+withQueueEvent :: TestEnv -> CallbackPollMode -> String -> (KafkaConsumer -> KafkaProducer -> TopicName -> (Fd, Fd) -> Assertion) -> Assertion
+withQueueEvent env mode label body = withQueueTracking $
+  withTopic env ("queue-event-" <> Text.pack label) 1 $ \topic producer ->
+    bracket createPipe closePipe $ \pipe@(rfd, wfd) -> do
+      setFdOption wfd NonBlockingRead True
+      setFdOption rfd NonBlockingRead True
+      let props = consumerProps env <> groupId (makeGroupId env ("queue-event-" <> Text.pack label)) <> callbackPollMode mode
+      bracket (mkConsumerFor topic props) releaseConsumer $ \consumer -> do
+        -- The observer borrows this final destination queue only while open.
+        setConsumerQueueIOEvent consumer Nothing
+        drainQueue consumer topic >>= (@?= [])
+        body consumer producer topic pipe
+
+closePipe :: (Fd, Fd) -> IO ()
+closePipe (rfd, wfd) = closeFd rfd >> closeFd wfd
+
+assertPipeOwned :: (Fd, Fd) -> Assertion
+assertPipeOwned (rfd, wfd) = do
+  fdWrite wfd "owner" >>= (@?= 5)
+  fdRead rfd 5 >>= (@?= "owner")
 
 send :: KafkaProducer -> TopicName -> ByteString -> IO ()
 send producer topic value = sendAll producer topic [value]
 
 sendAll :: KafkaProducer -> TopicName -> [ByteString] -> IO ()
-sendAll producer topic values = do
-  mapM_ (\v -> produceMessage producer (ProducerRecord topic (SpecifiedPartition 0) Nothing (Just v) mempty)) values
-  flushProducer producer
+sendAll producer topic values =
+  sendMessages [ProducerRecord topic (SpecifiedPartition 0) Nothing (Just value) mempty | value <- values] producer >>= either throwIO pure
 
--- | Poll until a poll times out, returning the values received. Other errors
--- (non-record events) are skipped.
-drainQueue :: KafkaConsumer -> IO [ByteString]
-drainQueue consumer = go (50 :: Int)
+recordValue :: TopicName -> ConsumerRecord (Maybe ByteString) (Maybe ByteString) -> IO (Offset, ByteString)
+recordValue topic record = do
+  (crTopic record, crPartition record, crKey record, crHeaders record) @?= (topic, PartitionId 0, Nothing, mempty)
+  value <- maybe (assertFailure "unexpected tombstone") pure (crValue record)
+  pure (crOffset record, value)
+
+drainQueue :: KafkaConsumer -> TopicName -> IO [(Offset, ByteString)]
+drainQueue consumer topic = go (50 :: Int)
   where
-    go 0 = pure []
+    go 0 = assertFailure "queue did not become idle within fifty polls"
     go n =
       pollMessage consumer (Timeout 200) >>= \case
-        Right record -> maybe id (:) (crValue record) <$> go (n - 1)
+        Right record -> do
+          value <- recordValue topic record
+          (value :) <$> go (n - 1)
         Left (KafkaResponseError RdKafkaRespErrTimedOut) -> pure []
-        Left _ -> go (n - 1)
+        Left (KafkaResponseError RdKafkaRespErrPartitionEof) -> go (n - 1)
+        Left err -> throwIO err
 
--- | Read up to @n@ bytes from a non-blocking descriptor; empty when none are
--- pending.
 fdRead :: Fd -> Int -> IO ByteString
-fdRead fd n =
-  allocaBytes n $ \buf ->
-    (try (fdReadBuf fd buf (fromIntegral n)) :: IO (Either IOError ByteCount)) >>= \case
-      Right count -> BS.packCStringLen (castPtr buf, fromIntegral count)
-      Left _ -> pure BS.empty
+fdRead fd n = allocaBytes n $ \buf ->
+  (try (fdReadBuf fd buf (fromIntegral n)) :: IO (Either IOError ByteCount)) >>= \case
+    Right count -> BS.packCStringLen (castPtr buf, fromIntegral count)
+    Left err | maybe False ((`elem` [eAGAIN, eWOULDBLOCK]) . Errno) (ioe_errno err) -> pure BS.empty
+    Left err -> throwIO err
 
--- | Read and discard pending payload bytes without blocking.
 drainPipe :: Fd -> IO ByteString
 drainPipe rfd =
   fdRead rfd 64 >>= \case
     bytes | not (BS.null bytes) -> (bytes <>) <$> drainPipe rfd
     _ -> pure BS.empty
 
--- | Poll, tolerating non-record events, until the record arrives (ten seconds).
-awaitRecord :: KafkaConsumer -> ByteString -> Assertion
-awaitRecord consumer value = do
-  got <- collect consumer 1
-  got @?= [value]
+awaitRecord :: KafkaConsumer -> TopicName -> Int -> ByteString -> Assertion
+awaitRecord consumer topic offset value = collect consumer topic 1 >>= (@?= [(Offset (fromIntegral offset), value)])
 
--- | Poll until @n@ records have arrived or ten seconds pass.
-collect :: KafkaConsumer -> Int -> IO [ByteString]
-collect consumer n = do
-  deadline <- (+ 10) <$> getMonotonicTime
-  let go acc
-        | length acc >= n = pure (reverse acc)
-        | otherwise = do
-            now <- getMonotonicTime
-            if now > deadline
-              then assertFailure ("received only " <> show (reverse acc) <> " within 10 seconds")
-              else
-                pollMessage consumer (Timeout 500) >>= \case
-                  Right record -> go (maybe acc (: acc) (crValue record))
-                  Left _ -> go acc
-  go []
+collect :: KafkaConsumer -> TopicName -> Int -> IO [(Offset, ByteString)]
+collect consumer topic n =
+  collectExactly getMonotonicTimeNSec 10000000000 n (pollMessage consumer (Timeout 500))
+    >>= either throwIO (traverse (recordValue topic))

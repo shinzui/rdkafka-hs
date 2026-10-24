@@ -1,0 +1,66 @@
+{
+  "status": "accepted queue-fixture checkpoint; EP-14 incomplete",
+  "fingerprint": "e60269df1b56e383003809e16cd6e9ec074ae17a069f8e1d992cb3aed12330bb",
+  "runs": {
+    "normal": {
+      "log": "/tmp/rdkafka-ep14-queue-normal-corrected.log",
+      "sha256": "16e2e27091505240299910908952b9d33b8c3faa75c2652c22574bb0b636a76d",
+      "passed": 13
+    },
+    "instrumented-haskell": {
+      "log": "/tmp/rdkafka-ep14-queue-hpc-corrected.log",
+      "sha256": "95bfa35c4144bd70448312210108ed8934c790bab4566247a4af56fccda5f2a6",
+      "passed": 13
+    },
+    "instrumented-native": {
+      "log": "/tmp/rdkafka-ep14-queue-asan.log",
+      "sha256": "84b41bc36de02cdeebb33720567e332f55646503e2ed56d5923365021ffd359f",
+      "passed": 13
+    }
+  },
+  "mutations": "dist-mutations/20261024T220955Z-queue-1667-0/results.json",
+  "compiled_mutations_caught": 5,
+  "controls": 1,
+  "original_cases_retained": 6,
+  "registered_cases": 13,
+  "scope": [
+    "All original notification, preloaded-record and rearm cases are retained in both modes",
+    "Native queue length is observed within the wrapper borrowing call; no native queue pointer is retained",
+    "Producer delivery reports and complete record identity/offsets are checked; unexpected record/descriptor errors remain failures",
+    "Close/destroy preserve caller descriptor ownership, and disabled/closed operations do not register notifications",
+    "Pipes outlive consumer destruction even when a test action fails",
+    "Queue cases move to the independent public-contract group without removing any original case"
+  ],
+  "native_library": "mori://confluentinc/librdkafka",
+  "native_version": "2.15.0",
+  "leak_instrumentation": false,
+  "fixture_correction": {
+    "logs": [
+      "/tmp/rdkafka-ep14-queue-normal.log",
+      "/tmp/rdkafka-ep14-queue-hpc.log"
+    ],
+    "reason": "The first observer retained a borrowed sync queue wrapper beyond release. Those runs aborted and are excluded. The corrected observer stores only scalar values observed within the borrowing call.",
+    "cleanup_log": "/tmp/rdkafka-ep14-queue-crash-cleanup.log",
+    "owned_topics_removed": [
+      "fdpcykbjns-queue-event-sync-preloaded",
+      "savlqyosei-queue-event-sync-preloaded"
+    ],
+    "ownership_check": "Both exact new fixture names contained only the expected early record at partition zero/offset zero with timestamps matching these two aborted runs. No other topics were removed."
+  },
+  "dependency_api_check": {
+    "project": "mori://ghc/ghc",
+    "release_tag": "ghc-9.12.4-release",
+    "base_version": "4.21.2.0",
+    "source_paths": [
+      "libraries/base/src/GHC/IO/Exception.hs",
+      "libraries/ghc-internal/src/GHC/Internal/IO/Exception.hs"
+    ],
+    "source_artifact_uri_pending": true,
+    "lookup": "Mori has no base package entry; the upstream release-tag sources verify exported IOException errno fields."
+  },
+  "remaining": "Whole-candidate reconciliation, other boundary/ownership/source-miss cases, saved legacy-seek diagnosis and EP-15 remain open.",
+  "required_checks": {
+    "log": "/tmp/rdkafka-ep14-queue-check.log",
+    "sha256": "9209fffbf1a9256b2f0982806deb034bc2baedcc4e2ffe62c7c2aaf960176ff7"
+  }
+}

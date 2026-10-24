@@ -17,7 +17,6 @@ import Kafka.Integration.PerMessageCommitTest qualified as PerMessageCommitTest
 import Kafka.Integration.ProducerPropertyTest qualified as ProducerPropertyTest
 import Kafka.Integration.ProducerRegressionTest qualified as ProducerRegressionTest
 import Kafka.Integration.PublicConsumerContractTest qualified as PublicConsumerContractTest
-import Kafka.Integration.QueueEventTest qualified as QueueEventTest
 import Kafka.Integration.ReadCommittedTest qualified as ReadCommittedTest
 import Kafka.Integration.SeekPartitionsTest qualified as SeekPartitionsTest
 import Kafka.Integration.StoreOffsetsTest qualified as StoreOffsetsTest
@@ -71,7 +70,6 @@ integrationMain = do
             ConsumerTest.tests env,
             BatchTest.tests env,
             HeadersTest.tests env,
-            QueueEventTest.tests env,
             AssignOnlyTest.tests env,
             AttributedErrorTest.tests env,
             DestroyTest.tests env,

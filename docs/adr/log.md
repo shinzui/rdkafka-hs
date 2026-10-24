@@ -1,6 +1,7 @@
 # Bundle Update Log
 
 ## 2026-10-24
+* **updated**: Scope temporary sync queue wrappers and keep notification descriptors through client destruction.
 * **updated**: Sample assignment loss before native revocation can clear the flag.
 * **updated**: Distinguish asynchronous assignment availability errors and Invalid commit-callback entries from broker state.
 * **created**: Reject topic truncation and partition wrapping before consumer or metadata native effects.

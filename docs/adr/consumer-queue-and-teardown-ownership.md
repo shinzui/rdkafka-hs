@@ -2,7 +2,7 @@
 type: Architecture Decision Record
 title: Consumer queue and teardown ownership
 description: Manual assignment shares subscription queue routing, and destroyConsumer synchronously stops polling, releases queue references and destroys the client without a graceful group close.
-timestamp: 2026-10-24T12:29:36Z
+timestamp: 2026-10-24T22:12:14Z
 generated:
   by: codex-cli/gpt-6-astra
   at: "2026-10-22T00:05:10Z"
@@ -93,3 +93,17 @@ EP-1 will adopt this existing record into the profiled ADR bundle and allocate
 its stable handle using OKF.
 
 Persistent Haskell callback bridges now follow [ADR-15](native-clients-own-persistent-haskell-callback-bridges.md). The native client finalizer retains their independent owner through shutdown and releases it afterward. Failed construction releases unattached registrations and destroys a native configuration duplicate left with the caller. Public operations scope native child handles and retain the client through their cleanup, rather than relying on GC finalizer ordering. The lifecycle lock still publishes `ClientDestroyed` only after synchronous finalization completes.
+
+A sync consumer-queue reference is a temporary native wrapper. Destroying that
+reference frees the wrapper even while the underlying queue remains owned by
+the client. Observers inspect the wrapper only within its borrowing call and
+retain scalar observations, or acquire a separately owned reference; retaining
+the client alone does not extend a released wrapper's lifetime. The native
+contract is in `mori://confluentinc/librdkafka`, project-relative
+`src/rdkafka_queue.c`; the source-artifact URI is pending.
+
+Notification fixtures keep pipes outside the consumer's teardown bracket, so
+both normal and failing actions destroy the client before closing descriptors.
+They observe a queued record before enabling preloaded notifications, preserve
+unexpected producer/poll/descriptor errors, and check descriptor ownership after
+both graceful close and immediate destruction.
