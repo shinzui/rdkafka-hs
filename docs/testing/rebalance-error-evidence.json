@@ -1,0 +1,43 @@
+{
+  "status": "accepted M2 rebalance-error checkpoint; EP-14 incomplete",
+  "fingerprint": "35b563bf08998d3045496fe0c1354e195a83d99b4113322471d1890d8f45ca16",
+  "runs": {
+    "normal": {
+      "log": "/tmp/rdkafka-ep14-rebalance-normal.log",
+      "sha256": "593582cfd66b6d83394e433a4e675ba56e429048b477353033628506dc0d6a2f",
+      "passed": 39,
+      "seconds": 18.96
+    },
+    "instrumented-haskell": {
+      "log": "/tmp/rdkafka-ep14-rebalance-hpc.log",
+      "sha256": "4efa442e309264cfaee08d0954545f89822fcdf54121bad051d23b69f3452527",
+      "passed": 15,
+      "seconds": 2.14
+    },
+    "instrumented-native": {
+      "log": "/tmp/rdkafka-ep14-rebalance-asan.log",
+      "sha256": "054d094cd7a91fcd0bbce886e94accaa734c0745ce29ba9bf14ce97ba32117a4",
+      "passed": 15,
+      "seconds": 2.86
+    }
+  },
+  "mutations": "dist-mutations/20261024T160849Z-rebalance-15738-0/results.json",
+  "compiled_mutations_caught": 4,
+  "controls": 1,
+  "baseline": {
+    "revision": "825be68",
+    "log": "/tmp/rdkafka-ep14-rebalance-baseline.log",
+    "failed": 12,
+    "total": 13,
+    "failures": "Cooperative error objects retained; eager and cooperative failures suppressed; after-events incorrectly reported success."
+  },
+  "controlled_native_scope": "Twelve isolated children invoke the installed callback with native partition lists and actually allocated cooperative error objects. Tests distinguish protocol, assign/revoke, async/sync and cooperative decoder failure; this does not simulate a real group handoff.",
+  "real_broker_scope": "Two cooperative-sticky consumers independently verify exact record delivery and assignment/revocation event order, one per callback poll mode.",
+  "native_counter_control": "An actual native error is intentionally retained until after the counter assertion and released by fixture cleanup.",
+  "native_library": "mori://confluentinc/librdkafka",
+  "native_version": "2.15.0",
+  "native_diagnostic_control": "docs/testing/callback-native-diagnostics.json",
+  "leak_instrumentation": false,
+  "required_checks": "/tmp/rdkafka-ep14-rebalance-check.log",
+  "remaining": "Consumer state, metadata and diagnostics contracts, deprecated seek, final coverage reconciliation and EP-15 environments remain open."
+}

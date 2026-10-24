@@ -68,6 +68,13 @@ def collect():
             if len(list(child_directory.glob("lifetime-" + kind + "-" + mode + "-*.tix"))) != 1:
                 raise ValueError("missing or ambiguous callback lifetime child coverage: " + kind + "/" + mode)
     artifacts.extend(children)
+    for protocol in ("cooperative", "eager"):
+        for operation in ("assign", "revoke"):
+            for mode in ("async", "sync"):
+                for failure in (("native", "decode") if protocol == "cooperative" else ("native",)):
+                    prefix = "rebalance-" + protocol + "-" + operation + "-" + mode + "-" + failure
+                    if len(list(child_directory.glob(prefix + "-*.tix"))) != 1:
+                        raise ValueError("missing or ambiguous rebalance error child coverage: " + prefix)
     for suite in SUITES:
         matches = list(cs["test:" + suite].rglob(suite + ".tix"))
         if len(matches) != 1 or not matches[0].stat().st_size:

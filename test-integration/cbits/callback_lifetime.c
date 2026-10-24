@@ -17,6 +17,7 @@ static rd_kafka_t *client;
 static rd_kafka_queue_t *message_queue;
 static rd_kafka_conf_t *duplicate;
 static log_callback user_log;
+extern void rdkafka_hs_state_client_created(rd_kafka_type_t, rd_kafka_t *);
 
 #define REAL(name) __typeof__(&name) real = (__typeof__(&name))dlsym(RTLD_NEXT, #name); \
   if (!real) { fprintf(stderr, "callback lifetime: %s\n", dlerror()); abort(); }
@@ -119,6 +120,7 @@ void rd_kafka_conf_destroy(rd_kafka_conf_t *conf) {
 rd_kafka_t *rd_kafka_new(rd_kafka_type_t type, rd_kafka_conf_t *conf, char *error, size_t capacity) {
   REAL(rd_kafka_new);
   rd_kafka_t *result = real(type, conf, error, capacity);
+  rdkafka_hs_state_client_created(type, result);
   pthread_mutex_lock(&lock);
   if (enabled && result) {
     if (client) abort(); /* Each fixture owns one client. */

@@ -202,7 +202,16 @@ families "messages" =
   ]
   where
     m = mutation "public-contract"
-families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public or messages")
+families "rebalance" =
+  [ control "unchanged-control" integration "rebalance-errors",
+    r "owned-rebalance-error-retained" (replace "bracket acquire rdKafkaErrorDestroy" "bracket acquire (const (pure ()))") "cooperative assign async native reports failure without a success event",
+    r "cooperative-assign-error-ignored" (replace "then checkRebalanceError (rdKafkaIncrementalAssign kptr pls)" "then void $ rdKafkaIncrementalAssign kptr pls") "cooperative assign async native reports failure without a success event",
+    r "cooperative-revoke-error-ignored" (replace "then checkRebalanceError (rdKafkaIncrementalUnassign kptr pls)" "then void $ rdKafkaIncrementalUnassign kptr pls") "cooperative revoke sync native reports failure without a success event",
+    r "rebalance-error-code-ignored" (replace "checkRebalanceCode action = action >>= either throwIO pure . rdKafkaErrorToEither" "checkRebalanceCode action = void action") "eager revoke sync native reports failure without a success event"
+  ]
+  where
+    r label change test = mutation "public-contract" label "src/Kafka/Consumer/Callbacks.hs" change test
+families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages or rebalance")
 
 replace :: String -> String -> String -> String
 replace old new source = case [i | (i, rest) <- zip [0 ..] (tails source), old `isPrefixOf` rest] of

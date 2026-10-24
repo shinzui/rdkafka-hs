@@ -35,6 +35,7 @@ main =
   getArgs >>= \case
     ["--producer-callback-probe", mode] -> ProducerRegressionTest.runCallbackProbe mode
     ["--lifetime-callback-probe", kind, label] -> CallbackLifetimeTest.runThrowingProbe kind label
+    ["--rebalance-error-probe", protocol, operation, poll, failure] -> PublicConsumerContractTest.runRebalanceProbe protocol operation poll failure
     ["--callback-lifetime-native-control"] -> CallbackLifetimeTest.runInvalidAccessControl
     _ -> integrationMain
 

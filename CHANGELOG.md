@@ -9,6 +9,10 @@ this project adheres to the [Haskell Package Versioning Policy](https://pvp.hask
 
 ### Fixed
 
+- Rebalance callbacks now check native assignment and revocation failures,
+  release cooperative error objects even if decoding fails, and report errors
+  through the callback exception handler without emitting a success event.
+
 - Polling now scopes native message acquisition and destruction together.
   Cancellation and conversion failures release every batch member, including
   unprocessed messages. Callback-event polling also closes the acquisition gap.

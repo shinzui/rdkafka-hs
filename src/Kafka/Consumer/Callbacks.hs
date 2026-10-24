@@ -9,6 +9,7 @@ module Kafka.Consumer.Callbacks
 where
 
 import Control.Arrow ((&&&))
+import Control.Exception (bracket, throwIO)
 import Control.Monad (forM_, void)
 import Foreign.ForeignPtr (finalizeForeignPtr, newForeignPtr_, withForeignPtr)
 import Foreign.Ptr (nullPtr)
@@ -18,6 +19,7 @@ import Kafka.Consumer.Types (KafkaConsumer (..), RebalanceEvent (..), TopicParti
 import Kafka.Internal.CallbackOwner (containCallbackException)
 import Kafka.Internal.RdKafka
 import Kafka.Internal.Setup (Callback (..), HasKafka (..), HasKafkaConf (..), Kafka (..), KafkaConf (..), getRdMsgQueue)
+import Kafka.Internal.Shared (rdKafkaErrorToEither)
 import Kafka.Types (KafkaError (..), PartitionId (..), TopicName (..))
 
 import Data.Text qualified as Text
@@ -88,8 +90,8 @@ setRebalanceCallback f k e pls = do
       containCallbackException $ f k (RebalanceBeforeAssign assignment)
       protocol <- rdKafkaRebalanceProtocol kptr
       if protocol == "COOPERATIVE"
-        then void $ rdKafkaIncrementalAssign kptr pls
-        else void $ rdKafkaAssign kptr pls
+        then checkRebalanceError (rdKafkaIncrementalAssign kptr pls)
+        else checkRebalanceCode (rdKafkaAssign kptr pls)
 
       mbq <- getRdMsgQueue $ getKafkaConf k
       case mbq of
@@ -108,7 +110,17 @@ setRebalanceCallback f k e pls = do
       containCallbackException $ f k (RebalanceBeforeRevoke assignment)
       protocol <- rdKafkaRebalanceProtocol kptr
       if protocol == "COOPERATIVE"
-        then void $ rdKafkaIncrementalUnassign kptr pls
-        else void $ newForeignPtr_ nullPtr >>= rdKafkaAssign kptr
+        then checkRebalanceError (rdKafkaIncrementalUnassign kptr pls)
+        else checkRebalanceCode (newForeignPtr_ nullPtr >>= rdKafkaAssign kptr)
       containCallbackException $ f k (RebalanceRevoke assignment)
     x -> error $ "Rebalance: UNKNOWN response: " <> show x
+
+-- The outer native callback boundary contains and reports these exceptions.
+-- Do not publish an after-assignment/revocation event when the native action
+-- failed, and do not let an owned error escape its decoding scope.
+checkRebalanceError :: IO RdKafkaErrorTPtr -> IO ()
+checkRebalanceError acquire = bracket acquire rdKafkaErrorDestroy $ \pointer ->
+  checkRebalanceCode (rdKafkaErrorCode pointer)
+
+checkRebalanceCode :: IO RdKafkaRespErrT -> IO ()
+checkRebalanceCode action = action >>= either throwIO pure . rdKafkaErrorToEither

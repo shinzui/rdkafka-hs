@@ -1,16 +1,23 @@
-module Kafka.Integration.PublicConsumerContractTest (tests) where
+module Kafka.Integration.PublicConsumerContractTest (tests, runRebalanceProbe) where
 
 import Control.Concurrent (forkFinally, forkIOWithUnmask, killThread, threadDelay)
 import Control.Concurrent.MVar (newEmptyMVar, putMVar, readMVar, tryReadMVar)
-import Control.Exception (AsyncException (ThreadKilled), SomeException, bracket, finally, fromException, throwIO, try)
+import Control.Exception (AsyncException (ThreadKilled), ErrorCall, SomeException, bracket, finally, fromException, throwIO, try)
 import Data.Either (isLeft)
+import Data.IORef (modifyIORef', newIORef, readIORef)
+import Data.Map.Strict qualified as M
+import Data.Maybe (isJust)
 import Data.Text qualified as Text
 import GHC.Clock (getMonotonicTimeNSec)
-import GHC.Conc (BlockReason (BlockedOnException), ThreadStatus (ThreadBlocked), threadStatus)
+import GHC.Conc (BlockReason (BlockedOnException), ThreadStatus (ThreadBlocked), getUncaughtExceptionHandler, setUncaughtExceptionHandler, threadStatus)
+import Kafka.CallbackTestSupport (runChildProbe)
 import Kafka.Consumer
+import Kafka.ConsumerStateSupport
 import Kafka.MessageTestSupport
 import Kafka.Producer qualified as P
 import Kafka.TestEnv
+import System.Environment (lookupEnv)
+import System.Exit (die)
 import System.Timeout (timeout)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (assertBool, assertFailure, testCase, (@?=))
@@ -115,7 +122,8 @@ tests testEnv =
                    assertBool ("empty batch took " <> show elapsed <> " ns") (elapsed < 3000000000)
                    balanced 0
              | milliseconds <- [0, 100]
-             ]
+             ],
+      rebalanceErrorTests testEnv
     ]
 
 assertBadSpecification :: (Show a) => [Either KafkaError a] -> IO ()
@@ -161,3 +169,85 @@ cancelled count action = do
       Right _ -> assertFailure "pending polling cancellation was not delivered"
     bounded (readMVar killed) >>= either throwIO pure
     balanced count
+
+rebalanceErrorTests :: TestEnv -> TestTree
+rebalanceErrorTests testEnv =
+  testGroup "rebalance-errors" $
+    [ testCase
+        "native rebalance counter detects an undisposed error"
+        ( withStateFault 1 $ do
+            stateLeakControl
+            stateStat 0 >>= (@?= 1)
+            stateStat 1 >>= (@?= 0)
+        )
+    ]
+      <> [ testCase (label <> " real cooperative assignment and revocation preserve records") $
+             withTopic testEnv ("cooperative-" <> Text.pack label) 1 $ \topic producer -> do
+               produceTo producer topic 0 "cooperative-record"
+               events <- newIORef []
+               let partitions = [(topic, PartitionId 0)]
+                   props =
+                     brokersList (teBrokers testEnv)
+                       <> groupId (makeGroupId testEnv ("cooperative-" <> Text.pack label))
+                       <> noAutoCommit
+                       <> callbackPollMode mode
+                       <> extraProps (M.singleton "partition.assignment.strategy" "cooperative-sticky")
+                       <> setCallback (rebalanceCallback (\_ event -> modifyIORef' events (<> [event])))
+               bracket (newConsumer props (topics [topic] <> offsetReset Earliest) >>= either throwIO pure) releaseConsumer $ \consumer -> do
+                 record <- pollMessage consumer (Timeout 10000) >>= either throwIO pure
+                 (crOffset record, crValue record) @?= (Offset 0, Just "cooperative-record")
+                 readIORef events >>= (@?= [RebalanceBeforeAssign partitions, RebalanceAssign partitions])
+               readIORef events >>= (@?= [RebalanceBeforeAssign partitions, RebalanceAssign partitions, RebalanceBeforeRevoke partitions, RebalanceRevoke partitions])
+         | (label, mode) <- [("async", CallbackPollModeAsync), ("sync", CallbackPollModeSync)]
+         ]
+      <> [ testCase (protocol <> " " <> operation <> " " <> poll <> " " <> failure <> " reports failure without a success event") $
+             runChildProbe ("rebalance-" <> protocol <> "-" <> operation <> "-" <> poll <> "-" <> failure) ["--rebalance-error-probe", protocol, operation, poll, failure]
+         | protocol <- ["cooperative", "eager"],
+           operation <- ["assign", "revoke"],
+           poll <- ["async", "sync"],
+           failure <- if protocol == "cooperative" then ["native", "decode"] else ["native"]
+         ]
+
+runRebalanceProbe :: String -> String -> String -> String -> IO ()
+runRebalanceProbe protocol operation poll failure = do
+  fault <- case (protocol, operation, failure) of
+    ("cooperative", "assign", "native") -> pure 1
+    ("cooperative", "revoke", "native") -> pure 2
+    ("cooperative", "assign", "decode") -> pure 3
+    ("cooperative", "revoke", "decode") -> pure 4
+    ("eager", "assign", "native") -> pure 5
+    ("eager", "revoke", "native") -> pure 6
+    _ -> die "invalid rebalance error probe"
+  brokers <- lookupEnv "RDKAFKA_TEST_BROKER" >>= either die pure . resolveBrokers
+  testEnv <- newTestEnv brokers
+  events <- newIORef []
+  reported <- newEmptyMVar
+  let topic = TopicName (prefixedName testEnv "rebalance-error")
+      mode = if poll == "async" then CallbackPollModeAsync else CallbackPollModeSync
+      props =
+        brokersList brokers
+          <> groupId (makeGroupId testEnv "rebalance-error")
+          <> noAutoCommit
+          <> callbackPollMode mode
+          <> setCallback (rebalanceCallback (\_ event -> modifyIORef' events (<> [event])))
+      before = if operation == "assign" then RebalanceBeforeAssign [(topic, PartitionId 0)] else RebalanceBeforeRevoke [(topic, PartitionId 0)]
+  bracket getUncaughtExceptionHandler setUncaughtExceptionHandler $ \_ -> do
+    setUncaughtExceptionHandler (putMVar reported)
+    withStateFault fault
+      $ bracket
+        (newAssignedConsumer props >>= either throwIO pure)
+        (\consumer -> endStateFault `finally` destroyConsumer consumer)
+      $ \_ -> do
+        triggerRebalance topic
+        result <- timeout 1000000 (readMVar reported)
+        observed <- mapM stateStat [0 .. 6]
+        seen <- readIORef events
+        let expectedObject = if protocol == "cooperative" then 1 else 0
+            expected = [expectedObject, expectedObject, if protocol == "cooperative" && operation == "assign" then 1 else 0, if protocol == "cooperative" && operation == "revoke" then 1 else 0, 1, if protocol == "eager" then 1 else 0, 1]
+            expectedError = case result of
+              Nothing -> False
+              Just exception ->
+                if failure == "decode"
+                  then isJust (fromException exception :: Maybe ErrorCall)
+                  else (fromException exception :: Maybe KafkaError) == Just (KafkaResponseError RdKafkaRespErrState)
+        assertBool (show (observed, seen, fmap show result)) (observed == expected && seen == [before] && expectedError)
