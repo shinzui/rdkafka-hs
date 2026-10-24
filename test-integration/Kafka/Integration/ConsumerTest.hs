@@ -60,9 +60,8 @@ tests env =
 consumerChecks :: TestEnv -> IO KafkaConsumer -> [TestTree]
 consumerChecks env getConsumer =
   [ check "should receive messages" $ \k -> do
-      res <- receiveMessages k
-      let msgsLen = either (const 0) length res
-      assertBool "expected at least one message" (msgsLen > 0)
+      res <- receiveTestMessages env k 14 0
+      length <$> res @?= Right 14
 
       let timestamps = crTimestamp <$> either (const []) id res
       forM_ timestamps $ \ts ->

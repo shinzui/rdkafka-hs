@@ -16,6 +16,11 @@ provenance:
       at: 2026-10-24T04:58:24Z
       mode: "update"
       note: "Expand acceptance to close public-contract, failure-path, concurrency, ownership, and compatibility coverage gaps; add EP-13 prerequisite and coordinated evidence gates."
+    - model: "gpt-6.1-sol"
+      harness: "codex-cli"
+      at: 2026-10-24T05:04:36Z
+      mode: "implement"
+      note: "Start EP-13 prerequisite implementation and track validation evidence."
 ---
 
 # Fix inherited release-review defects
@@ -65,7 +70,7 @@ Relevant decisions were read before drafting. [ADR-1](../adr/consumer-queue-and-
 | 10 | Report per-partition seek failures | [EP-10](../plans/10-report-per-partition-seek-failures.md) | EP-13 | None | Not Started |
 | 11 | Own native callbacks through client teardown | [EP-11](../plans/11-own-native-callbacks-through-client-teardown.md) | EP-13 | EP-9 | Not Started |
 | 12 | Release transaction error objects | [EP-12](../plans/12-release-transaction-error-objects.md) | EP-13 | None | Not Started |
-| 13 | Make coverage evidence and test fixtures reliable | [EP-13](../plans/13-make-coverage-evidence-and-test-fixtures-reliable.md) | None | None | Not Started |
+| 13 | Make coverage evidence and test fixtures reliable | [EP-13](../plans/13-make-coverage-evidence-and-test-fixtures-reliable.md) | None | None | Complete |
 | 14 | Cover the public API and pure-data laws | [EP-14](../plans/14-cover-the-public-api-and-pure-data-laws.md) | EP-13 | EP-8, EP-9, EP-10, EP-11, EP-12 | Not Started |
 | 15 | Validate broker failures and supported environments | [EP-15](../plans/15-validate-broker-failures-and-supported-environments.md) | EP-8, EP-9, EP-10, EP-11, EP-12, EP-13, EP-14 | None | Not Started |
 
@@ -115,7 +120,9 @@ Build and unit-test the emitted tarball from a fresh temporary extraction under 
 ## Progress
 
 
-Plans updated for the user's coverage expansion; all eight child plans are Not Started. EP-13 is ready. EP-8 through EP-12 and EP-14 wait for EP-13; EP-15 waits for the combined repaired/API-tested candidate. Implementation, inventory creation, measured coverage, and combined candidate validation remain outstanding.
+EP-13 is Complete. Its accepted baseline passes 14 unit and 129 integration tests in normal and instrumented builds, plus 15 tooling controls. The compiler-derived inventory contains 174 distinct exports and 169 contract/resource/environment rows; 168 remain open. All 22 library modules appear in measured reports, including explicit zero coverage for unlinked functions. The final coverage gate correctly rejects open rows and 3,004 unexplained hand-written misses. See [EP-13](../plans/13-make-coverage-evidence-and-test-fixtures-reliable.md) and its [evidence manifest](../testing/coverage-evidence.json).
+
+EP-8 is next. EP-9 through EP-12 and EP-14 are eligible under the declared order; EP-15 waits for all earlier children. The five repairs, expanded public-contract/property tests, compatibility matrix, and combined candidate gate remain outstanding.
 
 - [ ] Combined candidate closes all supported contract and critical ownership rows, six original regressions, generated-data properties, normal/coverage builds, source-distribution validation, broker-failure tests, and the required compatibility matrix.
 
@@ -124,6 +131,8 @@ Plans updated for the user's coverage expansion; all eight child plans are Not S
 
 
 The coverage audit found that `test-integration/Kafka/TestEnv.hs:sendMessages` and `sendMessagesWithHeaders` ignore enqueue results, and `receiveMessages` filters errors with `rights`. Existing metadata checks often assert only `isRight` or collection length. EP-13 must repair these false-success paths before new test results can be trusted. The interrupted-destroy test uses `forkIO` followed by `killThread` without proving destruction reached a particular stage; EP-11 must add controlled barriers around meaningful teardown windows.
+
+EP-13 found that c2hs `LINE` pragmas suppress GHC coverage for the hand-written binding wrappers, while unlinked modules disappear from runtime TIX data. Coverage-only source mapping and matching-hash zero indices now retain both categories. These are validation mechanics; native allocation balance remains a separate obligation.
 
 The existing suites pass despite all six defects, so their results alone cannot establish release readiness. The review's queue-full probe retained callback state after a major garbage collection; a separate probe retained an error callback's state after explicit consumer destruction. These are different ownership defects and need different negative controls.
 

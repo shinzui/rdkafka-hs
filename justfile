@@ -115,3 +115,14 @@ docs-check:
     okf validate docs/adr --strict --profile docs/adr/profile.dhall --profile-enforce --log-enforce
     okf validate docs/improvement-requests --strict --profile docs/improvement-requests/profile.dhall --profile-enforce --log-enforce
     mori validate
+
+# Measure both suites, including hand-written c2hs wrappers, on one candidate.
+[group("build")]
+coverage:
+    scripts/test-coverage.sh
+
+# Reject open contracts, stale evidence and unexplained coverage misses.
+[group("build")]
+coverage-check:
+    cabal build lib:rdkafka-hs
+    python3 scripts/check-coverage.py

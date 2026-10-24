@@ -8,14 +8,14 @@ module Kafka.Integration.HeadersTest
 where
 
 import Control.Exception (bracket, throwIO)
-import Control.Monad (forM_, void)
+import Control.Monad (forM_)
 import Data.Bifunctor (first)
 import Data.ByteString (ByteString)
 import Data.Text (Text)
 import Data.Text.Encoding (encodeUtf8)
 import GHC.Clock (getMonotonicTime)
 import Kafka.Consumer
-import Kafka.Producer (ProducePartition (..), ProducerRecord (..), flushProducer, produceMessage)
+import Kafka.Producer (ProducePartition (..), ProducerRecord (..))
 import Kafka.TestEnv
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (Assertion, assertFailure, testCase, (@?=))
@@ -79,11 +79,10 @@ scenario :: TestEnv -> PollApi -> CallbackPollMode -> Text -> Fixture -> Asserti
 scenario env api mode label fx =
   withTopic env suffix 1 $ \topic producer -> do
     let payload = encodeUtf8 suffix
-    res <- produceMessage producer (ProducerRecord topic (SpecifiedPartition 0) Nothing (Just payload) (headersFromList (fxHeaders fx)))
-    forM_ res (throwIO . userError . ("produceMessage: " <>) . show)
-    flushProducer producer
+    sendMessagesWithHeaders [ProducerRecord topic (SpecifiedPartition 0) Nothing (Just payload) mempty] (headersFromList (fxHeaders fx)) producer
+      >>= either throwIO pure
     let props = consumerProps env <> groupId (makeGroupId env suffix) <> callbackPollMode mode
-    bracket (mkConsumerFor topic props) (void . closeConsumer) $ \consumer -> do
+    bracket (mkConsumerFor topic props) releaseConsumer $ \consumer -> do
       record <- awaitRecord api consumer
       crTopic record @?= topic
       crPartition record @?= PartitionId 0

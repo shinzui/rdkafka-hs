@@ -21,7 +21,7 @@ tests env =
       withConsumer env (consumerProps env) $ \getConsumer ->
         testCase "2. should receive 2 messages" $ do
           k <- getConsumer
-          res <- receiveMessages k
+          res <- receiveTestMessages env k 2 0
           length <$> res @?= Right 2
 
           comRes <- forM res . mapM $ commitOffsetMessage OffsetCommit k
@@ -33,7 +33,7 @@ tests env =
       withConsumer env (consumerProps env) $ \getConsumer ->
         testCase "4. should receive 2 messages again" $ do
           k <- getConsumer
-          res <- receiveMessages k
+          res <- receiveTestMessages env k 2 2
           comRes <- commitAllOffsets OffsetCommit k
 
           length <$> res @?= Right 2

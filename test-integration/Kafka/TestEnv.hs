@@ -39,6 +39,9 @@ module Kafka.TestEnv
 
     -- * Messages
     receiveMessages,
+    receiveTestMessages,
+    releaseConsumer,
+    releaseProducer,
     testMessages,
     sendMessages,
     sendMessagesWithHeaders,
@@ -47,14 +50,15 @@ where
 
 import Control.Concurrent (threadDelay)
 import Control.Concurrent.MVar (newEmptyMVar, tryPutMVar, tryReadMVar)
-import Control.Exception (finally, throwIO)
-import Control.Monad (forM_, void)
+import Control.Exception (bracket, bracketOnError, finally, throwIO)
+import Control.Monad (void)
 import Data.ByteString qualified as BS
 import Data.Char (isDigit)
-import Data.Either (rights)
 import Data.Text (Text)
 import Data.Text qualified as Text
+import GHC.Clock (getMonotonicTimeNSec)
 import Kafka.Consumer as C
+import Kafka.FixtureSupport (acquirePair, collectExactly, sendAndConfirm)
 import Kafka.Metadata (allTopicsMetadata)
 import Kafka.Producer as P
 import Kafka.Topic (NewTopic (..), PartitionCount (..), ReplicationFactor (..), createTopic, deleteTopic)
@@ -145,8 +149,7 @@ checkBrokerReachable env = do
   case res of
     Left err -> pure (Left ("could not create a probe client: " <> show err))
     Right prod -> do
-      meta <- allTopicsMetadata prod (Timeout 10000)
-      closeProducer prod
+      meta <- allTopicsMetadata prod (Timeout 10000) `finally` releaseProducer prod
       pure $ case meta of
         Right _ -> Right ()
         Left err ->
@@ -219,71 +222,89 @@ mkConsumerFor topic props = do
       driveCallbacks c = case effectiveCallbackPollMode props' of
         CallbackPollModeSync -> pollConsumerEvents c Nothing
         CallbackPollModeAsync -> pure ()
-  consumer <-
-    newConsumer props' (testSubscription topic)
-      >>= either (throwIO . userError . ("newConsumer: " <>) . show) pure
-  let awaitAssignment =
-        tryReadMVar assigned >>= \case
-          Just () -> pure ()
-          Nothing -> do
-            driveCallbacks consumer
-            threadDelay 50000
-            awaitAssignment
-  timeout 30000000 awaitAssignment >>= \case
-    Just () -> pure consumer
-    Nothing -> do
-      void (closeConsumer consumer)
-      throwIO (userError "consumer was not assigned a partition within 30 seconds")
+  let acquire =
+        newConsumer props' (testSubscription topic)
+          >>= either (throwIO . userError . ("newConsumer: " <>) . show) pure
+  bracketOnError acquire destroyConsumer $ \consumer -> do
+    let awaitAssignment =
+          tryReadMVar assigned >>= \case
+            Just () -> pure ()
+            Nothing -> do
+              driveCallbacks consumer
+              threadDelay 50000
+              awaitAssignment
+    timeout 30000000 awaitAssignment >>= \case
+      Just () -> pure consumer
+      Nothing -> throwIO (userError "consumer was not assigned a partition within 30 seconds")
   where
     onRebalance var = \case
       RebalanceAssign _ -> void (tryPutMVar var ())
       _ -> pure ()
 
 withProducer :: TestEnv -> (IO KafkaProducer -> TestTree) -> TestTree
-withProducer env = withResource (mkProducer env) closeProducer
+withProducer env = withResource (mkProducer env) releaseProducer
 
 withConsumer :: TestEnv -> ConsumerProperties -> (IO KafkaConsumer -> TestTree) -> TestTree
-withConsumer env props = withResource (mkConsumerWith env props) (void . closeConsumer)
+withConsumer env props = withResource (mkConsumerWith env props) releaseConsumer
 
 withKafka :: TestEnv -> ConsumerProperties -> (IO (KafkaConsumer, KafkaProducer) -> TestTree) -> TestTree
 withKafka env props =
   withResource
-    ((,) <$> mkConsumerWith env props <*> mkProducer env)
-    (\(consumer, producer) -> closeProducer producer >> void (closeConsumer consumer))
+    (acquirePair (mkConsumerWith env props) releaseConsumer (mkProducer env))
+    (\(consumer, producer) -> releaseProducer producer `finally` releaseConsumer consumer)
 
 -- | Create a topic named @<prefix>-<suffix>@ with the given number of
 -- partitions, run the action with it and a producer, then delete the topic.
 withTopic :: TestEnv -> Text -> Int -> (TopicName -> KafkaProducer -> IO a) -> IO a
-withTopic env suffix partitions action = do
-  let topic = TopicName (prefixedName env suffix)
-  producer <- mkProducer env
-  flip finally (void (deleteTopic producer topic) >> closeProducer producer) $ do
-    createTopic producer (NewTopic topic (PartitionCount partitions) (ReplicationFactor 1) mempty)
-      >>= either (throwIO . userError . ("createTopic: " <>) . show) (const (pure ()))
-    action topic producer
-
--- | Produce one record to a partition and wait for its delivery.
-produceTo :: KafkaProducer -> TopicName -> Int -> BS.ByteString -> IO ()
-produceTo producer topic partition value = do
-  res <- produceMessage producer (ProducerRecord topic (SpecifiedPartition partition) Nothing (Just value) mempty)
-  forM_ res (throwIO . userError . ("produceMessage: " <>) . show)
-  flushProducer producer
-
-data ReadState = Skip | Read
-
--- | Poll until at least one record has arrived and then until a poll returns
--- no record. Gives up after thirty empty polls if nothing arrives.
-receiveMessages :: KafkaConsumer -> IO (Either KafkaError [ConsumerRecord (Maybe BS.ByteString) (Maybe BS.ByteString)])
-receiveMessages kafka = Right . rights <$> go (30 :: Int) Skip
+withTopic env suffix partitions action =
+  bracket (mkProducer env) releaseProducer $ \producer -> do
+    let topic = TopicName (prefixedName env suffix)
+        create =
+          createTopic producer (NewTopic topic (PartitionCount partitions) (ReplicationFactor 1) mempty)
+            >>= either (throwIO . userError . ("createTopic: " <>) . show) (checkTopic topic)
+        remove =
+          deleteTopic producer topic
+            >>= either (throwIO . userError . ("deleteTopic: " <>) . show) (checkTopic topic)
+    bracket create (const remove) (const (action topic producer))
   where
-    go budget s = do
-      msg <- pollMessage kafka (Timeout 1000)
-      case (s, msg) of
-        (Skip, Left _)
-          | budget <= 1 -> pure []
-          | otherwise -> (msg :) <$> go (budget - 1) Skip
-        (_, Right msg') -> (Right msg' :) <$> go budget Read
-        (Read, Left _) -> pure []
+    checkTopic expected actual
+      | expected == actual = pure ()
+      | otherwise = throwIO (userError ("admin response topic mismatch: " <> show (expected, actual)))
+
+releaseConsumer :: KafkaConsumer -> IO ()
+releaseConsumer consumer =
+  (closeConsumer consumer >>= mapM_ throwIO) `finally` destroyConsumer consumer
+
+-- | Cleanup must not wait forever for an unreachable broker. Purge first;
+-- this fixture is cleanup, delivery success is checked by sendMessages.
+releaseProducer :: KafkaProducer -> IO ()
+releaseProducer producer = do
+  purgeProducer producer [PurgeQueue, PurgeInFlight] >>= mapM_ throwIO
+  flushProducerTimeout producer (Timeout 5000) >>= mapM_ throwIO
+
+-- | Produce one record and verify the matching successful delivery report.
+produceTo :: KafkaProducer -> TopicName -> Int -> BS.ByteString -> IO ()
+produceTo producer topic partition value =
+  sendMessages [ProducerRecord topic (SpecifiedPartition partition) Nothing (Just value) mempty] producer
+    >>= either throwIO pure
+
+receiveMessages :: KafkaConsumer -> Int -> IO (Either KafkaError [ConsumerRecord (Maybe BS.ByteString) (Maybe BS.ByteString)])
+receiveMessages kafka count = collectExactly getMonotonicTimeNSec 30000000000 count (pollMessage kafka (Timeout 200))
+
+-- | Validate the inherited scenario's complete payload/key/header identities
+-- and contiguous offsets, not just its count. Every send uses testMessages.
+receiveTestMessages :: TestEnv -> KafkaConsumer -> Int -> Int -> IO (Either KafkaError [ConsumerRecord (Maybe BS.ByteString) (Maybe BS.ByteString)])
+receiveTestMessages env consumer count start = do
+  result <- receiveMessages consumer count
+  pure $ do
+    records <- result
+    let expected = take count (cycle (testMessages (teTopic env)))
+        actual = [ProducerRecord (crTopic r) UnassignedPartition (crKey r) (crValue r) (crHeaders r) | r <- records]
+    if actual == expected
+      && map crPartition records == replicate count (PartitionId 0)
+      && map crOffset records == map (Offset . fromIntegral) [start .. start + count - 1]
+      then Right records
+      else Left (KafkaError ("unexpected record identities/offsets: " <> Text.pack (show records)))
 
 testMessages :: TopicName -> [ProducerRecord]
 testMessages t =
@@ -292,9 +313,7 @@ testMessages t =
   ]
 
 sendMessages :: [ProducerRecord] -> KafkaProducer -> IO (Either KafkaError ())
-sendMessages msgs prod =
-  Right <$> (forM_ msgs (produceMessage prod) >> flushProducer prod)
+sendMessages msgs prod = sendAndConfirm 10000000 (produceMessage' prod) (flushProducerTimeout prod) msgs
 
 sendMessagesWithHeaders :: [ProducerRecord] -> Headers -> KafkaProducer -> IO (Either KafkaError ())
-sendMessagesWithHeaders msgs hdrs prod =
-  Right <$> (forM_ msgs (\msg -> produceMessage prod (msg {prHeaders = hdrs})) >> flushProducer prod)
+sendMessagesWithHeaders msgs hdrs = sendMessages [msg {prHeaders = hdrs} | msg <- msgs]

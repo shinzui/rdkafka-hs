@@ -2,10 +2,10 @@
 type: Architecture Decision Record
 title: Release coverage requires behavior and ownership evidence
 description: Release acceptance requires an explicit tested public-contract and native-ownership inventory, trustworthy fixtures, and source-bound compatibility evidence rather than only passing counts or aggregate coverage.
-timestamp: 2026-10-24T04:58:05Z
+timestamp: 2026-10-24T05:37:54Z
 generated:
-  by: codex-cli/gpt-6-astra
-  at: "2026-10-24T04:58:05Z"
+  by: codex-cli/gpt-6.1-sol
+  at: "2026-10-24T05:37:54Z"
 docId: ADR-10
 status: Accepted
 date: 2026-10-24
@@ -36,4 +36,4 @@ All broker disruptions and security tests use run-owned disposable fixtures. The
 
 [MasterPlan 2](../masterplans/2-fix-inherited-release-review-defects.md) adds fixture/inventory, public-contract/property, and failure/compatibility work streams around its five repair plans. The fixtures and coverage commands are prerequisites for the repair evidence; the final candidate requires all children and matrix rows to pass. [ADR-1](consumer-queue-and-teardown-ownership.md) continues to govern client teardown, and [ADR-2](release-validation-before-publication.md) continues to require validation before publication.
 
-This record accepts the validation policy. The corresponding test infrastructure and expanded coverage are planned, not implemented or already passing. Evidence must identify the source/configuration tested; documentation bookkeeping alone must not invalidate source fingerprints. Completion establishes a checked support contract, not proof over all possible inputs, schedules, and future dependency versions.
+[EP-13](../plans/13-make-coverage-evidence-and-test-fixtures-reliable.md) implements the fixture, compiler-export inventory and source-bound coverage infrastructure. Hand-written c2hs wrappers require coverage-only source mapping because GHC ignores redirected source spans; unlinked library modules require matching-hash zero counters so their functions remain visible. Reports retain generated binding boilerplate separately and reject absent hand-written instrumentation. The defect repairs, expanded public-contract coverage and environment matrix remain open in their owning children. Evidence must identify the source/configuration tested; documentation bookkeeping alone must not invalidate source fingerprints. Completion establishes a checked support contract, not proof over all possible inputs, schedules, and future dependency versions.

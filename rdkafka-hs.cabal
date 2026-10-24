@@ -29,6 +29,13 @@ extra-doc-files:
   CHANGELOG.md
   README.md
 
+extra-source-files:
+  docs/testing/*.json
+  docs/testing/*.md
+  scripts/*.hs
+  scripts/*.py
+  scripts/*.sh
+
 source-repository head
   type: git
   location: https://github.com/shinzui/rdkafka-hs.git
@@ -148,6 +155,10 @@ test-suite rdkafka-hs-integration
   if !flag(integration)
     buildable: False
   other-modules:
+    Kafka.CallbackTestSupport
+    Kafka.FaultTestSupport
+    Kafka.FixtureSupport
+    Kafka.FixtureSupportTest
     Kafka.Integration.AssignOnlyTest
     Kafka.Integration.AttributedErrorTest
     Kafka.Integration.BatchTest

@@ -1,5 +1,6 @@
 module Main (main) where
 
+import Kafka.FixtureSupportTest qualified as FixtureSupportTest
 import Kafka.Integration.AssignOnlyTest qualified as AssignOnlyTest
 import Kafka.Integration.AttributedErrorTest qualified as AttributedErrorTest
 import Kafka.Integration.BatchTest qualified as BatchTest
@@ -31,7 +32,8 @@ main = do
     . localOption (mkTimeout 60000000)
     $ testGroup
       "rdkafka-hs-integration"
-      [ ConfigurationTest.tests,
+      [ FixtureSupportTest.tests,
+        ConfigurationTest.tests,
         LifecycleTest.tests env,
         -- The groups share the run's topic and consumer group, so later groups
         -- depend on the records and offsets earlier ones leave behind.

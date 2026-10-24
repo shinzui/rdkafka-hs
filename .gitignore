@@ -25,3 +25,6 @@ dist-docs*
 .ghc.environment.*
 .librdkafka/
 .DS_Store
+
+# Python coverage tooling cache
+__pycache__/

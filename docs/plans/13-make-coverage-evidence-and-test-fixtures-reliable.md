@@ -11,6 +11,12 @@ provenance:
     model: "gpt-6-astra"
     harness: "codex-cli"
     at: 2026-10-24T04:50:25Z
+  revisions:
+    - model: "gpt-6.1-sol"
+      harness: "codex-cli"
+      at: 2026-10-24T05:04:36Z
+      mode: "implement"
+      note: "Implement trustworthy fixtures, injected-failure controls, and begin compiler-derived coverage inventory."
 ---
 
 # Make coverage evidence and test fixtures reliable
@@ -28,29 +34,36 @@ Make test success trustworthy and make missing coverage visible. A maintainer ca
 ## Progress
 
 
-- [ ] M1: Fixtures propagate unexpected errors, assert exact results, and recover run-owned resources on partial setup/failure.
-- [ ] M2: A machine-checked public-contract and native-ownership inventory identifies all known gaps and assigns them to children.
-- [ ] M3: Reproducible normal/instrumented coverage runs produce source-attributed reports, and the final coverage gate rejects missing or stale evidence.
+- [x] (2026-10-24) M1: Fixtures propagate enqueue/delivery/poll failures, validate exact records and offsets, and release partial setup. Thirteen harness controls pass, including an observed interrupted acquisition and a weak-root retention/release control. Normal execution passes 14 unit and 129 integration tests (82.38 seconds for integration).
+- [x] (2026-10-24) M2: Compiler-derived exports cover all 14 exposed modules and 174 distinct exported symbols, with constructors/selectors retained. The 169-row contract/resource/environment inventory has one accepted harness row and 168 explicitly owned open rows. Development validation passes; compiled temporary-export, stale-name/source, missing-TIX, and artifact-modification controls reject their injected defects.
+- [x] (2026-10-24) M3: `just coverage` passes 15 tooling controls and 14 unit/129 integration tests, merges both suites, covers all 22 library modules, and measures 2,764 hand-written native-wrapper ticks. The final gate rejects 168 open rows and 3,004 unexplained hand-written misses, with no stale-evidence diagnostic.
 
-Not started. The checks described below are deliverables to implement, not existing evidence.
-
+Accepted source fingerprint: `3867af1e625927d5799e2c4f189ba7f999b778bb74a9dd89ef382f754f4fdb03`, revision `2b023c72b7d1aa257ffbb0cdc05a9aff5039885d` plus this implementation's dirty source digest. [The concise manifest](../testing/coverage-evidence.json) records commands, GHC 9.12.4, loaded librdkafka 2.15.0, and private Redpanda v26.2.1. Detailed artifacts are under ignored `dist-coverage/reports/`; the instrumented integration run took 82.51 seconds. `cabal check`, `cabal sdist`, source-archive inclusion of all 12 coverage/harness files, and formatting checks pass. EP-8 may now begin. The final coverage gate remains intentionally red until subsequent children close their obligations.
 
 ## Surprises & Discoveries
 
 
-`sendMessages` and `sendMessagesWithHeaders` currently ignore every `produceMessage` result and return `Right ()`. `receiveMessages` uses `rights` and treats any error as an end condition, so it cannot distinguish expected timeout from real failure. Several inherited tests assert only `isRight` or nonempty results. These false-success paths explain why the existing count cannot substantiate comprehensive coverage.
+The inherited `sendMessages` and `sendMessagesWithHeaders` ignored every `produceMessage` result and return `Right ()`. The inherited `receiveMessages` used `rights` and treated any error as an end condition, so it could not distinguish expected timeout from real failure. Several inherited tests assert only `isRight` or nonempty results. These false-success paths explain why the existing count cannot substantiate comprehensive coverage.
 
+
+GHC 9.12 only instruments spans attributed to its current module source filename. c2hs redirects spans to `.chs`, so normal HPC reports contain zero ticks for every native wrapper. The coverage-only preprocessor removes those redirections, retains a source map, and verifies all 73 explicitly typed hand-written declarations against the original `.chs` lines. Ordinary `.hs` preprocessing also needs its original filename restored. Native wrappers and ordinary modules must both have nonzero instrumentation when they contain hand-written functions.
+
+An unlinked library module (initially `Kafka.Dump`) has no runtime TIX entry even though its MIX index contains functions. The report builder adds matching-hash zero counters for such modules; it must never omit those functions or call their missing execution inapplicable.
 
 ## Decision Log
 
 
 2026-10-24: Establish fixtures and evidence before dependent repairs. The baseline inventory may contain open rows with explicit owners; the final gate must fail on those rows. No arbitrary test-count or aggregate-percentage threshold can excuse an uncovered supported behavior.
 
+2026-10-24: Use compiler export metadata, source/test/build/configuration content hashes, exact registered test names, and artifact checksums for candidate identity. Coverage preprocessing is isolated from production compilation. Matching-hash zero counters retain unlinked modules in per-suite and combined reports; generated c2hs code remains separately classified.
+
 
 ## Outcomes & Retrospective
 
 
-Not implemented. Record observed results and durable lessons at completion; update relevant ADRs and the parent registry.
+The prerequisite infrastructure is implemented and accepted. Helpers no longer fabricate success or erase unexpected errors; exact data assertions cover the inherited shared-topic scenarios. The toolchain now measures hand-written wrappers that ordinary c2hs instrumentation silently omitted and retains unlinked library functions as explicit zero coverage. All original defects and broader API/environment obligations remain open in their owning children. The 863 unexercised hand-written top-level boxes (including declared typeclass instances) are visible in `unexercised-functions.json`, with owners in the miss inventory.
+
+The 15 tooling controls include successfully compiled semantic mutations: fabricating enqueue success fails the immediate-rejection case, and swallowing a poll error fails the exact-error case. The unchanged 13-case control passes. The final rejecting gate is useful acceptance evidence for this prerequisite, never release-readiness evidence. ADR-10 and the testing guide preserve the durable validation policy and source-mapping constraints.
 
 
 ## Context and Orientation

@@ -18,7 +18,7 @@ tests env =
       withConsumer env (consumerPropsNoStore env) $ \getConsumer ->
         testCase "2. should receive 2 messages without storing" $ do
           k <- getConsumer
-          res <- receiveMessages k
+          res <- receiveTestMessages env k 2 4
           length <$> res @?= Right 2
 
           comRes <- commitAllOffsets OffsetCommit k
@@ -27,23 +27,23 @@ tests env =
       withConsumer env (consumerPropsNoStore env) $ \getConsumer ->
         testCase "4. should receive 4 messages and store them" $ do
           k <- getConsumer
-          res <- receiveMessages k
+          res <- receiveTestMessages env k 4 4
           storeRes <- forM res . mapM $ storeOffsetMessage k
           comRes <- commitAllOffsets OffsetCommit k
 
-          length <$> storeRes @?= Right 4
+          storeRes @?= Right (replicate 4 Nothing)
           length <$> res @?= Right 4
           comRes @?= Nothing,
       produce "5. sends 2 messages to test topic",
       withConsumer env (consumerPropsNoStore env) $ \getConsumer ->
         testCase "6. should receive 2 messages" $ do
           k <- getConsumer
-          res <- receiveMessages k
+          res <- receiveTestMessages env k 2 8
           storeRes <- forM res $ mapM (storeOffsetMessage k)
           comRes <- commitAllOffsets OffsetCommit k
 
           length <$> res @?= Right 2
-          length <$> storeRes @?= Right 2
+          storeRes @?= Right [Nothing, Nothing]
           comRes @?= Nothing,
       withKafka env (consumerPropsNoStore env) $ \getKafka ->
         dependentTestGroup
@@ -55,12 +55,12 @@ tests env =
               res @?= Right (),
             testCase "6. should receive 2 messages" $ do
               (k, _) <- getKafka
-              res <- receiveMessages k
+              res <- receiveTestMessages env k 2 10
               storeRes <- forM res $ mapM (storeOffsetMessage k)
               comRes <- commitAllOffsets OffsetCommit k
 
               length <$> res @?= Right 2
-              length <$> storeRes @?= Right 2
+              storeRes @?= Right [Nothing, Nothing]
               comRes @?= Nothing
           ]
     ]

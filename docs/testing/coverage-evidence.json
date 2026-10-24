@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "revision": "2b023c72b7d1aa257ffbb0cdc05a9aff5039885d",
+  "fingerprint": "3867af1e625927d5799e2c4f189ba7f999b778bb74a9dd89ef382f754f4fdb03",
+  "at": "2026-10-24T05:36:13.330757+00:00",
+  "command": [
+    "cabal",
+    "test",
+    "rdkafka-hs-test",
+    "rdkafka-hs-integration",
+    "-f",
+    "integration",
+    "--enable-coverage",
+    "--builddir=dist-coverage",
+    "--ghc-options=-fforce-recomp -F -pgmF scripts/coverage-preprocess.py",
+    "--test-show-details=direct"
+  ],
+  "suites": [
+    "rdkafka-hs-test",
+    "rdkafka-hs-integration"
+  ],
+  "passed_test_count": 143,
+  "toolchain": "9.12.4",
+  "cabal": "3.16.1.0",
+  "loaded_native": "(\"2.15.0\",34537727)",
+  "broker_versions": [
+    {
+      "node_id": 0,
+      "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+    }
+  ],
+  "native": "2.15.0",
+  "broker": "127.0.0.1:39092",
+  "module_tick_counts": {
+    "Kafka.Callbacks": 34,
+    "Kafka.Consumer": 925,
+    "Kafka.Consumer.Callbacks": 179,
+    "Kafka.Consumer.ConsumerProperties": 175,
+    "Kafka.Consumer.Convert": 357,
+    "Kafka.Consumer.Subscription": 42,
+    "Kafka.Consumer.Types": 270,
+    "Kafka.Dump": 74,
+    "Kafka.Internal.RdKafka": 5686,
+    "Kafka.Internal.Setup": 157,
+    "Kafka.Internal.Shared": 213,
+    "Kafka.Metadata": 623,
+    "Kafka.Producer": 270,
+    "Kafka.Producer.Callbacks": 116,
+    "Kafka.Producer.Convert": 48,
+    "Kafka.Producer.ProducerProperties": 127,
+    "Kafka.Producer.Types": 79,
+    "Kafka.Topic": 309,
+    "Kafka.Topic.Types": 25,
+    "Kafka.Transaction": 106,
+    "Kafka.Types": 285,
+    "Kafka.Version": 43
+  },
+  "measured_native_wrapper_ticks": 2764,
+  "artifacts": {
+    "dist-coverage/reports/test.log": "3f471968185c108379763934a38d9950b33023da0faf5d15e7edbd27d86cdc13",
+    "dist-coverage/reports/unlinked-zero.tix": "2c9bf69bf1d675df7a35668c06a68e0288f33d1ba0bc09899a95b645b4d1256d",
+    "dist-coverage/reports/rdkafka-hs-test.tix": "fb6dd7d8a054b9fa810e62aa7b16a46d0e85da7f0c0631c2aeba3dfdf2040f09",
+    "dist-coverage/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-test/hpc/vanilla/tix/rdkafka-hs-test.tix": "8480e7494c77b3e4a2ac017cf67de429042684d858baa8b4f272d512370de5af",
+    "dist-coverage/reports/rdkafka-hs-test.txt": "555266c01c77e546e80866558b2f839b67f8e23c488e1a3d4fad9ecd57a94eaa",
+    "dist-coverage/reports/rdkafka-hs-integration.tix": "5d64c38757866949f151310e9377e57279d1aedab1cf42afa530a2a5804e5ef6",
+    "dist-coverage/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/hpc/vanilla/tix/rdkafka-hs-integration.tix": "5d6f2d623ef33d4fdb5c516d81d4379ff6e5f2fde7a9a53ce896b93a9b278d95",
+    "dist-coverage/reports/rdkafka-hs-integration.txt": "7f09d418fa284410c24b838c46502fcf46a78287408f022ae1573f3e617b67aa",
+    "dist-coverage/reports/combined.tix": "eeac52d087fd15800781c170c077e69382546566ff9b75595528a1f012b8835c",
+    "dist-coverage/reports/combined.txt": "9c1a1d85e11071358f792dfc6d2323dc56532719a2736fbcf5b60c7213c71a00",
+    "dist-coverage/reports/combined.xml": "5c50e4d9ada0b89e5b18fb5abcc2b09d580a8d5321f7376eaf214361b1da259e",
+    "dist-coverage/reports/ticks.txt": "dc987a336552fcaa33fb75e7664bfad93d4fae9f942aac9bf2e8cafa7b053f56",
+    "dist-coverage/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/build/Kafka/Internal/RdKafka.hs.coverage-map.json": "9d576ac395763ccce4b454b65ee98462da46589a62b7d16c04f3b640c4aebc1d",
+    "dist-coverage/reports/classified-metrics.json": "7a56ee2e1d291447b48983ceabc1286db3e8f03702364e174753934cdd94a5ab",
+    "dist-coverage/reports/unexercised-functions.json": "6d48d47cba5a709988474f7f955c5a78d51bab43c49b2aebf1c5d0ef8a5a6fe4",
+    "dist-coverage/reports/misses.json": "b1d30e417da8cbaa6b3854847f0aa26424a86480f4191a6439c8b9a0c18d5946"
+  },
+  "registered_haskell_tests": 143,
+  "tooling_controls": 15,
+  "open_contracts": 168,
+  "handwritten_misses": 3004,
+  "generated_misses": 1771
+}
