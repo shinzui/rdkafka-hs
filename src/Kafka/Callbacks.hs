@@ -8,7 +8,7 @@ where
 
 import Data.ByteString (ByteString)
 import Kafka.Internal.RdKafka (rdKafkaConfSetErrorCb, rdKafkaConfSetLogCb, rdKafkaConfSetStatsCb)
-import Kafka.Internal.Setup (Callback (..), getRdKafkaConf)
+import Kafka.Internal.Setup (Callback (..), KafkaConf (kcfgCallbackOwner), getRdKafkaConf)
 import Kafka.Types (KafkaError (..), KafkaLogLevel (..))
 
 -- | Add a callback for errors.
@@ -24,7 +24,7 @@ import Kafka.Types (KafkaError (..), KafkaLogLevel (..))
 errorCallback :: (KafkaError -> String -> IO ()) -> Callback
 errorCallback callback =
   let realCb _ err = callback (KafkaResponseError err)
-   in Callback $ \k -> rdKafkaConfSetErrorCb (getRdKafkaConf k) realCb
+   in Callback $ \k -> rdKafkaConfSetErrorCb (kcfgCallbackOwner k) (getRdKafkaConf k) realCb
 
 -- | Add a callback for logs.
 --
@@ -39,7 +39,7 @@ errorCallback callback =
 logCallback :: (KafkaLogLevel -> String -> String -> IO ()) -> Callback
 logCallback callback =
   let realCb _ = callback . toEnum
-   in Callback $ \k -> rdKafkaConfSetLogCb (getRdKafkaConf k) realCb
+   in Callback $ \k -> rdKafkaConfSetLogCb (kcfgCallbackOwner k) (getRdKafkaConf k) realCb
 
 -- | Add a callback for stats. The passed ByteString contains an UTF-8 encoded JSON document and can e.g. be parsed using Data.Aeson.decodeStrict. For more information about the content of the JSON document see <https://github.com/edenhill/librdkafka/blob/master/STATISTICS.md>.
 --
@@ -54,4 +54,4 @@ logCallback callback =
 statsCallback :: (ByteString -> IO ()) -> Callback
 statsCallback callback =
   let realCb _ = callback
-   in Callback $ \k -> rdKafkaConfSetStatsCb (getRdKafkaConf k) realCb
+   in Callback $ \k -> rdKafkaConfSetStatsCb (kcfgCallbackOwner k) (getRdKafkaConf k) realCb

@@ -4,6 +4,7 @@ import Kafka.FixtureSupportTest qualified as FixtureSupportTest
 import Kafka.Integration.AssignOnlyTest qualified as AssignOnlyTest
 import Kafka.Integration.AttributedErrorTest qualified as AttributedErrorTest
 import Kafka.Integration.BatchTest qualified as BatchTest
+import Kafka.Integration.CallbackLifetimeTest qualified as CallbackLifetimeTest
 import Kafka.Integration.ConfigurationTest qualified as ConfigurationTest
 import Kafka.Integration.ConsumerTest qualified as ConsumerTest
 import Kafka.Integration.DestroyTest qualified as DestroyTest
@@ -44,6 +45,7 @@ integrationMain = do
       "rdkafka-hs-integration"
       [ FixtureSupportTest.tests,
         ConfigurationTest.tests,
+        CallbackLifetimeTest.tests env,
         LifecycleTest.tests env,
         TopicConfigurationTest.tests env,
         ProducerRegressionTest.tests env,

@@ -17,6 +17,11 @@ provenance:
       at: 2026-10-24T04:58:24Z
       mode: "update"
       note: "Expand acceptance to close public-contract, failure-path, concurrency, ownership, and compatibility coverage gaps; add EP-13 prerequisite and coordinated evidence gates."
+    - model: "gpt-6.1-sol"
+      harness: "codex-cli"
+      at: 2026-10-24T11:03:55Z
+      mode: "implement"
+      note: "Prototype native callback ownership after accepted seek repair, retaining single teardown and producer finalization semantics."
 ---
 
 # Own native callbacks through client teardown
@@ -34,16 +39,28 @@ Fix F5: creating and discarding clients no longer permanently retains Haskell ca
 ## Progress
 
 
-- [ ] M1: A representative native callback owner proves retention during client lifetime and collection after teardown without changing public lifecycle semantics.
+- [x] M1: A representative native callback owner proves retention during client lifetime and collection after teardown without changing public lifecycle semantics.
 - [ ] M2: Every installed callback kind, replacement, configuration failure, and client-creation failure follows the same complete ownership path.
 - [ ] M3: Explicit/repeated/concurrent consumer destruction and producer finalization pass callback retention and existing lifecycle regressions.
 
 - [ ] M4: Every registration/transfer/teardown path and the meaningful interruption windows have deterministic lifetime evidence.
 
-Not started; this document records the implementation contract, not completed fixes.
+In Progress. M1 is accepted: corrected `mkWeakIORef` probes fail collection in 3/4 cases on an isolated archive of `7299b19` and pass 4/4 with the owner prototype. The representative delivery/error setters transfer bridges to the client finalizer; retained destroyed wrappers no longer retain those captures. The existing lifecycle/destroy/producer integration selection passes 170 cases (87.18 seconds). All ten wrapper allocation sites now use the owner. The current focused suite passes 45 integration cases and eight counted registry cases (29 total unit tests). Native diagnostics, semantic mutations, throwing-callback checks and combined normal/instrumented acceptance remain open; this is an implementation checkpoint, not whole-child acceptance.
 
 
 ## Surprises & Discoveries
+
+The corrected prototype uses `mkWeakIORef`, not a weak reference to the boxed IORef wrapper (which optimization can discard). The isolated committed baseline fails collection in three cases and passes its noncaptured control. The owner prototype passes those four and 170 existing integration cases. Logs: `/tmp/rdkafka-ep11-before-isolated.log`, `/tmp/rdkafka-ep11-prototype-test.log`, `/tmp/rdkafka-ep11-prototype-integration.log`.
+
+The owner has Building/Attached/Released phases; only the native finalizer releases an attached owner, after native shutdown. Internal KafkaConf carries this token without changing exposed producer/consumer record fields. Original native configuration remains available for inspection, while the owner rejects reconstruction or callback installation after transfer/release. Remaining setters now use the same installer; constructor cleanup is being verified. A failed consumer setup must destroy its already-created client, and async queue acquisition must remain masked through storing its owner reference.
+
+Audit beyond the known topic-finalizer crash is still required: native partition-list destruction can drop a private toppar reference, whose final destructor emits debug logs; queue/event/message destruction can also release nested native references. Inspect each reachable C finalizer and parent lifetime, and scope temporary handles before serialized explicit consumer destruction. Do not claim that changing topic finalization alone completes this audit.
+
+Native destructor stage controls now pass with actual DESTROY log callbacks, concurrent destroy callers and explicit pending cancellation. The first cancellation fixture inherited Tasty's masked state through `forkFinally`; explicitly unmasked workers correct that fixture, receive `ThreadKilled`, and preserve exactly-once cleanup. Logs `/tmp/rdkafka-ep11-cancel-stages.log` (invalid fixture assumption) and `/tmp/rdkafka-ep11-cancel-unmasked.log` (31 passing cases) preserve the distinction. Six additional constructor cancellation cases pass at partial installation and native acceptance for producer and both consumer modes.
+
+GHC's documented finalizer references do not guarantee parent/child completion ordering. Public native child handles therefore need scoped finalization while the client is retained with `withForeignPtr`, including cancellation windows during acquisition, conversion and teardown; a `touchForeignPtr` in a GC finalizer alone is insufficient. The source was checked in GHC 9.12.4, intended project `mori://ghc/ghc`, project-relative `libraries/ghc-internal/src/GHC/Internal/ForeignPtr.hs` (source artifact URI pending; the project is not yet registered locally). Mori searches found no registered GHC/base source, so the official upstream release source was used.
+
+The registry's direct unit tests compile its actual source as a test-local module. Public API imports in that suite are package-qualified to prevent the added source root shadowing library modules. Coverage must filter by library package as well as module name, excluding the test-local owner from library tick totals. Seven counted real-bridge unit checks currently pass (28 total unit tests); the package-selection control still needs verification.
 
 
 At baseline an error callback captures an IORef; after `destroyConsumer` and major GC a weak reference still observes that IORef. The setters allocate wrappers with `foreign import ccall "wrapper"` and never call `freeHaskellFunPtr`. The error setter already has this defect in retained commit `022a9699` (2017). Default rebalance callbacks capture KafkaConf, so attaching a finalizer only to that same configuration risks a retention cycle.

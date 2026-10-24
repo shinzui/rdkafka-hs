@@ -145,14 +145,25 @@ void rd_kafka_DeleteTopic_destroy(rd_kafka_DeleteTopic_t *topic) {
   REAL(rd_kafka_DeleteTopic_destroy);
   if (APPLICATION_CALL) released(topic, DELETE_TOPIC); real(topic);
 }
+/* Share queue interception with callback lifetime fixtures, so each ordinary
+ * native call still has exactly one interposer and one real dispatch. */
+void rdkafka_hs_callbacks_queue_created(rd_kafka_t *, rd_kafka_queue_t *);
+void rdkafka_hs_callbacks_queue_destroying(rd_kafka_queue_t *);
+
 rd_kafka_queue_t *rd_kafka_queue_new(rd_kafka_t *client) {
   REAL(rd_kafka_queue_new);
   rd_kafka_queue_t *result = real(client);
-  if (APPLICATION_CALL) acquired(result, QUEUE); return result;
+  if (APPLICATION_CALL) {
+    acquired(result, QUEUE);
+    rdkafka_hs_callbacks_queue_created(client, result);
+  } return result;
 }
 void rd_kafka_queue_destroy(rd_kafka_queue_t *queue) {
   REAL(rd_kafka_queue_destroy);
-  if (APPLICATION_CALL) released(queue, QUEUE); real(queue);
+  if (APPLICATION_CALL) {
+    released(queue, QUEUE);
+    rdkafka_hs_callbacks_queue_destroying(queue);
+  } real(queue);
 }
 rd_kafka_AdminOptions_t *rd_kafka_AdminOptions_new(rd_kafka_t *client, rd_kafka_admin_op_t operation) {
   REAL(rd_kafka_AdminOptions_new);

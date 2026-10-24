@@ -40,6 +40,19 @@ class GateControls(unittest.TestCase):
                 source.write_text("module Kafka.PropertySupport where\nvalue = 2\n")
                 self.assertNotEqual(common.fingerprint(), first)
 
+    def test_test_local_module_cannot_inflate_library_ticks(self):
+        with tempfile.TemporaryDirectory(prefix="rdkafka-package-coverage-control-") as directory:
+            root = Path(directory)
+            source, output = root / "source.tix", root / "library.tix"
+            source.write_text('Tix [TixModule "library/Kafka.Sample" 1 1 [0],TixModule "main/Kafka.Sample" 2 1 [99]]\n')
+            includes = common.library_hpc_includes([root / "library" / "Kafka.Sample.mix"])
+            subprocess.run(["hpc", "sum", "--union", *includes, "--output=" + str(output), str(source)], check=True)
+            measured = output.read_text()
+            self.assertIn('"library/Kafka.Sample"', measured)
+            self.assertIn('[0]', measured)
+            self.assertNotIn('"main/Kafka.Sample"', measured)
+            self.assertNotIn('[99]', measured)
+
     def setUp(self):
         self.matrix = json.loads((checker.ROOT / "docs/testing/coverage-matrix.json").read_text())
         self.exports = self.matrix["exports"]

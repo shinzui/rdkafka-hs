@@ -3,11 +3,12 @@ module Main (main) where
 import Kafka.Consumer.ConsumerPropertiesSpec qualified as ConsumerPropertiesSpec
 import Kafka.Consumer.ConsumerRecordMapSpec qualified as ConsumerRecordMapSpec
 import Kafka.Consumer.ConsumerRecordTraverseSpec qualified as ConsumerRecordTraverseSpec
+import Kafka.Internal.CallbackOwnerSpec qualified as CallbackOwnerSpec
 import Kafka.Producer.ProducerPropertiesSpec qualified as ProducerPropertiesSpec
-import Kafka.Version (librdkafkaVersion, librdkafkaVersionNumber)
 import Kafka.VersionTest qualified as VersionTest
 import System.Environment (getArgs)
 import Test.Tasty (defaultMain, testGroup)
+import "rdkafka-hs" Kafka.Version (librdkafkaVersion, librdkafkaVersionNumber)
 
 main :: IO ()
 main = do
@@ -21,7 +22,8 @@ runTests =
   defaultMain $
     testGroup
       "rdkafka-hs"
-      [ ConsumerPropertiesSpec.tests,
+      [ CallbackOwnerSpec.tests,
+        ConsumerPropertiesSpec.tests,
         ConsumerRecordMapSpec.tests,
         ConsumerRecordTraverseSpec.tests,
         VersionTest.tests,

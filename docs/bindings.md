@@ -35,7 +35,7 @@ changing the binding module, and `just bindings-check` to verify.
 | `rd_kafka_error_txn_requires_abort` | `rdKafkaErrorTxnRequiresAbort'` |
 | `rd_kafka_error_destroy` | `rdKafkaErrorDestroy` |
 | `rd_kafka_topic_partition_list_new` | `rdKafkaTopicPartitionListNew` |
-| `rd_kafka_topic_partition_list_destroy` | `rdKafkaTopicPartitionListDestroy` (finalizer pointer) |
+| `rd_kafka_topic_partition_list_destroy` | inline `{#call}` |
 | `rd_kafka_topic_partition_list_add` | `rdKafkaTopicPartitionListAdd` |
 | `rd_kafka_topic_partition_list_add_range` | `rdKafkaTopicPartitionListAddRange` |
 | `rd_kafka_topic_partition_list_copy` | `rdKafkaTopicPartitionListCopy` |
@@ -87,7 +87,7 @@ changing the binding module, and `just bindings-check` to verify.
 
 | C function | Haskell binding |
 | --- | --- |
-| `rd_kafka_message_destroy` | `rdKafkaMessageDestroyF` (finalizer pointer), `rdKafkaMessageDestroy` (foreign import) |
+| `rd_kafka_message_destroy` | inline `{#call}`, `rdKafkaMessageDestroy` (foreign import) |
 | `rd_kafka_message_timestamp` | `rdKafkaReadTimestamp'`, `rdKafkaMessageTimestamp` |
 | `rd_kafka_message_headers` | `rdKafkaMessageHeaders` |
 
@@ -131,7 +131,7 @@ changing the binding module, and `just bindings-check` to verify.
 | C function | Haskell binding |
 | --- | --- |
 | `rd_kafka_conf_new` | `rdKafkaConfNew` |
-| `rd_kafka_conf_destroy` | `rdKafkaConfDestroy` (finalizer pointer) |
+| `rd_kafka_conf_destroy` | `rdKafkaConfDestroy` (finalizer pointer), inline `{#call}` |
 | `rd_kafka_conf_dup` | `rdKafkaConfDup` |
 | `rd_kafka_conf` | `rdKafkaConf` |
 | `rd_kafka_conf_set` | `rdKafkaConfSet` |
@@ -210,7 +210,7 @@ changing the binding module, and `just bindings-check` to verify.
 | `rd_kafka_new` | `rdKafkaNew` |
 | `rd_kafka_destroy_flags` | inline `{#call}` |
 | `rd_kafka_topic_new` | `rdKafkaTopicNew` |
-| `rd_kafka_topic_destroy` | `rdKafkaTopicDestroy`, `rdKafkaTopicDestroy'` (finalizer pointer) |
+| `rd_kafka_topic_destroy` | `rdKafkaTopicDestroy`, inline `{#call}` |
 | `rd_kafka_topic_name` | `rdKafkaTopicName` |
 | `rd_kafka_poll` | `rdKafkaPoll` |
 | `rd_kafka_yield` | `rdKafkaYield` |
@@ -245,7 +245,7 @@ changing the binding module, and `just bindings-check` to verify.
 | C function | Haskell binding |
 | --- | --- |
 | `rd_kafka_queue_new` | `rdKafkaQueueNew` |
-| `rd_kafka_queue_destroy` | `rdKafkaQueueDestroy`, `rdKafkaQueueDestroyF` (finalizer pointer) |
+| `rd_kafka_queue_destroy` | `rdKafkaQueueDestroy`, inline `{#call}` |
 | `rd_kafka_sasl_set_credentials` | `rdKafkaSaslSetCredentials'` |
 | `rd_kafka_queue_get_consumer` | `rdKafkaQueueGetConsumer` |
 | `rd_kafka_queue_get_partition` | `rdKafkaQueueGetPartition'` |
@@ -480,7 +480,7 @@ changing the binding module, and `just bindings-check` to verify.
 
 | C function | Haskell binding |
 | --- | --- |
-| `rd_kafka_event_destroy` | `rdKafkaEventDestroyF` (finalizer pointer), `rdKafkaEventDestroy` |
+| `rd_kafka_event_destroy` | `rdKafkaEventDestroy`, inline `{#call}` |
 | `rd_kafka_event_error` | `rdKafkaEventError` |
 | `rd_kafka_event_CreateTopics_result` | inline `{#call}` |
 | `rd_kafka_event_DeleteTopics_result` | inline `{#call}` |

@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "owner": 11,
+  "status": "checkpoint; acceptance incomplete",
+  "allocations": [
+    {
+      "allocator": "mkRebalanceCallback",
+      "setter": "rdKafkaConfSetRebalanceCb",
+      "route": "rebalanceCallback",
+      "publicly_installable": true,
+      "owner": "Kafka.Internal.CallbackOwner.installCallback",
+      "release": "releaseCallbackOwner after native client destruction"
+    },
+    {
+      "allocator": "mkDeliveryCallback",
+      "setter": "rdKafkaConfSetDrMsgCb",
+      "route": "deliveryCallback and producer default",
+      "publicly_installable": true,
+      "owner": "Kafka.Internal.CallbackOwner.installCallback",
+      "release": "releaseCallbackOwner after native client destruction"
+    },
+    {
+      "allocator": "mkConsumeCallback",
+      "setter": "rdKafkaConfSetConsumeCb",
+      "route": "internal binding only",
+      "publicly_installable": false,
+      "owner": "Kafka.Internal.CallbackOwner.installCallback",
+      "release": "releaseCallbackOwner after native client destruction",
+      "rationale": "No call site reachable from an exposed module; the internal setter still requires an owner."
+    },
+    {
+      "allocator": "mkOffsetCommitCallback",
+      "setter": "rdKafkaConfSetOffsetCommitCb",
+      "route": "offsetCommitCallback",
+      "publicly_installable": true,
+      "owner": "Kafka.Internal.CallbackOwner.installCallback",
+      "release": "releaseCallbackOwner after native client destruction"
+    },
+    {
+      "allocator": "mkErrorCallback",
+      "setter": "rdKafkaConfSetErrorCb",
+      "route": "errorCallback",
+      "publicly_installable": true,
+      "owner": "Kafka.Internal.CallbackOwner.installCallback",
+      "release": "releaseCallbackOwner after native client destruction"
+    },
+    {
+      "allocator": "mkThrottleCallback",
+      "setter": "rdKafkaConfSetThrottleCb",
+      "route": "internal binding only",
+      "publicly_installable": false,
+      "owner": "Kafka.Internal.CallbackOwner.installCallback",
+      "release": "releaseCallbackOwner after native client destruction",
+      "rationale": "No call site reachable from an exposed module; the internal setter still requires an owner."
+    },
+    {
+      "allocator": "mkLogCallback",
+      "setter": "rdKafkaConfSetLogCb",
+      "route": "logCallback",
+      "publicly_installable": true,
+      "owner": "Kafka.Internal.CallbackOwner.installCallback",
+      "release": "releaseCallbackOwner after native client destruction"
+    },
+    {
+      "allocator": "mkStatsCallback",
+      "setter": "rdKafkaConfSetStatsCb",
+      "route": "statsCallback",
+      "publicly_installable": true,
+      "owner": "Kafka.Internal.CallbackOwner.installCallback",
+      "release": "releaseCallbackOwner after native client destruction"
+    },
+    {
+      "allocator": "mkSocketCallback",
+      "setter": "rdKafkaConfSetSocketCb",
+      "route": "internal binding only",
+      "publicly_installable": false,
+      "owner": "Kafka.Internal.CallbackOwner.installCallback",
+      "release": "releaseCallbackOwner after native client destruction",
+      "rationale": "No call site reachable from an exposed module; the internal setter still requires an owner."
+    },
+    {
+      "allocator": "mkPartitionerCallback",
+      "setter": "rdKafkaTopicConfSetPartitionerCb",
+      "route": "internal binding only",
+      "publicly_installable": false,
+      "owner": "Kafka.Internal.CallbackOwner.installCallback",
+      "release": "releaseCallbackOwner after native client destruction",
+      "rationale": "No call site reachable from an exposed module; the internal setter still requires an owner."
+    }
+  ],
+  "configurations": {
+    "original": "ForeignPtr owns the native configuration; inspection view remains passive after client creation.",
+    "duplicate": "Native client consumes it on success; wrapper destroys it on native creation failure.",
+    "replacements": "All allocated bridges remain owned until final native teardown.",
+    "borrowed_consumers": "Callback wrappers borrow native pointers and never acquire the native client deallocator."
+  },
+  "callback_capable_destruction": [
+    {
+      "kind": "client",
+      "policy": "Haskell finalizer or safe scoped native call; public operations retain the client through child cleanup."
+    },
+    {
+      "kind": "topic",
+      "policy": "Haskell finalizer or safe scoped native call; public operations retain the client through child cleanup."
+    },
+    {
+      "kind": "partition list with private partition references",
+      "policy": "Haskell finalizer or safe scoped native call; public operations retain the client through child cleanup."
+    },
+    {
+      "kind": "queue",
+      "policy": "Haskell finalizer or safe scoped native call; public operations retain the client through child cleanup."
+    },
+    {
+      "kind": "event",
+      "policy": "Haskell finalizer or safe scoped native call; public operations retain the client through child cleanup."
+    },
+    {
+      "kind": "message",
+      "policy": "Haskell finalizer or safe scoped native call; public operations retain the client through child cleanup."
+    }
+  ],
+  "remaining_c_finalizers": [
+    {
+      "kind": "global configuration",
+      "policy": "Detached allocation/property cleanup; no library-installed Haskell callback invocation."
+    },
+    {
+      "kind": "topic configuration",
+      "policy": "Detached allocation/property cleanup; no library-installed Haskell callback invocation."
+    },
+    {
+      "kind": "metadata snapshot",
+      "policy": "Detached allocation/property cleanup; no library-installed Haskell callback invocation."
+    },
+    {
+      "kind": "group list",
+      "policy": "Detached allocation/property cleanup; no library-installed Haskell callback invocation."
+    },
+    {
+      "kind": "admin options",
+      "policy": "Detached allocation/property cleanup; no library-installed Haskell callback invocation."
+    },
+    {
+      "kind": "new-topic request",
+      "policy": "Detached allocation/property cleanup; no library-installed Haskell callback invocation."
+    }
+  ],
+  "evidence": {
+    "before": "/tmp/rdkafka-ep11-before-isolated.log",
+    "native_cases": "/tmp/rdkafka-ep11-producer-kinds.log",
+    "registry_cases": "/tmp/rdkafka-ep11-owner-unit4.log",
+    "tooling_controls": "/tmp/rdkafka-ep11-tools.log",
+    "native_case_count": 45,
+    "registry_case_count": 8,
+    "tooling_controls_count": 19
+  },
+  "remaining": [
+    "Native invalid-access diagnostic and negative control",
+    "Semantic mutations on the final candidate",
+    "Throwing callbacks at remaining foreign boundaries",
+    "Combined optimized/instrumented acceptance and inventory reconciliation"
+  ]
+}

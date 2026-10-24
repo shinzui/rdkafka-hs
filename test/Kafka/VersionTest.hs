@@ -4,9 +4,9 @@ module Kafka.VersionTest
 where
 
 import Data.Text qualified as Text
-import Kafka.Version
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (assertBool, testCase, (@?=))
+import "rdkafka-hs" Kafka.Version
 
 tests :: TestTree
 tests =

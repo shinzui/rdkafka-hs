@@ -28,7 +28,8 @@ import Data.ByteString qualified as BS
 import Text.Read (readMaybe)
 import Data.Text (Text)
 import Data.Text qualified as Text
-import Control.Exception (finally)
+import Control.Exception (finally, mask_)
+import Kafka.Internal.CallbackOwner (CallbackOwner, installCallback, checkCallbackOwner, attachCallbackOwner, releaseCallbackOwner, containCallbackException, containCallbackResult)
 import Control.Monad (liftM)
 import Data.Int (Int32, Int64)
 import Data.Word (Word8)
@@ -37,7 +38,7 @@ import Foreign.Marshal.Alloc (alloca, allocaBytes)
 import Foreign.Marshal.Array (peekArray, allocaArray, withArrayLen)
 import Foreign.Storable (Storable(..))
 import Foreign.Ptr (Ptr, FunPtr, castFunPtr, castPtr, nullPtr)
-import Foreign.ForeignPtr (FinalizerPtr, addForeignPtrFinalizer, newForeignPtr_, withForeignPtr, ForeignPtr, newForeignPtr)
+import Foreign.ForeignPtr (FinalizerPtr, addForeignPtrFinalizer, newForeignPtr_, withForeignPtr, ForeignPtr, newForeignPtr, touchForeignPtr)
 import Foreign.C.Error (Errno(..), getErrno)
 import Foreign.C.String (CString, newCString, withCString, withCAString, peekCAString, peekCString)
 import Foreign.C.Types (CFile, CInt(..), CSize, CChar, CLong)
@@ -314,14 +315,20 @@ instance Storable RdKafkaMetadataT where
 {#fun rd_kafka_topic_partition_list_new as ^
     {`Int'} -> `RdKafkaTopicPartitionListTPtr' #}
 
-foreign import ccall unsafe "rdkafka.h &rd_kafka_topic_partition_list_destroy"
-    rdKafkaTopicPartitionListDestroy :: FinalizerPtr RdKafkaTopicPartitionListT
 
 newRdKafkaTopicPartitionListT :: Int -> IO RdKafkaTopicPartitionListTPtr
-newRdKafkaTopicPartitionListT size = do
+newRdKafkaTopicPartitionListT size = mask_ $ do
     ret <- rdKafkaTopicPartitionListNew size
-    addForeignPtrFinalizer rdKafkaTopicPartitionListDestroy ret
-    return ret
+    managePartitionList (pure ()) ret
+
+-- Lists returned by assignment can retain private partition references.
+-- Releasing the last reference may log through a Haskell callback.
+managePartitionList :: IO () -> RdKafkaTopicPartitionListTPtr -> IO RdKafkaTopicPartitionListTPtr
+managePartitionList retainParent pointer = withForeignPtr pointer $ \raw -> do
+    Concurrent.addForeignPtrFinalizer pointer $ do
+      {# call rd_kafka_topic_partition_list_destroy #} raw
+      retainParent
+    pure pointer
 
 {# fun rd_kafka_topic_partition_list_add as ^
     {`RdKafkaTopicPartitionListTPtr', `String', `Int'} -> `RdKafkaTopicPartitionTPtr' #}
@@ -333,10 +340,9 @@ newRdKafkaTopicPartitionListT size = do
     {`RdKafkaTopicPartitionListTPtr'} -> `RdKafkaTopicPartitionListTPtr' #}
 
 copyRdKafkaTopicPartitionList :: RdKafkaTopicPartitionListTPtr -> IO RdKafkaTopicPartitionListTPtr
-copyRdKafkaTopicPartitionList pl = do
+copyRdKafkaTopicPartitionList pl = mask_ $ do
     cp <- rdKafkaTopicPartitionListCopy pl
-    addForeignPtrFinalizer rdKafkaTopicPartitionListDestroy cp
-    return cp
+    managePartitionList (touchForeignPtr pl) cp
 
 {# fun rd_kafka_topic_partition_list_set_offset as ^
     {`RdKafkaTopicPartitionListTPtr', `String', `Int', `Int64'}
@@ -355,11 +361,10 @@ foreign import ccall safe "rd_kafka.h rd_kafka_conf_set_rebalance_cb"
        -> FunPtr RdRebalanceCallback'
        -> IO ()
 
-rdKafkaConfSetRebalanceCb :: RdKafkaConfTPtr -> RdRebalanceCallback -> IO ()
-rdKafkaConfSetRebalanceCb conf cb = do
-    cb' <- mkRebalanceCallback (\k e p _ -> cb k (cIntToEnum e) p)
-    withForeignPtr conf $ \c -> rdKafkaConfSetRebalanceCb' c cb'
-    return ()
+rdKafkaConfSetRebalanceCb :: CallbackOwner -> RdKafkaConfTPtr -> RdRebalanceCallback -> IO ()
+rdKafkaConfSetRebalanceCb owner conf cb =
+    installCallback owner (mkRebalanceCallback (\k e p _ -> containCallbackException (cb k (cIntToEnum e) p))) $ \cb' ->
+      withForeignPtr conf $ \c -> rdKafkaConfSetRebalanceCb' c cb'
 
 ---- Delivery Callback
 type DeliveryCallback' = Ptr RdKafkaT -> Ptr RdKafkaMessageT -> Word8Ptr -> IO ()
@@ -371,11 +376,10 @@ foreign import ccall safe "wrapper"
 foreign import ccall safe "rd_kafka.h rd_kafka_conf_set_dr_msg_cb"
     rdKafkaConfSetDrMsgCb' :: Ptr RdKafkaConfT -> FunPtr DeliveryCallback' -> IO ()
 
-rdKafkaConfSetDrMsgCb :: RdKafkaConfTPtr -> DeliveryCallback -> IO ()
-rdKafkaConfSetDrMsgCb conf cb = do
-    cb' <- mkDeliveryCallback (\k m _ -> cb k m)
-    withForeignPtr conf $ \c -> rdKafkaConfSetDrMsgCb' c cb'
-    return ()
+rdKafkaConfSetDrMsgCb :: CallbackOwner -> RdKafkaConfTPtr -> DeliveryCallback -> IO ()
+rdKafkaConfSetDrMsgCb owner conf cb =
+    installCallback owner (mkDeliveryCallback (\k m _ -> cb k m)) $ \cb' ->
+      withForeignPtr conf $ \c -> rdKafkaConfSetDrMsgCb' c cb'
 
 ---- Consume Callback
 type ConsumeCallback = Ptr RdKafkaMessageT -> Word8Ptr -> IO ()
@@ -386,11 +390,10 @@ foreign import ccall safe "wrapper"
 foreign import ccall safe "rd_kafka.h rd_kafka_conf_set_consume_cb"
     rdKafkaConfSetConsumeCb' :: Ptr RdKafkaConfT -> FunPtr ConsumeCallback -> IO ()
 
-rdKafkaConfSetConsumeCb :: RdKafkaConfTPtr -> ConsumeCallback -> IO ()
-rdKafkaConfSetConsumeCb conf cb = do
-    cb' <- mkConsumeCallback cb
-    withForeignPtr conf $ \c -> rdKafkaConfSetConsumeCb' c cb'
-    return ()
+rdKafkaConfSetConsumeCb :: CallbackOwner -> RdKafkaConfTPtr -> ConsumeCallback -> IO ()
+rdKafkaConfSetConsumeCb owner conf cb =
+    installCallback owner (mkConsumeCallback (\m opaque -> containCallbackException (cb m opaque))) $ \cb' ->
+      withForeignPtr conf $ \c -> rdKafkaConfSetConsumeCb' c cb'
 
 ---- Offset Commit Callback
 type OffsetCommitCallback' = Ptr RdKafkaT -> CInt -> Ptr RdKafkaTopicPartitionListT -> Word8Ptr -> IO ()
@@ -402,11 +405,10 @@ foreign import ccall safe "wrapper"
 foreign import ccall safe "rd_kafka.h rd_kafka_conf_set_offset_commit_cb"
     rdKafkaConfSetOffsetCommitCb' :: Ptr RdKafkaConfT -> FunPtr OffsetCommitCallback' -> IO ()
 
-rdKafkaConfSetOffsetCommitCb :: RdKafkaConfTPtr -> OffsetCommitCallback -> IO ()
-rdKafkaConfSetOffsetCommitCb conf cb = do
-    cb' <- mkOffsetCommitCallback (\k e p _ -> cb k (cIntToEnum e) p)
-    withForeignPtr conf $ \c -> rdKafkaConfSetOffsetCommitCb' c cb'
-    return ()
+rdKafkaConfSetOffsetCommitCb :: CallbackOwner -> RdKafkaConfTPtr -> OffsetCommitCallback -> IO ()
+rdKafkaConfSetOffsetCommitCb owner conf cb =
+    installCallback owner (mkOffsetCommitCallback (\k e p _ -> containCallbackException (cb k (cIntToEnum e) p))) $ \cb' ->
+      withForeignPtr conf $ \c -> rdKafkaConfSetOffsetCommitCb' c cb'
 
 
 ----- Error Callback
@@ -419,10 +421,10 @@ foreign import ccall safe "wrapper"
 foreign import ccall safe "rd_kafka.h rd_kafka_conf_set_error_cb"
     rdKafkaConfSetErrorCb' :: Ptr RdKafkaConfT -> FunPtr ErrorCallback' -> IO ()
 
-rdKafkaConfSetErrorCb :: RdKafkaConfTPtr -> ErrorCallback -> IO ()
-rdKafkaConfSetErrorCb conf cb = do
-    cb' <- mkErrorCallback (\k e r _ -> peekCAString r >>= cb k (cIntToEnum e))
-    withForeignPtr conf $ \c -> rdKafkaConfSetErrorCb' c cb'
+rdKafkaConfSetErrorCb :: CallbackOwner -> RdKafkaConfTPtr -> ErrorCallback -> IO ()
+rdKafkaConfSetErrorCb owner conf cb =
+    installCallback owner (mkErrorCallback (\k e r _ -> containCallbackException (peekCAString r >>= cb k (cIntToEnum e)))) $ \cb' ->
+      withForeignPtr conf $ \c -> rdKafkaConfSetErrorCb' c cb'
 
 ---- Throttle Callback
 type ThrottleCallback = Ptr RdKafkaT -> CString -> Int -> Int -> Word8Ptr -> IO ()
@@ -433,11 +435,10 @@ foreign import ccall safe "wrapper"
 foreign import ccall safe "rd_kafka.h rd_kafka_conf_set_throttle_cb"
     rdKafkaConfSetThrottleCb' :: Ptr RdKafkaConfT -> FunPtr ThrottleCallback -> IO ()
 
-rdKafkaConfSetThrottleCb :: RdKafkaConfTPtr -> ThrottleCallback -> IO ()
-rdKafkaConfSetThrottleCb conf cb = do
-    cb' <- mkThrottleCallback cb
-    withForeignPtr conf $ \c -> rdKafkaConfSetThrottleCb' c cb'
-    return ()
+rdKafkaConfSetThrottleCb :: CallbackOwner -> RdKafkaConfTPtr -> ThrottleCallback -> IO ()
+rdKafkaConfSetThrottleCb owner conf cb =
+    installCallback owner (mkThrottleCallback (\k name ident duration opaque -> containCallbackException (cb k name ident duration opaque))) $ \cb' ->
+      withForeignPtr conf $ \c -> rdKafkaConfSetThrottleCb' c cb'
 
 ---- Log Callback
 type LogCallback' = Ptr RdKafkaT -> CInt -> CString -> CString -> IO ()
@@ -449,13 +450,13 @@ foreign import ccall safe "wrapper"
 foreign import ccall safe "rd_kafka.h rd_kafka_conf_set_log_cb"
     rdKafkaConfSetLogCb' :: Ptr RdKafkaConfT -> FunPtr LogCallback' -> IO ()
 
-rdKafkaConfSetLogCb :: RdKafkaConfTPtr -> LogCallback -> IO ()
-rdKafkaConfSetLogCb conf cb = do
-    cb' <- mkLogCallback $ \k l f b -> do
-            f' <- peekCAString f
-            b' <- peekCAString b
-            cb k (cIntConv l) f' b'
-    withForeignPtr conf $ \c -> rdKafkaConfSetLogCb' c cb'
+rdKafkaConfSetLogCb :: CallbackOwner -> RdKafkaConfTPtr -> LogCallback -> IO ()
+rdKafkaConfSetLogCb owner conf cb =
+    installCallback owner (mkLogCallback $ \k l f b -> containCallbackException $ do
+        f' <- peekCAString f
+        b' <- peekCAString b
+        cb k (cIntConv l) f' b') $ \cb' ->
+      withForeignPtr conf $ \c -> rdKafkaConfSetLogCb' c cb'
 
 ---- Stats Callback
 type StatsCallback' = Ptr RdKafkaT -> CString -> CSize -> Word8Ptr -> IO CInt
@@ -467,11 +468,10 @@ foreign import ccall safe "wrapper"
 foreign import ccall safe "rd_kafka.h rd_kafka_conf_set_stats_cb"
     rdKafkaConfSetStatsCb' :: Ptr RdKafkaConfT -> FunPtr StatsCallback' -> IO ()
 
-rdKafkaConfSetStatsCb :: RdKafkaConfTPtr -> StatsCallback -> IO ()
-rdKafkaConfSetStatsCb conf cb = do
-    cb' <- mkStatsCallback $ \k j jl _ -> BS.packCStringLen (j, cIntConv jl) >>= cb k >> pure 0
-    withForeignPtr conf $ \c -> rdKafkaConfSetStatsCb' c cb'
-    return ()
+rdKafkaConfSetStatsCb :: CallbackOwner -> RdKafkaConfTPtr -> StatsCallback -> IO ()
+rdKafkaConfSetStatsCb owner conf cb =
+    installCallback owner (mkStatsCallback $ \k j jl _ -> containCallbackException (BS.packCStringLen (j, cIntConv jl) >>= cb k) >> pure 0) $ \cb' ->
+      withForeignPtr conf $ \c -> rdKafkaConfSetStatsCb' c cb'
 
 ---- Socket Callback
 type SocketCallback = Int -> Int -> Int -> Word8Ptr -> IO CInt
@@ -482,11 +482,10 @@ foreign import ccall safe "wrapper"
 foreign import ccall safe "rd_kafka.h rd_kafka_conf_set_socket_cb"
     rdKafkaConfSetSocketCb' :: Ptr RdKafkaConfT -> FunPtr SocketCallback -> IO ()
 
-rdKafkaConfSetSocketCb :: RdKafkaConfTPtr -> SocketCallback -> IO ()
-rdKafkaConfSetSocketCb conf cb = do
-    cb' <- mkSocketCallback cb
-    _ <- withForeignPtr conf $ \c -> rdKafkaConfSetSocketCb' c cb' >> pure (0 :: Int)
-    return ()
+rdKafkaConfSetSocketCb :: CallbackOwner -> RdKafkaConfTPtr -> SocketCallback -> IO ()
+rdKafkaConfSetSocketCb owner conf cb =
+    installCallback owner (mkSocketCallback (\domain typ protocol opaque -> containCallbackResult (-1) (cb domain typ protocol opaque))) $ \cb' ->
+      withForeignPtr conf $ \c -> rdKafkaConfSetSocketCb' c cb'
 
 {#fun rd_kafka_conf_set_opaque as ^
     {`RdKafkaConfTPtr', castPtr `Word8Ptr'} -> `()' #}
@@ -513,11 +512,11 @@ foreign import ccall safe "wrapper"
 foreign import ccall safe "rd_kafka.h rd_kafka_topic_conf_set_partitioner_cb"
     rdKafkaTopicConfSetPartitionerCb' :: Ptr RdKafkaTopicConfT -> FunPtr PartitionerCallback -> IO ()
 
-rdKafkaTopicConfSetPartitionerCb :: RdKafkaTopicConfTPtr -> PartitionerCallback -> IO ()
-rdKafkaTopicConfSetPartitionerCb conf cb = do
-    cb' <- mkPartitionerCallback cb
-    withForeignPtr conf $ \c -> rdKafkaTopicConfSetPartitionerCb' c cb'
-    return ()
+rdKafkaTopicConfSetPartitionerCb :: CallbackOwner -> RdKafkaTopicConfTPtr -> PartitionerCallback -> IO ()
+rdKafkaTopicConfSetPartitionerCb owner conf cb =
+    installCallback owner (mkPartitionerCallback (\topic key keyLength partitionCount topicOpaque messageOpaque ->
+      containCallbackResult (-1) (cb topic key keyLength partitionCount topicOpaque messageOpaque))) $ \cb' ->
+      withForeignPtr conf $ \c -> rdKafkaTopicConfSetPartitionerCb' c cb'
 
 ---- Partition
 
@@ -564,8 +563,6 @@ rdKafkaTopicConfSetPartitionerCb conf cb = do
     {`RdKafkaTPtr', `RdKafkaTopicPartitionListTPtr'} -> `RdKafkaRespErrT' cIntToEnum #}
 
 ---- EVENT
-foreign import ccall unsafe "rdkafka.h &rd_kafka_event_destroy"
-    rdKafkaEventDestroyF :: FinalizerPtr RdKafkaEventT
 
 data RdKafkaEventT
 {#pointer *rd_kafka_event_t as RdKafkaEventTPtr foreign -> RdKafkaEventT #}
@@ -586,8 +583,6 @@ data RdKafkaQueueT
 {#fun rd_kafka_queue_destroy as ^
     {`RdKafkaQueueTPtr'} -> `()'#}
 
-foreign import ccall unsafe "rdkafka.h &rd_kafka_queue_destroy"
-    rdKafkaQueueDestroyF :: FinalizerPtr RdKafkaQueueT
 
 -- | A new reference to the consumer queue; release it with
 -- 'rdKafkaQueueDestroy'. NULL when the client has no consumer group.
@@ -608,18 +603,29 @@ type QueueEventCallback = Ptr RdKafkaT -> Ptr () -> IO ()
     {`RdKafkaQueueTPtr', castFunPtr `FunPtr QueueEventCallback', castPtr `Ptr ()'} -> `()' #}
 
 newRdKafkaQueue :: RdKafkaTPtr -> IO RdKafkaQueueTPtr
-newRdKafkaQueue k = do
+newRdKafkaQueue k = mask_ $ do
     q <- rdKafkaQueueNew k
-    addForeignPtrFinalizer rdKafkaQueueDestroyF q
-    return q
+    manageQueue k q
+
+manageQueue :: RdKafkaTPtr -> RdKafkaQueueTPtr -> IO RdKafkaQueueTPtr
+manageQueue parent pointer = withForeignPtr pointer $ \raw -> do
+    Concurrent.addForeignPtrFinalizer pointer $ do
+      {# call rd_kafka_queue_destroy #} raw
+      touchForeignPtr parent
+    pure pointer
 
 rdKafkaQueuePoll :: RdKafkaQueueTPtr -> Int -> IO (Maybe RdKafkaEventTPtr)
-rdKafkaQueuePoll qPtr timeout =
+rdKafkaQueuePoll qPtr timeout = mask_ $
   withForeignPtr qPtr $ \qPtr' -> do
     res <- {#call rd_kafka_queue_poll#} qPtr' (fromIntegral timeout)
     if res == nullPtr
       then pure Nothing
-      else Just <$> newForeignPtr rdKafkaEventDestroyF res
+      else do
+        event <- newForeignPtr_ res
+        Concurrent.addForeignPtrFinalizer event $ do
+          {# call rd_kafka_event_destroy #} res
+          touchForeignPtr qPtr
+        pure (Just event)
 
 {#fun rd_kafka_consume_queue as ^
     {`RdKafkaQueueTPtr', `Int'} -> `RdKafkaMessageTPtr' #}
@@ -631,13 +637,12 @@ rdKafkaQueuePoll qPtr timeout =
     {`RdKafkaTPtr', `String', `Int'} -> `RdKafkaQueueTPtr' #}
 
 rdKafkaQueueGetPartition :: RdKafkaTPtr -> String -> Int -> IO (Maybe RdKafkaQueueTPtr)
-rdKafkaQueueGetPartition k t p = do
+rdKafkaQueueGetPartition k t p = mask_ $ do
     ret <- rdKafkaQueueGetPartition' k t p
     withForeignPtr ret $ \realPtr ->
         if realPtr == nullPtr then return Nothing
         else do
-            addForeignPtrFinalizer rdKafkaQueueDestroyF ret
-            return $ Just ret
+            Just <$> manageQueue k ret
 
 {#fun rd_kafka_consume_batch_queue as rdKafkaConsumeBatchQueue'
   {`RdKafkaQueueTPtr', `Int', castPtr `Ptr (Ptr RdKafkaMessageT)', cIntConv `CSize'}
@@ -665,11 +670,11 @@ rdKafkaConsumeBatchQueue qptr timeout batchSize = do
     -> `RdKafkaRespErrT' cIntToEnum #}
 
 rdKafkaSubscription :: RdKafkaTPtr -> IO (Either RdKafkaRespErrT RdKafkaTopicPartitionListTPtr)
-rdKafkaSubscription k = do
+rdKafkaSubscription k = mask_ $ do
     (err, sub) <- rdKafkaSubscription' k
     case err of
         RdKafkaRespErrNoError ->
-            Right <$> newForeignPtr rdKafkaTopicPartitionListDestroy sub
+            newForeignPtr_ sub >>= fmap Right . managePartitionList (touchForeignPtr k)
         e -> return (Left e)
 
 {#fun rd_kafka_consumer_poll as ^
@@ -678,8 +683,10 @@ rdKafkaSubscription k = do
 pollRdKafkaConsumer :: RdKafkaTPtr -> Int -> IO RdKafkaMessageTPtr
 pollRdKafkaConsumer k t = do
     m <- rdKafkaConsumerPoll k t
-    addForeignPtrFinalizer rdKafkaMessageDestroyF m
-    return m
+    withForeignPtr m $ \raw -> Concurrent.addForeignPtrFinalizer m $ do
+      {# call rd_kafka_message_destroy #} raw
+      touchForeignPtr k
+    pure m
 
 {#fun rd_kafka_consumer_close as ^
     {`RdKafkaTPtr'} -> `RdKafkaRespErrT' cIntToEnum #}
@@ -706,11 +713,11 @@ pollRdKafkaConsumer k t = do
     -> `RdKafkaRespErrT' cIntToEnum #}
 
 rdKafkaAssignment :: RdKafkaTPtr -> IO (Either RdKafkaRespErrT RdKafkaTopicPartitionListTPtr)
-rdKafkaAssignment k = do
+rdKafkaAssignment k = mask_ $ do
     (err, ass) <- rdKafkaAssignment' k
     case err of
         RdKafkaRespErrNoError ->
-            Right <$> newForeignPtr rdKafkaTopicPartitionListDestroy ass
+            newForeignPtr_ ass >>= fmap Right . managePartitionList (touchForeignPtr k)
         e -> return (Left e)
 
 {#fun rd_kafka_commit as ^
@@ -835,8 +842,6 @@ rdKafkaListGroups k g t = case g of
 -------------------------------------------------------------------------------------------------
 
 -- rd_kafka_message
-foreign import ccall unsafe "rdkafka.h &rd_kafka_message_destroy"
-    rdKafkaMessageDestroyF :: FinalizerPtr RdKafkaMessageT
 
 foreign import ccall unsafe "rdkafka.h rd_kafka_message_destroy"
     rdKafkaMessageDestroy :: Ptr RdKafkaMessageT -> IO ()
@@ -911,7 +916,7 @@ rdKafkaSocketTimeout kafka = withForeignPtr kafka $ \_ -> do
             _ -> Left "invalid socket.timeout.ms value from the native client"
 
 newRdKafkaConfT :: IO RdKafkaConfTPtr
-newRdKafkaConfT = do
+newRdKafkaConfT = mask_ $ do
     ret <- rdKafkaConfNew
     addForeignPtrFinalizer rdKafkaConfDestroy ret
     return ret
@@ -940,7 +945,7 @@ foreign import ccall unsafe "rdkafka.h &rd_kafka_topic_conf_destroy"
   -> `RdKafkaConfResT' cIntToEnum #}
 
 newRdKafkaTopicConfT :: IO RdKafkaTopicConfTPtr
-newRdKafkaTopicConfT = do
+newRdKafkaTopicConfT = mask_ $ do
     ret <- rdKafkaTopicConfNew
     addForeignPtrFinalizer rdKafkaTopicConfDestroy ret
     return ret
@@ -953,24 +958,27 @@ newRdKafkaTopicConfT = do
     {enumToCInt `RdKafkaTypeT', `RdKafkaConfTPtr', id `CCharBufPointer', cIntConv `CSize'}
     -> `RdKafkaTPtr' #}
 
-newRdKafkaT :: RdKafkaTypeT -> RdKafkaConfTPtr -> IO (Either Text RdKafkaTPtr)
-newRdKafkaT kafkaType confPtr =
+newRdKafkaT :: CallbackOwner -> RdKafkaTypeT -> RdKafkaConfTPtr -> IO (Either Text RdKafkaTPtr)
+newRdKafkaT owner kafkaType confPtr = mask_ $
     allocaBytes nErrorBytes $ \charPtr -> do
+        checkCallbackOwner owner
         duper <- rdKafkaConfDup confPtr
         ret <- rdKafkaNew kafkaType duper charPtr (fromIntegral nErrorBytes)
-        withForeignPtr ret $ \realPtr -> do
-            if realPtr == nullPtr then peekCText charPtr >>= return . Left
-            else do
-                -- Issue #151
-                -- rd_kafka_destroy_flags may call back into Haskell if an
-                -- error or log callback is set, so we must use a concurrent
-                -- finalizer
-                Concurrent.addForeignPtrFinalizer ret $ do
-                  -- do not call 'rd_kafka_close_consumer' on destroying all Kafka.
-                  -- when needed, applications should do it explicitly.
-                  -- RD_KAFKA_DESTROY_F_NO_CONSUMER_CLOSE = 0x8
+        withForeignPtr ret $ \realPtr ->
+            if realPtr == nullPtr
+              then do
+                -- rd_kafka_new consumes its configuration only on success.
+                withForeignPtr duper $ \duplicate -> {# call rd_kafka_conf_destroy #} duplicate
+                releaseCallbackOwner owner
+                Left <$> peekCText charPtr
+              else do
+                attachCallbackOwner owner
+                -- Native shutdown may call Haskell. Keep every registration
+                -- alive through its final callback, then release exactly once.
+                Concurrent.addForeignPtrFinalizer ret $ mask_ $ do
                   {# call rd_kafka_destroy_flags #} realPtr 0x8
-                return $ Right ret
+                  releaseCallbackOwner owner
+                pure (Right ret)
 
 {#fun rd_kafka_brokers_add as ^
     {`RdKafkaTPtr', `String'} -> `Int' #}
@@ -1107,11 +1115,9 @@ destroyUnmanagedRdKafkaTopic :: RdKafkaTopicTPtr -> IO ()
 destroyUnmanagedRdKafkaTopic ptr =
   withForeignPtr ptr rdKafkaTopicDestroy
 
-foreign import ccall unsafe "rdkafka.h &rd_kafka_topic_destroy"
-    rdKafkaTopicDestroy' :: FinalizerPtr RdKafkaTopicT
 
 newUnmanagedRdKafkaTopicT :: RdKafkaTPtr -> String -> Maybe RdKafkaTopicConfTPtr -> IO (Either String RdKafkaTopicTPtr)
-newUnmanagedRdKafkaTopicT kafkaPtr topic topicConfPtr = do
+newUnmanagedRdKafkaTopicT kafkaPtr topic topicConfPtr = mask_ $ do
     duper <- maybe (newForeignPtr_ nullPtr) rdKafkaTopicConfDup topicConfPtr
     ret <- rdKafkaTopicNew kafkaPtr topic duper
     withForeignPtr ret $ \realPtr ->
@@ -1119,9 +1125,12 @@ newUnmanagedRdKafkaTopicT kafkaPtr topic topicConfPtr = do
         else return $ Right ret
 
 newRdKafkaTopicT :: RdKafkaTPtr -> String -> Maybe RdKafkaTopicConfTPtr -> IO (Either String RdKafkaTopicTPtr)
-newRdKafkaTopicT kafkaPtr topic topicConfPtr = do
+newRdKafkaTopicT kafkaPtr topic topicConfPtr = mask_ $ do
     res <- newUnmanagedRdKafkaTopicT kafkaPtr topic topicConfPtr
-    _ <- traverse (addForeignPtrFinalizer rdKafkaTopicDestroy') res
+    _ <- traverse (\topicPtr -> withForeignPtr topicPtr $ \realPtr ->
+      Concurrent.addForeignPtrFinalizer topicPtr $ do
+        {# call rd_kafka_topic_destroy #} realPtr
+        touchForeignPtr kafkaPtr) res
     return res
 
 -------------------------------------------------------------------------------------------------

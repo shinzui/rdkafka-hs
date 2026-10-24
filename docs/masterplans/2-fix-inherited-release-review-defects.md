@@ -68,7 +68,7 @@ Relevant decisions were read before drafting. [ADR-1](../adr/consumer-queue-and-
 | 8 | Apply topic creation configuration safely | [EP-8](../plans/8-apply-topic-creation-configuration-safely.md) | EP-13 | None | Complete |
 | 9 | Honor producer settings and release rejected callbacks | [EP-9](../plans/9-honor-producer-settings-and-release-rejected-callbacks.md) | EP-13 | None | Complete |
 | 10 | Report per-partition seek failures | [EP-10](../plans/10-report-per-partition-seek-failures.md) | EP-13 | None | Complete |
-| 11 | Own native callbacks through client teardown | [EP-11](../plans/11-own-native-callbacks-through-client-teardown.md) | EP-13 | EP-9 | Not Started |
+| 11 | Own native callbacks through client teardown | [EP-11](../plans/11-own-native-callbacks-through-client-teardown.md) | EP-13 | EP-9 | In Progress |
 | 12 | Release transaction error objects | [EP-12](../plans/12-release-transaction-error-objects.md) | EP-13 | None | Not Started |
 | 13 | Make coverage evidence and test fixtures reliable | [EP-13](../plans/13-make-coverage-evidence-and-test-fixtures-reliable.md) | None | None | Complete |
 | 14 | Cover the public API and pure-data laws | [EP-14](../plans/14-cover-the-public-api-and-pure-data-laws.md) | EP-13 | EP-8, EP-9, EP-10, EP-11, EP-12 | In Progress |
@@ -134,6 +134,8 @@ EP-10 is Complete: 76 focused seek/rewind cases and seven compiled mutations ver
 
 
 ## Surprises & Discoveries
+
+EP-11's teardown audit identified a possible unowned remainder when batch message conversion is interrupted. EP-14 owns reproduction and full-batch cleanup under its existing polling/batch contract; its plan records the concrete source path. This remains an open obligation, independent of callback registration release.
 
 
 The coverage audit found that `test-integration/Kafka/TestEnv.hs:sendMessages` and `sendMessagesWithHeaders` ignore enqueue results, and `receiveMessages` filters errors with `rights`. Existing metadata checks often assert only `isRight` or collection length. EP-13 must repair these false-success paths before new test results can be trusted. The interrupted-destroy test uses `forkIO` followed by `killThread` without proving destruction reached a particular stage; EP-11 must add controlled barriers around meaningful teardown windows.

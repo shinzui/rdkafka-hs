@@ -71,7 +71,9 @@ module Kafka.Producer
   )
 where
 
-import Control.Exception (bracket, mask_, onException)
+import Kafka.Internal.CallbackOwner (releaseUnattachedCallbacks)
+
+import Control.Exception (bracket, mask, mask_, onException)
 import Control.Monad (forM_)
 import Control.Monad.IO.Class (MonadIO (liftIO))
 import Data.Bits ((.|.))
@@ -121,28 +123,29 @@ runProducer props f =
 -- global properties are preserved. Invalid topic properties retain the
 -- existing configuration-exception convention.
 newProducer :: (MonadIO m) => ProducerProperties -> m (Either KafkaError KafkaProducer)
-newProducer pps = liftIO $ do
-  kc@(KafkaConf kc' _ _ _) <- kafkaConf (KafkaProps $ (ppKafkaProps pps))
-  tc <- topicConf (TopicProps $ (ppTopicProps pps))
-  -- librdkafka accepts topic properties on the global configuration. Merge
-  -- only explicit keys: replacing default_topic_conf would discard topic
-  -- properties already supplied through the global map.
-  setAllKafkaConfValues kc (KafkaProps (ppTopicProps pps))
+newProducer pps = liftIO $ mask $ \restore -> do
+  kc@(KafkaConf kc' _ _ _ _) <- kafkaConf (KafkaProps $ (ppKafkaProps pps))
+  flip onException (releaseUnattachedCallbacks (kcfgCallbackOwner kc)) $ restore $ do
+    tc <- topicConf (TopicProps $ (ppTopicProps pps))
+    -- librdkafka accepts topic properties on the global configuration. Merge
+    -- only explicit keys: replacing default_topic_conf would discard topic
+    -- properties already supplied through the global map.
+    setAllKafkaConfValues kc (KafkaProps (ppTopicProps pps))
 
-  -- add default delivery report callback
-  let Callback setDeliveryCallback = deliveryCallback (const mempty)
-  setDeliveryCallback kc
+    -- add default delivery report callback
+    let Callback setDeliveryCallback = deliveryCallback (const mempty)
+    setDeliveryCallback kc
 
-  -- set callbacks
-  forM_ (ppCallbacks pps) (\(Callback setCb) -> setCb kc)
+    -- set callbacks
+    forM_ (ppCallbacks pps) (\(Callback setCb) -> setCb kc)
 
-  mbKafka <- newRdKafkaT RdKafkaProducer kc'
-  case mbKafka of
-    Left err -> return . Left $ KafkaError err
-    Right kafka -> do
-      forM_ (ppLogLevel pps) (rdKafkaSetLogLevel kafka . fromEnum)
-      let prod = KafkaProducer (Kafka kafka) kc tc
-      return (Right prod)
+    mbKafka <- newRdKafkaT (kcfgCallbackOwner kc) RdKafkaProducer kc'
+    case mbKafka of
+      Left err -> return . Left $ KafkaError err
+      Right kafka -> do
+        forM_ (ppLogLevel pps) (rdKafkaSetLogLevel kafka . fromEnum)
+        let prod = KafkaProducer (Kafka kafka) kc tc
+        return (Right prod)
 
 -- | Sends a single message.
 -- Since librdkafka is backed by a queue, this function can return before messages are sent. See

@@ -10,11 +10,12 @@ where
 
 import Control.Arrow ((&&&))
 import Control.Monad (forM_, void)
-import Foreign.ForeignPtr (finalizeForeignPtr, newForeignPtr_)
+import Foreign.ForeignPtr (finalizeForeignPtr, newForeignPtr_, withForeignPtr)
 import Foreign.Ptr (nullPtr)
 import Kafka.Callbacks as X
 import Kafka.Consumer.Convert (fromNativeTopicPartitionList', fromNativeTopicPartitionList'')
 import Kafka.Consumer.Types (KafkaConsumer (..), RebalanceEvent (..), TopicPartition (..))
+import Kafka.Internal.CallbackOwner (containCallbackException)
 import Kafka.Internal.RdKafka
 import Kafka.Internal.Setup (Callback (..), HasKafka (..), HasKafkaConf (..), Kafka (..), KafkaConf (..), getRdMsgQueue)
 import Kafka.Types (KafkaError (..), PartitionId (..), TopicName (..))
@@ -24,7 +25,7 @@ import Data.Text qualified as Text
 -- | Sets a callback that is called when rebalance is needed.
 rebalanceCallback :: (KafkaConsumer -> RebalanceEvent -> IO ()) -> Callback
 rebalanceCallback callback =
-  Callback $ \kc@(KafkaConf con _ _ _) -> rdKafkaConfSetRebalanceCb con (realCb kc)
+  Callback $ \kc@(KafkaConf con _ _ _ _) -> rdKafkaConfSetRebalanceCb (kcfgCallbackOwner kc) con (realCb kc)
   where
     realCb kc k err pl = do
       k' <- newForeignPtr_ k
@@ -41,7 +42,7 @@ rebalanceCallback callback =
 -- an error.
 offsetCommitCallback :: (KafkaConsumer -> KafkaError -> [TopicPartition] -> IO ()) -> Callback
 offsetCommitCallback callback =
-  Callback $ \kc@(KafkaConf conf _ _ _) -> rdKafkaConfSetOffsetCommitCb conf (realCb kc)
+  Callback $ \kc@(KafkaConf conf _ _ _ _) -> rdKafkaConfSetOffsetCommitCb (kcfgCallbackOwner kc) conf (realCb kc)
   where
     realCb kc k err pl = do
       k' <- newForeignPtr_ k
@@ -65,7 +66,7 @@ forwardPartitionsToMessageQueue k ps = do
   forM_ mbq $ \mq -> forM_ ps $ \(t, p) -> redirectPartitionQueue (getKafka k) t p mq
 
 redirectPartitionQueue :: Kafka -> TopicName -> PartitionId -> RdKafkaQueueTPtr -> IO ()
-redirectPartitionQueue (Kafka k) (TopicName t) (PartitionId p) q = do
+redirectPartitionQueue (Kafka k) (TopicName t) (PartitionId p) q = withForeignPtr k $ \_ -> do
   mpq <- rdKafkaQueueGetPartition k (Text.unpack t) p
   case mpq of
     Nothing -> return ()
@@ -84,7 +85,7 @@ setRebalanceCallback f k e pls = do
 
   case e of
     KafkaResponseError RdKafkaRespErrAssignPartitions -> do
-      f k (RebalanceBeforeAssign assignment)
+      containCallbackException $ f k (RebalanceBeforeAssign assignment)
       protocol <- rdKafkaRebalanceProtocol kptr
       if protocol == "COOPERATIVE"
         then void $ rdKafkaIncrementalAssign kptr pls
@@ -102,12 +103,12 @@ setRebalanceCallback f k e pls = do
           forwardPartitionsToMessageQueue k assignment
           void $ rdKafkaResumePartitions kptr pls
 
-      f k (RebalanceAssign assignment)
+      containCallbackException $ f k (RebalanceAssign assignment)
     KafkaResponseError RdKafkaRespErrRevokePartitions -> do
-      f k (RebalanceBeforeRevoke assignment)
+      containCallbackException $ f k (RebalanceBeforeRevoke assignment)
       protocol <- rdKafkaRebalanceProtocol kptr
       if protocol == "COOPERATIVE"
         then void $ rdKafkaIncrementalUnassign kptr pls
         else void $ newForeignPtr_ nullPtr >>= rdKafkaAssign kptr
-      f k (RebalanceRevoke assignment)
+      containCallbackException $ f k (RebalanceRevoke assignment)
     x -> error $ "Rebalance: UNKNOWN response: " <> show x

@@ -104,6 +104,7 @@ library
     Kafka.Callbacks
     Kafka.Consumer.Callbacks
     Kafka.Consumer.Convert
+    Kafka.Internal.CallbackOwner
     Kafka.Internal.RdKafka
     Kafka.Internal.Setup
     Kafka.Internal.Shared
@@ -140,6 +141,7 @@ test-suite rdkafka-hs-integration
 
   c-sources:
     test-integration/cbits/admin_ownership.c
+    test-integration/cbits/callback_lifetime.c
     test-integration/cbits/producer_ownership.c
     test-integration/cbits/seek_faults.c
 
@@ -169,6 +171,7 @@ test-suite rdkafka-hs-integration
     buildable: False
   other-modules:
     Kafka.AdminTestSupport
+    Kafka.CallbackLifetimeSupport
     Kafka.CallbackTestSupport
     Kafka.FaultTestSupport
     Kafka.FixtureSupport
@@ -176,6 +179,7 @@ test-suite rdkafka-hs-integration
     Kafka.Integration.AssignOnlyTest
     Kafka.Integration.AttributedErrorTest
     Kafka.Integration.BatchTest
+    Kafka.Integration.CallbackLifetimeTest
     Kafka.Integration.ConfigurationTest
     Kafka.Integration.ConsumerTest
     Kafka.Integration.DestroyTest
@@ -199,11 +203,13 @@ test-suite rdkafka-hs-integration
 
 test-suite rdkafka-hs-test
   import: common-options
+  default-extensions: PackageImports
   type: exitcode-stdio-1.0
   main-is: Main.hs
   hs-source-dirs:
     test
     test-support
+    src
 
   ghc-options:
     -threaded
@@ -224,6 +230,8 @@ test-suite rdkafka-hs-test
     Kafka.Consumer.ConsumerPropertiesSpec
     Kafka.Consumer.ConsumerRecordMapSpec
     Kafka.Consumer.ConsumerRecordTraverseSpec
+    Kafka.Internal.CallbackOwner
+    Kafka.Internal.CallbackOwnerSpec
     Kafka.Producer.ProducerPropertiesSpec
     Kafka.PropertySupport
     Kafka.VersionTest

@@ -18,7 +18,7 @@ import Foreign.Storable (Storable (peek))
 import Kafka.Callbacks as X
 import Kafka.Consumer.Types (Offset (..))
 import Kafka.Internal.RdKafka (RdKafkaMessageT (..), RdKafkaRespErrT (..), rdKafkaConfSetDrMsgCb)
-import Kafka.Internal.Setup (Callback (..), getRdKafkaConf)
+import Kafka.Internal.Setup (Callback (..), KafkaConf (kcfgCallbackOwner), getRdKafkaConf)
 import Kafka.Internal.Shared (kafkaRespErr, readHeaders, readKey, readPayload, readTopic)
 import Kafka.Producer.Types (DeliveryReport (..), ProducePartition (..), ProducerRecord (..))
 import Kafka.Types (KafkaError (..), TopicName (..))
@@ -36,7 +36,7 @@ import Kafka.Types (KafkaError (..), TopicName (..))
 -- per-message callback runs unmasked on its own thread and uses that same
 -- runtime exception policy.
 deliveryCallback :: (DeliveryReport -> IO ()) -> Callback
-deliveryCallback callback = Callback $ \kc -> rdKafkaConfSetDrMsgCb (getRdKafkaConf kc) realCb
+deliveryCallback callback = Callback $ \kc -> rdKafkaConfSetDrMsgCb (kcfgCallbackOwner kc) (getRdKafkaConf kc) realCb
   where
     realCb :: t -> Ptr RdKafkaMessageT -> IO ()
     realCb _ mptr = containCallbackException $ mask $ \restore ->

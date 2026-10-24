@@ -1,6 +1,8 @@
 # Bundle Update Log
 
 ## 2026-10-24
+* **updated**: Link callback owner ordering and scoped native child cleanup.
+* **created**: Record persistent callback ownership and native shutdown ordering.
 * **created**: Record ordered seek member errors, initiation-only timeout semantics and rewind propagation.
 * **Clarification**: Decide enqueue ownership from the nullable native error pointer and free rejected roots before decoding; preserve native error-object codes.
 * **Decision**: Accept conditional per-message callback ownership transfer and containment of delivery exceptions within Haskell threads.

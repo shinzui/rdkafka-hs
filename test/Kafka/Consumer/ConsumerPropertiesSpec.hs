@@ -3,10 +3,10 @@ module Kafka.Consumer.ConsumerPropertiesSpec
   )
 where
 
-import Kafka.Consumer.ConsumerProperties
-import Kafka.Consumer.Types (ConsumerGroupId (..))
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
+import "rdkafka-hs" Kafka.Consumer.ConsumerProperties
+import "rdkafka-hs" Kafka.Consumer.Types (ConsumerGroupId (..))
 
 tests :: TestTree
 tests =

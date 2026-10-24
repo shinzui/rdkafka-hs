@@ -6,10 +6,10 @@ where
 import Data.Bifunctor
 import Data.Bitraversable
 import Data.Text
-import Kafka.Consumer.Types
-import Kafka.Types
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
+import "rdkafka-hs" Kafka.Consumer.Types
+import "rdkafka-hs" Kafka.Types
 
 testKey, testValue :: Text
 testKey = "some-key"

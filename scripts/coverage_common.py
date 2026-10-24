@@ -13,6 +13,10 @@ def run(*args):
     return subprocess.check_output(args, cwd=ROOT, text=True)
 
 
+def library_hpc_includes(mixfiles):
+    return ["--include=" + p.parent.name + ":" + p.stem for p in mixfiles]
+
+
 def fingerprint():
     # Evidence-only documentation is deliberately excluded. Include untracked
     # test/source additions; git diff alone cannot identify a dirty candidate.

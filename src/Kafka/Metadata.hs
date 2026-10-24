@@ -38,7 +38,7 @@ import Control.Monad.IO.Class (MonadIO (liftIO))
 import Data.Bifunctor (bimap)
 import Data.ByteString (ByteString, pack)
 import Data.Text (Text)
-import Foreign (Storable (peek), peekArray, withForeignPtr)
+import Foreign (Storable (peek), finalizeForeignPtr, peekArray, withForeignPtr)
 import GHC.Generics (Generic)
 import Kafka.Consumer.Convert (fromNativeTopicPartitionList'', toNativeTopicPartitionList)
 import Kafka.Consumer.Types (ConsumerGroupId (..), Offset (..), PartitionOffset (..), TopicPartition (..))
@@ -137,7 +137,7 @@ allTopicsMetadata k (Timeout timeout) = liftIO $ do
 
 -- | Returns metadata only for specified topic
 topicMetadata :: (MonadIO m, HasKafka k) => k -> Timeout -> TopicName -> m (Either KafkaError KafkaMetadata)
-topicMetadata k (Timeout timeout) (TopicName tn) = liftIO $
+topicMetadata k (Timeout timeout) (TopicName tn) = liftIO $ withForeignPtr (getKafkaPtr k) $ \_ ->
   bracket mkTopic clTopic $ \mbt -> case mbt of
     Left err -> return (Left $ KafkaError (Text.pack err))
     Right t -> do
@@ -201,8 +201,7 @@ offsetsForTime' k timeout timestamp t =
 -- timestamp is greater than or equal to the given timestamp in the
 -- corresponding partition.
 offsetsForTime :: (MonadIO m, HasKafka k) => k -> Timeout -> Millis -> [(TopicName, PartitionId)] -> m (Either KafkaError [TopicPartition])
-offsetsForTime k (Timeout timeout) (Millis t) tps = liftIO $ do
-  ntps <- toNativeTopicPartitionList $ mkTopicPartition <$> uniqueTps
+offsetsForTime k (Timeout timeout) (Millis t) tps = liftIO $ withForeignPtr (getKafkaPtr k) $ \_ -> bracket (toNativeTopicPartitionList (mkTopicPartition <$> uniqueTps)) finalizeForeignPtr $ \ntps -> do
   res <- rdKafkaOffsetsForTimes (getKafkaPtr k) ntps timeout
   case res of
     RdKafkaRespErrNoError -> Right <$> fromNativeTopicPartitionList'' ntps

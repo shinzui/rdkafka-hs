@@ -2,7 +2,7 @@
 type: Architecture Decision Record
 title: Consumer queue and teardown ownership
 description: Manual assignment shares subscription queue routing, and destroyConsumer synchronously stops polling, releases queue references and destroys the client without a graceful group close.
-timestamp: 2026-10-22T01:21:16Z
+timestamp: 2026-10-24T12:29:36Z
 generated:
   by: codex-cli/gpt-6-astra
   at: "2026-10-22T00:05:10Z"
@@ -91,3 +91,5 @@ This decision preserves the fatal-error contract in
 `mori://shinzui/hw-kafka-client/okf/improvement-requests/concepts/IR-2`.
 EP-1 will adopt this existing record into the profiled ADR bundle and allocate
 its stable handle using OKF.
+
+Persistent Haskell callback bridges now follow [ADR-15](native-clients-own-persistent-haskell-callback-bridges.md). The native client finalizer retains their independent owner through shutdown and releases it afterward. Failed construction releases unattached registrations and destroys a native configuration duplicate left with the caller. Public operations scope native child handles and retain the client through their cleanup, rather than relying on GC finalizer ordering. The lifecycle lock still publishes `ClientDestroyed` only after synchronous finalization completes.

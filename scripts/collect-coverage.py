@@ -10,7 +10,7 @@ import sys
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
-from coverage_common import ROOT, components, fingerprint, run
+from coverage_common import library_hpc_includes, ROOT, components, fingerprint, run
 
 SUITES = ("rdkafka-hs-test", "rdkafka-hs-integration")
 BUILD = "dist-coverage"
@@ -49,7 +49,9 @@ def collect():
                               for p in (ROOT / "src").rglob("*") if p.suffix in (".hs", ".chs"))
     if modules != expected_modules:
         raise ValueError("library MIX module set does not match hand-written sources")
-    include = ["--include=" + m for m in modules]
+    # Unit tests compile the internal owner in isolation. Select the library
+    # package explicitly so its test-local copy cannot inflate library coverage.
+    include = library_hpc_includes(mixfiles)
     mixargs = ["--hpcdir=" + str(d) for d in mixdirs]
     zeros = OUTPUT / "unlinked-zero.tix"
     zero_args = [arg for p in mixfiles for arg in (p.parent.name + "/" + p.stem, str(p))]
@@ -134,6 +136,8 @@ def collect():
             declaration = re.search(r'TopLevelBox \["([^"]+)"', label)
             symbol = module + "." + declaration[1] if declaration else None
             row = symbol_rows.get(symbol)
+            if row is None and module == "Kafka.Internal.CallbackOwner":
+                row = next(r for r in matrix["contracts"] if r["id"] == "F5")
             fallback = "OWN-binding-coverage" if module == "Kafka.Internal.RdKafka" else "OWN-source-coverage"
             misses.append(dict(module=module, source=source, line=source_line, tick=int(index), label=label,
                                generated=generated, contract=row["id"] if row else fallback, owner=row["owner"] if row else 14))

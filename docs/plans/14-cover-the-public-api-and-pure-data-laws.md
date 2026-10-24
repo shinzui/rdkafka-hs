@@ -45,6 +45,10 @@ The current complete suites pass 21 unit and 244 integration tests in normal and
 
 ## Surprises & Discoveries
 
+EP-11 also observed that cooperative rebalance handlers discard the owned error pointers from `rdKafkaIncrementalAssign` / `rdKafkaIncrementalUnassign`. Reproduce the native error branches with counted error objects and repair their disposal/observable failure handling under this child's remaining consumer-state/error contract. Ordinary successful eager rebalances do not exercise those branches.
+
+EP-11's native reference audit found a batch ownership window: `rdKafkaConsumeBatchQueue` returns raw messages without finalizers, and `pollMessageBatch` traverses `fromMessagePtr`. That converter destroys its current message in `finally`, but interruption or conversion failure can leave later messages unprocessed and unowned. Reproduce with a counted native boundary and repair the batch's complete ownership scope under this child's polling/batch acceptance. Do not close this discovery through a success-only batch run.
+
 
 The original unit suite covers four consumer-property examples, seven record mapping/traversal examples, and three version examples. There are no generated property suites. The metadata integration scenario often checks only Right/length, and deprecated seek is covered more thoroughly than its replacement. Current producer and consumer Type modules expose constructors, so the inventory must use actual exports rather than Haddock prose saying a constructor is hidden.
 

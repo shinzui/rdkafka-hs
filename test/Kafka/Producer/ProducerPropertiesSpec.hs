@@ -3,11 +3,11 @@ module Kafka.Producer.ProducerPropertiesSpec (tests) where
 import Data.Map.Strict (Map)
 import Data.Map.Strict qualified as Map
 import Data.Text (Text)
-import Kafka.Producer qualified as P
 import Kafka.PropertySupport
 import Test.Tasty (TestTree)
 import Test.Tasty.HUnit (testCase, (@?=))
 import Test.Tasty.QuickCheck qualified as QC
+import "rdkafka-hs" Kafka.Producer qualified as P
 
 data Edit = Global Text Text | Topic Text Text | Level P.KafkaLogLevel
   deriving stock (Eq, Show)
