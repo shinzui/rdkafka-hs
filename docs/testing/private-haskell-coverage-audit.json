@@ -1,0 +1,142 @@
+{
+  "status": "partial M3 source audit; whole-candidate refresh and reachable branches remain open",
+  "baseline_fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+  "proof": "Exact-name scans across every src .hs/.chs file find only each listed function definition, signature, export and INLINE entries. Cabal other-modules hides all four owning modules; exposed module exports do not re-export these helpers.",
+  "declarations": [
+    {
+      "file": "src/Kafka/Consumer/Convert.hs",
+      "name": "offsetSyncToInt",
+      "start": 62,
+      "end": 66,
+      "source_sha256": "61ce0505eaa2aead929700fc60b31dcf27125c095a944f92874146c1a15091e1",
+      "baseline_missing_ticks": 7,
+      "keys": [
+        "Kafka.Consumer.Convert:62:TopLevelBox [\"offsetSyncToInt\"]",
+        "Kafka.Consumer.Convert:63:ExpBox False",
+        "Kafka.Consumer.Convert:64:ExpBox False",
+        "Kafka.Consumer.Convert:64:ExpBox True",
+        "Kafka.Consumer.Convert:65:ExpBox True",
+        "Kafka.Consumer.Convert:66:ExpBox True"
+      ]
+    },
+    {
+      "file": "src/Kafka/Consumer/Convert.hs",
+      "name": "toNativeTopicPartitionListNoDispose",
+      "start": 138,
+      "end": 150,
+      "source_sha256": "61ce0505eaa2aead929700fc60b31dcf27125c095a944f92874146c1a15091e1",
+      "baseline_missing_ticks": 32,
+      "keys": [
+        "Kafka.Consumer.Convert:138:ExpBox False",
+        "Kafka.Consumer.Convert:138:TopLevelBox [\"toNativeTopicPartitionListNoDispose\"]",
+        "Kafka.Consumer.Convert:139:ExpBox False",
+        "Kafka.Consumer.Convert:140:ExpBox False",
+        "Kafka.Consumer.Convert:141:ExpBox False",
+        "Kafka.Consumer.Convert:142:ExpBox False",
+        "Kafka.Consumer.Convert:143:ExpBox False",
+        "Kafka.Consumer.Convert:144:ExpBox False",
+        "Kafka.Consumer.Convert:144:LocalBox [\"toNativeTopicPartitionListNoDispose\",\"to\"]",
+        "Kafka.Consumer.Convert:145:ExpBox False",
+        "Kafka.Consumer.Convert:145:LocalBox [\"toNativeTopicPartitionListNoDispose\",\"tnS\"]",
+        "Kafka.Consumer.Convert:146:ExpBox False",
+        "Kafka.Consumer.Convert:147:ExpBox False",
+        "Kafka.Consumer.Convert:149:ExpBox False",
+        "Kafka.Consumer.Convert:150:ExpBox False"
+      ]
+    },
+    {
+      "file": "src/Kafka/Internal/Shared.hs",
+      "name": "throwOnError",
+      "start": 64,
+      "end": 68,
+      "source_sha256": "da37bdff0d9cf6bd60109b63e563e4eec0d6a2c74b251df1d2e8244756c176a7",
+      "baseline_missing_ticks": 11,
+      "keys": [
+        "Kafka.Internal.Shared:64:ExpBox False",
+        "Kafka.Internal.Shared:64:TopLevelBox [\"throwOnError\"]",
+        "Kafka.Internal.Shared:65:ExpBox False",
+        "Kafka.Internal.Shared:66:ExpBox False",
+        "Kafka.Internal.Shared:67:ExpBox False",
+        "Kafka.Internal.Shared:67:ExpBox True",
+        "Kafka.Internal.Shared:68:ExpBox False",
+        "Kafka.Internal.Shared:68:ExpBox True"
+      ]
+    },
+    {
+      "file": "src/Kafka/Internal/Shared.hs",
+      "name": "hasError",
+      "start": 71,
+      "end": 73,
+      "source_sha256": "da37bdff0d9cf6bd60109b63e563e4eec0d6a2c74b251df1d2e8244756c176a7",
+      "baseline_missing_ticks": 5,
+      "keys": [
+        "Kafka.Internal.Shared:71:ExpBox False",
+        "Kafka.Internal.Shared:71:TopLevelBox [\"hasError\"]",
+        "Kafka.Internal.Shared:72:ExpBox True",
+        "Kafka.Internal.Shared:73:ExpBox True"
+      ]
+    },
+    {
+      "file": "src/Kafka/Internal/Shared.hs",
+      "name": "kafkaErrorToEither",
+      "start": 83,
+      "end": 85,
+      "source_sha256": "da37bdff0d9cf6bd60109b63e563e4eec0d6a2c74b251df1d2e8244756c176a7",
+      "baseline_missing_ticks": 7,
+      "keys": [
+        "Kafka.Internal.Shared:83:ExpBox False",
+        "Kafka.Internal.Shared:83:TopLevelBox [\"kafkaErrorToEither\"]",
+        "Kafka.Internal.Shared:84:ExpBox False",
+        "Kafka.Internal.Shared:84:ExpBox True",
+        "Kafka.Internal.Shared:85:ExpBox False",
+        "Kafka.Internal.Shared:85:ExpBox True"
+      ]
+    },
+    {
+      "file": "src/Kafka/Producer/Convert.hs",
+      "name": "handleProduceErr",
+      "start": 32,
+      "end": 34,
+      "source_sha256": "9ba868c4ea7d938ab857f2e92f1a033a633b8f7b834da58502d6fb9831f99483",
+      "baseline_missing_ticks": 12,
+      "keys": [
+        "Kafka.Producer.Convert:32:ExpBox False",
+        "Kafka.Producer.Convert:32:ExpBox True",
+        "Kafka.Producer.Convert:32:TopLevelBox [\"handleProduceErr\"]",
+        "Kafka.Producer.Convert:33:ExpBox False",
+        "Kafka.Producer.Convert:33:ExpBox True",
+        "Kafka.Producer.Convert:34:ExpBox False",
+        "Kafka.Producer.Convert:34:ExpBox True"
+      ]
+    },
+    {
+      "file": "src/Kafka/Producer/Convert.hs",
+      "name": "handleProduceErr'",
+      "start": 43,
+      "end": 45,
+      "source_sha256": "9ba868c4ea7d938ab857f2e92f1a033a633b8f7b834da58502d6fb9831f99483",
+      "baseline_missing_ticks": 13,
+      "keys": [
+        "Kafka.Producer.Convert:43:ExpBox False",
+        "Kafka.Producer.Convert:43:ExpBox True",
+        "Kafka.Producer.Convert:43:TopLevelBox [\"handleProduceErr'\"]",
+        "Kafka.Producer.Convert:44:ExpBox False",
+        "Kafka.Producer.Convert:44:ExpBox True",
+        "Kafka.Producer.Convert:45:ExpBox False",
+        "Kafka.Producer.Convert:45:ExpBox True"
+      ]
+    },
+    {
+      "file": "src/Kafka/Internal/RdKafka.chs",
+      "name": "peekCAText",
+      "start": 110,
+      "end": 110,
+      "source_sha256": "95633699b8e19f1140bdb6154a2521ab6e27902b4fda4fc1f4a60dfa89b9a991",
+      "baseline_missing_ticks": 5,
+      "keys": [
+        "Kafka.Internal.RdKafka:110:ExpBox False",
+        "Kafka.Internal.RdKafka:110:TopLevelBox [\"peekCAText\"]"
+      ]
+    }
+  ]
+}

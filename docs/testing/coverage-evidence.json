@@ -6,9 +6,9 @@
     "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
   },
   "schema_version": 1,
-  "revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
-  "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
-  "at": "2026-10-24T20:10:27.176482+00:00",
+  "revision": "1baa517f43d1dd7ee03a8b328fa2e998c5093838",
+  "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+  "at": "2026-10-24T21:19:07.801712+00:00",
   "command": [
     "cabal",
     "test",
@@ -445,6 +445,14 @@
     "rdkafka-hs-integration.public-contract.consumer-state.sync-buffer-fields-no-time",
     "rdkafka-hs-integration.public-contract.consumer-state.sync-buffer-fields-append-time",
     "rdkafka-hs-integration.public-contract.consumer-state.sync-buffer-fields-create-time",
+    "rdkafka-hs-integration.public-contract.consumer-commit.async commit modes preserve native flags callback offsets and broker state",
+    "rdkafka-hs-integration.public-contract.consumer-commit.sync commit modes preserve native flags callback offsets and broker state",
+    "rdkafka-hs-integration.public-contract.consumer-commit.async empty commit requests preserve no-offset callbacks",
+    "rdkafka-hs-integration.public-contract.consumer-commit.sync empty commit requests preserve no-offset callbacks",
+    "rdkafka-hs-integration.public-contract.consumer-commit.async mixed broker commit failures preserve successful offsets",
+    "rdkafka-hs-integration.public-contract.consumer-commit.sync mixed broker commit failures preserve successful offsets",
+    "rdkafka-hs-integration.public-contract.consumer-commit.async committed query preserves an unavailable coordinator timeout",
+    "rdkafka-hs-integration.public-contract.consumer-commit.sync committed query preserves an unavailable coordinator timeout",
     "rdkafka-hs-integration.public-contract.diagnostics.supported-property print flushes and preserves the caller handle",
     "rdkafka-hs-integration.public-contract.diagnostics.client print flushes and preserves the caller handle",
     "rdkafka-hs-integration.public-contract.diagnostics.failed fdopen releases the duplicate and preserves the original",
@@ -454,12 +462,28 @@
     "rdkafka-hs-integration.public-contract.diagnostics.native dump counter detects an unreleased array",
     "rdkafka-hs-integration.public-contract.diagnostics.global cancellation at native acquisition releases its array",
     "rdkafka-hs-integration.public-contract.diagnostics.topic cancellation at native acquisition releases its array",
+    "rdkafka-hs-integration.public-contract.deprecated-runners.producer flushes after Returned",
+    "rdkafka-hs-integration.public-contract.deprecated-runners.producer flushes after Refused",
+    "rdkafka-hs-integration.public-contract.deprecated-runners.producer flushes after Thrown",
+    "rdkafka-hs-integration.public-contract.deprecated-runners.async consumer closes after Returned",
+    "rdkafka-hs-integration.public-contract.deprecated-runners.async consumer closes after Refused",
+    "rdkafka-hs-integration.public-contract.deprecated-runners.async consumer closes after Thrown",
+    "rdkafka-hs-integration.public-contract.deprecated-runners.sync consumer closes after Returned",
+    "rdkafka-hs-integration.public-contract.deprecated-runners.sync consumer closes after Refused",
+    "rdkafka-hs-integration.public-contract.deprecated-runners.sync consumer closes after Thrown",
+    "rdkafka-hs-integration.public-contract.deprecated-runners.producer preserves native construction failure without invoking handler",
+    "rdkafka-hs-integration.public-contract.deprecated-runners.producer preserves configuration exceptions without invoking handler",
+    "rdkafka-hs-integration.public-contract.deprecated-runners.async consumer preserves native construction failure",
+    "rdkafka-hs-integration.public-contract.deprecated-runners.async consumer preserves configuration construction failure",
+    "rdkafka-hs-integration.public-contract.deprecated-runners.sync consumer preserves native construction failure",
+    "rdkafka-hs-integration.public-contract.deprecated-runners.sync consumer preserves configuration construction failure",
     "rdkafka-hs-integration.public-contract.runtime-contract.RTS capability is observed by async construction",
     "rdkafka-hs-integration.public-contract.runtime-contract.explicit async construction checks the runtime",
     "rdkafka-hs-integration.public-contract.runtime-contract.sync subscription delivers an exact record",
     "rdkafka-hs-integration.public-contract.runtime-contract.deprecated sync runner closes after an exact record",
     "rdkafka-hs-integration.public-contract.metadata-contract.native metadata counter detects an unreleased result",
     "rdkafka-hs-integration.public-contract.metadata-contract.topic identity replica sets and exact watermarks",
+    "rdkafka-hs-integration.public-contract.metadata-contract.distinct native metadata fields retain exact identities and errors",
     "rdkafka-hs-integration.public-contract.metadata-contract.provided metadata preserves partition failures in convenience helpers",
     "rdkafka-hs-integration.public-contract.metadata-contract.native metadata partition failures survive convenience helpers",
     "rdkafka-hs-integration.public-contract.metadata-contract.group query timeout preserves initial metadata wait failure",
@@ -666,7 +690,7 @@
     "rdkafka-hs-integration.broker.Read all topics.should return all the topics",
     "rdkafka-hs-integration.broker.Read all topics.should delete this run's topics"
   ],
-  "passed_test_count": 638,
+  "passed_test_count": 662,
   "supplemental_runs": [
     {
       "kind": "nonthreaded-runtime",
@@ -1048,16 +1072,6 @@
     {
       "module": "Kafka.Consumer",
       "source": "src/Kafka/Consumer.hs",
-      "line": 443,
-      "tick": 1008,
-      "label": "ExpBox True",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Consumer",
-      "source": "src/Kafka/Consumer.hs",
       "line": 394,
       "tick": 1061,
       "label": "ExpBox False",
@@ -1358,36 +1372,6 @@
     {
       "module": "Kafka.Consumer",
       "source": "src/Kafka/Consumer.hs",
-      "line": 142,
-      "tick": 1419,
-      "label": "ExpBox False",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Consumer",
-      "source": "src/Kafka/Consumer.hs",
-      "line": 142,
-      "tick": 1420,
-      "label": "ExpBox False",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Consumer",
-      "source": "src/Kafka/Consumer.hs",
-      "line": 142,
-      "tick": 1421,
-      "label": "ExpBox True",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Consumer",
-      "source": "src/Kafka/Consumer.hs",
       "line": 139,
       "tick": 1425,
       "label": "ExpBox False",
@@ -1401,16 +1385,6 @@
       "line": 139,
       "tick": 1426,
       "label": "ExpBox False",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Consumer",
-      "source": "src/Kafka/Consumer.hs",
-      "line": 139,
-      "tick": 1427,
-      "label": "ExpBox True",
       "generated": false,
       "contract": "OWN-source-coverage",
       "owner": 14
@@ -1688,16 +1662,6 @@
     {
       "module": "Kafka.Consumer.Convert",
       "source": "src/Kafka/Consumer/Convert.hs",
-      "line": 242,
-      "tick": 1,
-      "label": "ExpBox True",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Consumer.Convert",
-      "source": "src/Kafka/Consumer/Convert.hs",
       "line": 217,
       "tick": 30,
       "label": "BinBox CondBinBox False",
@@ -1781,36 +1745,6 @@
       "line": 84,
       "tick": 263,
       "label": "BinBox GuardBinBox False",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Consumer.Convert",
-      "source": "src/Kafka/Consumer/Convert.hs",
-      "line": 93,
-      "tick": 304,
-      "label": "BinBox CondBinBox True",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Consumer.Convert",
-      "source": "src/Kafka/Consumer/Convert.hs",
-      "line": 94,
-      "tick": 307,
-      "label": "ExpBox False",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Consumer.Convert",
-      "source": "src/Kafka/Consumer/Convert.hs",
-      "line": 94,
-      "tick": 308,
-      "label": "ExpBox True",
       "generated": false,
       "contract": "OWN-source-coverage",
       "owner": 14
@@ -3438,10 +3372,10 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1121,
+      "line": 1117,
       "tick": 787,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
@@ -9758,430 +9692,430 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 355,
+      "line": 348,
       "tick": 2771,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 355,
+      "line": 348,
       "tick": 2772,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 355,
+      "line": 348,
       "tick": 2773,
       "label": "LocalBox [\"rdKafkaTopicPartitionListSetOffset\",\"res'\"]",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 356,
+      "line": 348,
       "tick": 2774,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 342,
+      "line": 340,
       "tick": 2783,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 342,
+      "line": 340,
       "tick": 2784,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 343,
+      "line": 340,
       "tick": 2785,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 343,
+      "line": 340,
       "tick": 2786,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 344,
+      "line": 340,
       "tick": 2787,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 344,
+      "line": 340,
       "tick": 2788,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 345,
+      "line": 340,
       "tick": 2789,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 345,
+      "line": 340,
       "tick": 2790,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 344,
+      "line": 340,
       "tick": 2791,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 344,
+      "line": 340,
       "tick": 2792,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 343,
+      "line": 340,
       "tick": 2793,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 343,
+      "line": 340,
       "tick": 2794,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 342,
+      "line": 340,
       "tick": 2795,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 342,
+      "line": 340,
       "tick": 2796,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 341,
+      "line": 340,
       "tick": 2797,
       "label": "TopLevelBox [\"rdKafkaTopicPartitionListCopy\"]",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 339,
+      "line": 337,
       "tick": 2798,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 339,
+      "line": 337,
       "tick": 2799,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 340,
+      "line": 337,
       "tick": 2800,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 340,
+      "line": 337,
       "tick": 2801,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 341,
+      "line": 337,
       "tick": 2802,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 341,
+      "line": 337,
       "tick": 2803,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 341,
+      "line": 337,
       "tick": 2804,
       "label": "LocalBox [\"rdKafkaTopicPartitionListAddRange\",\"a3'\"]",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 342,
+      "line": 337,
       "tick": 2805,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 342,
+      "line": 337,
       "tick": 2806,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 342,
+      "line": 337,
       "tick": 2807,
       "label": "LocalBox [\"rdKafkaTopicPartitionListAddRange\",\"a4'\"]",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 343,
+      "line": 337,
       "tick": 2808,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 343,
+      "line": 337,
       "tick": 2809,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 343,
+      "line": 337,
       "tick": 2810,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 343,
+      "line": 337,
       "tick": 2811,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 343,
+      "line": 337,
       "tick": 2812,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 344,
+      "line": 337,
       "tick": 2813,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 344,
+      "line": 337,
       "tick": 2814,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 341,
+      "line": 337,
       "tick": 2815,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 340,
+      "line": 337,
       "tick": 2816,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 340,
+      "line": 337,
       "tick": 2817,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 339,
+      "line": 337,
       "tick": 2818,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 339,
+      "line": 337,
       "tick": 2819,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 338,
+      "line": 337,
       "tick": 2820,
       "label": "TopLevelBox [\"rdKafkaTopicPartitionListAddRange\"]",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 341,
+      "line": 334,
       "tick": 2834,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
@@ -12468,7 +12402,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1330,
+      "line": 1329,
       "tick": 3538,
       "label": "ExpBox True",
       "generated": true,
@@ -12478,7 +12412,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1331,
+      "line": 1329,
       "tick": 3539,
       "label": "ExpBox True",
       "generated": true,
@@ -12488,27 +12422,27 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1332,
+      "line": 1329,
       "tick": 3540,
       "label": "ExpBox True",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1333,
+      "line": 1329,
       "tick": 3541,
       "label": "ExpBox True",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1334,
+      "line": 1329,
       "tick": 3542,
       "label": "ExpBox True",
       "generated": true,
@@ -12518,7 +12452,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1334,
+      "line": 1329,
       "tick": 3543,
       "label": "ExpBox True",
       "generated": true,
@@ -12528,7 +12462,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1334,
+      "line": 1329,
       "tick": 3544,
       "label": "ExpBox True",
       "generated": true,
@@ -12538,7 +12472,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1334,
+      "line": 1329,
       "tick": 3545,
       "label": "ExpBox True",
       "generated": true,
@@ -12548,7 +12482,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1334,
+      "line": 1329,
       "tick": 3546,
       "label": "ExpBox True",
       "generated": true,
@@ -12558,7 +12492,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1334,
+      "line": 1329,
       "tick": 3547,
       "label": "ExpBox True",
       "generated": true,
@@ -12568,7 +12502,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1334,
+      "line": 1329,
       "tick": 3548,
       "label": "ExpBox True",
       "generated": true,
@@ -12578,7 +12512,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1334,
+      "line": 1329,
       "tick": 3549,
       "label": "ExpBox True",
       "generated": true,
@@ -12588,7 +12522,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1334,
+      "line": 1329,
       "tick": 3550,
       "label": "ExpBox True",
       "generated": true,
@@ -12598,7 +12532,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1334,
+      "line": 1329,
       "tick": 3551,
       "label": "ExpBox True",
       "generated": true,
@@ -12608,7 +12542,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1334,
+      "line": 1329,
       "tick": 3552,
       "label": "ExpBox True",
       "generated": true,
@@ -12618,7 +12552,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1334,
+      "line": 1329,
       "tick": 3553,
       "label": "ExpBox True",
       "generated": true,
@@ -12628,7 +12562,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1334,
+      "line": 1329,
       "tick": 3554,
       "label": "ExpBox True",
       "generated": true,
@@ -12638,7 +12572,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1334,
+      "line": 1329,
       "tick": 3555,
       "label": "ExpBox True",
       "generated": true,
@@ -12648,7 +12582,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1334,
+      "line": 1329,
       "tick": 3556,
       "label": "ExpBox True",
       "generated": true,
@@ -12658,7 +12592,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1334,
+      "line": 1329,
       "tick": 3557,
       "label": "ExpBox True",
       "generated": true,
@@ -12668,7 +12602,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1334,
+      "line": 1329,
       "tick": 3558,
       "label": "ExpBox True",
       "generated": true,
@@ -12678,7 +12612,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1334,
+      "line": 1329,
       "tick": 3559,
       "label": "ExpBox True",
       "generated": true,
@@ -12688,7 +12622,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1334,
+      "line": 1329,
       "tick": 3560,
       "label": "ExpBox True",
       "generated": true,
@@ -12698,7 +12632,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1334,
+      "line": 1329,
       "tick": 3561,
       "label": "ExpBox False",
       "generated": true,
@@ -12708,7 +12642,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1334,
+      "line": 1329,
       "tick": 3562,
       "label": "ExpBox True",
       "generated": true,
@@ -12718,7 +12652,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1330,
+      "line": 1329,
       "tick": 3563,
       "label": "TopLevelBox [\"pred\"]",
       "generated": true,
@@ -12728,7 +12662,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3564,
       "label": "ExpBox True",
       "generated": true,
@@ -12738,7 +12672,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3565,
       "label": "ExpBox True",
       "generated": true,
@@ -12748,7 +12682,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3566,
       "label": "ExpBox True",
       "generated": true,
@@ -12758,7 +12692,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3567,
       "label": "ExpBox True",
       "generated": true,
@@ -12768,7 +12702,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3568,
       "label": "ExpBox True",
       "generated": true,
@@ -12778,7 +12712,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3569,
       "label": "ExpBox True",
       "generated": true,
@@ -12788,7 +12722,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3570,
       "label": "ExpBox True",
       "generated": true,
@@ -12798,7 +12732,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3571,
       "label": "ExpBox True",
       "generated": true,
@@ -12808,7 +12742,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3572,
       "label": "ExpBox True",
       "generated": true,
@@ -12818,7 +12752,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3573,
       "label": "ExpBox True",
       "generated": true,
@@ -12828,7 +12762,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3574,
       "label": "ExpBox True",
       "generated": true,
@@ -12838,7 +12772,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3575,
       "label": "ExpBox True",
       "generated": true,
@@ -12848,7 +12782,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3576,
       "label": "ExpBox True",
       "generated": true,
@@ -12858,7 +12792,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3577,
       "label": "ExpBox True",
       "generated": true,
@@ -12868,7 +12802,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3578,
       "label": "ExpBox True",
       "generated": true,
@@ -12878,7 +12812,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3579,
       "label": "ExpBox True",
       "generated": true,
@@ -12888,7 +12822,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3580,
       "label": "ExpBox True",
       "generated": true,
@@ -12898,7 +12832,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3581,
       "label": "ExpBox True",
       "generated": true,
@@ -12908,7 +12842,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3582,
       "label": "ExpBox True",
       "generated": true,
@@ -12918,7 +12852,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3583,
       "label": "ExpBox True",
       "generated": true,
@@ -12928,7 +12862,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3584,
       "label": "ExpBox True",
       "generated": true,
@@ -12938,7 +12872,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3585,
       "label": "ExpBox True",
       "generated": true,
@@ -12948,7 +12882,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3586,
       "label": "ExpBox True",
       "generated": true,
@@ -12958,7 +12892,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3587,
       "label": "ExpBox True",
       "generated": true,
@@ -12968,7 +12902,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3588,
       "label": "ExpBox False",
       "generated": true,
@@ -12978,7 +12912,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3589,
       "label": "ExpBox False",
       "generated": true,
@@ -12988,7 +12922,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3590,
       "label": "ExpBox False",
       "generated": true,
@@ -12998,7 +12932,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3591,
       "label": "ExpBox False",
       "generated": true,
@@ -13008,7 +12942,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3592,
       "label": "ExpBox True",
       "generated": true,
@@ -13018,7 +12952,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3593,
       "label": "TopLevelBox [\"toEnum\"]",
       "generated": true,
@@ -13028,7 +12962,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3595,
       "label": "ExpBox True",
       "generated": true,
@@ -13038,7 +12972,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3596,
       "label": "ExpBox True",
       "generated": true,
@@ -13048,7 +12982,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3597,
       "label": "ExpBox True",
       "generated": true,
@@ -13058,7 +12992,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3598,
       "label": "ExpBox True",
       "generated": true,
@@ -13068,7 +13002,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3599,
       "label": "ExpBox True",
       "generated": true,
@@ -13078,7 +13012,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3600,
       "label": "ExpBox True",
       "generated": true,
@@ -13088,7 +13022,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3601,
       "label": "ExpBox True",
       "generated": true,
@@ -13098,7 +13032,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3602,
       "label": "ExpBox True",
       "generated": true,
@@ -13108,7 +13042,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3603,
       "label": "ExpBox True",
       "generated": true,
@@ -13118,7 +13052,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3604,
       "label": "ExpBox True",
       "generated": true,
@@ -13128,7 +13062,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3605,
       "label": "ExpBox True",
       "generated": true,
@@ -13138,7 +13072,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3606,
       "label": "ExpBox True",
       "generated": true,
@@ -13148,7 +13082,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3607,
       "label": "ExpBox True",
       "generated": true,
@@ -13158,7 +13092,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3608,
       "label": "ExpBox True",
       "generated": true,
@@ -13168,7 +13102,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3609,
       "label": "ExpBox True",
       "generated": true,
@@ -13178,7 +13112,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3610,
       "label": "ExpBox True",
       "generated": true,
@@ -13188,7 +13122,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3611,
       "label": "ExpBox True",
       "generated": true,
@@ -13198,7 +13132,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3612,
       "label": "ExpBox True",
       "generated": true,
@@ -13208,7 +13142,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3613,
       "label": "ExpBox True",
       "generated": true,
@@ -13218,7 +13152,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3614,
       "label": "ExpBox True",
       "generated": true,
@@ -13228,7 +13162,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3615,
       "label": "ExpBox True",
       "generated": true,
@@ -13238,7 +13172,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3616,
       "label": "ExpBox True",
       "generated": true,
@@ -13248,7 +13182,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1339,
+      "line": 1329,
       "tick": 3617,
       "label": "ExpBox True",
       "generated": true,
@@ -13258,40 +13192,40 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1338,
+      "line": 1329,
       "tick": 3619,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1338,
+      "line": 1329,
       "tick": 3620,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1338,
+      "line": 1329,
       "tick": 3621,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1338,
+      "line": 1329,
       "tick": 3622,
       "label": "TopLevelBox [\"enumFrom\"]",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
@@ -13308,7 +13242,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1337,
+      "line": 1329,
       "tick": 3624,
       "label": "ExpBox False",
       "generated": true,
@@ -13318,7 +13252,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1337,
+      "line": 1329,
       "tick": 3625,
       "label": "ExpBox False",
       "generated": true,
@@ -13328,7 +13262,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1337,
+      "line": 1329,
       "tick": 3626,
       "label": "LocalBox [\"enumFromTo\",\"end\"]",
       "generated": true,
@@ -13338,7 +13272,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1337,
+      "line": 1329,
       "tick": 3627,
       "label": "ExpBox False",
       "generated": true,
@@ -13348,7 +13282,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1337,
+      "line": 1329,
       "tick": 3628,
       "label": "ExpBox False",
       "generated": true,
@@ -13358,7 +13292,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1337,
+      "line": 1329,
       "tick": 3629,
       "label": "ExpBox False",
       "generated": true,
@@ -13368,7 +13302,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1337,
+      "line": 1329,
       "tick": 3630,
       "label": "ExpBox False",
       "generated": true,
@@ -13378,7 +13312,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1337,
+      "line": 1329,
       "tick": 3631,
       "label": "ExpBox False",
       "generated": true,
@@ -13388,7 +13322,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1337,
+      "line": 1329,
       "tick": 3632,
       "label": "ExpBox False",
       "generated": true,
@@ -13398,7 +13332,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1337,
+      "line": 1329,
       "tick": 3633,
       "label": "ExpBox False",
       "generated": true,
@@ -13408,7 +13342,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1337,
+      "line": 1329,
       "tick": 3634,
       "label": "ExpBox False",
       "generated": true,
@@ -13418,7 +13352,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1337,
+      "line": 1329,
       "tick": 3635,
       "label": "ExpBox True",
       "generated": true,
@@ -13428,7 +13362,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1337,
+      "line": 1329,
       "tick": 3636,
       "label": "ExpBox False",
       "generated": true,
@@ -13438,7 +13372,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1337,
+      "line": 1329,
       "tick": 3637,
       "label": "ExpBox True",
       "generated": true,
@@ -13448,7 +13382,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1337,
+      "line": 1329,
       "tick": 3638,
       "label": "ExpBox True",
       "generated": true,
@@ -13458,7 +13392,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1337,
+      "line": 1329,
       "tick": 3639,
       "label": "ExpBox False",
       "generated": true,
@@ -13468,7 +13402,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1337,
+      "line": 1329,
       "tick": 3640,
       "label": "LocalBox [\"enumFromTo\",\"go\"]",
       "generated": true,
@@ -13478,30 +13412,30 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1335,
+      "line": 1329,
       "tick": 3641,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1335,
+      "line": 1329,
       "tick": 3642,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 1335,
+      "line": 1329,
       "tick": 3643,
       "label": "TopLevelBox [\"enumFromTo\"]",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
@@ -22368,7 +22302,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 76,
+      "line": 75,
       "tick": 5245,
       "label": "ExpBox True",
       "generated": true,
@@ -22378,7 +22312,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 77,
+      "line": 75,
       "tick": 5246,
       "label": "ExpBox True",
       "generated": true,
@@ -22388,7 +22322,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 78,
+      "line": 75,
       "tick": 5247,
       "label": "ExpBox True",
       "generated": true,
@@ -22398,7 +22332,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5248,
       "label": "ExpBox True",
       "generated": true,
@@ -22408,7 +22342,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5249,
       "label": "ExpBox True",
       "generated": true,
@@ -22418,7 +22352,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5250,
       "label": "ExpBox True",
       "generated": true,
@@ -22428,7 +22362,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5251,
       "label": "ExpBox True",
       "generated": true,
@@ -22438,7 +22372,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5252,
       "label": "ExpBox True",
       "generated": true,
@@ -22448,7 +22382,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5253,
       "label": "ExpBox True",
       "generated": true,
@@ -22458,7 +22392,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5254,
       "label": "ExpBox True",
       "generated": true,
@@ -22468,7 +22402,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5255,
       "label": "ExpBox True",
       "generated": true,
@@ -22478,7 +22412,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5256,
       "label": "ExpBox True",
       "generated": true,
@@ -22488,7 +22422,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5257,
       "label": "ExpBox True",
       "generated": true,
@@ -22498,7 +22432,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5258,
       "label": "ExpBox True",
       "generated": true,
@@ -22508,7 +22442,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5259,
       "label": "ExpBox True",
       "generated": true,
@@ -22518,7 +22452,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5260,
       "label": "ExpBox True",
       "generated": true,
@@ -22528,7 +22462,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5261,
       "label": "ExpBox True",
       "generated": true,
@@ -22538,7 +22472,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5262,
       "label": "ExpBox True",
       "generated": true,
@@ -22548,7 +22482,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5263,
       "label": "ExpBox True",
       "generated": true,
@@ -22558,7 +22492,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5264,
       "label": "ExpBox True",
       "generated": true,
@@ -22568,7 +22502,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5265,
       "label": "ExpBox True",
       "generated": true,
@@ -22578,7 +22512,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5266,
       "label": "ExpBox True",
       "generated": true,
@@ -22588,7 +22522,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5267,
       "label": "ExpBox True",
       "generated": true,
@@ -22598,7 +22532,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5268,
       "label": "ExpBox True",
       "generated": true,
@@ -22608,7 +22542,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5269,
       "label": "ExpBox True",
       "generated": true,
@@ -22618,7 +22552,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5270,
       "label": "ExpBox True",
       "generated": true,
@@ -22628,7 +22562,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5271,
       "label": "ExpBox True",
       "generated": true,
@@ -22638,7 +22572,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5272,
       "label": "ExpBox True",
       "generated": true,
@@ -22648,7 +22582,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5273,
       "label": "ExpBox True",
       "generated": true,
@@ -22658,7 +22592,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5274,
       "label": "ExpBox True",
       "generated": true,
@@ -22668,7 +22602,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5275,
       "label": "ExpBox True",
       "generated": true,
@@ -22678,7 +22612,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5276,
       "label": "ExpBox True",
       "generated": true,
@@ -22688,7 +22622,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5277,
       "label": "ExpBox True",
       "generated": true,
@@ -22698,7 +22632,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5278,
       "label": "ExpBox True",
       "generated": true,
@@ -22708,7 +22642,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5279,
       "label": "ExpBox True",
       "generated": true,
@@ -22718,7 +22652,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5280,
       "label": "ExpBox True",
       "generated": true,
@@ -22728,7 +22662,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5281,
       "label": "ExpBox True",
       "generated": true,
@@ -22738,7 +22672,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5282,
       "label": "ExpBox True",
       "generated": true,
@@ -22748,7 +22682,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5283,
       "label": "ExpBox True",
       "generated": true,
@@ -22758,7 +22692,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5284,
       "label": "ExpBox True",
       "generated": true,
@@ -22768,7 +22702,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5285,
       "label": "ExpBox True",
       "generated": true,
@@ -22778,7 +22712,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5286,
       "label": "ExpBox True",
       "generated": true,
@@ -22788,7 +22722,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5287,
       "label": "ExpBox True",
       "generated": true,
@@ -22798,7 +22732,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5288,
       "label": "ExpBox True",
       "generated": true,
@@ -22808,7 +22742,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5289,
       "label": "ExpBox True",
       "generated": true,
@@ -22818,7 +22752,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5290,
       "label": "ExpBox True",
       "generated": true,
@@ -22828,7 +22762,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5291,
       "label": "ExpBox True",
       "generated": true,
@@ -22838,7 +22772,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5292,
       "label": "ExpBox True",
       "generated": true,
@@ -22848,7 +22782,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5293,
       "label": "ExpBox True",
       "generated": true,
@@ -22858,7 +22792,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5294,
       "label": "ExpBox True",
       "generated": true,
@@ -22868,7 +22802,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5295,
       "label": "ExpBox True",
       "generated": true,
@@ -22878,7 +22812,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5296,
       "label": "ExpBox True",
       "generated": true,
@@ -22888,7 +22822,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5297,
       "label": "ExpBox True",
       "generated": true,
@@ -22898,7 +22832,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5298,
       "label": "ExpBox True",
       "generated": true,
@@ -22908,7 +22842,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5299,
       "label": "ExpBox True",
       "generated": true,
@@ -22918,7 +22852,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5300,
       "label": "ExpBox True",
       "generated": true,
@@ -22928,7 +22862,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5301,
       "label": "ExpBox True",
       "generated": true,
@@ -22938,7 +22872,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5302,
       "label": "ExpBox True",
       "generated": true,
@@ -22948,7 +22882,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5303,
       "label": "ExpBox True",
       "generated": true,
@@ -22958,7 +22892,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5304,
       "label": "ExpBox True",
       "generated": true,
@@ -22968,7 +22902,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5305,
       "label": "ExpBox True",
       "generated": true,
@@ -22978,7 +22912,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5306,
       "label": "ExpBox True",
       "generated": true,
@@ -22988,7 +22922,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5307,
       "label": "ExpBox True",
       "generated": true,
@@ -22998,7 +22932,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5308,
       "label": "ExpBox True",
       "generated": true,
@@ -23008,7 +22942,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5309,
       "label": "ExpBox True",
       "generated": true,
@@ -23018,7 +22952,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5310,
       "label": "ExpBox True",
       "generated": true,
@@ -23028,7 +22962,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5311,
       "label": "ExpBox True",
       "generated": true,
@@ -23038,7 +22972,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5312,
       "label": "ExpBox True",
       "generated": true,
@@ -23048,7 +22982,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5313,
       "label": "ExpBox True",
       "generated": true,
@@ -23058,7 +22992,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5314,
       "label": "ExpBox True",
       "generated": true,
@@ -23068,7 +23002,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5315,
       "label": "ExpBox True",
       "generated": true,
@@ -23078,7 +23012,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5316,
       "label": "ExpBox True",
       "generated": true,
@@ -23088,7 +23022,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5317,
       "label": "ExpBox True",
       "generated": true,
@@ -23098,7 +23032,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5318,
       "label": "ExpBox True",
       "generated": true,
@@ -23108,7 +23042,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5319,
       "label": "ExpBox True",
       "generated": true,
@@ -23118,7 +23052,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5320,
       "label": "ExpBox True",
       "generated": true,
@@ -23128,7 +23062,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5321,
       "label": "ExpBox True",
       "generated": true,
@@ -23138,7 +23072,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5322,
       "label": "ExpBox True",
       "generated": true,
@@ -23148,7 +23082,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5323,
       "label": "ExpBox True",
       "generated": true,
@@ -23158,7 +23092,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5324,
       "label": "ExpBox True",
       "generated": true,
@@ -23168,7 +23102,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5325,
       "label": "ExpBox True",
       "generated": true,
@@ -23178,7 +23112,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5326,
       "label": "ExpBox True",
       "generated": true,
@@ -23188,7 +23122,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5327,
       "label": "ExpBox True",
       "generated": true,
@@ -23198,7 +23132,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5328,
       "label": "ExpBox True",
       "generated": true,
@@ -23208,7 +23142,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5329,
       "label": "ExpBox True",
       "generated": true,
@@ -23218,7 +23152,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5330,
       "label": "ExpBox True",
       "generated": true,
@@ -23228,7 +23162,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5331,
       "label": "ExpBox True",
       "generated": true,
@@ -23238,7 +23172,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5332,
       "label": "ExpBox True",
       "generated": true,
@@ -23248,7 +23182,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5333,
       "label": "ExpBox True",
       "generated": true,
@@ -23258,7 +23192,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5334,
       "label": "ExpBox True",
       "generated": true,
@@ -23268,7 +23202,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5335,
       "label": "ExpBox True",
       "generated": true,
@@ -23278,7 +23212,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5336,
       "label": "ExpBox True",
       "generated": true,
@@ -23288,7 +23222,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5337,
       "label": "ExpBox True",
       "generated": true,
@@ -23298,7 +23232,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5338,
       "label": "ExpBox True",
       "generated": true,
@@ -23308,7 +23242,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5339,
       "label": "ExpBox True",
       "generated": true,
@@ -23318,7 +23252,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5340,
       "label": "ExpBox True",
       "generated": true,
@@ -23328,7 +23262,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5341,
       "label": "ExpBox True",
       "generated": true,
@@ -23338,7 +23272,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5342,
       "label": "ExpBox True",
       "generated": true,
@@ -23348,7 +23282,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5343,
       "label": "ExpBox True",
       "generated": true,
@@ -23358,7 +23292,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5344,
       "label": "ExpBox True",
       "generated": true,
@@ -23368,7 +23302,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5345,
       "label": "ExpBox True",
       "generated": true,
@@ -23378,7 +23312,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5346,
       "label": "ExpBox True",
       "generated": true,
@@ -23388,7 +23322,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5347,
       "label": "ExpBox True",
       "generated": true,
@@ -23398,7 +23332,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5348,
       "label": "ExpBox True",
       "generated": true,
@@ -23408,7 +23342,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5349,
       "label": "ExpBox True",
       "generated": true,
@@ -23418,7 +23352,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5350,
       "label": "ExpBox True",
       "generated": true,
@@ -23428,7 +23362,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5351,
       "label": "ExpBox True",
       "generated": true,
@@ -23438,7 +23372,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5352,
       "label": "ExpBox True",
       "generated": true,
@@ -23448,7 +23382,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5353,
       "label": "ExpBox True",
       "generated": true,
@@ -23458,7 +23392,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5354,
       "label": "ExpBox True",
       "generated": true,
@@ -23468,7 +23402,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5355,
       "label": "ExpBox True",
       "generated": true,
@@ -23478,7 +23412,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5356,
       "label": "ExpBox True",
       "generated": true,
@@ -23488,7 +23422,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5357,
       "label": "ExpBox True",
       "generated": true,
@@ -23498,7 +23432,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5358,
       "label": "ExpBox True",
       "generated": true,
@@ -23508,7 +23442,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5359,
       "label": "ExpBox True",
       "generated": true,
@@ -23518,7 +23452,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5360,
       "label": "ExpBox True",
       "generated": true,
@@ -23528,7 +23462,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5361,
       "label": "ExpBox True",
       "generated": true,
@@ -23538,7 +23472,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5362,
       "label": "ExpBox True",
       "generated": true,
@@ -23548,7 +23482,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5363,
       "label": "ExpBox True",
       "generated": true,
@@ -23558,7 +23492,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5364,
       "label": "ExpBox True",
       "generated": true,
@@ -23568,7 +23502,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5365,
       "label": "ExpBox True",
       "generated": true,
@@ -23578,7 +23512,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5366,
       "label": "ExpBox True",
       "generated": true,
@@ -23588,7 +23522,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5367,
       "label": "ExpBox True",
       "generated": true,
@@ -23598,7 +23532,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5368,
       "label": "ExpBox True",
       "generated": true,
@@ -23608,7 +23542,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5369,
       "label": "ExpBox True",
       "generated": true,
@@ -23618,7 +23552,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5370,
       "label": "ExpBox True",
       "generated": true,
@@ -23628,7 +23562,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5371,
       "label": "ExpBox True",
       "generated": true,
@@ -23638,7 +23572,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5372,
       "label": "ExpBox True",
       "generated": true,
@@ -23648,7 +23582,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5373,
       "label": "ExpBox True",
       "generated": true,
@@ -23658,7 +23592,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5374,
       "label": "ExpBox True",
       "generated": true,
@@ -23668,7 +23602,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5375,
       "label": "ExpBox True",
       "generated": true,
@@ -23678,7 +23612,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5376,
       "label": "ExpBox True",
       "generated": true,
@@ -23688,7 +23622,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5377,
       "label": "ExpBox True",
       "generated": true,
@@ -23698,7 +23632,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5378,
       "label": "ExpBox True",
       "generated": true,
@@ -23708,7 +23642,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5379,
       "label": "ExpBox True",
       "generated": true,
@@ -23718,7 +23652,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5380,
       "label": "ExpBox True",
       "generated": true,
@@ -23728,7 +23662,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5381,
       "label": "ExpBox True",
       "generated": true,
@@ -23738,7 +23672,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5382,
       "label": "ExpBox True",
       "generated": true,
@@ -23748,7 +23682,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5383,
       "label": "ExpBox True",
       "generated": true,
@@ -23758,7 +23692,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5384,
       "label": "ExpBox True",
       "generated": true,
@@ -23768,7 +23702,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5385,
       "label": "ExpBox True",
       "generated": true,
@@ -23778,7 +23712,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5386,
       "label": "ExpBox True",
       "generated": true,
@@ -23788,7 +23722,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5387,
       "label": "ExpBox True",
       "generated": true,
@@ -23798,7 +23732,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5388,
       "label": "ExpBox True",
       "generated": true,
@@ -23808,7 +23742,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5389,
       "label": "ExpBox True",
       "generated": true,
@@ -23818,7 +23752,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5390,
       "label": "ExpBox True",
       "generated": true,
@@ -23828,7 +23762,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5391,
       "label": "ExpBox True",
       "generated": true,
@@ -23838,7 +23772,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5392,
       "label": "ExpBox True",
       "generated": true,
@@ -23848,7 +23782,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5393,
       "label": "ExpBox True",
       "generated": true,
@@ -23858,7 +23792,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5394,
       "label": "ExpBox True",
       "generated": true,
@@ -23868,7 +23802,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5395,
       "label": "ExpBox True",
       "generated": true,
@@ -23878,7 +23812,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5396,
       "label": "ExpBox True",
       "generated": true,
@@ -23888,7 +23822,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5397,
       "label": "ExpBox True",
       "generated": true,
@@ -23898,7 +23832,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5398,
       "label": "ExpBox True",
       "generated": true,
@@ -23908,7 +23842,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5399,
       "label": "ExpBox True",
       "generated": true,
@@ -23918,7 +23852,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5400,
       "label": "ExpBox True",
       "generated": true,
@@ -23928,7 +23862,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5401,
       "label": "ExpBox True",
       "generated": true,
@@ -23938,7 +23872,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5402,
       "label": "ExpBox True",
       "generated": true,
@@ -23948,7 +23882,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5403,
       "label": "ExpBox True",
       "generated": true,
@@ -23958,7 +23892,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5404,
       "label": "ExpBox True",
       "generated": true,
@@ -23968,7 +23902,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5405,
       "label": "ExpBox True",
       "generated": true,
@@ -23978,7 +23912,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5406,
       "label": "ExpBox True",
       "generated": true,
@@ -23988,7 +23922,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5407,
       "label": "ExpBox True",
       "generated": true,
@@ -23998,7 +23932,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5408,
       "label": "ExpBox True",
       "generated": true,
@@ -24008,7 +23942,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5409,
       "label": "ExpBox True",
       "generated": true,
@@ -24018,7 +23952,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5410,
       "label": "ExpBox True",
       "generated": true,
@@ -24028,7 +23962,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5411,
       "label": "ExpBox True",
       "generated": true,
@@ -24038,7 +23972,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5412,
       "label": "ExpBox True",
       "generated": true,
@@ -24048,7 +23982,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5413,
       "label": "ExpBox True",
       "generated": true,
@@ -24058,7 +23992,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5414,
       "label": "ExpBox True",
       "generated": true,
@@ -24068,7 +24002,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5415,
       "label": "ExpBox True",
       "generated": true,
@@ -24078,7 +24012,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5416,
       "label": "ExpBox True",
       "generated": true,
@@ -24088,7 +24022,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5417,
       "label": "ExpBox True",
       "generated": true,
@@ -24098,7 +24032,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5418,
       "label": "ExpBox True",
       "generated": true,
@@ -24108,7 +24042,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5419,
       "label": "ExpBox True",
       "generated": true,
@@ -24118,7 +24052,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5420,
       "label": "ExpBox True",
       "generated": true,
@@ -24128,7 +24062,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5421,
       "label": "ExpBox True",
       "generated": true,
@@ -24138,7 +24072,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5422,
       "label": "ExpBox True",
       "generated": true,
@@ -24148,7 +24082,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5423,
       "label": "ExpBox True",
       "generated": true,
@@ -24158,7 +24092,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5424,
       "label": "ExpBox True",
       "generated": true,
@@ -24168,7 +24102,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5425,
       "label": "ExpBox True",
       "generated": true,
@@ -24178,7 +24112,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5426,
       "label": "ExpBox True",
       "generated": true,
@@ -24188,7 +24122,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5427,
       "label": "ExpBox True",
       "generated": true,
@@ -24198,7 +24132,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5428,
       "label": "ExpBox True",
       "generated": true,
@@ -24208,7 +24142,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5429,
       "label": "ExpBox True",
       "generated": true,
@@ -24218,7 +24152,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5430,
       "label": "ExpBox True",
       "generated": true,
@@ -24228,7 +24162,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5431,
       "label": "ExpBox True",
       "generated": true,
@@ -24238,7 +24172,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5432,
       "label": "ExpBox True",
       "generated": true,
@@ -24248,7 +24182,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5433,
       "label": "ExpBox True",
       "generated": true,
@@ -24258,7 +24192,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5434,
       "label": "ExpBox True",
       "generated": true,
@@ -24268,7 +24202,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5435,
       "label": "ExpBox False",
       "generated": true,
@@ -24278,7 +24212,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 75,
       "tick": 5436,
       "label": "ExpBox True",
       "generated": true,
@@ -24288,7 +24222,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 76,
+      "line": 75,
       "tick": 5437,
       "label": "TopLevelBox [\"pred\"]",
       "generated": true,
@@ -24298,40 +24232,40 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 88,
+      "line": 75,
       "tick": 5893,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 88,
+      "line": 75,
       "tick": 5894,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 88,
+      "line": 75,
       "tick": 5895,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 88,
+      "line": 75,
       "tick": 5896,
       "label": "TopLevelBox [\"enumFrom\"]",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
@@ -24348,177 +24282,177 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 82,
+      "line": 75,
       "tick": 5898,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 82,
+      "line": 75,
       "tick": 5899,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 82,
+      "line": 75,
       "tick": 5900,
       "label": "LocalBox [\"enumFromTo\",\"end\"]",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 83,
+      "line": 75,
       "tick": 5901,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 83,
+      "line": 75,
       "tick": 5902,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 83,
+      "line": 75,
       "tick": 5903,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 83,
+      "line": 75,
       "tick": 5904,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 84,
+      "line": 75,
       "tick": 5905,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 84,
+      "line": 75,
       "tick": 5906,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 84,
+      "line": 75,
       "tick": 5907,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 84,
+      "line": 75,
       "tick": 5908,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 84,
+      "line": 75,
       "tick": 5909,
       "label": "ExpBox True",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 85,
+      "line": 75,
       "tick": 5910,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 85,
+      "line": 75,
       "tick": 5911,
       "label": "ExpBox True",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 86,
+      "line": 75,
       "tick": 5912,
       "label": "ExpBox True",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 83,
+      "line": 75,
       "tick": 5913,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 83,
+      "line": 75,
       "tick": 5914,
       "label": "LocalBox [\"enumFromTo\",\"go\"]",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 80,
+      "line": 75,
       "tick": 5915,
       "label": "ExpBox False",
       "generated": true,
@@ -24528,7 +24462,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 80,
+      "line": 75,
       "tick": 5916,
       "label": "ExpBox False",
       "generated": true,
@@ -24538,7 +24472,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 80,
+      "line": 75,
       "tick": 5917,
       "label": "TopLevelBox [\"enumFromTo\"]",
       "generated": true,
@@ -24608,7 +24542,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 73,
+      "line": 72,
       "tick": 5924,
       "label": "ExpBox True",
       "generated": true,
@@ -24618,7 +24552,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 74,
+      "line": 72,
       "tick": 5925,
       "label": "ExpBox True",
       "generated": true,
@@ -24628,7 +24562,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 75,
+      "line": 72,
       "tick": 5926,
       "label": "ExpBox False",
       "generated": true,
@@ -24638,7 +24572,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 75,
+      "line": 72,
       "tick": 5927,
       "label": "ExpBox True",
       "generated": true,
@@ -24648,7 +24582,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 73,
+      "line": 72,
       "tick": 5928,
       "label": "TopLevelBox [\"pred\"]",
       "generated": true,
@@ -24658,117 +24592,117 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 89,
+      "line": 72,
       "tick": 5932,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 89,
+      "line": 72,
       "tick": 5933,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 89,
+      "line": 72,
       "tick": 5934,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 89,
+      "line": 72,
       "tick": 5935,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 89,
+      "line": 72,
       "tick": 5936,
       "label": "ExpBox True",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 82,
+      "line": 72,
       "tick": 5938,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 82,
+      "line": 72,
       "tick": 5939,
       "label": "ExpBox True",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 83,
+      "line": 72,
       "tick": 5940,
       "label": "ExpBox False",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 83,
+      "line": 72,
       "tick": 5941,
       "label": "ExpBox True",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 84,
+      "line": 72,
       "tick": 5942,
       "label": "ExpBox True",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 82,
+      "line": 72,
       "tick": 5943,
       "label": "TopLevelBox [\"fromEnum\"]",
-      "generated": false,
+      "generated": true,
       "contract": "OWN-binding-coverage",
       "owner": 14
     },
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 80,
+      "line": 72,
       "tick": 5944,
       "label": "ExpBox False",
       "generated": true,
@@ -24778,7 +24712,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 80,
+      "line": 72,
       "tick": 5945,
       "label": "ExpBox False",
       "generated": true,
@@ -24788,7 +24722,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 80,
+      "line": 72,
       "tick": 5946,
       "label": "ExpBox False",
       "generated": true,
@@ -24798,7 +24732,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 80,
+      "line": 72,
       "tick": 5947,
       "label": "TopLevelBox [\"enumFrom\"]",
       "generated": true,
@@ -24818,7 +24752,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 78,
+      "line": 72,
       "tick": 5949,
       "label": "ExpBox False",
       "generated": true,
@@ -24828,7 +24762,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 78,
+      "line": 72,
       "tick": 5950,
       "label": "ExpBox False",
       "generated": true,
@@ -24838,7 +24772,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 78,
+      "line": 72,
       "tick": 5951,
       "label": "LocalBox [\"enumFromTo\",\"end\"]",
       "generated": true,
@@ -24848,7 +24782,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 72,
       "tick": 5952,
       "label": "ExpBox False",
       "generated": true,
@@ -24858,7 +24792,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 72,
       "tick": 5953,
       "label": "ExpBox False",
       "generated": true,
@@ -24868,7 +24802,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 72,
       "tick": 5954,
       "label": "ExpBox False",
       "generated": true,
@@ -24878,7 +24812,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 72,
       "tick": 5955,
       "label": "ExpBox False",
       "generated": true,
@@ -24888,7 +24822,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 72,
       "tick": 5956,
       "label": "ExpBox False",
       "generated": true,
@@ -24898,7 +24832,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 72,
       "tick": 5957,
       "label": "ExpBox False",
       "generated": true,
@@ -24908,7 +24842,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 72,
       "tick": 5958,
       "label": "ExpBox False",
       "generated": true,
@@ -24918,7 +24852,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 72,
       "tick": 5959,
       "label": "ExpBox False",
       "generated": true,
@@ -24928,7 +24862,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 72,
       "tick": 5960,
       "label": "ExpBox True",
       "generated": true,
@@ -24938,7 +24872,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 72,
       "tick": 5961,
       "label": "ExpBox False",
       "generated": true,
@@ -24948,7 +24882,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 72,
       "tick": 5962,
       "label": "ExpBox True",
       "generated": true,
@@ -24958,7 +24892,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 72,
       "tick": 5963,
       "label": "ExpBox True",
       "generated": true,
@@ -24968,7 +24902,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 72,
       "tick": 5964,
       "label": "ExpBox False",
       "generated": true,
@@ -24978,7 +24912,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 79,
+      "line": 72,
       "tick": 5965,
       "label": "LocalBox [\"enumFromTo\",\"go\"]",
       "generated": true,
@@ -24988,7 +24922,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 76,
+      "line": 72,
       "tick": 5966,
       "label": "ExpBox False",
       "generated": true,
@@ -24998,7 +24932,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 76,
+      "line": 72,
       "tick": 5967,
       "label": "ExpBox False",
       "generated": true,
@@ -25008,7 +24942,7 @@
     {
       "module": "Kafka.Internal.RdKafka",
       "source": "src/Kafka/Internal/RdKafka.chs",
-      "line": 76,
+      "line": 72,
       "tick": 5968,
       "label": "TopLevelBox [\"enumFromTo\"]",
       "generated": true,
@@ -26958,201 +26892,11 @@
     {
       "module": "Kafka.Producer",
       "source": "src/Kafka/Producer.hs",
-      "line": 117,
-      "tick": 355,
-      "label": "ExpBox False",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Producer",
-      "source": "src/Kafka/Producer.hs",
-      "line": 117,
-      "tick": 356,
-      "label": "ExpBox False",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Producer",
-      "source": "src/Kafka/Producer.hs",
-      "line": 117,
-      "tick": 357,
-      "label": "ExpBox False",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Producer",
-      "source": "src/Kafka/Producer.hs",
-      "line": 117,
-      "tick": 358,
-      "label": "ExpBox True",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Producer",
-      "source": "src/Kafka/Producer.hs",
-      "line": 118,
-      "tick": 359,
-      "label": "ExpBox False",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Producer",
-      "source": "src/Kafka/Producer.hs",
-      "line": 118,
-      "tick": 360,
-      "label": "ExpBox True",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Producer",
-      "source": "src/Kafka/Producer.hs",
-      "line": 117,
-      "tick": 361,
-      "label": "LocalBox [\"runProducer\",\"runHandler\"]",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Producer",
-      "source": "src/Kafka/Producer.hs",
       "line": 114,
       "tick": 362,
       "label": "ExpBox False",
       "generated": false,
       "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Producer",
-      "source": "src/Kafka/Producer.hs",
-      "line": 114,
-      "tick": 363,
-      "label": "ExpBox True",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Producer",
-      "source": "src/Kafka/Producer.hs",
-      "line": 115,
-      "tick": 364,
-      "label": "ExpBox False",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Producer",
-      "source": "src/Kafka/Producer.hs",
-      "line": 115,
-      "tick": 365,
-      "label": "ExpBox True",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Producer",
-      "source": "src/Kafka/Producer.hs",
-      "line": 114,
-      "tick": 366,
-      "label": "LocalBox [\"runProducer\",\"clProducer\"]",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Producer",
-      "source": "src/Kafka/Producer.hs",
-      "line": 112,
-      "tick": 367,
-      "label": "ExpBox False",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Producer",
-      "source": "src/Kafka/Producer.hs",
-      "line": 112,
-      "tick": 368,
-      "label": "ExpBox False",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Producer",
-      "source": "src/Kafka/Producer.hs",
-      "line": 112,
-      "tick": 369,
-      "label": "LocalBox [\"runProducer\",\"mkProducer\"]",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Producer",
-      "source": "src/Kafka/Producer.hs",
-      "line": 110,
-      "tick": 370,
-      "label": "ExpBox False",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Producer",
-      "source": "src/Kafka/Producer.hs",
-      "line": 110,
-      "tick": 371,
-      "label": "ExpBox False",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Producer",
-      "source": "src/Kafka/Producer.hs",
-      "line": 110,
-      "tick": 372,
-      "label": "ExpBox False",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Producer",
-      "source": "src/Kafka/Producer.hs",
-      "line": 110,
-      "tick": 373,
-      "label": "ExpBox False",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 14
-    },
-    {
-      "module": "Kafka.Producer",
-      "source": "src/Kafka/Producer.hs",
-      "line": 109,
-      "tick": 374,
-      "label": "TopLevelBox [\"runProducer\"]",
-      "generated": false,
-      "contract": "API-Kafka-Producer-runProducer",
       "owner": 14
     },
     {
@@ -29721,54 +29465,54 @@
     "Kafka.Types": 285,
     "Kafka.Version": 43
   },
-  "measured_native_wrapper_ticks": 2902,
+  "measured_native_wrapper_ticks": 2750,
   "artifacts": {
-    "dist-coverage/reports/test.log": "1a4e7c6ee2838e374d91459f6a3f7164cd15de0f97ba8813e66eee20af314305",
-    "dist-coverage/reports/unlinked-zero.tix": "5e54110ec115dbad012111cbd762a5eb6e4fff90636f5e64b87f674a6a41b950",
-    "dist-coverage/reports/nonthreaded-build.log": "57d2f201fa0cd42fe47ab1fa866a86c9777998b3f3878b389010ffffbf9698d8",
+    "dist-coverage/reports/test.log": "070b5ae5d524b34b1c866a40df1503002091e79393e3af4c55c1fa788dfbf720",
+    "dist-coverage/reports/unlinked-zero.tix": "d2898cca5cf17fb9a7d392c9c8723a23e79ab47ca4f2f9eef2550accc29a0307",
+    "dist-coverage/reports/nonthreaded-build.log": "5dc2c5bcd3b844b0b4b86d642947d10b78ac551c262117b9c890c6d610aec0a6",
     "dist-coverage/reports/nonthreaded-rts.txt": "e30f15edf898c4f023cbf2f49a34315dfefee8daf9edb50281a7fa588c9f1638",
-    "dist-coverage/reports/nonthreaded-runtime.log": "46b003567ce156de849be7c7fd8f91fc67646a8cf87b7e715ef34f8a39002e14",
-    "dist-coverage/reports/nonthreaded-runtime.tix": "90751e3e920004825922c3eb523a5bc49a14f18189c92a4d27c64e45325ea75a",
+    "dist-coverage/reports/nonthreaded-runtime.log": "6018534444cf8d97801b6e1a51dcd154068d95c420d8b8a14a86b3b5016b5b9a",
+    "dist-coverage/reports/nonthreaded-runtime.tix": "d9bd7dcf1a5e3e2f8e945d5ac7628375d472adf90fff1f899656ceff69acc290",
     "dist-coverage/reports/nonthreaded-consumer.tix": "8060ddbd7d29a00d07615e6e4fd6b4af3d16a895b3fa7d97a6b960346f62674a",
-    "dist-coverage/children/lifetime-commit-async-10744712979593969467.tix": "1da5d0d2f3d7f1ac232f83d4405abf5607e0b0eba473cc7f2c7dbe04492b9674",
-    "dist-coverage/children/lifetime-commit-sync-16260892052743052317.tix": "fc449048475f703776f9781f1eb284faac39c493643f56d0ddacff6bd0f12af0",
-    "dist-coverage/children/lifetime-error-async-16756855522304904368.tix": "de900c1251e8cacc4c69b9973057656823bd16b49c9df1c68e948395481d28d1",
-    "dist-coverage/children/lifetime-error-sync-2511061560293530817.tix": "dccb1653ae4af62dd753f44a9bd98c129553929ed408e6786f887915f1e37e9c",
-    "dist-coverage/children/lifetime-log-async-17285583237744093533.tix": "3f1e55bf3a41ec286ad9b5bf97000bb8ec39a7f367ba3f22a3b7988919be6efa",
-    "dist-coverage/children/lifetime-log-sync-3225219747473918969.tix": "292c472e8c767f0f191424ab475e4cbf7f359b99082fabebca1323f580e2fb09",
-    "dist-coverage/children/lifetime-rebalance-async-2345167969473923985.tix": "e2b5dbebe8c17bfc70da2e1c0c24a7c525bde338d43820f5cbd55849a12aa9ce",
-    "dist-coverage/children/lifetime-rebalance-sync-1995325339035740071.tix": "e0dc9397173d74cff5f4af8fa5b01443937a645a7810f1f706887d931ec52a8f",
-    "dist-coverage/children/lifetime-stats-async-5009429774620830666.tix": "436018637799962b06eefffb8a9ddecce0b6bc0b4d8d60e8606a4fca860ff59b",
-    "dist-coverage/children/lifetime-stats-sync-16948050061296342451.tix": "9abacbaae334ca06acf920a4649911e84a42b390f1fec41f2b33e5488878c893",
-    "dist-coverage/children/metadata-groups-12095872333797116375.tix": "f106c4f4e11ad4473379c28b6413568946f5237c932111999e2978f47f30c2e4",
-    "dist-coverage/children/metadata-metadata-5629330797708689719.tix": "853241045f27f6660579a695ec9887a045f280a787fcff89d6ab5e3d556cbe9c",
-    "dist-coverage/children/producer-global-4945533650130947734.tix": "a3bfe4b8bb07192587530007250ec7ffb81d683f6f932d2830a97f191297203f",
-    "dist-coverage/children/producer-message-989170697825404040.tix": "a6df143b4ee7b8c35c27d7a21e49f265b18ce560330870e960c4e90748e69eda",
-    "dist-coverage/children/rebalance-cooperative-assign-async-decode-262603268986982645.tix": "98fb007123c1d5e8ab039c474b6a06ae3444cce4560caa19e693dbd4e9398bb2",
-    "dist-coverage/children/rebalance-cooperative-assign-async-native-14834591451592539076.tix": "a7311fce60dd790d0875bdab98bfc442e8b979505a24ce83a1e8fdc793c8c5f8",
-    "dist-coverage/children/rebalance-cooperative-assign-sync-decode-10472831098654875066.tix": "ba63cf065e0b165d34de9674c84e36eabd8795437d41e984630d4359217c6208",
-    "dist-coverage/children/rebalance-cooperative-assign-sync-native-10099899589287817484.tix": "165c52f864208273dd939799185eb684369c8633972185f1792c0f23ede10fd0",
-    "dist-coverage/children/rebalance-cooperative-revoke-async-decode-3497270829699443021.tix": "b2d6e65453853b6699f9ba4c736485017df88a45e4abb8efb1725497174508b7",
-    "dist-coverage/children/rebalance-cooperative-revoke-async-native-10258280442120055660.tix": "dfd404fc28499bfa597a0acd0af65e48970ba1883ec7518fcae19efcdfd96f20",
-    "dist-coverage/children/rebalance-cooperative-revoke-sync-decode-10757419522991274664.tix": "c5887ccb9d3e99538df28c1332c1fef2849be7be91ec140104ad11057d2cce32",
-    "dist-coverage/children/rebalance-cooperative-revoke-sync-native-9083583396042791061.tix": "224b23bf4487ae58df374111d2f3e2479a90d0245d7862237df5af73872b7426",
-    "dist-coverage/children/rebalance-eager-assign-async-native-10304598394377870916.tix": "f50981677f79f8d62bcb1603a6111fc6c5072f028442a4a5cef6688680415973",
-    "dist-coverage/children/rebalance-eager-assign-sync-native-5759660064995431552.tix": "5a1dec1ba3d3e24d430a36091b748d590211e87270dea8d2a171ca4bb0b41eea",
-    "dist-coverage/children/rebalance-eager-revoke-async-native-17499345310523215794.tix": "103f2c81edbecbaf824699760748ac53fbf1b3e19dccb8172e79c1a16c1aa646",
-    "dist-coverage/children/rebalance-eager-revoke-sync-native-9459704173056496222.tix": "2799603b6a00a862b46dd471dfcaeb90b1b03aa57d3d2ff02c2529ed8e62763b",
-    "dist-coverage/reports/rdkafka-hs-test.tix": "63aafc58f4904e895a3c32c5d35497b520f662479474f1ac1367046d8e50b23e",
-    "dist-coverage/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-test/hpc/vanilla/tix/rdkafka-hs-test.tix": "186c239cf1ef21fce770b14263fc69c60ebca368e18a13a5fa51b6fdaddda4fa",
+    "dist-coverage/children/lifetime-commit-async-7885097162754805874.tix": "ccce1ba2c70ccb3956427c605b6e96c1abfe3554c0cd1072a083900e74ef0425",
+    "dist-coverage/children/lifetime-commit-sync-14202878300141790753.tix": "bf6d334f1ecc1676f3ae89bfa4414e4714e89ce02e58d939b673f8a547c62cf3",
+    "dist-coverage/children/lifetime-error-async-3475583614829425509.tix": "b83a5c989e8d9ed1dd964b73c2f9c0020a939ec9584ab0deaa7d04ea039b5c50",
+    "dist-coverage/children/lifetime-error-sync-13559803339726946784.tix": "4cb4527d430ddcc52b4d80fd02bfb677c2aea2b38095f3817c66814bb9a0de81",
+    "dist-coverage/children/lifetime-log-async-3176212358217116141.tix": "792acd86cb31be94f07eac69b7985238993e95c17b800dcd564ab296fd454e48",
+    "dist-coverage/children/lifetime-log-sync-8429758221921063718.tix": "20e330a1ecfe22e68c7d5a532a53e6a357941ebc8cf8ac72ce12f4b861437a94",
+    "dist-coverage/children/lifetime-rebalance-async-6897985464476343051.tix": "630d6683280e4c807eeef45ebb53bcb7d230bf2a90aabfc83daa3940a2944302",
+    "dist-coverage/children/lifetime-rebalance-sync-7746796289963381856.tix": "b814ca49301ca6828e6ca913f2c4e9d8c07ecc1c95aef4e5b0649d631b88f98c",
+    "dist-coverage/children/lifetime-stats-async-17025164560856886212.tix": "494378346c5f1d2589a39b0c50cd643fc828ab708e98aa4b05a3e9f994c39a36",
+    "dist-coverage/children/lifetime-stats-sync-16260850862980281159.tix": "f683b6be39b9fb170069bf8d5f8a6e2a74acdb5bdfab8904aedb819c9baadecf",
+    "dist-coverage/children/metadata-groups-11394166645187045200.tix": "ca972267a457ca4005fa717b3f069cd577c94edd28645e1259ad7b61c108b419",
+    "dist-coverage/children/metadata-metadata-10224003027749970899.tix": "efd376a92c6da0eb133aac9e3ff492bd22c994be4e318d24b818c228434dc8b9",
+    "dist-coverage/children/producer-global-14803300269052160057.tix": "f7e5af6cc7208c132a6bac7839821f9b839215d90e8a1faf8b8d773d6f430348",
+    "dist-coverage/children/producer-message-10928935623560370276.tix": "ef4a3a1cda5eeb86bd98dec0bb16237f14d17e5edbf7d947911fdbf6c79a0630",
+    "dist-coverage/children/rebalance-cooperative-assign-async-decode-10315698173170671383.tix": "85f51190d565befdf13673793dbb8b830f1b3d6cb29849bc8ff0d2af68f318a3",
+    "dist-coverage/children/rebalance-cooperative-assign-async-native-5946057997821769772.tix": "9eb48402ce7d929aa23c914eccfa817849322eeaf49e9273f5d212a07127fda2",
+    "dist-coverage/children/rebalance-cooperative-assign-sync-decode-7170638771236388971.tix": "b25a31d289aba868fb5bd147069307e5a6b6e0caf8d893db542389603b4a21b0",
+    "dist-coverage/children/rebalance-cooperative-assign-sync-native-10169909554292254949.tix": "ed7b9e8ffc5526ebeb53f11137beb04d06524497069207b48e558d9b57cbc13f",
+    "dist-coverage/children/rebalance-cooperative-revoke-async-decode-1026875940447753728.tix": "c92184286d6429f97648a14844c8d13e68ba2292b2c3b28af8834d438f975f04",
+    "dist-coverage/children/rebalance-cooperative-revoke-async-native-16783982836493370895.tix": "4b43f808e6a7139e1064c0aa72c6a4e85e1d31ab5d8d222fad95af3b426d959e",
+    "dist-coverage/children/rebalance-cooperative-revoke-sync-decode-4823797983599976564.tix": "29748672f8472ff078a2afa34bacf9983d84a5b0e257a8553a880e80d2609848",
+    "dist-coverage/children/rebalance-cooperative-revoke-sync-native-10808482038850122656.tix": "2cfe8dd8870c5ae856ba77acba55c9d901eede885a0b565517722f4bef26b997",
+    "dist-coverage/children/rebalance-eager-assign-async-native-7723491938491458276.tix": "b1bb1b3bf3cf07a996349b023af0bf51ac84c1f6652b9939710c26ec8e11319c",
+    "dist-coverage/children/rebalance-eager-assign-sync-native-7917793081827690305.tix": "9edecd4087895a73aa2cefeb90305adf4706d09458b51e9435fabae64078747b",
+    "dist-coverage/children/rebalance-eager-revoke-async-native-5678896226050817411.tix": "74690947cd47c51f5700aba750383c79c454c0c8c8bc3aa8ac452ad6d2f2c7d2",
+    "dist-coverage/children/rebalance-eager-revoke-sync-native-14690247601137618794.tix": "fb95de779bbf3b56b66d2038ddea3f77112c17e8214b5b4ff8aad9d94ba5e028",
+    "dist-coverage/reports/rdkafka-hs-test.tix": "176605e19f245e7b699cb6dc56d13b19def998ad19f883882e6d8b9795f53f1a",
+    "dist-coverage/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-test/hpc/vanilla/tix/rdkafka-hs-test.tix": "66af9952bf65c1f134ab6d8556fe20642df7737c94ca48dc46ffb4f3107ee1de",
     "dist-coverage/reports/rdkafka-hs-test.txt": "9699c1ae22f4679bc93e31158bde6b67556167391d45482cc55206889a44c3d2",
-    "dist-coverage/reports/rdkafka-hs-integration.tix": "28a72303ff055ae1b2daa88ef20f2431cc4b7c627e133d81064fc48f9b3266e0",
-    "dist-coverage/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/hpc/vanilla/tix/rdkafka-hs-integration.tix": "32783a6cea91010d092d7ffc9458ec3fe96c4d68bcd069a9b09c11348a9cbc01",
-    "dist-coverage/reports/rdkafka-hs-integration.txt": "11a913a967f66602141a3b3bed75fae7e4fb40002a6f49c40f0dde7fe2709c0e",
-    "dist-coverage/reports/combined.tix": "ea943d31b4b2812d5ac3fc8de250c3f1570f39e2cd3d5547d3220c5083cee107",
-    "dist-coverage/reports/combined.txt": "6aea789b0bf697c3e90e1871ccd2177ae3a110b2ed785abe222f329930dd993e",
-    "dist-coverage/reports/combined.xml": "7625a8d2e875f024a8c825df4eee69a36673a37ad74d23dda6977533a988a290",
-    "dist-coverage/reports/ticks.txt": "f53759d7484cff9154171e526edb2971de4d51bf4188357acc613b49c93e7ad2",
-    "dist-coverage/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/build/Kafka/Internal/RdKafka.hs.coverage-map.json": "f5908414adc12be4fa5e855835ae30d160a77c0bd6d005b09d9573c481c9e9d9",
-    "dist-coverage/reports/classified-metrics.json": "62197b59d1b258acefe4a427a06d042cb2c7aa8fada8093c730991a5e6bd27f0",
-    "dist-coverage/reports/unexercised-functions.json": "53fd09910f49f957fa32a64cbc310d54cc6125b9e6989207f1ce403eab3b7a6d",
-    "dist-coverage/reports/misses.json": "b79e55374e58522d914aa7d1fd9140c5459e8ce89f24d674b5dc3684f7fad583"
+    "dist-coverage/reports/rdkafka-hs-integration.tix": "6c516248651fe341ba3129bd615efc837e857704cdec7596b2f3850024890a43",
+    "dist-coverage/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/hpc/vanilla/tix/rdkafka-hs-integration.tix": "9a33e4e69c2a13ef714457178b8f3520134bb3c14886c4520ddaefe759d0948c",
+    "dist-coverage/reports/rdkafka-hs-integration.txt": "9b18a2707e15f9b751c5fb726d075793eba3eef7a3986384d1c787d867d1e2c7",
+    "dist-coverage/reports/combined.tix": "afe7e8d3c23c3782a0efa4c2510b1c3480020842d1e987981488527e9e67d17e",
+    "dist-coverage/reports/combined.txt": "07ec479a5d43c17cc0c1d6f715b1a68804b0bfd86987fbef4ae1acfc032156b6",
+    "dist-coverage/reports/combined.xml": "0d1aa87ce3a6affc5ede357bb935d718dce3e9a6752f73a3eee7fd2ba11302b0",
+    "dist-coverage/reports/ticks.txt": "60d0c44a4f256dc2adf88ccc0fad73fe5edc17dc3c6ab8b3eb7eca6c662a5b57",
+    "dist-coverage/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/build/Kafka/Internal/RdKafka.hs.coverage-map.json": "bae27da1702bc7f779573b43f79af0d874bdfeb94dcb56200b9d17842892fe1e",
+    "dist-coverage/reports/classified-metrics.json": "1ec6c25997095167ff6cccc795c7200ac9785e31ac9d7d961d9017a41c30c5c8",
+    "dist-coverage/reports/unexercised-functions.json": "17e798f836db96830e7f23eba87735dce05bcd11402507c3961150f330b00f75",
+    "dist-coverage/reports/misses.json": "b75afda6432b2c12b72c9e94185850fc6d7fe1ad0c2638e70e9475dde4659889"
   }
 }

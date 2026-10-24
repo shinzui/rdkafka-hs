@@ -1,0 +1,48 @@
+{
+  "status": "accepted full post-wrapper checkpoint; EP-14 remains incomplete",
+  "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+  "counts": {
+    "tested": 146,
+    "unimplemented": 35
+  },
+  "normal": {
+    "unit": 78,
+    "integration": 584,
+    "log": "/tmp/rdkafka-ep14-post-runners-full-normal.log"
+  },
+  "mapped": {
+    "unit": 78,
+    "integration": 584,
+    "manifest": "docs/testing/coverage-evidence.json"
+  },
+  "actual_nonthreaded": 4,
+  "tooling_controls": 24,
+  "measured_native_wrapper_ticks": 2750,
+  "unexplained_handwritten_missing_ticks": 255,
+  "newly_reconciled_rows": [
+    "API-Kafka-Consumer-Types-KafkaConsumer",
+    "API-Kafka-Consumer-commitPartitionsOffsets",
+    "API-Kafka-Consumer-committed",
+    "API-Kafka-Consumer-consumerFatalError",
+    "API-Kafka-Consumer-runConsumer",
+    "API-Kafka-Metadata-BrokerMetadata",
+    "API-Kafka-Metadata-GroupInfo",
+    "API-Kafka-Metadata-GroupProtocol",
+    "API-Kafka-Metadata-KafkaMetadata",
+    "API-Kafka-Metadata-PartitionMetadata",
+    "API-Kafka-Metadata-TopicMetadata",
+    "API-Kafka-Metadata-WatermarkOffsets",
+    "API-Kafka-Producer-Types-KafkaProducer",
+    "API-Kafka-Producer-runProducer"
+  ],
+  "partial_audits": [
+    "docs/testing/private-haskell-coverage-audit.json",
+    "docs/testing/compiler-forwarding-coverage-audit.json"
+  ],
+  "open_discoveries": [
+    "Embedded NUL topic inputs truncate in consumer assignment",
+    "Partition values outside C int wrap and can select partition zero",
+    "Saved historical deprecated-seek state failure remains unexplained"
+  ],
+  "remaining": "Consumer/API boundaries, reachable ownership/error misses, remaining exact contracts and all EP-15 requirements"
+}
