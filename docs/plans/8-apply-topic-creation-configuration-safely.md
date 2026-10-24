@@ -11,6 +11,12 @@ provenance:
     model: "gpt-6-astra"
     harness: "codex-cli"
     at: 2026-10-24T04:38:50Z
+  revisions:
+    - model: "gpt-6-astra"
+      harness: "codex-cli"
+      at: 2026-10-24T04:58:24Z
+      mode: "update"
+      note: "Expand acceptance to close public-contract, failure-path, concurrency, ownership, and compatibility coverage gaps; add EP-13 prerequisite and coordinated evidence gates."
 ---
 
 # Apply topic creation configuration safely
@@ -31,6 +37,8 @@ Fix F1: applications can create a topic with settings such as `cleanup.policy=co
 - [ ] M1: Nonempty valid topic settings are submitted successfully and verified on the private broker.
 - [ ] M2: Empty settings, rejected settings, and interrupted/error construction paths preserve results and release owned handles.
 
+- [ ] M3: Topic administration covers meaningful input boundaries, broker errors, and request/event lifetime paths with verified broker state.
+
 Not started; this document records the implementation contract, not completed fixes.
 
 
@@ -42,6 +50,8 @@ The review reproduced `Prelude.undefined` with a one-entry configuration map. Th
 
 ## Decision Log
 
+
+2026-10-24 revision: The user expanded acceptance to close coverage gaps. Add the complete behavioral/ownership matrix for this workstream, depend on EP-13's reliable fixtures, and require evidence per coverage-inventory row. Existing milestones remain required.
 
 2026-10-23: Repair the existing create-topic path without adding a public admin configuration API. Prove the supplied value reaches the broker through a test-only broker inspection or a supported behavioral assertion.
 
@@ -73,6 +83,8 @@ M1 replaces the undefined pointer with the actual allocated topic handle and add
 
 M2 moves allocation, configuration, submission, and cleanup under one explicit ownership boundary. Keep the handle alive through request submission, then destroy it once on success, rejected configuration, or exceptions. Either acquire the raw handle under the outer bracket and configure in its body, or use equivalent scoped ownership that cannot lose a handle when acquisition returns `Left`. Do not install a finalizer and retain an unconditional manual destroy on the same handle. Inspect the native setter before designing a local rejection fixture: some invalid settings are rejected by the broker, not by the setter. Cover a broker-rejected value and, with a narrow internal test seam if needed, an exception after allocation but before submission. Add the inherited-fix changelog entry.
 
+
+M3 expands topic administration coverage beyond the original crash. Use empty, singleton, and multiple configuration maps; supported values must be verified on the broker. Exercise invalid names, invalid partition/replication parameters, unsupported configuration, duplicate creation, deletion of an existing topic, and deletion of a nonexistent topic. Assert the documented result and actual broker state, not merely `isRight`. Exercise unavailable/slow broker responses and the native event-queue timeout/error branches with bounded, controlled fixtures. Inspect `waitForResponse` so a missing/wrong event cannot masquerade as a successful empty result. Test request allocation, configuration, submission, response conversion, and cleanup failures using private seams only where the real broker cannot force the window reliably. Each owned request/event/queue/options resource touched by these paths has a documented release boundary and a negative control. Correct defects exposed in the existing create/delete contract; do not broaden the public admin surface.
 
 ## Concrete Steps
 
@@ -112,6 +124,10 @@ Record the broker-inspection command chosen in M1 and native handle-release evid
 A valid nonempty configuration returns `Right` and the broker exposes the requested setting. Empty configuration still creates a usable topic. Invalid broker configuration returns `Left` instead of a Haskell exception and does not leave a created topic mistaken for success. Construction/submission failure and exceptions release the request object exactly once; prove with a narrow allocation/destruction counter around the scoped helper or a native leak diagnostic, and include a positive control showing the old acquisition pattern retains the object. Existing topic create/delete tests remain green. Cleanup operates only on the test's unique topic.
 
 
+The topic-admin rows in `docs/testing/coverage-matrix.json` must name tests for each supported success/failure branch above and their release evidence. The positive configuration test must fail if configuration application is deliberately removed, not just if `undefined` is restored. Repeated failures must not leak request objects, queues, or response events. A timeout must be distinguishable from successful creation; a failed create cannot be accepted by a test that ignores the broker's actual state. Broker ACL denial is exercised by EP-15 and cross-linked here; this child owns local input and ordinary admin failure semantics.
+
+All new cases use EP-13's failure-preserving fixtures and are recorded with exact test names and candidate evidence in the coverage inventory. No known failing case may be marked expected-failure to claim completion.
+
 ## Idempotence and Recovery
 
 
@@ -121,4 +137,4 @@ These changes require no data migration. Re-running tests uses fresh run prefixe
 ## Interfaces and Dependencies
 
 
-No hard or soft child dependency. `docs/masterplans/2-fix-inherited-release-review-defects.md` owns the combined release gate. This child owns `src/Kafka/Topic.hs`, its topic-request bindings if necessary, and topic configuration tests. EP-11 in `docs/plans/11-own-native-callbacks-through-client-teardown.md` owns client callback lifetimes; native topic request objects must remain a separate scoped resource. Public `NewTopic` and `createTopic` types remain unchanged.
+Hard dependency: `docs/plans/13-make-coverage-evidence-and-test-fixtures-reliable.md` must be Complete; its trustworthy fixtures and coverage inventory are prerequisites. No other hard dependency. `docs/masterplans/2-fix-inherited-release-review-defects.md` owns the combined release gate. This child owns `src/Kafka/Topic.hs`, its topic-request bindings if necessary, and topic configuration tests. EP-11 in `docs/plans/11-own-native-callbacks-through-client-teardown.md` owns client callback lifetimes; native topic request objects must remain a separate scoped resource. Public `NewTopic` and `createTopic` types remain unchanged.

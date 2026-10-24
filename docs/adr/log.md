@@ -1,5 +1,8 @@
 # Bundle Update Log
 
+## 2026-10-24
+* **Decision**: Require public-contract, native-ownership, and supported-environment evidence for release coverage; implementation is planned in MasterPlan 2.
+
 ## 2026-10-23
 * **Addition**: ADR-9 records that consumed headers preserve wire order, repeated names and identical pairs included, and that value selection is the caller's choice.
 

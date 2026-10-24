@@ -11,6 +11,12 @@ provenance:
     model: "gpt-6-astra"
     harness: "codex-cli"
     at: 2026-10-24T04:38:50Z
+  revisions:
+    - model: "gpt-6-astra"
+      harness: "codex-cli"
+      at: 2026-10-24T04:58:24Z
+      mode: "update"
+      note: "Expand acceptance to close public-contract, failure-path, concurrency, ownership, and compatibility coverage gaps; add EP-13 prerequisite and coordinated evidence gates."
 ---
 
 # Honor producer settings and release rejected callbacks
@@ -31,6 +37,8 @@ Fix F2 and F4: producer timeout/compression/topic properties affect actual deliv
 - [ ] M1: Effective producer settings honor topic properties while preserving global settings and defined precedence.
 - [ ] M2: Queue-full rejection releases captured callback state while successful/purged messages retain and release their callbacks correctly.
 
+- [ ] M3: Producer data boundaries, configuration composition, delivery/purge outcomes, and controlled enqueue/callback races have exact behavioral assertions.
+
 Not started; this document records the implementation contract, not completed fixes.
 
 
@@ -42,6 +50,8 @@ At baseline, `sendTimeout (Timeout 1000)` against `127.0.0.1:1` leaves a message
 
 ## Decision Log
 
+
+2026-10-24 revision: The user expanded acceptance to close coverage gaps. Add the complete behavioral/ownership matrix for this workstream, depend on EP-13's reliable fixtures, and require evidence per coverage-inventory row. Existing milestones remain required.
 
 2026-10-23: Preserve global producer properties and apply explicit topic properties afterward, so explicit topic values win on duplicate keys without discarding unrelated global values. Preserve the per-message callback API; establish exception-safe ownership transfer at successful enqueue.
 
@@ -57,7 +67,7 @@ Not implemented. Record accepted evidence, remaining limitations, and durable le
 
 `newProducer` in `src/Kafka/Producer.hs` builds `tc` from `ppTopicProps` but creates the native client from `kc'` only. The `produceva` path addresses topics by name, so `tc` is never used for producing. Helpers in `src/Kafka/Producer/ProducerProperties.hs` put `sendTimeout`, `topicCompression`, and `extraTopicProps` into that unused map. `src/Kafka/Dump.hs` exposes configuration inspection; retain its supported interfaces.
 
-`produceMessage'` allocates a `StablePtr`, a runtime root retaining the Haskell callback while C stores its address. `src/Kafka/Producer/Callbacks.hs` frees it when processing a delivery report. Immediate enqueue failures get no delivery report, so they need immediate release. These pointers are distinct from the native callback function registrations addressed by EP-11. Add `test-integration/Kafka/Integration/ProducerRegressionTest.hs` and, if useful, `test-integration/Kafka/CallbackTestSupport.hs` for bounded weak-reference checks.
+`produceMessage'` allocates a `StablePtr`, a runtime root retaining the Haskell callback while C stores its address. `src/Kafka/Producer/Callbacks.hs` frees it when processing a delivery report. Immediate enqueue failures get no delivery report, so they need immediate release. These pointers are distinct from the native callback function registrations addressed by EP-11. Add `test-integration/Kafka/Integration/ProducerRegressionTest.hs` and reuse EP-13's `test-integration/Kafka/CallbackTestSupport.hs` for bounded weak-reference checks.
 
 This is the Haskell package `rdkafka-hs`, reviewed at commit `9c41b3d` (version `1.0.0.1`). The C library librdkafka performs the native work; `src/Kafka/Internal/RdKafka.chs` generates Haskell bindings through c2hs. Use the project Nix development shell: plain Cabal in the review environment could not find the C library. [ADR-4](../adr/toolchain-floor-is-ghc-9-12-and-librdkafka-2-15.md) retains GHC 9.12 and librdkafka 2.15. No dependency upgrade is required.
 
@@ -75,6 +85,10 @@ M2 masks asynchronous exceptions around callback allocation and the enqueue owne
 
 Build the weak-reference fixture in a separate non-inlined helper: create an IORef, a weak reference to it, and a callback that mutates that IORef; return only the weak reference after enqueueing. A bounded GC loop must show retention for an accepted pending message and collection after rejected enqueue or a served delivery report. Wait for forked message callbacks to finish before testing collection. Include a control object with no callback root so optimizer or stack retention cannot manufacture a passing test. Add changelog and Haddock explanations for setting precedence.
 
+
+M3 exercises the complete existing producer contract around the repaired paths. Round-trip absent versus empty keys/values, tombstones, binary payloads with zero bytes, duplicate/empty headers, specified versus unassigned partitions, and supported compression values. Cover oversized records, known invalid partitions, queue-full rejection, no pending messages, successful/expired delivery, purge flags separately and in combination, bounded flush timeout followed by recovery, and repeated flush/close. For global and explicit topic properties test empty identity, right-biased composition, unrelated-key preservation, invalid keys/values, and callback replacement order. All delivery tests assert exact record identity and report counts.
+
+Schedule producer concurrency with barriers: accepted enqueue while another thread serves its delivery report, exception before ownership transfer, immediate failure after allocation, and cleanup while a report callback is running. Test both a throwing global delivery callback and a throwing per-message callback in an isolated process if necessary; define and assert the library's supported exception policy without allowing exceptions to unwind through foreign frames or silently leak resources. Repeatedly injecting cancellation without observing the transfer boundary is not sufficient. Add replayable generated property cases for producer property composition through EP-14's shared harness; this child owns their behavior requirements.
 
 ## Concrete Steps
 
@@ -114,6 +128,10 @@ For the unavailable-broker fixture, use loopback port 1, explicit short time bou
 The one-second topic timeout produces a delivery failure and empties the queue within a generous bounded window; the same global setting still works. Explicit topic values override only matching global values, and unrelated global properties survive. A compression setting appears in effective client/topic configuration used by producing, and a record round-trips successfully. A rejected callback is collectable and never invoked; an accepted callback remains alive until its delivery report, executes once, and then becomes collectable, including the purge case. Repeat a bounded queue-full batch to detect retention, and demonstrate that the baseline fails the negative-path assertions. Existing headers, lifecycle, delivery, and transaction tests remain green.
 
 
+The producer rows in `docs/testing/coverage-matrix.json` must include accepted-message and immediate-failure ownership, every meaningful purge/flush outcome, and byte-exact record/report observations. Include mutations that drop topic settings, omit rejection cleanup, and free accepted callbacks too early; each must make a focused test fail or the isolated safety probe fail. Test weak-reference lifetimes under the normal optimized build as well as coverage instrumentation; report completion of forked callbacks before asserting collection. Real authentication failures/recovery are owned by EP-15, not satisfied by calling `setSaslCredentials` against a plaintext broker.
+
+All new cases use EP-13's failure-preserving fixtures and are recorded with exact test names and candidate evidence in the coverage inventory. No known failing case may be marked expected-failure to claim completion.
+
 ## Idempotence and Recovery
 
 
@@ -123,4 +141,4 @@ These changes require no data migration. Re-running tests uses fresh run prefixe
 ## Interfaces and Dependencies
 
 
-No hard dependencies. There is an integration dependency with `docs/plans/11-own-native-callbacks-through-client-teardown.md`: this plan owns effective producer configuration and per-message StablePtr transfer; that plan owns FunPtr registration and client finalizers. Neither may release the other's pointers. EP-11 has a soft dependency on this plan's tests and must rerun the accepted-message/delivery path after constructor changes. Public producer function signatures, `ProducerProperties`, and close/flush semantics remain unchanged. Do not introduce a new producer destruction API.
+Hard dependency: `docs/plans/13-make-coverage-evidence-and-test-fixtures-reliable.md` must be Complete; its trustworthy fixtures and coverage inventory are prerequisites. There is an integration dependency with `docs/plans/11-own-native-callbacks-through-client-teardown.md`: this plan owns effective producer configuration and per-message StablePtr transfer; that plan owns FunPtr registration and client finalizers. Neither may release the other's pointers. EP-11 has a soft dependency on this plan's tests and must rerun the accepted-message/delivery path after constructor changes. Public producer function signatures, `ProducerProperties`, and close/flush semantics remain unchanged. Do not introduce a new producer destruction API.

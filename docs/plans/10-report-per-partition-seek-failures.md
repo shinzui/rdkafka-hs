@@ -11,6 +11,12 @@ provenance:
     model: "gpt-6-astra"
     harness: "codex-cli"
     at: 2026-10-24T04:38:50Z
+  revisions:
+    - model: "gpt-6-astra"
+      harness: "codex-cli"
+      at: 2026-10-24T04:58:24Z
+      mode: "update"
+      note: "Expand acceptance to close public-contract, failure-path, concurrency, ownership, and compatibility coverage gaps; add EP-13 prerequisite and coordinated evidence gates."
 ---
 
 # Report per-partition seek failures
@@ -31,6 +37,8 @@ Fix F3: synchronous `seekPartitions` returns an error when any requested partiti
 - [ ] M1: Synchronous seeks return native per-partition errors, including mixed success/failure requests.
 - [ ] M2: Valid replay, zero-timeout initiation, top-level failures, and rewind behavior retain their documented contracts in both poll modes.
 
+- [ ] M3: Seek and rewind boundaries, partial success, offset sentinels, and assignment changes are verified in both callback modes.
+
 Not started; this document records the implementation contract, not completed fixes.
 
 
@@ -42,6 +50,8 @@ The review called `seekPartitions` on a new assigned-only consumer with no assig
 
 ## Decision Log
 
+
+2026-10-24 revision: The user expanded acceptance to close coverage gaps. Add the complete behavioral/ownership matrix for this workstream, depend on EP-13's reliable fixtures, and require evidence per coverage-inventory row. Existing milestones remain required.
 
 2026-10-23: Preserve `m (Maybe KafkaError)`. A top-level error takes precedence; otherwise report the first non-success partition error in input order. A zero timeout promises initiation only, so it cannot promise final success of an asynchronous seek.
 
@@ -73,6 +83,8 @@ M1 adds a narrow internal helper that reads native partition errors while the li
 
 M2 documents and tests zero-timeout behavior against the supported native implementation. Preserve asynchronous initiation: normalize `RdKafkaRespErrInProgress` as pending only for `Timeout 0`; still report immediately populated substantive partition errors where librdkafka supplies them. For nonzero timeouts, do not silently normalize a residual error or pending state to completed success. Test empty input/top-level failure, all-success input, invalid offsets, and stable selection of the first error. Use positive tests with known partition offsets and payloads: consume, seek backward, and verify the next record is from the requested position in both callback modes. Exercise `rewindConsumer` after committing a known offset. State that mixed seeks can partially succeed and returning an error does not undo successful partitions. Add changelog and Haddocks.
 
+
+M3 completes the seek/rewind boundary matrix. Exercise empty/single/multiple partition lists, duplicate entries, mixed successful/failed partitions, unknown topics, currently unassigned partitions, each supported logical offset, zero and nonzero timeouts, and positions before/after the retained log range. Compare exact next-record offsets and payloads after successful synchronous seeks. Rewind must distinguish no assignment, no committed offset, a known committed next offset, a committed-offset lookup failure, and a seek failure after lookup. In both callback modes, control reassignment/rebalance between lookup and seek with a barrier or a narrow test seam, then verify failure propagates without claiming rollback of already successful partitions. Derive native sentinels and timeout expectations from the supported header/source; do not invent equivalent treatment for every negative number. Unsupported input must either have a documented rejection test or a source-backed precondition row, not disappear from the matrix.
 
 ## Concrete Steps
 
@@ -112,6 +124,10 @@ Reproduce the no-assignment case with `newAssignedConsumer`, a unique group ID, 
 An unassigned partition yields `Just (KafkaResponseError ...)`, matching its native error rather than `Nothing`. Mixed requests also return an error even when the assigned member succeeds. All-valid nonzero-timeout seeks return `Nothing` and subsequent polls prove the requested position. Empty requests preserve the native top-level error. Zero-timeout calls remain bounded and do not misreport an in-progress marker as a terminal failure, while immediate substantive errors remain visible. Rewind returns the seek result and successful rewind resumes at the committed offset. Both callback modes pass; no public type gains fields or constructors.
 
 
+Each seek/rewind row in `docs/testing/coverage-matrix.json` names a result-code assertion and, where applicable, the subsequent consumer position. Include a mutation that ignores `err` fields and one that forgets the next-offset convention; the appropriate tests must fail. No success assertion may be only `isRight`, and no retry helper may discard unexpected errors while waiting for a record. Existing `seek` remains in EP-14's public API inventory even though deprecated; this child tests the supported replacement and rewind.
+
+All new cases use EP-13's failure-preserving fixtures and are recorded with exact test names and candidate evidence in the coverage inventory. No known failing case may be marked expected-failure to claim completion.
+
 ## Idempotence and Recovery
 
 
@@ -121,4 +137,4 @@ These changes require no data migration. Re-running tests uses fresh run prefixe
 ## Interfaces and Dependencies
 
 
-No child prerequisites. This plan owns `seekPartitions` and an internal error reader in `src/Kafka/Consumer/Convert.hs`. Keep native list ownership local and do not add a second destroy. `docs/plans/11-own-native-callbacks-through-client-teardown.md` owns client lifetime machinery; preserve that implementation when integrating. The parent combined gate is in `docs/masterplans/2-fix-inherited-release-review-defects.md`.
+Hard dependency: `docs/plans/13-make-coverage-evidence-and-test-fixtures-reliable.md` must be Complete; its trustworthy fixtures and coverage inventory are prerequisites. This plan owns `seekPartitions` and an internal error reader in `src/Kafka/Consumer/Convert.hs`. Keep native list ownership local and do not add a second destroy. `docs/plans/11-own-native-callbacks-through-client-teardown.md` owns client lifetime machinery; preserve that implementation when integrating. The parent combined gate is in `docs/masterplans/2-fix-inherited-release-review-defects.md`.

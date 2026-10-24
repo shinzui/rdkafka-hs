@@ -11,6 +11,12 @@ provenance:
     model: "gpt-6-astra"
     harness: "codex-cli"
     at: 2026-10-24T04:38:50Z
+  revisions:
+    - model: "gpt-6-astra"
+      harness: "codex-cli"
+      at: 2026-10-24T04:58:24Z
+      mode: "update"
+      note: "Expand acceptance to close public-contract, failure-path, concurrency, ownership, and compatibility coverage gaps; add EP-13 prerequisite and coordinated evidence gates."
 ---
 
 # Release transaction error objects
@@ -31,6 +37,8 @@ Fix F6: failed or retried transaction initialization, begin, and abort operation
 - [ ] M1: Init, begin, and abort preserve results while bracketing every returned native error object.
 - [ ] M2: Repeated error paths have allocation-specific leak evidence and successful commit/abort cycles pass broker tests.
 
+- [ ] M3: Commit/abort visibility, transactional source offsets, recovery flags, and exceptional error decoding have end-to-end evidence.
+
 Not started; this document records the implementation contract, not completed fixes.
 
 
@@ -42,6 +50,8 @@ Retained commit `c58bc85` (September 2022) introduced the three wrappers that ex
 
 ## Decision Log
 
+
+2026-10-24 revision: The user expanded acceptance to close coverage gaps. Add the complete behavioral/ownership matrix for this workstream, depend on EP-13's reliable fixtures, and require evidence per coverage-inventory row. Existing milestones remain required.
 
 2026-10-23: Keep transaction public return types unchanged. Use scoped destruction around error decoding, including exceptions; preserve null-as-success. Do not turn this repair into a redesign of transaction retry policy or public TxError types.
 
@@ -75,6 +85,10 @@ M2 adds errors from all three public entry points. A producer without `transacti
 
 For native memory proof, run an isolated test case named `transaction-error-leak-probe` that repeatedly invokes the three immediate-error paths on one nontransactional producer. Do not create a client for every iteration, which would confound callback/client leaks. Build with symbols and use macOS `leaks` with allocation stack logging, available in the reviewed environment. Compare baseline and repaired builds for allocations rooted in `rd_kafka_error_new`/`rd_kafka_error_new_v` from these wrapper paths; distinguish native client background allocations and unrelated known defects. If the allocator tool cannot symbolize or inspect the process, use a documented test-only instrumented native allocator/destructor counter around these returned error objects, with a known-leaking control. Never accept stable RSS or only passing return-value assertions as proof of destruction. Record exact commands, iteration count, and before/after attributed results. Add changelog coverage.
 
+
+M3 exercises the complete public transactional flow. Cover initialization success and bounded timeout/retry; begin before initialization, nested begin, commit/abort without an open transaction, empty transactions, successful commit, and successful abort. Produce distinct records before commit and abort and assert visibility through real read-committed and read-uncommitted consumers, including resume after abort. Use `commitOffsetMessageTransaction` with a source consumer: an aborted transaction must not advance committed group offsets, while a committed transaction must atomically expose output and commit the source next offset. Exercise repeated cycles and verify recovery after retryable and abort-required failures.
+
+Fatal, retriable, and abort-required flags must be verified on actual supported native error objects. Use real transactional fencing with duplicate transactional IDs for a fatal condition and a controlled private broker/proxy for recoverable failures where repeatable; where a specific flag combination cannot be reliably induced, exercise the actual conversion function with a private native-error fixture and retain at least one real end-to-end failure. Do not substitute a hand-constructed public TxError for the C-to-Haskell conversion under test. Add deterministic exception injection after error acquisition and between flag reads, proving one destroy and no read after free. Include both consumer poll modes for source-offset transactions where their callback routing affects the path.
 
 ## Concrete Steps
 
@@ -117,6 +131,10 @@ Run these inside the development shell after starting the private broker with `j
 Each immediate-error call returns the same Kafka error before and after the repair. Nontransactional init/begin/abort loops have no outstanding native error objects attributable to these calls after decoding; the baseline shows their allocation stacks or a positive counter imbalance. A timed-out initialization remains a timeout and releases its returned object. Valid commit and abort cycles return success, and existing read-committed tests pass. Commit/send-offsets flags are copied before release and remain correct; a scoped decoder releases once even if conversion throws. All native error ownership paths touched by this child are exception-safe.
 
 
+Transaction inventory rows must cover all five public operations and all TxError accessors with exact outcomes. The leak probe must exercise immediate error and timeout returns separately, with allocation-attributed evidence and a deliberate leak control. An aborted output must remain invisible to read-committed consumers and its source offset must remain uncommitted; successful commit must publish both together. Mutations that omit destruction, commit the wrong source offset, or invert error flags must be caught. The read-committed watermark test alone does not satisfy transaction recovery or atomicity coverage. EP-15 owns network loss/fencing under the compatibility matrix and reuses these scenarios.
+
+All new cases use EP-13's failure-preserving fixtures and are recorded with exact test names and candidate evidence in the coverage inventory. No known failing case may be marked expected-failure to claim completion.
+
 ## Idempotence and Recovery
 
 
@@ -126,4 +144,4 @@ These changes require no data migration. Re-running tests uses fresh run prefixe
 ## Interfaces and Dependencies
 
 
-No hard or soft dependency. This child owns transaction error conversion in `src/Kafka/Transaction.hs` and its new tests. EP-11 (`docs/plans/11-own-native-callbacks-through-client-teardown.md`) independently owns persistent callback/client resources; isolate allocation evidence so its baseline leaks cannot mask this fix. The `TxError` API and producer/client lifecycle semantics remain unchanged. The master coordinator owns full-candidate validation after all children complete.
+Hard dependency: `docs/plans/13-make-coverage-evidence-and-test-fixtures-reliable.md` must be Complete; its trustworthy fixtures and coverage inventory are prerequisites. No other hard dependency. This child owns transaction error conversion in `src/Kafka/Transaction.hs` and its new tests. EP-11 (`docs/plans/11-own-native-callbacks-through-client-teardown.md`) independently owns persistent callback/client resources; isolate allocation evidence so its baseline leaks cannot mask this fix. The `TxError` API and producer/client lifecycle semantics remain unchanged. The master coordinator owns full-candidate validation after all children complete.

@@ -1,0 +1,39 @@
+---
+type: Architecture Decision Record
+title: Release coverage requires behavior and ownership evidence
+description: Release acceptance requires an explicit tested public-contract and native-ownership inventory, trustworthy fixtures, and source-bound compatibility evidence rather than only passing counts or aggregate coverage.
+timestamp: 2026-10-24T04:58:05Z
+generated:
+  by: codex-cli/gpt-6-astra
+  at: "2026-10-24T04:58:05Z"
+docId: ADR-10
+status: Accepted
+date: 2026-10-24
+originatingPlan: docs/masterplans/2-fix-inherited-release-review-defects.md
+---
+
+# Release coverage requires behavior and ownership evidence
+
+## Context
+
+The pre-release review passed 14 unit and 116 integration tests while reproducing five inherited defects and identifying a sixth native error-object leak by source inspection. Existing fixtures ignore enqueue errors or discard consumer errors, and several assertions check only success or collection size. Callback ownership, transaction failures, configuration application, and compatibility have gaps that a passing count conceals. The user requested that the repair plans close coverage gaps across the library.
+
+## Decision
+
+A release candidate must have an inventory mapping every supported public behavior and critical native allocation, ownership transfer, error conversion, and release path to precise test assertions and current-source evidence. Include applicable success, failure, boundary, mode, and lifetime cases. A function being called is not proof that its result or cleanup is correct. Re-exports, diagnostics, deprecated entry points, and pure-data laws remain visible in the inventory.
+
+Fixtures must preserve unexpected errors and assert exact records, offsets, counts, and results. Meaningful concurrency and asynchronous-exception windows require observed barriers or state, not merely thread launch followed by cancellation. Generated property tests provide replay seeds and minimized failures; native-resource checks include leak/invalid-access evidence with positive controls proving instrumentation is effective. Deliberate semantic mutations must fail the focused behavioral tests, not just compilation.
+
+Haskell Program Coverage reports expression, alternative, and condition coverage for the hand-written Haskell code. Keep generated binding boilerplate separate and classify uncovered hand-written paths. These metrics do not prove native memory safety. Run normal optimized builds as well as instrumented builds. There is no test-count cap or aggregate percentage that excuses a missing supported behavior.
+
+The final gate rejects open, unowned, stale, skipped-required, or unexplained coverage rows. A not-applicable classification requires a concrete documented precondition or source-proven unreachable path. Tooling or environment unavailability is a blocker, not non-applicability. Newly discovered violations of existing supported contracts require regression tests and repair; expected failures cannot make the release gate green.
+
+Record a representative tested-environment matrix covering the current primary Darwin/Redpanda tuple, Linux build and representative broker/native-diagnostic execution, Apache Kafka behavior including leader failover, and a newer compatible released compiler/library tuple when available. Select actual released versions during implementation, verify registry/tag evidence, and record the loaded native-library version. Broad dependency bounds do not establish that every allowed combination is tested. Do not silently narrow supported behavior to avoid a failing matrix case.
+
+All broker disruptions and security tests use run-owned disposable fixtures. The protections in [ADR-5](integration-tests-run-against-a-project-local-redpanda.md) remain: never mutate the machine-global broker. Extending test execution to additional supplied isolated environments does not authorize a general-purpose provisioning system or infrastructure purchases. The implementation must amend environment-specific guidance when those additional fixtures exist. Earlier release distribution and platform history in [ADR-7](first-release-scope-and-distribution.md) remains historical fact.
+
+## Consequences
+
+[MasterPlan 2](../masterplans/2-fix-inherited-release-review-defects.md) adds fixture/inventory, public-contract/property, and failure/compatibility work streams around its five repair plans. The fixtures and coverage commands are prerequisites for the repair evidence; the final candidate requires all children and matrix rows to pass. [ADR-1](consumer-queue-and-teardown-ownership.md) continues to govern client teardown, and [ADR-2](release-validation-before-publication.md) continues to require validation before publication.
+
+This record accepts the validation policy. The corresponding test infrastructure and expanded coverage are planned, not implemented or already passing. Evidence must identify the source/configuration tested; documentation bookkeeping alone must not invalidate source fingerprints. Completion establishes a checked support contract, not proof over all possible inputs, schedules, and future dependency versions.
