@@ -249,6 +249,14 @@ families "metadata" =
   ]
   where
     d label change test = mutation "metadata-contract" label "src/Kafka/Metadata.hs" change test
+families "metadata-utf8" =
+  [ control "unchanged-control" integration "metadata-contract",
+    mutation "metadata-contract" "group-query-ascii-encoded" "src/Kafka/Internal/RdKafka.chs" (replace "Just strGrp -> withCString strGrp listGroups" "Just strGrp -> withCAString strGrp listGroups") "async group identity lifecycle and supported native states",
+    d "group-identity-ascii-decoded" (replace "cid <- peekCText $ group'RdKafkaGroupInfoT gi" "cid <- peekCAText $ group'RdKafkaGroupInfoT gi"),
+    d "member-client-ascii-decoded" (replace "cid <- peekCText $ clientId'RdKafkaGroupMemberInfoT mi" "cid <- peekCAText $ clientId'RdKafkaGroupMemberInfoT mi")
+  ]
+  where
+    d label change = mutation "metadata-contract" label "src/Kafka/Metadata.hs" (change . replace "peekCText," "peekCText, peekCAText,") "async group identity lifecycle and supported native states"
 families "data" =
   [ control "unchanged-unit-control" unit "Public data contracts",
     control "unchanged-native-control" integration "metadata-contract",
@@ -261,7 +269,7 @@ families "config" =
     mutation "config-strings" "c-string-key-guard-removed" "src/Kafka/Internal/Setup.hs" (replace "Text.any (== '\\0') key" "False") "producer topic rejects NUL key",
     mutation "config-strings" "c-string-value-guard-removed" "src/Kafka/Internal/Setup.hs" (replace "Text.any (== '\\0') value" "False") "producer global rejects NUL value"
   ]
-families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata, data or config")
+families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata, metadata-utf8, data or config")
 
 replace :: String -> String -> String -> String
 replace old new source = case [i | (i, rest) <- zip [0 ..] (tails source), old `isPrefixOf` rest] of

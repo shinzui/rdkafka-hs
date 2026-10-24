@@ -69,9 +69,9 @@ rd_kafka_resp_err_t rd_kafka_list_groups(rd_kafka_t *rk, const char *group,
     if (mode == 17) {
       if (groups->group_cnt != 1 || groups->groups[0].member_cnt != 1) abort();
       struct rd_kafka_group_member_info *member = &groups->groups[0].members[0];
-      free(member->member_id); member->member_id = strdup("member-field");
-      free(member->client_id); member->client_id = strdup("client-field");
-      free(member->client_host); member->client_host = strdup("host-field");
+      free(member->member_id); member->member_id = strdup("member-field-λ-配置");
+      free(member->client_id); member->client_id = strdup("client-field-λ-配置");
+      free(member->client_host); member->client_host = strdup("host-field-λ-配置");
       const unsigned char metadata_bytes[] = {0, 1, 0, 255};
       const unsigned char assignment_bytes[] = {255, 0, 2, 0, 3};
       free(member->member_metadata); member->member_metadata = malloc(sizeof(metadata_bytes));

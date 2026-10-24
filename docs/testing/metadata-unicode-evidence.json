@@ -1,0 +1,73 @@
+{
+  "status": "accepted Unicode metadata checkpoint; EP-14 M2/M3 incomplete",
+  "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
+  "runs": {
+    "normal": {
+      "log": "/tmp/rdkafka-ep14-metadata-utf8-normal.log",
+      "sha256": "d3b04ce5d99e750be579aae1299d5c2c46d1994909e119fedda47dfdc6dc8f78",
+      "passed": 10
+    },
+    "instrumented-native": {
+      "log": "/tmp/rdkafka-ep14-metadata-utf8-asan.log",
+      "sha256": "f40225758a6dd9b6e61ea1009b2385f85b560f87a3f9b03e1a7dc5335cca1d14",
+      "passed": 10
+    },
+    "instrumented-haskell": {
+      "manifest": "docs/testing/coverage-evidence.json",
+      "scoped_cases": 10,
+      "part_of_integration_cases": 533
+    }
+  },
+  "baseline": {
+    "query": {
+      "log": "/tmp/rdkafka-ep14-metadata-utf8-baseline.log",
+      "sha256": "c497c01361ac368f2ffd2a729237470345a2d0b9a5977318e0f52c027ca47782"
+    },
+    "decoder": {
+      "log": "/tmp/rdkafka-ep14-metadata-utf8-decoder-baseline.log",
+      "sha256": "3c3020c6413fffa1a389bdf4159ba47ace2c50309730576ad5e6b598db34de9c"
+    },
+    "failed_cases_each": 2,
+    "observed": [
+      "Existing Unicode groups return an empty query result with the ASCII query encoder",
+      "Correcting only query encoding returns groups with changed identities through the ASCII decoder"
+    ]
+  },
+  "mutations": "dist-mutations/20261024T185243Z-metadata-utf8-47170-0/results.json",
+  "compiled_mutations_caught": 3,
+  "controls": 1,
+  "scope": [
+    "Actual Unicode group/client IDs in async and sync modes",
+    "Distinct native-owned Unicode member/client/host fields",
+    "Independent binary metadata and assignment fields",
+    "Existing group lifecycle and controlled state/error behavior retained"
+  ],
+  "native_library": "mori://confluentinc/librdkafka",
+  "native_version": "2.15.0",
+  "native_diagnostic_control": "docs/testing/callback-native-diagnostics.json",
+  "leak_instrumentation": false,
+  "required_checks": {
+    "log": "/tmp/rdkafka-ep14-metadata-utf8-check.log",
+    "sha256": "5fc98e306b543a98978650b1ca806de5dc2137233f06075b9595aeb9bcb81850"
+  },
+  "build_all_with_examples": {
+    "log": "/tmp/rdkafka-ep14-config-metadata-build-all.log",
+    "sha256": "ba73e57456fad258353dc371119be992a4c8d194659279249a60efdc8519a8e5"
+  },
+  "remaining": "Provided-metadata partition errors, consumer gaps, deprecated wrapper/example runtime checks, saved deprecated-seek failure, remaining handwritten coverage misses and EP-15 environments remain open.",
+  "full_mapped": {
+    "manifest": "docs/testing/coverage-evidence.json",
+    "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
+    "registered": 611,
+    "unit": 78,
+    "integration": 533,
+    "integration_seconds": 243.47,
+    "nonthreaded_supplement": 4,
+    "handwritten_native_wrapper_ticks": 2902,
+    "tooling_controls": 22
+  },
+  "inventory": {
+    "tested": 125,
+    "open": 56
+  }
+}

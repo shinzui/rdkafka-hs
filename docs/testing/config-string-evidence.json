@@ -49,5 +49,11 @@
     "Consumer global/subscription NUL keys and values in both callback modes",
     "Native empty client-id default, exact ordinary Unicode client-id and native unknown-key rejection"
   ],
-  "remaining": "CFG inventory reconciliation awaits the next whole-candidate mapped run; metadata Unicode query/decoding regression, other public contracts, saved deprecated-seek failure and environment matrix remain open."
+  "remaining": "CFG inventory row is reconciled. Remaining metadata/consumer contracts, saved deprecated-seek failure, handwritten misses and EP-15 environments remain open.",
+  "full_mapped": {
+    "manifest": "docs/testing/coverage-evidence.json",
+    "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
+    "scoped_cases": 15,
+    "registered": 611
+  }
 }

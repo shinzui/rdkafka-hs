@@ -2,7 +2,7 @@
 type: Architecture Decision Record
 title: Metadata results have scoped ownership and explicit errors
 description: Copy and release native metadata and group lists within one scope, preserve nested query errors, and return unsupported group states as errors.
-timestamp: 2026-10-24T16:44:52Z
+timestamp: 2026-10-24T18:53:15Z
 generated:
   by: codex-cli/gpt-6.1-sol
   at: "2026-10-24T16:44:52Z"
@@ -29,3 +29,7 @@ Preserve native overall errors, topic errors used by convenience queries, and ti
 [EP-14](../plans/14-cover-the-public-api-and-pure-data-laws.md) verifies topic/partition identity, replica and leader consistency, exact watermarks, timestamp boundary results, missing-topic and mixed-request errors, and real group identity/lifecycle. Controlled group-list states use genuinely allocated native results. Isolated cancellation children count native acquisition/destruction and terminate on a failed ownership assertion; they never compete with a ForeignPtr finalizer to free a managed result. A separate retained-result control is owned and cleaned up entirely by the native fixture.
 
 An unreachable bootstrap endpoint returns native `Transport` before a broker can accept a metadata request. That differs from timing out after request submission; tests must preserve the actual native outcome instead of labeling every elapsed deadline `TimedOut`.
+
+## Text identity
+
+Group queries use the same locale-aware native string encoding as configuration setters, and metadata fields use the matching text decoder. ASCII-only marshalling is inappropriate for Unicode group IDs, client IDs and member fields: it both queries a different byte sequence and changes decoded UTF-8 bytes into unrelated characters. Tests use actual Unicode groups/clients in both callback modes and distinct native-owned Unicode member strings, alongside independent binary metadata and assignment bytes. This preserves identity without changing the public result types.

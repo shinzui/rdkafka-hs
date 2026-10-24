@@ -106,8 +106,8 @@ tests env =
       <> [ testCase (label <> " group identity lifecycle and supported native states") $
              withTopic env (Text.pack ("metadata-group-" <> label)) 1 $ \topic producer -> do
                produceTo producer topic 0 "group-record"
-               let group = makeGroupId env (Text.pack ("metadata-group-" <> label))
-                   props = brokersList (teBrokers env) <> groupId group <> clientId (ClientId (Text.pack ("metadata-client-" <> label))) <> noAutoCommit <> callbackPollMode mode
+               let group = makeGroupId env (Text.pack ("metadata-group-λ-配置-" <> label))
+                   props = brokersList (teBrokers env) <> groupId group <> clientId (ClientId (Text.pack ("metadata-client-λ-配置-" <> label))) <> noAutoCommit <> callbackPollMode mode
                bracket (newConsumer props (topics [topic] <> offsetReset Earliest) >>= either throwIO pure) releaseConsumer $ \consumer -> do
                  message <- pollMessage consumer (Timeout 10000) >>= either throwIO pure
                  crValue message @?= Just "group-record"
@@ -116,7 +116,7 @@ tests env =
                    map (\info -> (giGroup info, giError info, giState info, giProtocolType info)) described @?= [(group, Nothing, GroupStable, GroupProtocolType "consumer")]
                    case described of
                      [info] -> do
-                       map gmiClientId (giMembers info) @?= [ClientId (Text.pack ("metadata-client-" <> label))]
+                       map gmiClientId (giMembers info) @?= [ClientId (Text.pack ("metadata-client-λ-配置-" <> label))]
                        assertBool (show info) (not (Text.null (let GroupProtocol protocol = giProtocol info in protocol)))
                      other -> assertFailure (show other)
                    allGroups <- allConsumerGroupsInfo producer (Timeout 5000) >>= either throwIO pure
@@ -133,7 +133,7 @@ tests env =
                    mapM metadataStat [2, 3] >>= (@?= [1, 1])
                  withMetadataFault 17 $ do
                    described <- consumerGroupInfo producer (Timeout 5000) group >>= either throwIO pure
-                   map giMembers described @?= [[GroupMemberInfo (GroupMemberId "member-field") (ClientId "client-field") "host-field" (BS.pack [0, 1, 0, 255]) (BS.pack [255, 0, 2, 0, 3])]]
+                   map giMembers described @?= [[GroupMemberInfo (GroupMemberId "member-field-λ-配置") (ClientId "client-field-λ-配置") "host-field-λ-配置" (BS.pack [0, 1, 0, 255]) (BS.pack [255, 0, 2, 0, 3])]]
                    mapM metadataStat [2, 3] >>= (@?= [1, 1])
                described <- consumerGroupInfo producer (Timeout 5000) group >>= either throwIO pure
                map giState described @?= [GroupEmpty]

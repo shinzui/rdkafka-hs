@@ -43,7 +43,7 @@ import Foreign (ForeignPtr, Storable (peek), finalizeForeignPtr, peekArray, with
 import GHC.Generics (Generic)
 import Kafka.Consumer.Convert (fromNativeTopicPartitionList'', nativeTopicPartitionErrors, toNativeTopicPartitionList)
 import Kafka.Consumer.Types (ConsumerGroupId (..), Offset (..), PartitionOffset (..), TopicPartition (..))
-import Kafka.Internal.RdKafka (RdKafkaGroupInfoT (..), RdKafkaGroupListT (..), RdKafkaGroupListTPtr, RdKafkaGroupMemberInfoT (..), RdKafkaMetadataBrokerT (..), RdKafkaMetadataPartitionT (..), RdKafkaMetadataT (..), RdKafkaMetadataTPtr, RdKafkaMetadataTopicT (..), RdKafkaRespErrT (..), RdKafkaTPtr, destroyUnmanagedRdKafkaTopic, newUnmanagedRdKafkaTopicT, peekCAText, rdKafkaListGroups, rdKafkaMetadata, rdKafkaOffsetsForTimes, rdKafkaQueryWatermarkOffsets)
+import Kafka.Internal.RdKafka (RdKafkaGroupInfoT (..), RdKafkaGroupListT (..), RdKafkaGroupListTPtr, RdKafkaGroupMemberInfoT (..), RdKafkaMetadataBrokerT (..), RdKafkaMetadataPartitionT (..), RdKafkaMetadataT (..), RdKafkaMetadataTPtr, RdKafkaMetadataTopicT (..), RdKafkaRespErrT (..), RdKafkaTPtr, destroyUnmanagedRdKafkaTopic, newUnmanagedRdKafkaTopicT, peekCText, rdKafkaListGroups, rdKafkaMetadata, rdKafkaOffsetsForTimes, rdKafkaQueryWatermarkOffsets)
 import Kafka.Internal.Setup (HasKafka (..), Kafka (..))
 import Kafka.Internal.Shared (kafkaErrorToMaybe)
 import Kafka.Types (BrokerId (..), ClientId (..), KafkaError (..), Millis (..), PartitionId (..), Timeout (..), TopicName (..))
@@ -258,10 +258,10 @@ fromGroupInfoPtr :: RdKafkaGroupInfoT -> IO (Either KafkaError GroupInfo)
 fromGroupInfoPtr gi = do
   -- bmd <- peek (broker'RdKafkaGroupInfoT gi) -- >>= fromBrokerMetadataPtr
   -- xxx <- fromBrokerMetadataPtr bmd
-  cid <- peekCAText $ group'RdKafkaGroupInfoT gi
-  stt <- peekCAText $ state'RdKafkaGroupInfoT gi
-  prt <- peekCAText $ protocolType'RdKafkaGroupInfoT gi
-  pr <- peekCAText $ protocol'RdKafkaGroupInfoT gi
+  cid <- peekCText $ group'RdKafkaGroupInfoT gi
+  stt <- peekCText $ state'RdKafkaGroupInfoT gi
+  prt <- peekCText $ protocolType'RdKafkaGroupInfoT gi
+  pr <- peekCText $ protocol'RdKafkaGroupInfoT gi
   mbs <- peekArray (memberCnt'RdKafkaGroupInfoT gi) (members'RdKafkaGroupInfoT gi)
   mbl <- mapM fromGroupMemberInfoPtr mbs
   pure $ do
@@ -279,9 +279,9 @@ fromGroupInfoPtr gi = do
 
 fromGroupMemberInfoPtr :: RdKafkaGroupMemberInfoT -> IO GroupMemberInfo
 fromGroupMemberInfoPtr mi = do
-  mid <- peekCAText $ memberId'RdKafkaGroupMemberInfoT mi
-  cid <- peekCAText $ clientId'RdKafkaGroupMemberInfoT mi
-  hst <- peekCAText $ clientHost'RdKafkaGroupMemberInfoT mi
+  mid <- peekCText $ memberId'RdKafkaGroupMemberInfoT mi
+  cid <- peekCText $ clientId'RdKafkaGroupMemberInfoT mi
+  hst <- peekCText $ clientHost'RdKafkaGroupMemberInfoT mi
   mtd <- peekArray (memberMetadataSize'RdKafkaGroupMemberInfoT mi) (memberMetadata'RdKafkaGroupMemberInfoT mi)
   ass <- peekArray (memberAssignmentSize'RdKafkaGroupMemberInfoT mi) (memberAssignment'RdKafkaGroupMemberInfoT mi)
   return
@@ -295,7 +295,7 @@ fromGroupMemberInfoPtr mi = do
 
 fromTopicMetadataPtr :: RdKafkaMetadataTopicT -> IO TopicMetadata
 fromTopicMetadataPtr tm = do
-  tnm <- peekCAText (topic'RdKafkaMetadataTopicT tm)
+  tnm <- peekCText (topic'RdKafkaMetadataTopicT tm)
   pts <- peekArray (partitionCnt'RdKafkaMetadataTopicT tm) (partitions'RdKafkaMetadataTopicT tm)
   pms <- mapM fromPartitionMetadataPtr pts
   return
@@ -320,7 +320,7 @@ fromPartitionMetadataPtr pm = do
 
 fromBrokerMetadataPtr :: RdKafkaMetadataBrokerT -> IO BrokerMetadata
 fromBrokerMetadataPtr bm = do
-  host <- peekCAText (host'RdKafkaMetadataBrokerT bm)
+  host <- peekCText (host'RdKafkaMetadataBrokerT bm)
   return
     BrokerMetadata
       { bmBrokerId = BrokerId (id'RdKafkaMetadataBrokerT bm),

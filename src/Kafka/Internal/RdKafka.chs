@@ -838,7 +838,7 @@ foreign import ccall "rdkafka.h &rd_kafka_group_list_destroy"
 rdKafkaListGroups :: RdKafkaTPtr -> Maybe String -> Int -> IO (Either RdKafkaRespErrT RdKafkaGroupListTPtr)
 rdKafkaListGroups k g t = case g of
     Nothing -> listGroups nullPtr
-    Just strGrp -> withCAString strGrp listGroups
+    Just strGrp -> withCString strGrp listGroups
     where
         listGroups grp = do
             (err, res) <- rdKafkaListGroups' k grp t
