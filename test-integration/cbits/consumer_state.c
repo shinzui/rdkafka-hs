@@ -1,5 +1,6 @@
 /* Integration executable only. Invoke the installed native callback with an
  * owned native partition list and controlled, actually allocated error objects.
+ * Mode zero only observes native commit arguments without changing results.
  * Real cooperative group handoffs remain separate broker scenarios. */
 #define _GNU_SOURCE
 #include <dlfcn.h>
@@ -13,6 +14,7 @@ typedef void (*rebalance_callback)(rd_kafka_t *, rd_kafka_resp_err_t,
 static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 static int enabled, mode, stats[7];
 static rd_kafka_t *client;
+static int commit_calls, commit_async;
 static rebalance_callback installed;
 static rd_kafka_error_t *owned_error;
 
@@ -23,6 +25,7 @@ void rdkafka_hs_test_state_begin(int value) {
   pthread_mutex_lock(&lock);
   if (owned_error) abort();
   enabled = 1; mode = value; client = NULL; installed = NULL;
+  commit_calls = 0; commit_async = -1;
   for (int i = 0; i < 7; ++i) stats[i] = 0;
   pthread_mutex_unlock(&lock);
 }
@@ -60,7 +63,7 @@ void rd_kafka_conf_set_rebalance_cb(rd_kafka_conf_t *conf, rebalance_callback ca
 const char *rd_kafka_rebalance_protocol(rd_kafka_t *rk) {
   REAL(rd_kafka_rebalance_protocol);
   pthread_mutex_lock(&lock);
-  int controlled = enabled && rk == client;
+  int controlled = enabled && rk == client && mode >= 1 && mode <= 6;
   int eager = mode >= 5;
   if (controlled) stats[4]++;
   pthread_mutex_unlock(&lock);
@@ -77,7 +80,7 @@ static rd_kafka_error_t *failure_locked(int index) {
 rd_kafka_error_t *rd_kafka_incremental_assign(rd_kafka_t *rk, const rd_kafka_topic_partition_list_t *partitions) {
   REAL(rd_kafka_incremental_assign);
   pthread_mutex_lock(&lock);
-  if (enabled && rk == client) {
+  if (enabled && rk == client && mode >= 1 && mode <= 6) {
     rd_kafka_error_t *error = failure_locked(2);
     pthread_mutex_unlock(&lock); return error;
   }
@@ -87,7 +90,7 @@ rd_kafka_error_t *rd_kafka_incremental_assign(rd_kafka_t *rk, const rd_kafka_top
 rd_kafka_error_t *rd_kafka_incremental_unassign(rd_kafka_t *rk, const rd_kafka_topic_partition_list_t *partitions) {
   REAL(rd_kafka_incremental_unassign);
   pthread_mutex_lock(&lock);
-  if (enabled && rk == client) {
+  if (enabled && rk == client && mode >= 1 && mode <= 6) {
     rd_kafka_error_t *error = failure_locked(3);
     pthread_mutex_unlock(&lock); return error;
   }
@@ -118,4 +121,18 @@ void rdkafka_hs_test_state_leak_control(void) {
   pthread_mutex_lock(&lock);
   failure_locked(2);
   pthread_mutex_unlock(&lock);
+}
+
+int rdkafka_hs_test_state_commit_count(void) {
+  pthread_mutex_lock(&lock); int value = commit_calls; pthread_mutex_unlock(&lock); return value;
+}
+int rdkafka_hs_test_state_commit_async(void) {
+  pthread_mutex_lock(&lock); int value = commit_async; pthread_mutex_unlock(&lock); return value;
+}
+rd_kafka_resp_err_t rd_kafka_commit(rd_kafka_t *rk, const rd_kafka_topic_partition_list_t *offsets, int async) {
+  REAL(rd_kafka_commit);
+  pthread_mutex_lock(&lock);
+  if (enabled && mode == 0 && rk == client) { commit_calls++; commit_async = async; }
+  pthread_mutex_unlock(&lock);
+  return real(rk, offsets, async);
 }

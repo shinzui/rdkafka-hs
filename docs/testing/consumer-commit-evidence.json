@@ -1,0 +1,51 @@
+{
+  "status": "accepted consumer-commit checkpoint; EP-14 incomplete",
+  "fingerprint": "a76469420b092749fe23814d70bf8c7246c282602e41548eb016f84a1239ce31",
+  "runs": {
+    "normal": {
+      "log": "/tmp/rdkafka-ep14-consumer-commit-normal-accepted.log",
+      "sha256": "fdbfe736df28bd4845cd9f446722c4b19612c69584149ab1b733548034f33624",
+      "passed": 8
+    },
+    "instrumented-haskell": {
+      "log": "/tmp/rdkafka-ep14-consumer-commit-hpc.log",
+      "sha256": "4eb6ab315352db6714c12b82fbbfe3c2ea268f265e89306f3d5f24c905307e5f",
+      "passed": 8
+    },
+    "instrumented-native": {
+      "log": "/tmp/rdkafka-ep14-consumer-commit-asan.log",
+      "sha256": "43edb74bed796878c61744be64af8dd698e60ac96d5cfb75c4763468b54ff972",
+      "passed": 8
+    }
+  },
+  "mutations": "dist-mutations/20261024T204323Z-consumer-commit-16026-0/results.json",
+  "compiled_mutations_caught": 4,
+  "controls": 1,
+  "scope": [
+    "Native async/sync argument flags observed without altering calls/results",
+    "Message-next, explicit and stored/all offset commits with exact callback offsets and broker reads",
+    "Empty requests and NoOffset callbacks including null/empty partition lists",
+    "Mixed commit failures retain successful broker effects",
+    "Absent committed partition returns Invalid without error; unavailable coordinator returns TimedOut"
+  ],
+  "fixture_corrections": [
+    {
+      "log": "/tmp/rdkafka-ep14-consumer-commit-boundaries.log",
+      "reason": "The initial mixed committed-offset query expected UnknownTopicOrPart. Native OffsetFetch reports the absent rejected partition as Invalid without error. Both initial assertion failures are excluded from defect evidence."
+    },
+    {
+      "log": "/tmp/rdkafka-ep14-consumer-commit-mutations.log",
+      "reason": "The callback mutation target matched both the rebalance call and offset callback. Restrict to the offset callback declaration before accepting the rerun."
+    }
+  ],
+  "observer": "Mode zero is passthrough observation. Modes one through six retain the existing rebalance failure controls. The native rd_kafka_commit interposer records only the actual count/async argument for the selected consumer and calls the real function unchanged.",
+  "native_library": "mori://confluentinc/librdkafka",
+  "native_version": "2.15.0",
+  "native_diagnostic_control": "docs/testing/callback-native-diagnostics.json",
+  "leak_instrumentation": false,
+  "required_checks": {
+    "log": "/tmp/rdkafka-ep14-consumer-commit-check.log",
+    "sha256": "f5a30e0a56d3b7f933df2e9944a226e1c5e0874b7329b216d5a760e46b0c9b9c"
+  },
+  "remaining": "Whole-candidate inventory refresh, deprecated wrappers/examples/input boundaries, saved deprecated-seek diagnosis, remaining handwritten misses and EP-15 environments remain open."
+}

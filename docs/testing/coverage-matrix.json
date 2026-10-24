@@ -10840,6 +10840,216 @@
       "status": "unreachable",
       "rationale": "rdKafkaMsgFlagFree is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
       "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1205:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1206:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1206:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1207:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1207:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1208:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1208:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1209:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1209:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1210:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1210:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1211:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1211:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1213:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1214:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1215:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1212:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1217:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1218:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1219:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1216:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1220:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1220:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1221:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1221:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1223:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1224:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1225:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1226:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1222:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1205:TopLevelBox [\"peek\"]": {
+      "status": "unreachable",
+      "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1228:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "The outbound argument array supplies an explicit count, so public producers do not construct an End terminator.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1228:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "The outbound argument array supplies an explicit count, so public producers do not construct an End terminator.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1233:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "ProducerRecord has no per-record timestamp input. No src call constructs the private Timestamp union variant.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1234:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "ProducerRecord has no per-record timestamp input. No src call constructs the private Timestamp union variant.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1232:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "ProducerRecord has no per-record timestamp input. No src call constructs the private Timestamp union variant.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1242:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "Public Headers are ordered byte pairs converted to individual Header union entries; no src call supplies a prebuilt native header-list pointer.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1243:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "Public Headers are ordered byte pairs converted to individual Header union entries; no src call supplies a prebuilt native header-list pointer.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1241:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "Public Headers are ordered byte pairs converted to individual Header union entries; no src call supplies a prebuilt native header-list pointer.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1245:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "Public ProducerRecord selects a TopicName, not a native topic handle. No src call constructs this private union variant.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1246:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "Public ProducerRecord selects a TopicName, not a native topic handle. No src call constructs this private union variant.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1244:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "Public ProducerRecord selects a TopicName, not a native topic handle. No src call constructs this private union variant.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
     }
   }
 }

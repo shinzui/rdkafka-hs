@@ -1,4 +1,4 @@
-module Kafka.ConsumerStateSupport (withStateFault, endStateFault, stateStat, triggerRebalance, stateLeakControl) where
+module Kafka.ConsumerStateSupport (withStateFault, endStateFault, stateStat, triggerRebalance, stateLeakControl, commitObservation) where
 
 import Control.Exception (bracket_)
 import Data.Text qualified as Text
@@ -24,3 +24,10 @@ stateStat index = fromIntegral <$> stat (fromIntegral index)
 
 triggerRebalance :: TopicName -> IO ()
 triggerRebalance (TopicName topic) = withCString (Text.unpack topic) trigger
+
+foreign import ccall unsafe "rdkafka_hs_test_state_commit_count" commitCount :: IO CInt
+
+foreign import ccall unsafe "rdkafka_hs_test_state_commit_async" commitAsync :: IO CInt
+
+commitObservation :: IO (Int, Int)
+commitObservation = (,) <$> (fromIntegral <$> commitCount) <*> (fromIntegral <$> commitAsync)

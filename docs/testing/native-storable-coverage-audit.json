@@ -22,5 +22,38 @@
   },
   "baseline_revision": "542b0d7",
   "verified_on_candidate": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
-  "candidate_classified_ticks": 484
+  "candidate_classified_ticks": 484,
+  "outbound_union_audit": {
+    "baseline_revision": "c8317f0",
+    "classified_ticks": 203,
+    "classification_keys": 42,
+    "ranges": [
+      {
+        "start": 1205,
+        "end": 1226,
+        "rationale": "RdKafkaVuT is only an outbound argument union. Public producers construct values that withArrayLen writes for rd_kafka_produceva; no src call reads this private union with peek. Native test observers inspect C arguments directly and do not use this Haskell reader."
+      },
+      {
+        "start": 1227,
+        "end": 1228,
+        "rationale": "The outbound argument array supplies an explicit count, so public producers do not construct an End terminator."
+      },
+      {
+        "start": 1232,
+        "end": 1234,
+        "rationale": "ProducerRecord has no per-record timestamp input. No src call constructs the private Timestamp union variant."
+      },
+      {
+        "start": 1241,
+        "end": 1243,
+        "rationale": "Public Headers are ordered byte pairs converted to individual Header union entries; no src call supplies a prebuilt native header-list pointer."
+      },
+      {
+        "start": 1244,
+        "end": 1246,
+        "rationale": "Public ProducerRecord selects a TopicName, not a native topic handle. No src call constructs this private union variant."
+      }
+    ],
+    "excluded": "All public outbound variants and their actual writer/size/alignment paths remain measured; no blanket union-instance exclusion."
+  }
 }

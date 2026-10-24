@@ -262,6 +262,13 @@ families "buffer" =
   ]
   where
     b label change test = mutation "public-contract" label consumer change test
+families "consumer-commit" =
+  [ control "unchanged-control" integration "consumer-commit",
+    mutation "consumer-commit" "async-commit-submitted-synchronously" consumerConversion (replace "offsetCommitToBool OffsetCommitAsync = True" "offsetCommitToBool OffsetCommitAsync = False") "async commit modes preserve native flags callback offsets and broker state",
+    mutation "consumer-commit" "message-commit-next-offset-lost" consumerConversion (replace "PartitionOffset $ moff + 1" "PartitionOffset moff") "async commit modes preserve native flags callback offsets and broker state",
+    mutation "consumer-commit" "commit-callback-error-suppressed" "src/Kafka/Consumer/Callbacks.hs" (section "offsetCommitCallback ::" "-------------------------------------------------------------------------------" (replace "callback (KafkaConsumer (Kafka k') kc) (KafkaResponseError err) pls" "callback (KafkaConsumer (Kafka k') kc) (KafkaResponseError RdKafkaRespErrNoError) pls")) "sync empty commit requests preserve no-offset callbacks",
+    mutation "consumer-commit" "commit-all-submits-empty-list" consumer (replace "newForeignPtr_ nullPtr >>= commitOffsets o k" "withPartitionList k (toNativeTopicPartitionList []) (commitOffsets o k)") "async commit modes preserve native flags callback offsets and broker state"
+  ]
 families "metadata-fields" =
   [ control "unchanged-control" integration "metadata-contract",
     d "broker-port-decoded-as-id" (replace "bmBrokerPort = port'RdKafkaMetadataBrokerT bm" "bmBrokerPort = id'RdKafkaMetadataBrokerT bm") "distinct native metadata fields retain exact identities and errors",
@@ -300,7 +307,7 @@ families "config" =
     mutation "config-strings" "c-string-key-guard-removed" "src/Kafka/Internal/Setup.hs" (replace "Text.any (== '\\0') key" "False") "producer topic rejects NUL key",
     mutation "config-strings" "c-string-value-guard-removed" "src/Kafka/Internal/Setup.hs" (replace "Text.any (== '\\0') value" "False") "producer global rejects NUL value"
   ]
-families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata, metadata-utf8, metadata-partitions, metadata-fields, buffer, data or config")
+families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata, metadata-utf8, metadata-partitions, metadata-fields, consumer-commit, buffer, data or config")
 
 replace :: String -> String -> String -> String
 replace old new source = case [i | (i, rest) <- zip [0 ..] (tails source), old `isPrefixOf` rest] of

@@ -14,6 +14,7 @@ import Kafka.CallbackTestSupport (runChildProbe)
 import Kafka.Consumer
 import Kafka.ConsumerStateSupport
 import Kafka.Integration.ConfigStringContractTest qualified as ConfigStringContractTest
+import Kafka.Integration.ConsumerCommitContractTest qualified as ConsumerCommitContractTest
 import Kafka.Integration.ConsumerStateContractTest qualified as ConsumerStateContractTest
 import Kafka.Integration.DiagnosticContractTest qualified as DiagnosticContractTest
 import Kafka.Integration.MetadataContractTest qualified as MetadataContractTest
@@ -146,6 +147,7 @@ tests testEnv =
              ],
       rebalanceErrorTests testEnv,
       ConsumerStateContractTest.tests testEnv,
+      ConsumerCommitContractTest.tests testEnv,
       DiagnosticContractTest.tests testEnv,
       RuntimeContractTest.tests testEnv,
       MetadataContractTest.tests testEnv,

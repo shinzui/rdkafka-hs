@@ -189,6 +189,7 @@ test-suite rdkafka-hs-integration
     Kafka.Integration.CallbackLifetimeTest
     Kafka.Integration.ConfigStringContractTest
     Kafka.Integration.ConfigurationTest
+    Kafka.Integration.ConsumerCommitContractTest
     Kafka.Integration.ConsumerPropertyTest
     Kafka.Integration.ConsumerStateContractTest
     Kafka.Integration.ConsumerTest
