@@ -1,7 +1,7 @@
 ---
 id: 15
 slug: validate-broker-failures-and-supported-environments
-title: "Validate broker failures and supported environments"
+title: "Validate the primary release candidate"
 kind: exec-plan
 created_at: 2026-10-24T04:50:25Z
 intention: "intention_01m5p37ej8e3h92gkf2wp9j6qa"
@@ -19,120 +19,84 @@ provenance:
       note: "Keep real assignment-loss True evidence with the existing EP-15 eviction and handoff scenarios."
 ---
 
-# Validate broker failures and supported environments
-
-
-This ExecPlan is a living document. Keep its evidence, milestones, dependencies, and decisions current.
-
+# Validate the primary release candidate
 
 ## Purpose / Big Picture
 
-
-Prove the combined candidate behaves correctly under real broker failures and in explicitly tested environments. Release evidence will distinguish supported tested behavior from assumptions about other compilers, native libraries, brokers, and operating systems. Authentication/authorization and native-memory safety are exercised beyond simple setter return values.
-
+Finish a release-ready candidate on the demonstrated primary environment, with clean package execution and truthful limits. On 2026-10-24 the user explicitly narrowed this child and EP-14, requested a comprehensive follow-up and required preserving all started work. [ADR-27](../adr/release-validation-has-explicit-primary-and-expanded-scopes.md) defines this scope. The broader former requirements are preserved in [MasterPlan 3](../masterplans/3-complete-deferred-coverage-and-compatibility-validation.md), EP-17 through EP-20, and [the deferred ledger](../testing/deferred-validation.md).
 
 ## Progress
 
+- [x] M1: The exact primary compiler/native/broker/runtime tuple and complete normal/mapped suite are source-bound, with retained semantic/tooling/native controls and truthful diagnostic limits.
+- [ ] M2: A clean source distribution builds all enabled components and passes its unit suite, representative repair/ownership broker cases and bounded example verification.
+- [ ] M3: Required Cabal/binding/documentation/Nix checks and primary inventory freshness pass; evidence, tested claims and the separate release handoff agree.
 
-- [ ] M1: Run-owned fault fixtures prove outage/reconnection, rebalance, and transactional recovery against real brokers with no shared-broker mutation.
-- [ ] M2: Real authentication/authorization, compatibility tuples, and native lifetime diagnostics pass with exact environment evidence.
-- [ ] M3: The complete candidate passes the public-contract/ownership inventory, supported matrix, optimized/instrumented builds, and source-distribution replay with no unexplained gaps.
-
-Not started. The checks described below are deliverables to implement, not existing evidence.
-
+In Progress. The frozen source fingerprint `060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e` passes all 78 unit and 708 integration cases normally and mapped, plus four actual nonthreaded runtime checks. Twenty-four tooling controls pass. The primary environment is macOS 26.7, Darwin 25.6.0/arm64, GHC 9.12.4, Cabal 3.16.1.0, loaded librdkafka 2.15.0 and private Redpanda v26.2.1. Package replay and final documentation/check reconciliation remain.
 
 ## Surprises & Discoveries
 
+The original wider acceptance had no implementation started in this child. Existing work from EP-8 through EP-14 includes real primary broker and controlled native failure/ownership cases, generated laws, semantic mutation families and focused AddressSanitizer runs. Preserve them. They do not establish Linux, Apache multi-broker, real authenticated TLS/ACL operation or native leak freedom. Current Darwin ASan runs use leak detection disabled; weak references and counters have their own narrower claims.
 
-The existing suite uses a single local Redpanda and one primary GHC/librdkafka tuple. `setSaslCredentials` tests call setters on unauthenticated unreachable clients, which does not prove authentication or credential replacement. Consumer destroy tests use a silent TCP listener, useful for shutdown bounds but insufficient for real disconnect/reconnect and broker failover behavior.
-
+The full report leaves 192 unclassified handwritten ticks and 35 historical open inventory rows, many now backed by tests awaiting exhaustive reconciliation. The user transferred these explicitly; `docs/testing/deferred-validation-snapshot.json` preserves exact rows, source keys and evidence hashes without changing their status to passing.
 
 ## Decision Log
 
+2026-10-24: The user selected primary-environment release qualification and a comprehensive follow-up. Replace this child's unstarted broad matrix with concrete primary package/candidate acceptance. Retain the original broader requirements in EP-17 (Linux/newer/native lifetime diagnostics), EP-18 (Apache distributed failures/groups/transactions), EP-19 (real security/reconnect), and EP-20 (strict complete gate). No test or implemented repair is removed.
 
-2026-10-24: Cover meaningful environment axes with representative declared tuples, not an unbounded Cartesian product. Mandatory rows cannot be waived because a machine or diagnostic is unavailable. Keep all destructive fault actions within fixtures owned by this run; no publication or infrastructure purchases are authorized by this plan.
-
+2026-10-24: Reuse the full identical-source normal/mapped runs for the checkout. Clean package acceptance builds every enabled component, verifies packaged source identity, runs all unit cases and representative nonzero repair/ownership/runtime broker cases plus the bounded actual example. Repeating the whole identical broker suite in every extraction is unnecessary unless package differences or failures invalidate the source proof.
 
 ## Outcomes & Retrospective
 
-
-Not implemented. Record observed results and durable lessons at completion; update relevant ADRs and the parent registry.
-
+Primary execution is established; clean package and final gate acceptance are pending. Completing this child prepares a separate release task and does not publish, choose a new package version, tag, push or mark the broader intention complete. Comprehensive qualification remains tracked under MasterPlan 3.
 
 ## Context and Orientation
 
+`rdkafka-hs.cabal` registers the library, example, unit suite and integration suite. `cabal sdist` must include every registered Haskell/C test source and the existing test/coverage tools. `test-integration/Kafka/TestEnv.hs` owns private broker fixtures and strict assertions. The current private broker uses 127.0.0.1:39092/admin 39644; no action may mutate the machine-global broker on 9092.
 
-Use completed EP-8–EP-14 tests and fixtures. Add `test-integration/Kafka/Integration/BrokerFailureTest.hs`, `RebalanceContractTest.hs`, and `AuthenticationTest.hs` as needed, plus `scripts/test-compatibility.sh` and `docs/testing/compatibility-matrix.json`. Existing private-broker lifecycle lives in `nix/redpanda.nix`, `flake.module.nix`, and `justfile`; do not change the machine-global broker. This child may add test-only isolated configurations using available supported tooling or consume a supplied disposable endpoint. It must not silently turn `just test-it` into a cluster-reset command.
+`docs/testing/coverage-evidence.json` preserves the current full mapped candidate, loaded version, runtime supplement and raw artifact hashes. Focused manifests such as `partition-list-evidence.json`, `final-boundaries-evidence.json`, `legacy-seek-evidence.json`, `callback-native-diagnostics.json`, and the earlier repair evidence retain native/semantic controls. `scripts/test-mutations.hs` is the single Haskell mutation runner; do not recreate the four replaced Python runners. Python remains allowed for edits/probes; minimize permanent scripts.
 
-This repository is `rdkafka-hs`, a Haskell wrapper around librdkafka. The reviewed baseline is `9c41b3d`; planning commit `7646e69` added the six-defect repair initiative. `rdkafka-hs.cabal` lists the public modules and two test suites: `rdkafka-hs-test` has 14 baseline tests and `rdkafka-hs-integration` has 116. `test/Main.hs` and `test-integration/Main.hs` register cases; `test-integration/Kafka/TestEnv.hs` owns broker fixtures. Generated bindings come from `src/Kafka/Internal/RdKafka.chs`, with hand-written conversion and lifetime code alongside them.
+[ADR-2](../adr/release-validation-before-publication.md) requires exact-candidate validation before separate publication. [ADR-5](../adr/integration-tests-run-against-a-project-local-redpanda.md) protects shared resources. [ADR-27](../adr/release-validation-has-explicit-primary-and-expanded-scopes.md) governs this explicit release scope, while [ADR-10](../adr/release-coverage-requires-behavior-and-ownership-evidence.md) retains comprehensive qualification under MasterPlan 3. Existing distribution history in ADR-7 stays historical fact.
 
-Read [ADR-10](../adr/release-coverage-requires-behavior-and-ownership-evidence.md): coverage means evidence for each supported behavior and critical ownership branch, not a passing count. [ADR-5](../adr/integration-tests-run-against-a-project-local-redpanda.md) protects the shared broker: use the private endpoint at `127.0.0.1:39092`, run-prefixed resources, and only run-owned fault targets. [ADR-1](../adr/consumer-queue-and-teardown-ownership.md) distinguishes graceful close from destruction and requires one native deallocator. [ADR-4](../adr/toolchain-floor-is-ghc-9-12-and-librdkafka-2-15.md) retains the existing compiler/library floor; [ADR-2](../adr/release-validation-before-publication.md) requires exact-candidate validation before publication. Existing first-release platform/provisioning limits in [ADR-7](../adr/first-release-scope-and-distribution.md) describe the earlier release; the new compatibility plan must document its additional test environments without rewriting that release history.
-
-Use Mori to locate dependency sources before relying on APIs. `mori://confluentinc/librdkafka` owns the native API. `mori://haskell/cabal` owns project-relative `cabal/doc/cabal-project-description-file.rst`, whose coverage section documents `--enable-coverage`. `mori://UnkindPartition/tasty/packages/tasty-quickcheck` supplies a property-test adapter; its source is under project-relative `tasty/quickcheck/Test/Tasty/QuickCheck.hs` in `mori://UnkindPartition/tasty`. Source-file artifact URIs are pending. Consult the local source first; verify current releases through authoritative package registries/upstream tags before choosing new test dependency bounds. No runtime dependency upgrade is implied. Do not inspect `/nix/store` or filesystem root.
-
+Use Mori before dependency APIs and authoritative registries/upstream tags before any new version/bound decision. No new tuple or bound is needed for this primary replay. Never traverse `/nix/store` or filesystem root.
 
 ## Plan of Work
 
+M1 accepts the complete primary source-bound normal/mapped runs, actual nonthreaded supplement, existing semantic/native controls and tooling checks. Record actual OS/compiler/Cabal/native/broker identities, not only build-time flags. Keep all diagnostic limitations visible. Update only stale existing inventory references/fingerprints supported by the complete current run; moved test groups keep the same cases. Do not mislabel the exhaustive deferred rows as tested.
 
-M1 builds deterministic failure fixtures using a run-owned proxy or isolated broker instances. Exercise connection refusal, an established connection that stops responding, connection loss during produce/poll/commit, broker restart, and recovery within configured timeouts. Verify callback counts and actual offsets/records: duplicates permitted by the chosen delivery mode must be distinguished from loss, and exactly-once claims require transactional proof. Never claim exactly-once delivery from ordinary producer retries. Use two consumers with unique group IDs to verify assignment, revocation, assignmentLost when supported, eager and cooperative strategies actually exposed through properties, and delivery across rebalance in both callback modes. A multi-broker Apache Kafka fixture must exercise leader failover for a replicated topic, with before/after leader metadata and record/commit observations. Broker restart and leader failover are different cases. Own and restore all processes, proxies, topics, and users this run mutates; add preflight checks that refuse shared or unowned endpoints for fault actions.
+M2 creates a source tarball under an ignored build directory, records its hash, checks that all registered source/test/C/script files are included, and extracts into a fresh directory with no source symlinks back to the checkout. Build library, examples and both suites there using the same primary environment. Compare packaged source/test bytes to the checkout. Run all unit properties with 1,000 cases/seed 20261024 and a representative broker selection that exercises topic configuration, producer ownership, seek errors, persistent callback teardown, transaction errors, partition-list cleanup and runtime behavior. Fail on missing groups or zero tests. Run the actual example executable with broker/topic/group arguments under a timeout and independently verify its exact records/offsets/headers/committed offset, reusing the existing temporary Haskell example verifier where available. Retain outputs and exact commands.
 
-The assignmentLost inventory row belongs here: EP-14 verifies healthy False results, while static-member fatal fencing does not guarantee a revocation callback. Exercise actual eviction or poll-liveness loss and observe True inside RebalanceBeforeRevoke, before native unassignment can clear it; a later False snapshot or a fatal error alone does not close this obligation.
-
-Reuse EP-12's transaction flow under interruption: source offsets advance with committed output and do not advance on abort, retryable failures recover, and fatal fencing requires a new producer. Use barriers/events or observed protocol state to trigger each failure window; arbitrary sleeps are not evidence the window was exercised. Assertion logs record the state reached before disruption, operation result, cleanup, and recovered state. Missing capabilities must fail the named mandatory case instead of silently skipping it.
-
-M2 defines concrete released environment tuples in `docs/testing/compatibility-matrix.json`. Required axes are the current Darwin/Redpanda/GHC 9.12.4/librdkafka 2.15 baseline; Linux build/unit plus representative real-broker integration and native invalid-access/leak diagnostics; an Apache Kafka broker configuration including replicated failover; and a newer released compiler/native-library tuple compatible with declared package bounds. A tuple may cover multiple axes. If the floor is already the newest compatible release, document registry/tag evidence and collapse that axis rather than inventing a version. Record exact OS/architecture, GHC, Cabal, c2hs, librdkafka, broker image digest/configuration, commands, and source identity for each tuple. Test the library version actually loaded, not only headers used to compile. The entire deterministic baseline suite runs on the primary tuple, and cross-tuple smoke selections must include F1–F6, both poll modes, core produce/consume/offset/transaction flows, and C/Haskell lifetime tests. A blank or unrun required tuple blocks completion. Do not silently narrow advertised support to make a matrix green; surface that as a separate scope decision.
-
-Add a private broker security configuration and test successful TLS/authentication, rejected credentials/certificate verification, authorization denial for production/consumption/admin operations, and `setSaslCredentials` affecting a subsequent authentication after a controlled reconnect. Preserve existing authenticated-connection semantics: the setter does not promise immediate reauthentication. Use ephemeral credentials/certificates and scrub secrets from evidence. Exercise supported SASL mechanisms promised in project documentation; unclaimed native-library mechanisms need an explicit applicability rationale rather than assumed coverage. Do not infer security coverage from a plaintext setter test.
-
-Run allocation-attributed/native invalid-access diagnostics on the relevant C ownership tests. Linux sanitizer or Valgrind evidence and Darwin leak/weak-reference evidence are complementary; verify the selected tool can see librdkafka and Haskell/C bridge allocations using a deliberately failing control. If a diagnostic cannot instrument a component, document the limitation and supply an effective alternative for that required path; no clean-looking but uninstrumented result counts. Keep suppression files specific and justified, and never suppress project allocation stacks or ignore a positive control failure.
-
-M3 runs the source-distribution build/tests on a clean extraction and replays the evidence manifest against the final candidate. Implement `just test-compatibility` as a fail-closed entry point: it preflights required fixtures, runs or verifies current-revision tuple evidence, and reports every unavailable/failed/stale row. Existing local development tests remain convenient, while the release gate requires the complete matrix. Re-run changed scenarios when source/configuration changes invalidate their proof. Update the testing guide, README's tested-environment claims, and the relevant ADRs for the accepted execution environment and lifetime diagnostics. Distinguish borrowed external test endpoints from local broker orchestration; this initiative is not a general deployment platform or a CI rollout.
-
+M3 runs Cabal/binding/documentation/Nix checks and the explicit `scripts/check-coverage.py --allow-open` source-freshness/inventory validation. `just coverage-check` remains strict and is not this primary release gate; future `just test-compatibility` belongs to EP-20. Record one accurate primary row in `docs/testing/compatibility-matrix.json` and a concise `docs/testing/primary-validation-evidence.json`. Link every deferred obligation to MasterPlan 3. Update README/testing claims, complete this child and MasterPlan 2's primary integration gate, and leave a concrete separate release handoff. No publication is authorized here.
 
 ## Concrete Steps
 
-
-Run from `/Users/shinzui/Keikaku/bokuno/rdkafka-hs`, or the current checkout root:
+From the repository root:
 
 ```bash
-nix develop
-mori registry show confluentinc/librdkafka --full
-mori registry show haskell/cabal --full
-mori registry show UnkindPartition/tasty --full
+nix develop -c cabal build all -f examples -f integration
+nix develop -c cabal check
+nix develop -c cabal sdist --output-directory=dist-primary-release
+nix develop -c python3 scripts/check-coverage.py --allow-open
+nix develop -c just check
+```
+
+The complete normal and mapped source commands are already captured in the current full evidence; rerun only if source/configuration changes invalidate it. In the fresh tarball extraction, run:
+
+```bash
 cabal build all -f examples -f integration
-cabal test rdkafka-hs-test --test-show-details=direct
-just test-it
+cabal test rdkafka-hs-test --test-show-details=direct --test-options='--quickcheck-tests=1000 --quickcheck-replay=20261024'
+cabal test rdkafka-hs-integration -f integration --test-show-details=direct --test-options='-p /topic-configuration/||/partition-list-ownership/||/runtime-contract/||/seek-partitions/'
 ```
 
-Run focused cases while developing and the full required gates after meaningful changes. Preserve unrelated `.seihou/manifest.json` edits. Source changes require normal and instrumented validation; documentation-only evidence updates do not justify repeating all expensive scenarios. Commit implementation boundaries using Conventional Commits plus this child's ExecPlan trailer, `MasterPlan: docs/masterplans/2-fix-inherited-release-review-defects.md`, and `Intention: intention_01m5p37ej8e3h92gkf2wp9j6qa`.
-
-The primary suite and final gate run from the development shell:
-
-```bash
-just test-it
-just coverage
-just test-compatibility
-just coverage-check
-cabal check
-cabal sdist
-```
-
-EP-15 must add the third command and exact per-tuple invocation recipes to `docs/testing/coverage.md`. Test `just test-compatibility` with an intentionally missing fixture and stale evidence to prove nonzero exit. Use existing `RDKAFKA_TEST_BROKER` for an explicitly supplied private endpoint only after ownership/capability preflight; never substitute port 9092. Record actual diagnostic/tool arguments, no placeholder commands, before acceptance.
-
+Supplement that named selection with the existing producer/callback/transaction repair groups and document all actual names/counts. The example verification uses three stdin lines and checks four exact records, the final fancy header and broker committed next offset four; see `docs/testing/example-evidence.json`. These are required behaviors, not an instruction to install another permanent runner.
 
 ## Validation and Acceptance
 
-
-Every required fault scenario observes the targeted state before disruption and asserts record/error/offset outcomes afterward; reconnection and leader failover both have evidence. Both callback modes preserve their defined behavior through applicable failures. Real authentication succeeds and fails as expected, and credential rotation is verified on a fresh authentication. All required environment axes have source-bound evidence; unavailable tooling/endpoints produce an incomplete status. Native diagnostics catch their intentionally faulty controls and report no unexplained project leaks/invalid accesses in the repaired candidate. Source-distribution tests reproduce supported behavior. `just coverage-check` passes with zero open or unexplained supported-contract/critical-ownership rows, and `just test-compatibility` passes without skip or allow-open flags. This does not claim all possible inputs, thread schedules, or dependency versions were exhaustively tested; it establishes an explicit checked support contract.
-
+Every implemented regression passes; full primary normal/mapped source evidence and the actual runtime supplement are current. Clean package source identity, enabled-component builds, complete unit cases, representative repair/ownership/runtime broker cases and independent bounded example effects pass. Required package/binding/documentation/Nix checks pass. The primary report lists exact versions and accurate native instrumentation limits. The 35 historical open rows and 192 current unclassified ticks remain explicitly preserved for the comprehensive follow-up; no confirmed failing regression is deferred or hidden. Actual release version selection/publication is separate.
 
 ## Idempotence and Recovery
 
-
-All runs must be repeatable with fresh run IDs. Store generated reports under ignored build/artifact directories; commit the inventory schema, requirements, concise evidence manifest, and commands, not large generated HTML. Do not remove another run's topics or stop a broker not owned by the fixture. On failure retain the seed, operation trace, exact environment, and failure log; restore owned fault fixtures in `finally` before reporting failure. A retry that passes does not erase an earlier failure: diagnose it or keep the row open. Unavailable required environments remain blockers. No tagging, upload, remote publication, or downstream repository mutation is part of this plan.
-
+Use a fresh ignored extraction and unique topic/group prefixes. Do not reuse a dirty package build as a clean replay. Restore only owned fixture resources in `finally`; keep descriptors open through native consumer destruction. Preserve failed seeds/logs and diagnose a failure before accepting a retry. Do not delete shared topics, reset clusters, alter 9092, touch unrelated `.seihou/manifest.json`, move tags, upload or push. Documentation-only changes do not require repeating identical-source full broker execution.
 
 ## Interfaces and Dependencies
 
-
-Hard dependencies on whole children `docs/plans/8-apply-topic-creation-configuration-safely.md`, `docs/plans/9-honor-producer-settings-and-release-rejected-callbacks.md`, `docs/plans/10-report-per-partition-seek-failures.md`, `docs/plans/11-own-native-callbacks-through-client-teardown.md`, `docs/plans/12-release-transaction-error-objects.md`, `docs/plans/13-make-coverage-evidence-and-test-fixtures-reliable.md`, and `docs/plans/14-cover-the-public-api-and-pure-data-laws.md`. This ensures expensive cross-environment/fault tests exercise a locally repaired and verified candidate. EP-13 owns inventory schema and base fixtures; this child owns environment capability/evidence schema and fault/security fixtures. The master coordinator reconciles final evidence and marks the initiative complete; publication remains separate.
+Whole-child hard dependencies are EP-8 through EP-14 under `docs/masterplans/2-fix-inherited-release-review-defects.md`; EP-14 is Complete under the user-approved primary scope. Own the primary compatibility row, package replay and final handoff. MasterPlan 3 owns exhaustive/global qualification and its separate gate; it does not block this explicitly narrowed release. Preserve all original artifact/source links and provenance. Commits include this ExecPlan, the current MasterPlan and intention trailers.

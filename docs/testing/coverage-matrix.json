@@ -2278,7 +2278,7 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -2345,7 +2345,7 @@
         "rdkafka-hs-integration.producer-properties.callback composition preserves order and identity"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -2440,7 +2440,7 @@
         "rdkafka-hs-integration.seek-partitions.sync.native tail sentinel replays final two records"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence": "docs/testing/seek-evidence.json",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
@@ -2519,7 +2519,7 @@
         "rdkafka-hs-integration.producer-regressions.later delivery callback replaces the earlier callback"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -2628,7 +2628,7 @@
       "status": "tested",
       "native_diagnostics": "docs/testing/callback-native-diagnostics.json",
       "mutations": "dist-mutations/20261024T135134Z-callback-6370-0/results.json",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -2686,7 +2686,7 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -2747,7 +2747,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -2808,7 +2808,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -2869,7 +2869,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -2930,7 +2930,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -2991,7 +2991,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -3052,7 +3052,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -3113,7 +3113,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -3174,7 +3174,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -3235,7 +3235,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -3296,7 +3296,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -3357,7 +3357,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -3418,7 +3418,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -3479,7 +3479,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -3540,7 +3540,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -3601,7 +3601,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -3662,7 +3662,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -3723,7 +3723,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -3784,7 +3784,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -3845,7 +3845,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -3900,7 +3900,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -3955,7 +3955,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4010,7 +4010,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4065,7 +4065,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4111,7 +4111,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4157,7 +4157,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4202,7 +4202,7 @@
         "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4245,7 +4245,7 @@
         "rdkafka-hs-integration.public-contract.deprecated-runners.sync consumer preserves configuration construction failure"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad"
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e"
     },
     {
       "id": "API-Kafka-Consumer-Types-Offset",
@@ -4274,7 +4274,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4320,7 +4320,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4366,7 +4366,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4412,7 +4412,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4458,7 +4458,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4504,7 +4504,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4550,7 +4550,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4596,7 +4596,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4642,7 +4642,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4688,7 +4688,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4733,7 +4733,7 @@
         "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4778,7 +4778,7 @@
         "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4823,7 +4823,7 @@
         "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4868,7 +4868,7 @@
         "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4913,7 +4913,7 @@
         "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4958,7 +4958,7 @@
         "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -5003,7 +5003,7 @@
         "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -5048,7 +5048,7 @@
         "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -5101,7 +5101,7 @@
         "rdkafka-hs-integration.public-contract.consumer-state.sync.empty-requests-preserve-empty-assignment"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -5185,7 +5185,7 @@
         "rdkafka-hs-integration.public-contract.consumer-commit.sync committed query preserves an unavailable coordinator timeout"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad"
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e"
     },
     {
       "id": "API-Kafka-Consumer-committed",
@@ -5209,7 +5209,7 @@
         "rdkafka-hs-integration.public-contract.consumer-commit.sync committed query preserves an unavailable coordinator timeout"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad"
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e"
     },
     {
       "id": "API-Kafka-Consumer-consumerClosed",
@@ -5227,7 +5227,7 @@
         "rdkafka-hs-integration.public-contract.runtime-contract.deprecated sync runner closes after an exact record"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -5258,8 +5258,8 @@
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
       "tests": [
-        "rdkafka-hs-integration.broker.fatal.async",
-        "rdkafka-hs-integration.broker.fatal.sync",
+        "rdkafka-hs-integration.public-contract.fatal.async",
+        "rdkafka-hs-integration.public-contract.fatal.sync",
         "rdkafka-hs-integration.public-contract.deprecated-runners.async consumer closes after Returned",
         "rdkafka-hs-integration.public-contract.deprecated-runners.async consumer closes after Refused",
         "rdkafka-hs-integration.public-contract.deprecated-runners.async consumer closes after Thrown",
@@ -5272,7 +5272,7 @@
         "rdkafka-hs-integration.public-contract.deprecated-runners.sync consumer preserves configuration construction failure"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad"
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e"
     },
     {
       "id": "API-Kafka-Consumer-pausePartitions",
@@ -5343,7 +5343,7 @@
         "rdkafka-hs-integration.public-contract.runtime-contract.deprecated sync runner closes after an exact record"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -5431,7 +5431,7 @@
         "rdkafka-hs-integration.public-contract.runtime-contract.deprecated sync runner closes after an exact record"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -5575,7 +5575,7 @@
         "rdkafka-hs-integration.public-contract.runtime-contract.deprecated sync runner closes after an exact record"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -5622,7 +5622,7 @@
         "rdkafka-hs-integration.seek-partitions.sync.rewind propagates assignment change after committed lookup"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence": "docs/testing/seek-evidence.json",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
@@ -5666,7 +5666,7 @@
         "rdkafka-hs-integration.public-contract.deprecated-runners.sync consumer preserves configuration construction failure"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad"
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e"
     },
     {
       "id": "API-Kafka-Consumer-setConsumerQueueIOEvent",
@@ -5761,7 +5761,7 @@
         "rdkafka-hs-integration.public-contract.diagnostics.topic cancellation at native acquisition releases its array"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -5803,7 +5803,7 @@
         "rdkafka-hs-integration.public-contract.diagnostics.topic cancellation at native acquisition releases its array"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -5845,7 +5845,7 @@
         "rdkafka-hs-integration.public-contract.diagnostics.topic cancellation at native acquisition releases its array"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -5887,7 +5887,7 @@
         "rdkafka-hs-integration.public-contract.diagnostics.topic cancellation at native acquisition releases its array"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -5921,7 +5921,7 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -5969,7 +5969,7 @@
         "rdkafka-hs-integration.public-contract.metadata-contract.sync group identity lifecycle and supported native states"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad"
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e"
     },
     {
       "id": "API-Kafka-Metadata-GroupInfo",
@@ -6000,7 +6000,7 @@
         "rdkafka-hs-integration.public-contract.metadata-contract.sync group identity lifecycle and supported native states"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad"
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e"
     },
     {
       "id": "API-Kafka-Metadata-GroupMemberId",
@@ -6031,7 +6031,7 @@
         "rdkafka-hs-integration.public-contract.metadata-contract.sync group identity lifecycle and supported native states"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -6079,7 +6079,7 @@
         "rdkafka-hs-integration.public-contract.metadata-contract.sync group identity lifecycle and supported native states"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -6127,7 +6127,7 @@
         "rdkafka-hs-integration.public-contract.metadata-contract.sync group identity lifecycle and supported native states"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad"
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e"
     },
     {
       "id": "API-Kafka-Metadata-GroupProtocolType",
@@ -6158,7 +6158,7 @@
         "rdkafka-hs-integration.public-contract.metadata-contract.sync group identity lifecycle and supported native states"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -6206,7 +6206,7 @@
         "rdkafka-hs-integration.public-contract.metadata-contract.sync group identity lifecycle and supported native states"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -6254,7 +6254,7 @@
         "rdkafka-hs-integration.public-contract.metadata-contract.sync group identity lifecycle and supported native states"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad"
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e"
     },
     {
       "id": "API-Kafka-Metadata-PartitionMetadata",
@@ -6285,7 +6285,7 @@
         "rdkafka-hs-integration.public-contract.metadata-contract.sync group identity lifecycle and supported native states"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad"
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e"
     },
     {
       "id": "API-Kafka-Metadata-TopicMetadata",
@@ -6316,7 +6316,7 @@
         "rdkafka-hs-integration.public-contract.metadata-contract.sync group identity lifecycle and supported native states"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad"
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e"
     },
     {
       "id": "API-Kafka-Metadata-WatermarkOffsets",
@@ -6347,7 +6347,7 @@
         "rdkafka-hs-integration.public-contract.metadata-contract.sync group identity lifecycle and supported native states"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad"
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e"
     },
     {
       "id": "API-Kafka-Metadata-allConsumerGroupsInfo",
@@ -6532,7 +6532,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -6594,7 +6594,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -6656,7 +6656,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -6718,7 +6718,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -6780,7 +6780,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -6842,7 +6842,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -6904,7 +6904,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -6966,7 +6966,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -7028,7 +7028,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -7090,7 +7090,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -7136,7 +7136,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -7188,7 +7188,7 @@
         "rdkafka-hs-integration.public-contract.deprecated-runners.producer preserves configuration exceptions without invoking handler"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad"
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e"
     },
     {
       "id": "API-Kafka-Producer-Types-ProducePartition",
@@ -7217,7 +7217,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -7263,7 +7263,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -7309,7 +7309,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -7363,7 +7363,7 @@
         "rdkafka-hs-integration.producer-regressions.empty queue supports repeated flush and close"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -7417,7 +7417,7 @@
         "rdkafka-hs-integration.producer-regressions.empty queue supports repeated flush and close"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -7471,7 +7471,7 @@
         "rdkafka-hs-integration.producer-regressions.empty queue supports repeated flush and close"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -7509,7 +7509,7 @@
         "rdkafka-hs-integration.public-contract.deprecated-runners.producer preserves configuration exceptions without invoking handler"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad"
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e"
     },
     {
       "id": "API-Kafka-Producer-setSaslCredentials",
@@ -7552,7 +7552,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -7598,7 +7598,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -7644,7 +7644,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -7690,7 +7690,7 @@
         "rdkafka-hs-integration.topic-configuration.deletion reports a missing response as a timeout"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -7744,7 +7744,7 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -7796,7 +7796,7 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -7851,7 +7851,7 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -7905,7 +7905,7 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -7959,7 +7959,7 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -8013,7 +8013,7 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -8067,7 +8067,7 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -8113,7 +8113,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -8159,7 +8159,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -8205,7 +8205,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -8251,7 +8251,7 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -8300,7 +8300,7 @@
         "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -8349,7 +8349,7 @@
         "rdkafka-hs.Public data contracts.builders.debug contexts preserve order duplicates and the empty-list identity"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -8398,7 +8398,7 @@
         "rdkafka-hs.Public data contracts.builders.debug contexts preserve order duplicates and the empty-list identity"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -8448,7 +8448,7 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -8498,7 +8498,7 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -8548,7 +8548,7 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -8598,7 +8598,7 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -8648,7 +8648,7 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -8698,7 +8698,7 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -8748,7 +8748,7 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -8798,7 +8798,7 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -8848,7 +8848,7 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -8898,7 +8898,7 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -8948,7 +8948,7 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -8998,7 +8998,7 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -9037,7 +9037,7 @@
         "rdkafka-hs.Public properties.version.fixed zero and full version byte boundaries"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -9076,7 +9076,7 @@
         "rdkafka-hs.Public properties.version.fixed zero and full version byte boundaries"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -9115,7 +9115,7 @@
         "rdkafka-hs.Public properties.version.fixed zero and full version byte boundaries"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -9154,7 +9154,7 @@
         "rdkafka-hs.Public properties.version.fixed zero and full version byte boundaries"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -9193,7 +9193,7 @@
         "rdkafka-hs.Public properties.version.fixed zero and full version byte boundaries"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -9249,7 +9249,7 @@
       "status": "tested",
       "native_diagnostics": "docs/testing/callback-native-diagnostics.json",
       "mutations": "dist-mutations/20261024T135134Z-callback-6370-0/results.json",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -9333,7 +9333,7 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -9393,7 +9393,7 @@
         "rdkafka-hs-integration.producer-regressions.known invalid partition rejection releases capture"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -9461,12 +9461,12 @@
         "rdkafka-hs-integration.callback-lifetime.consumer-sync constructor cancellation at native acceptance releases its owner",
         "rdkafka-hs-integration.callback-lifetime.async cancellation while waiting for active callback permits retry",
         "rdkafka-hs-integration.callback-lifetime.sync cancellation while waiting for active callback permits retry",
-        "rdkafka-hs-integration.broker.queue event.async.wakes an idle consumer and stays quiet once disabled",
-        "rdkafka-hs-integration.broker.queue event.async.finds records queued before it was enabled, then rearms",
-        "rdkafka-hs-integration.broker.queue event.async.one wake-up covers several records, then rearms",
-        "rdkafka-hs-integration.broker.queue event.sync.wakes an idle consumer and stays quiet once disabled",
-        "rdkafka-hs-integration.broker.queue event.sync.finds records queued before it was enabled, then rearms",
-        "rdkafka-hs-integration.broker.queue event.sync.one wake-up covers several records, then rearms",
+        "rdkafka-hs-integration.public-contract.queue event.async.wakes an idle consumer and stays quiet once disabled",
+        "rdkafka-hs-integration.public-contract.queue event.async.finds records queued before it was enabled, then rearms",
+        "rdkafka-hs-integration.public-contract.queue event.async.one wake-up covers several records, then rearms",
+        "rdkafka-hs-integration.public-contract.queue event.sync.wakes an idle consumer and stays quiet once disabled",
+        "rdkafka-hs-integration.public-contract.queue event.sync.finds records queued before it was enabled, then rearms",
+        "rdkafka-hs-integration.public-contract.queue event.sync.one wake-up covers several records, then rearms",
         "rdkafka-hs-integration.broker.destroy.async.closes broker connections within one second",
         "rdkafka-hs-integration.broker.destroy.async.is safe to repeat",
         "rdkafka-hs-integration.broker.destroy.async.concurrent destroys both return after cleanup",
@@ -9481,7 +9481,7 @@
       "status": "tested",
       "native_diagnostics": "docs/testing/callback-native-diagnostics.json",
       "mutations": "dist-mutations/20261024T135134Z-callback-6370-0/results.json",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -9529,7 +9529,7 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -9645,7 +9645,7 @@
         "rdkafka-hs-integration.Fixture error controls.weak control retains while rooted and collects after release"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -9691,7 +9691,7 @@
         "rdkafka-hs-integration.topic-configuration.maximum C replication count retains native validation"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -9743,7 +9743,7 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -9784,7 +9784,7 @@
         "rdkafka-hs-integration.topic-configuration.concurrent requests keep their own queues and responses"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -9864,7 +9864,7 @@
         "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: minimum unrepresentable partition"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -9913,7 +9913,7 @@
         "rdkafka-hs-integration.producer-regressions.empty queue supports repeated flush and close"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -9951,7 +9951,7 @@
         "rdkafka-hs-integration.producer-regressions.later delivery callback replaces the earlier callback"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -9987,7 +9987,7 @@
         "rdkafka-hs-integration.producer-regressions.native error decoding failure releases rejected callback capture"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -10026,7 +10026,7 @@
         "rdkafka-hs-integration.producer-properties.callback composition preserves order and identity"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -10072,7 +10072,7 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "073aaaf7bb77bebb5b504869d60ce69058795934774f4b63a72e04445f4692ad",
+      "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
       "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",

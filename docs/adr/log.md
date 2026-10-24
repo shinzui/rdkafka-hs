@@ -1,6 +1,8 @@
 # Bundle Update Log
 
 ## 2026-10-24
+* **updated**: Apply exhaustive coverage and broad matrix policy to deferred qualification under ADR-27
+* **created**: Record user-selected primary release scope and preserve comprehensive qualification in MasterPlan 3
 * **updated**: Record deprecated seek active-fetcher precondition and distinguish source diagnosis from unrecorded historical trigger
 * **updated**: Clarify ownership of partially converted consumer partition lists and release before GC
 * **updated**: Scope temporary sync queue wrappers and keep notification descriptors through client destruction.

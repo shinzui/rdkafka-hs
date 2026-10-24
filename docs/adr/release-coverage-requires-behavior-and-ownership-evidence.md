@@ -20,6 +20,14 @@ The pre-release review passed 14 unit and 116 integration tests while reproducin
 
 ## Decision
 
+Scope amendment, 2026-10-24: the comprehensive standard below now belongs to
+[MasterPlan 3](../masterplans/3-complete-deferred-coverage-and-compatibility-validation.md).
+The user explicitly narrowed the immediate release to the demonstrated primary
+environment while preserving every implemented repair and test.
+[ADR-27](release-validation-has-explicit-primary-and-expanded-scopes.md) defines
+that release gate and the deferred-obligation ledger. Open comprehensive rows
+remain visible and cannot be relabeled as passing.
+
 A release candidate must have an inventory mapping every supported public behavior and critical native allocation, ownership transfer, error conversion, and release path to precise test assertions and current-source evidence. Include applicable success, failure, boundary, mode, and lifetime cases. A function being called is not proof that its result or cleanup is correct. Re-exports, diagnostics, deprecated entry points, and pure-data laws remain visible in the inventory.
 
 Fixtures must preserve unexpected errors and assert exact records, offsets, counts, and results. Meaningful concurrency and asynchronous-exception windows require observed barriers or state, not merely thread launch followed by cancellation. Generated property tests provide replay seeds and minimized failures; native-resource checks include leak/invalid-access evidence with positive controls proving instrumentation is effective. Deliberate semantic mutations must fail the focused behavioral tests, not just compilation.
