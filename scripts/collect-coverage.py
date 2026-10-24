@@ -149,7 +149,7 @@ def collect():
         broker_versions = [{"node_id": b["node_id"], "version": b["version"]} for b in json.load(response)]
     if not broker_versions:
         raise ValueError("missing actual broker version")
-    evidence = dict(schema_version=1, revision=run("git", "rev-parse", "HEAD").strip(), fingerprint=before,
+    evidence = dict(test_configuration={key: os.getenv(key) for key in ("RDKAFKA_TEST_BROKER", "RDKAFKA_TEST_ADMIN", "RDKAFKA_TEST_RPK", "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY")}, schema_version=1, revision=run("git", "rev-parse", "HEAD").strip(), fingerprint=before,
                     at=datetime.now(timezone.utc).isoformat(), command=command, suites=list(SUITES), tests=tests,
                     passed_test_count=sum(counts), toolchain=run("ghc", "--numeric-version").strip(), cabal=run("cabal", "--numeric-version").strip(),
                     loaded_native=loaded_native, broker_versions=broker_versions, native=run("pkg-config", "--modversion", "rdkafka").strip(),

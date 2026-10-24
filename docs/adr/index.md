@@ -8,6 +8,7 @@ okf_version: "0.2"
 
 # Architecture Decision Record
 
+- [Admin requests have scoped native ownership and configured deadlines](admin-requests-have-scoped-native-ownership-and-configured-deadlines.md) - Topic administration retains the native client, scopes each owned request and result, validates C representations, and follows the configured native request timeout.
 - [Consumed headers preserve wire order](consumed-headers-preserve-wire-order.md) - Headers is an ordered list that keeps every pair, repeated names and identical pairs included, and the consumer decoder returns it in the order the producer sent it; selecting a value for a repeated name is the caller's choice.
 - [Consumer fatal errors are surfaced in-band](consumer-fatal-errors-are-surfaced-in-band.md) - Once librdkafka raises a fatal error on a consumer, pollMessage and pollMessageBatch return KafkaResponseError RdKafkaRespErrFatal on every call in both callback poll modes, consumerFatalError returns the cause, and the background loop destroys what it polls.
 - [Consumer queue and teardown ownership](consumer-queue-and-teardown-ownership.md) - Manual assignment shares subscription queue routing, and destroyConsumer synchronously stops polling, releases queue references and destroys the client without a graceful group close.

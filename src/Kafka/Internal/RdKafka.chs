@@ -25,6 +25,7 @@ module Kafka.Internal.RdKafka where
 
 import Data.ByteString (ByteString)
 import Data.ByteString qualified as BS
+import Text.Read (readMaybe)
 import Data.Text (Text)
 import Data.Text qualified as Text
 import Control.Exception (finally)
@@ -572,6 +573,9 @@ data RdKafkaEventT
 {#fun rd_kafka_event_destroy as ^
     {`RdKafkaEventTPtr'} -> `()'#}
 
+{#fun rd_kafka_event_error as ^
+    {`RdKafkaEventTPtr'} -> `RdKafkaRespErrT' cIntToEnum #}
+
 ---- QUEUE
 data RdKafkaQueueT
 {#pointer *rd_kafka_queue_t as RdKafkaQueueTPtr foreign -> RdKafkaQueueT #}
@@ -881,6 +885,30 @@ foreign import ccall unsafe "rdkafka.h &rd_kafka_conf_destroy"
 {#fun rd_kafka_conf_set as ^
   {`RdKafkaConfTPtr', `String', `String', id `CCharBufPointer', cIntConv `CSize'}
   -> `RdKafkaConfResT' cIntToEnum #}
+
+-- Borrowed, read-only configuration: the client owns it.
+{#fun rd_kafka_conf as ^ {`RdKafkaTPtr'} -> `RdKafkaConfTPtr' #}
+
+{#fun rd_kafka_conf_get as ^
+  {`RdKafkaConfTPtr', `String', id `Ptr CChar', castPtr `Ptr CSize'}
+  -> `RdKafkaConfResT' cIntToEnum #}
+
+-- | Read the actual native request timeout, including defaults and overrides.
+-- No configuration ownership is transferred by rd_kafka_conf().
+rdKafkaSocketTimeout :: RdKafkaTPtr -> IO (Either String Int)
+rdKafkaSocketTimeout kafka = withForeignPtr kafka $ \_ -> do
+    conf <- rdKafkaConf kafka
+    allocaBytes 32 $ \buffer -> alloca $ \size -> do
+      poke size (32 :: CSize)
+      result <- rdKafkaConfGet conf "socket.timeout.ms" buffer size
+      required <- peek size
+      if result /= RdKafkaConfOk || required > 32
+        then pure (Left "could not read socket.timeout.ms from the native client")
+        else do
+          value <- peekCString buffer
+          pure $ case (readMaybe value :: Maybe Integer) of
+            Just milliseconds | milliseconds > 0 && milliseconds <= toInteger (maxBound :: CInt) -> Right (fromInteger milliseconds)
+            _ -> Left "invalid socket.timeout.ms value from the native client"
 
 newRdKafkaConfT :: IO RdKafkaConfTPtr
 newRdKafkaConfT = do

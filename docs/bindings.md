@@ -7,8 +7,8 @@ changing the binding module, and `just bindings-check` to verify.
 - librdkafka: 2.15.0
 - Header: `src/rdkafka.h`, sha256 `33cca14d9fc87117100ce90bd84f2006b8ba521c788055db6af614d0f2f7ca2f`
 - Exported functions: 495
-- Bound: 134
-- Unbound: 361
+- Bound: 137
+- Unbound: 358
 
 ## librdkafka version
 
@@ -126,13 +126,14 @@ changing the binding module, and `just bindings-check` to verify.
 
 ## Configuration interface
 
-20 of 37 bound.
+22 of 37 bound.
 
 | C function | Haskell binding |
 | --- | --- |
 | `rd_kafka_conf_new` | `rdKafkaConfNew` |
 | `rd_kafka_conf_destroy` | `rdKafkaConfDestroy` (finalizer pointer) |
 | `rd_kafka_conf_dup` | `rdKafkaConfDup` |
+| `rd_kafka_conf` | `rdKafkaConf` |
 | `rd_kafka_conf_set` | `rdKafkaConfSet` |
 | `rd_kafka_conf_set_dr_msg_cb` | `rdKafkaConfSetDrMsgCb'` (foreign import) |
 | `rd_kafka_conf_set_consume_cb` | `rdKafkaConfSetConsumeCb'` (foreign import) |
@@ -146,15 +147,15 @@ changing the binding module, and `just bindings-check` to verify.
 | `rd_kafka_conf_set_opaque` | `rdKafkaConfSetOpaque` |
 | `rd_kafka_opaque` | `rdKafkaOpaque` |
 | `rd_kafka_conf_set_default_topic_conf` | `rdKafkaConfSetDefaultTopicConf` |
+| `rd_kafka_conf_get` | `rdKafkaConfGet` |
 | `rd_kafka_conf_dump` | `rdKafkaConfDump` |
 | `rd_kafka_topic_conf_dump` | `rdKafkaTopicConfDump` |
 | `rd_kafka_conf_dump_free` | `rdKafkaConfDumpFree` |
 | `rd_kafka_conf_properties_show` | `rdKafkaConfPropertiesShow` |
 
-<details><summary>Unbound (17)</summary>
+<details><summary>Unbound (15)</summary>
 
 - `rd_kafka_conf_dup_filter`
-- `rd_kafka_conf`
 - `rd_kafka_conf_set_events`
 - `rd_kafka_conf_set_background_event_cb`
 - `rd_kafka_conf_set_dr_cb`
@@ -168,7 +169,6 @@ changing the binding module, and `just bindings-check` to verify.
 - `rd_kafka_conf_set_ssl_cert`
 - `rd_kafka_conf_set_engine_callback_data`
 - `rd_kafka_conf_get_default_topic_conf`
-- `rd_kafka_conf_get`
 - `rd_kafka_topic_conf_get`
 
 </details>
@@ -476,16 +476,17 @@ changing the binding module, and `just bindings-check` to verify.
 
 ## Event interface
 
-4 of 40 bound.
+5 of 40 bound.
 
 | C function | Haskell binding |
 | --- | --- |
 | `rd_kafka_event_destroy` | `rdKafkaEventDestroyF` (finalizer pointer), `rdKafkaEventDestroy` |
+| `rd_kafka_event_error` | `rdKafkaEventError` |
 | `rd_kafka_event_CreateTopics_result` | inline `{#call}` |
 | `rd_kafka_event_DeleteTopics_result` | inline `{#call}` |
 | `rd_kafka_queue_poll` | inline `{#call}` |
 
-<details><summary>Unbound (36)</summary>
+<details><summary>Unbound (35)</summary>
 
 - `rd_kafka_event_type`
 - `rd_kafka_event_name`
@@ -493,7 +494,6 @@ changing the binding module, and `just bindings-check` to verify.
 - `rd_kafka_event_message_array`
 - `rd_kafka_event_message_count`
 - `rd_kafka_event_config_string`
-- `rd_kafka_event_error`
 - `rd_kafka_event_error_string`
 - `rd_kafka_event_error_is_fatal`
 - `rd_kafka_event_opaque`

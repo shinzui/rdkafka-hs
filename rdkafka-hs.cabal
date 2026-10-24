@@ -135,6 +135,10 @@ test-suite rdkafka-hs-integration
   type: exitcode-stdio-1.0
   main-is: Main.hs
   hs-source-dirs: test-integration
+  c-sources: test-integration/cbits/admin_ownership.c
+
+  if os(linux)
+    extra-libraries: dl
   ghc-options:
     -threaded
     -rtsopts
@@ -145,6 +149,7 @@ test-suite rdkafka-hs-integration
     bytestring,
     containers,
     network,
+    process,
     random,
     rdkafka-hs,
     tasty ^>=1.5,
@@ -155,6 +160,7 @@ test-suite rdkafka-hs-integration
   if !flag(integration)
     buildable: False
   other-modules:
+    Kafka.AdminTestSupport
     Kafka.CallbackTestSupport
     Kafka.FaultTestSupport
     Kafka.FixtureSupport
@@ -173,6 +179,7 @@ test-suite rdkafka-hs-integration
     Kafka.Integration.QueueEventTest
     Kafka.Integration.ReadCommittedTest
     Kafka.Integration.StoreOffsetsTest
+    Kafka.Integration.TopicConfigurationTest
     Kafka.Integration.TopicTest
     Kafka.TestEnv
 

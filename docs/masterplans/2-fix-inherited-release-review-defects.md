@@ -65,7 +65,7 @@ Relevant decisions were read before drafting. [ADR-1](../adr/consumer-queue-and-
 
 | # | Title | Path | Hard Deps | Soft Deps | Status |
 |---|---|---|---|---|---|
-| 8 | Apply topic creation configuration safely | [EP-8](../plans/8-apply-topic-creation-configuration-safely.md) | EP-13 | None | Not Started |
+| 8 | Apply topic creation configuration safely | [EP-8](../plans/8-apply-topic-creation-configuration-safely.md) | EP-13 | None | In Progress |
 | 9 | Honor producer settings and release rejected callbacks | [EP-9](../plans/9-honor-producer-settings-and-release-rejected-callbacks.md) | EP-13 | None | Not Started |
 | 10 | Report per-partition seek failures | [EP-10](../plans/10-report-per-partition-seek-failures.md) | EP-13 | None | Not Started |
 | 11 | Own native callbacks through client teardown | [EP-11](../plans/11-own-native-callbacks-through-client-teardown.md) | EP-13 | EP-9 | Not Started |
@@ -98,6 +98,10 @@ EP-10 owns a narrow internal partition-error reader in `src/Kafka/Consumer/Conve
 
 Each child registers its tests in `test-integration/Main.hs` and `rdkafka-hs.cabal` as needed, using distinct test modules and additive edits. EP-13 introduces and owns the shared weak-reference helper in `test-integration/Kafka/CallbackTestSupport.hs`; EP-9 and EP-11 extend it through that owner as their cases require. A weak reference observes whether captured state can be collected without keeping it alive itself. Tests must prove both retention while a callback is needed and collection after release, with bounded garbage-collection retries and helper functions that prevent accidental stack retention.
 
+EP-8 confirms administration remains usable after graceful consumer close in both callback modes. Generic `HasKafka` operations retain only the native client ForeignPtr, so EP-11 must couple callback registration ownership to that pointer's native teardown rather than relying exclusively on the surrounding client record staying reachable.
+
+An isolated debug-logging diagnostic also crashes when the native topic C finalizer calls back into Haskell. EP-11 must cover native topic finalization as well as client teardown: callback-capable destruction cannot run through a C finalizer. The original failure log is `/tmp/rdkafka-seek-debug.log`.
+
 EP-11 must update ADR-1 with actual ownership and finalizer ordering when implemented. EP-9 must document precedence between global and explicit topic properties. Promote that precedence to an ADR only if it becomes a distinct lasting project contract; do not describe an unimplemented ownership design as already accepted. Other children distill any new durable constraints under the existing profiled ADR workflow.
 
 The coordinator owns final reconciliation: all six finding IDs and every supported public contract map to accepted tests; changelog and Haddocks describe the repaired behavior; source-distribution builds include all needed sources; public API compatibility and shutdown behavior remain intact. From the repository root, run:
@@ -122,7 +126,7 @@ Build and unit-test the emitted tarball from a fresh temporary extraction under 
 
 EP-13 is Complete. Its accepted baseline passes 14 unit and 129 integration tests in normal and instrumented builds, plus 15 tooling controls. The compiler-derived inventory contains 174 distinct exports and 169 contract/resource/environment rows; 168 remain open. All 22 library modules appear in measured reports, including explicit zero coverage for unlinked functions. The final coverage gate correctly rejects open rows and 3,004 unexplained hand-written misses. See [EP-13](../plans/13-make-coverage-evidence-and-test-fixtures-reliable.md) and its [evidence manifest](../testing/coverage-evidence.json).
 
-EP-8 is next. EP-9 through EP-12 and EP-14 are eligible under the declared order; EP-15 waits for all earlier children. The five repairs, expanded public-contract/property tests, compatibility matrix, and combined candidate gate remain outstanding.
+EP-8 is In Progress. Fifty-three focused admin cases pass, including effective broker configuration, native resource counters, controlled interruption, overlapping requests, malformed native results, and producer/consumer lifecycle modes. Eight compiled semantic mutations fail their intended regressions, and the unchanged control passes all 53 admin cases. Normal full validation and Nix checks pass. Current instrumented acceptance is pending after an inherited synchronous deprecated seek returned `RdKafkaRespErrState` and skipped four dependent checks; the saved failure remains open for the consumer workstream. The earlier passing instrumented snapshot is explicitly historical. EP-9 through EP-12 and EP-14 are eligible under the declared order; EP-15 waits for all earlier children. The five repairs, expanded public-contract/property tests, compatibility matrix, and combined candidate gate remain outstanding.
 
 - [ ] Combined candidate closes all supported contract and critical ownership rows, six original regressions, generated-data properties, normal/coverage builds, source-distribution validation, broker-failure tests, and the required compatibility matrix.
 

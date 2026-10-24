@@ -17,6 +17,11 @@ provenance:
       at: 2026-10-24T04:58:24Z
       mode: "update"
       note: "Expand acceptance to close public-contract, failure-path, concurrency, ownership, and compatibility coverage gaps; add EP-13 prerequisite and coordinated evidence gates."
+    - model: "gpt-6.1-sol"
+      harness: "codex-cli"
+      at: 2026-10-24T05:40:15Z
+      mode: "implement"
+      note: "Begin topic configuration regression and scoped native admin ownership repair after EP-13 acceptance."
 ---
 
 # Apply topic creation configuration safely
@@ -34,12 +39,12 @@ Fix F1: applications can create a topic with settings such as `cleanup.policy=co
 ## Progress
 
 
-- [ ] M1: Nonempty valid topic settings are submitted successfully and verified on the private broker.
+- [x] (2026-10-24) M1: The singleton `cleanup.policy=compact` regression fails before the repair with `Prelude.undefined` and passes after it (0.34 seconds), asserting exact topic/partition metadata and the broker's actual `compact` value through `rpk`.
 - [ ] M2: Empty settings, rejected settings, and interrupted/error construction paths preserve results and release owned handles.
 
 - [ ] M3: Topic administration covers meaningful input boundaries, broker errors, and request/event lifetime paths with verified broker state.
 
-Not started; this document records the implementation contract, not completed fixes.
+Implementation in progress. EP-13 was accepted in `293f8cc`. Configuration now runs inside the acquired NewTopic request's bracket using its real pointer; admin queue/options and polled events have explicit finalization scopes, and the client is retained through the operation. Fifty-three focused cases now pass (15.34 seconds), including native allocation/release counters with a real retained-request positive control, observed post-allocation interruption, consumer sync/async and post-close administration, 20 overlapping requests, broker errors, response corruption, numeric/NUL boundaries and native timeout decoding. Eight semantic mutations now compile and fail their intended regressions; the unchanged control passes all 53 cases. Normal validation passes 14 unit and 182 integration tests, and `just check`, `cabal check`, and binding checks pass. A later full instrumented run fails in the inherited synchronous deprecated seek (`RdKafkaRespErrState`), skipping four dependent cases, while all 53 admin cases pass. That failure is preserved at `dist-coverage/failures/ep8-sync-seek-state.log`; current-candidate acceptance remains pending rather than replacing it with the earlier passing instrumented run. ADR-11 records the implemented scoped ownership and native deadline contract. The first regression is registered independently of the inherited ordered broker group so focused execution does not pull unrelated dependent cases.
 
 
 ## Surprises & Discoveries
@@ -48,10 +53,24 @@ Not started; this document records the implementation contract, not completed fi
 The review reproduced `Prelude.undefined` with a one-entry configuration map. The bug was introduced by retained commit `eb193f5` in May 2025, after the upstream 5.3.0 release; it was imported into this fork. `TopicTest.hs` only creates topics with `mempty`, which avoids the failing expression.
 
 
+The native setter only rejects a null configuration name; strings supplied by the public API are non-null and broker validation handles invalid keys/values. A deterministic setter-error and post-allocation exception test therefore needs a private test seam. Test-only native call interception now counts the real library's application-owned allocation/release calls without changing production exports. It filters native-library internal calls to keep application reference counts meaningful on ELF platforms. The controlled setter barrier observes the killer blocked in `throwTo` before releasing the native call; thread launch or a scheduling delay never defines the interruption window.
+
+Boundary regressions reproduced two additional inherited violations: `maxBound :: Int` wrapped to the native `-1` default sentinel, and an embedded NUL created a truncated topic while returning `KafkaInvalidReturnValue`. Preflight validation now rejects these inputs before acquiring native resources. The NUL probe's own truncated topic was explicitly removed from the private broker.
+
+A run-owned unresponsive TCP endpoint reproduced dropped request-level errors (`KafkaInvalidReturnValue` instead of `_TIMED_OUT`). The wrapper now reads native event errors. Twenty concurrent requests then exposed the one-second poll interval being mistaken for a request deadline. The implementation reads the actual native `socket.timeout.ms`, retries idle polls, and permits one poll quantum for terminal native error delivery. The 20-request regression passes with observed overlapping queue ownership.
+
+Redpanda v26.2.1 accepts unknown topic configuration keys. The test now declares the broker's `ignore`/`reject` policy, verifies exact key/value arguments to the native setter, and checks effective known properties. It does not impose a client whitelist or accept an arbitrary result. EP-15 must supply and execute the Apache Kafka `reject` policy.
+
+The isolated native-logging diagnostic also reproduced a C topic finalizer calling back into Haskell, which GHC rejects. The trace is `/tmp/rdkafka-seek-debug.log`; this lifetime defect belongs to EP-11. Removing the Haskell logger from the diagnostic allowed the same normal consumer scenario to pass with native logging. This is diagnostic evidence, not acceptance of the original failure.
+
 ## Decision Log
 
 
 2026-10-24 revision: The user expanded acceptance to close coverage gaps. Add the complete behavioral/ownership matrix for this workstream, depend on EP-13's reliable fixtures, and require evidence per coverage-inventory row. Existing milestones remain required.
+
+2026-10-24: Honor the native configured request deadline. The previous one-second queue poll produced false timeouts under a healthy concurrent workload; treating it as a complete deadline would preserve that defect. Public signatures remain unchanged. A local timeout leaves the broker outcome unknown, as documented in the Haddocks.
+
+2026-10-24: Reject NUL C-string inputs and values outside C integer representation before allocating admin resources. Preserve native validation and error conventions for representable ordinary values.
 
 2026-10-23: Repair the existing create-topic path without adding a public admin configuration API. Prove the supplied value reaches the broker through a test-only broker inspection or a supported behavioral assertion.
 
@@ -115,7 +134,7 @@ Use the focused group (give any new group this exact name):
 just test-it '--test-options=-p /topic-configuration/'
 ```
 
-Record the broker-inspection command chosen in M1 and native handle-release evidence in this document. The focused group must fail on the original undefined expression and pass after the repair.
+The broker inspection command is `container exec rdkafka-hs-rp-0 rpk topic describe <run-prefixed-topic> -c`; its `cleanup.policy` row must contain `compact`. Isolated non-container environments can set `RDKAFKA_TEST_RPK` to an rpk executable configured for their validated private broker. Native handle-release evidence remains pending. The focused group must fail on the original undefined expression and pass after the repair.
 
 
 ## Validation and Acceptance

@@ -1,0 +1,262 @@
+{
+  "revision": "293f8cc74e233454cccc9448430ae8ffa4048314",
+  "fingerprint": "f0544d9f21671d2c2a21c9e5ec250df6ab1e839507204bfc2ba47a0f46e2e9ae",
+  "configuration": {
+    "ghc": "9.12.4",
+    "native": "(\"2.15.0\",34537727)",
+    "broker": [
+      {
+        "node_id": 0,
+        "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+      }
+    ],
+    "fixture": {
+      "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+      "RDKAFKA_TEST_ADMIN": null,
+      "RDKAFKA_TEST_RPK": null,
+      "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+    }
+  },
+  "normal": {
+    "unit_tests": 14,
+    "integration_tests": 182,
+    "integration_seconds": 96.38
+  },
+  "instrumented": {
+    "unit_tests": 14,
+    "integration_tests": 182,
+    "integration_seconds": 98.53
+  },
+  "focused_tests": [
+    "rdkafka-hs-integration.topic-configuration.singleton configuration reaches the broker",
+    "rdkafka-hs-integration.topic-configuration.native allocation control detects a retained request",
+    "rdkafka-hs-integration.topic-configuration.setter rejection releases allocated request before submission",
+    "rdkafka-hs-integration.topic-configuration.interruption after allocation releases request before submission",
+    "rdkafka-hs-integration.topic-configuration.multiple configuration entries reach the broker",
+    "rdkafka-hs-integration.topic-configuration.broker-rejected values release requests and response events repeatedly",
+    "rdkafka-hs-integration.topic-configuration.unrepresentable partition count never wraps to broker defaults",
+    "rdkafka-hs-integration.topic-configuration.NUL in a topic name never creates a truncated topic",
+    "rdkafka-hs-integration.topic-configuration.unresponsive broker preserves the native timeout error",
+    "rdkafka-hs-integration.topic-configuration.empty configuration creates a usable topic",
+    "rdkafka-hs-integration.topic-configuration.later setter rejection releases partially configured request",
+    "rdkafka-hs-integration.topic-configuration.duplicate creation preserves the existing topic",
+    "rdkafka-hs-integration.topic-configuration.deletion removes exactly the existing topic",
+    "rdkafka-hs-integration.topic-configuration.missing topic deletion preserves its error and releases the request",
+    "rdkafka-hs-integration.topic-configuration.NUL deletion cannot remove a truncated victim name",
+    "rdkafka-hs-integration.topic-configuration.broker default partition and replication counts remain supported",
+    "rdkafka-hs-integration.topic-configuration.replication above the available broker count is rejected",
+    "rdkafka-hs-integration.topic-configuration.unsupported configuration follows the declared broker policy",
+    "rdkafka-hs-integration.topic-configuration.minimum unrepresentable partition count is rejected",
+    "rdkafka-hs-integration.topic-configuration.maximum unrepresentable replication count is rejected",
+    "rdkafka-hs-integration.topic-configuration.minimum unrepresentable replication count is rejected",
+    "rdkafka-hs-integration.topic-configuration.NUL configuration key is rejected before native allocation",
+    "rdkafka-hs-integration.topic-configuration.NUL configuration value is rejected before native allocation",
+    "rdkafka-hs-integration.topic-configuration.negative invalid partition count retains native validation",
+    "rdkafka-hs-integration.topic-configuration.maximum C partition count retains native validation",
+    "rdkafka-hs-integration.topic-configuration.negative invalid replication count retains native validation",
+    "rdkafka-hs-integration.topic-configuration.maximum C replication count retains native validation",
+    "rdkafka-hs-integration.topic-configuration.empty topic name is rejected by the broker",
+    "rdkafka-hs-integration.topic-configuration.space in a topic name is rejected by the broker",
+    "rdkafka-hs-integration.topic-configuration.overlong topic name is rejected by the broker",
+    "rdkafka-hs-integration.topic-configuration.zero partition count is rejected by the broker",
+    "rdkafka-hs-integration.topic-configuration.zero replication count is rejected by the broker",
+    "rdkafka-hs-integration.topic-configuration.wrong event type fails and releases its event",
+    "rdkafka-hs-integration.topic-configuration.empty response fails and releases its event",
+    "rdkafka-hs-integration.topic-configuration.wrong topic response cannot report success",
+    "rdkafka-hs-integration.topic-configuration.missing polled event reports a timeout",
+    "rdkafka-hs-integration.topic-configuration.delayed response succeeds with balanced ownership",
+    "rdkafka-hs-integration.topic-configuration.consumer administration applies settings in async mode",
+    "rdkafka-hs-integration.topic-configuration.consumer administration applies settings in sync mode",
+    "rdkafka-hs-integration.topic-configuration.consumer administration applies settings in async-closed mode",
+    "rdkafka-hs-integration.topic-configuration.consumer administration applies settings in sync-closed mode",
+    "rdkafka-hs-integration.topic-configuration.concurrent requests keep their own queues and responses",
+    "rdkafka-hs-integration.topic-configuration.unresponsive deletion preserves the native timeout error",
+    "rdkafka-hs-integration.topic-configuration.deletion rejects a wrong event type and releases it",
+    "rdkafka-hs-integration.topic-configuration.deletion rejects an empty result and releases its event",
+    "rdkafka-hs-integration.topic-configuration.deletion rejects a mismatched topic result",
+    "rdkafka-hs-integration.topic-configuration.deletion reports a missing response as a timeout",
+    "rdkafka-hs-integration.topic-configuration.missing native timeout configuration returns an error",
+    "rdkafka-hs-integration.topic-configuration.malformed native timeout configuration returns an error",
+    "rdkafka-hs-integration.topic-configuration.zero native timeout configuration returns an error",
+    "rdkafka-hs-integration.topic-configuration.negative native timeout configuration returns an error",
+    "rdkafka-hs-integration.topic-configuration.overflowing native timeout configuration returns an error",
+    "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
+  ],
+  "tooling_controls": 17,
+  "mutation_evidence": "dist-topic-mutations/20261024T073201Z-6vjusaca/results.json",
+  "mutations": [
+    {
+      "mutation": "unchanged-control",
+      "compiled": true,
+      "exit": 0,
+      "pattern": "/topic-configuration/",
+      "expected_failure": null,
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T073201Z-6vjusaca/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/topic-configuration/",
+        "+RTS",
+        "-N2",
+        "-A256m",
+        "-RTS"
+      ],
+      "build_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/unchanged-control.build.log",
+      "test_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/unchanged-control.test.log"
+    },
+    {
+      "mutation": "configuration-removed",
+      "compiled": true,
+      "exit": 1,
+      "pattern": "/singleton/",
+      "expected_failure": "singleton configuration reaches the broker",
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T073201Z-6vjusaca/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/singleton/",
+        "+RTS",
+        "-N2",
+        "-A256m",
+        "-RTS"
+      ],
+      "build_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/configuration-removed.build.log",
+      "test_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/configuration-removed.test.log"
+    },
+    {
+      "mutation": "old-acquisition-lifetime",
+      "compiled": true,
+      "exit": 1,
+      "pattern": "/setter rejection releases allocated/",
+      "expected_failure": "setter rejection releases allocated request before submission",
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T073201Z-6vjusaca/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/setter rejection releases allocated/",
+        "+RTS",
+        "-N2",
+        "-A256m",
+        "-RTS"
+      ],
+      "build_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/old-acquisition-lifetime.build.log",
+      "test_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/old-acquisition-lifetime.test.log"
+    },
+    {
+      "mutation": "queue-finalization-removed",
+      "compiled": true,
+      "exit": 1,
+      "pattern": "/setter rejection releases allocated/",
+      "expected_failure": "setter rejection releases allocated request before submission",
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T073201Z-6vjusaca/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/setter rejection releases allocated/",
+        "+RTS",
+        "-N2",
+        "-A256m",
+        "-RTS"
+      ],
+      "build_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/queue-finalization-removed.build.log",
+      "test_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/queue-finalization-removed.test.log"
+    },
+    {
+      "mutation": "options-finalization-removed",
+      "compiled": true,
+      "exit": 1,
+      "pattern": "/setter rejection releases allocated/",
+      "expected_failure": "setter rejection releases allocated request before submission",
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T073201Z-6vjusaca/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/setter rejection releases allocated/",
+        "+RTS",
+        "-N2",
+        "-A256m",
+        "-RTS"
+      ],
+      "build_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/options-finalization-removed.build.log",
+      "test_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/options-finalization-removed.test.log"
+    },
+    {
+      "mutation": "delete-request-finalization-removed",
+      "compiled": true,
+      "exit": 1,
+      "pattern": "/missing topic deletion/",
+      "expected_failure": "missing topic deletion preserves its error and releases the request",
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T073201Z-6vjusaca/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/missing topic deletion/",
+        "+RTS",
+        "-N2",
+        "-A256m",
+        "-RTS"
+      ],
+      "build_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/delete-request-finalization-removed.build.log",
+      "test_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/delete-request-finalization-removed.test.log"
+    },
+    {
+      "mutation": "event-finalization-removed",
+      "compiled": true,
+      "exit": 1,
+      "pattern": "/broker-rejected values/",
+      "expected_failure": "broker-rejected values release requests and response events repeatedly",
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T073201Z-6vjusaca/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/broker-rejected values/",
+        "+RTS",
+        "-N2",
+        "-A256m",
+        "-RTS"
+      ],
+      "build_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/event-finalization-removed.build.log",
+      "test_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/event-finalization-removed.test.log"
+    },
+    {
+      "mutation": "native-request-error-ignored",
+      "compiled": true,
+      "exit": 1,
+      "pattern": "/unresponsive broker preserves/",
+      "expected_failure": "unresponsive broker preserves the native timeout error",
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T073201Z-6vjusaca/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/unresponsive broker preserves/",
+        "+RTS",
+        "-N2",
+        "-A256m",
+        "-RTS"
+      ],
+      "build_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/native-request-error-ignored.build.log",
+      "test_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/native-request-error-ignored.test.log"
+    },
+    {
+      "mutation": "topic-identity-ignored",
+      "compiled": true,
+      "exit": 1,
+      "pattern": "/wrong topic response/",
+      "expected_failure": "wrong topic response cannot report success",
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T073201Z-6vjusaca/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/wrong topic response/",
+        "+RTS",
+        "-N2",
+        "-A256m",
+        "-RTS"
+      ],
+      "build_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/topic-identity-ignored.build.log",
+      "test_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/topic-identity-ignored.test.log"
+    }
+  ],
+  "native_counter_scope": "application-owned NewTopic/DeleteTopic requests, queue references, options and events; native leak/invalid-access diagnostics remain assigned to EP-15",
+  "coverage_evidence": "dist-coverage/evidence.json",
+  "mutation_fingerprint": "470be3ccad19c06c1822393486da4d3420681f99914cea3938b7f11d15b734a5",
+  "status": "53 focused cases and eight mutations accepted; full current-candidate validation pending",
+  "latest_coverage_attempt": {
+    "fingerprint": "470be3ccad19c06c1822393486da4d3420681f99914cea3938b7f11d15b734a5",
+    "accepted": false,
+    "log": "dist-coverage/failures/ep8-sync-seek-state.log",
+    "sha256": "2c45980cc04be4e3579487dd66c991d48769255ac109ae257ff61581abf0cc2b",
+    "result": "Synchronous deprecated seek returned RdKafkaRespErrState; four dependent cases skipped. All 53 admin cases passed. Investigation remains open."
+  }
+}

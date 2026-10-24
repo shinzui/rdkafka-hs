@@ -2218,12 +2218,84 @@
       ],
       "owner": 8,
       "behavior": "Topic creation applies every supplied configuration before submission and reports native failures",
-      "inputs": "empty, one/multiple properties; invalid key/value; invalid name/partition count/replication factor; duplicate topic",
-      "expected": "Exact topic/partition metadata and effective config match request; invalid config returns existing error convention; no native handle leaks",
-      "modes": "all supported modes",
+      "inputs": "empty/singleton/multiple maps; rejected known values; declared unknown-key policy; valid/default/invalid counts and names; C representation boundaries",
+      "expected": "Exact effective known properties and requested topic metadata; unrecognized keys follow the declared broker policy with exact setter arguments; native/local failures preserve their error conventions",
+      "modes": "producer; async/sync consumers, including after graceful close",
       "ownership": "NewTopic, admin options, queue, event allocated/acquired then released on success, rejection and exception",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs-integration.topic-configuration.singleton configuration reaches the broker",
+        "rdkafka-hs-integration.topic-configuration.native allocation control detects a retained request",
+        "rdkafka-hs-integration.topic-configuration.setter rejection releases allocated request before submission",
+        "rdkafka-hs-integration.topic-configuration.interruption after allocation releases request before submission",
+        "rdkafka-hs-integration.topic-configuration.multiple configuration entries reach the broker",
+        "rdkafka-hs-integration.topic-configuration.broker-rejected values release requests and response events repeatedly",
+        "rdkafka-hs-integration.topic-configuration.unrepresentable partition count never wraps to broker defaults",
+        "rdkafka-hs-integration.topic-configuration.NUL in a topic name never creates a truncated topic",
+        "rdkafka-hs-integration.topic-configuration.unresponsive broker preserves the native timeout error",
+        "rdkafka-hs-integration.topic-configuration.empty configuration creates a usable topic",
+        "rdkafka-hs-integration.topic-configuration.later setter rejection releases partially configured request",
+        "rdkafka-hs-integration.topic-configuration.duplicate creation preserves the existing topic",
+        "rdkafka-hs-integration.topic-configuration.deletion removes exactly the existing topic",
+        "rdkafka-hs-integration.topic-configuration.missing topic deletion preserves its error and releases the request",
+        "rdkafka-hs-integration.topic-configuration.NUL deletion cannot remove a truncated victim name",
+        "rdkafka-hs-integration.topic-configuration.broker default partition and replication counts remain supported",
+        "rdkafka-hs-integration.topic-configuration.replication above the available broker count is rejected",
+        "rdkafka-hs-integration.topic-configuration.unsupported configuration follows the declared broker policy",
+        "rdkafka-hs-integration.topic-configuration.minimum unrepresentable partition count is rejected",
+        "rdkafka-hs-integration.topic-configuration.maximum unrepresentable replication count is rejected",
+        "rdkafka-hs-integration.topic-configuration.minimum unrepresentable replication count is rejected",
+        "rdkafka-hs-integration.topic-configuration.NUL configuration key is rejected before native allocation",
+        "rdkafka-hs-integration.topic-configuration.NUL configuration value is rejected before native allocation",
+        "rdkafka-hs-integration.topic-configuration.negative invalid partition count retains native validation",
+        "rdkafka-hs-integration.topic-configuration.maximum C partition count retains native validation",
+        "rdkafka-hs-integration.topic-configuration.negative invalid replication count retains native validation",
+        "rdkafka-hs-integration.topic-configuration.maximum C replication count retains native validation",
+        "rdkafka-hs-integration.topic-configuration.empty topic name is rejected by the broker",
+        "rdkafka-hs-integration.topic-configuration.space in a topic name is rejected by the broker",
+        "rdkafka-hs-integration.topic-configuration.overlong topic name is rejected by the broker",
+        "rdkafka-hs-integration.topic-configuration.zero partition count is rejected by the broker",
+        "rdkafka-hs-integration.topic-configuration.zero replication count is rejected by the broker",
+        "rdkafka-hs-integration.topic-configuration.wrong event type fails and releases its event",
+        "rdkafka-hs-integration.topic-configuration.empty response fails and releases its event",
+        "rdkafka-hs-integration.topic-configuration.wrong topic response cannot report success",
+        "rdkafka-hs-integration.topic-configuration.missing polled event reports a timeout",
+        "rdkafka-hs-integration.topic-configuration.delayed response succeeds with balanced ownership",
+        "rdkafka-hs-integration.topic-configuration.consumer administration applies settings in async mode",
+        "rdkafka-hs-integration.topic-configuration.consumer administration applies settings in sync mode",
+        "rdkafka-hs-integration.topic-configuration.consumer administration applies settings in async-closed mode",
+        "rdkafka-hs-integration.topic-configuration.consumer administration applies settings in sync-closed mode",
+        "rdkafka-hs-integration.topic-configuration.concurrent requests keep their own queues and responses",
+        "rdkafka-hs-integration.topic-configuration.unresponsive deletion preserves the native timeout error",
+        "rdkafka-hs-integration.topic-configuration.deletion rejects a wrong event type and releases it",
+        "rdkafka-hs-integration.topic-configuration.deletion rejects an empty result and releases its event",
+        "rdkafka-hs-integration.topic-configuration.deletion rejects a mismatched topic result",
+        "rdkafka-hs-integration.topic-configuration.deletion reports a missing response as a timeout",
+        "rdkafka-hs-integration.topic-configuration.missing native timeout configuration returns an error",
+        "rdkafka-hs-integration.topic-configuration.malformed native timeout configuration returns an error",
+        "rdkafka-hs-integration.topic-configuration.zero native timeout configuration returns an error",
+        "rdkafka-hs-integration.topic-configuration.negative native timeout configuration returns an error",
+        "rdkafka-hs-integration.topic-configuration.overflowing native timeout configuration returns an error",
+        "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
+      ],
+      "status": "tested",
+      "fingerprint": "f0544d9f21671d2c2a21c9e5ec250df6ab1e839507204bfc2ba47a0f46e2e9ae",
+      "evidence_revision": "293f8cc74e233454cccc9448430ae8ffa4048314",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "F2",
@@ -3972,12 +4044,44 @@
       ],
       "owner": 8,
       "behavior": "Delete only the named run-owned topic and report broker/admin errors",
-      "inputs": "existing/missing/invalid topic, repeated deletion, unavailable broker",
-      "expected": "Named topic disappears; unrelated topic remains; exact errors surfaced",
+      "inputs": "existing/missing topic; invalid NUL name; request timeout; malformed event/result; producer and async/sync consumer clients before/after graceful close",
+      "expected": "Exact deleted topic and verified absence; unrelated topic survives; errors retain native codes; all owned references released",
       "modes": "all supported modes",
       "ownership": "DeleteTopic/admin options/queue/event released on success, error and exception",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs-integration.topic-configuration.singleton configuration reaches the broker",
+        "rdkafka-hs-integration.topic-configuration.deletion removes exactly the existing topic",
+        "rdkafka-hs-integration.topic-configuration.missing topic deletion preserves its error and releases the request",
+        "rdkafka-hs-integration.topic-configuration.NUL deletion cannot remove a truncated victim name",
+        "rdkafka-hs-integration.topic-configuration.consumer administration applies settings in async mode",
+        "rdkafka-hs-integration.topic-configuration.consumer administration applies settings in sync mode",
+        "rdkafka-hs-integration.topic-configuration.consumer administration applies settings in async-closed mode",
+        "rdkafka-hs-integration.topic-configuration.consumer administration applies settings in sync-closed mode",
+        "rdkafka-hs-integration.topic-configuration.unresponsive deletion preserves the native timeout error",
+        "rdkafka-hs-integration.topic-configuration.deletion rejects a wrong event type and releases it",
+        "rdkafka-hs-integration.topic-configuration.deletion rejects an empty result and releases its event",
+        "rdkafka-hs-integration.topic-configuration.deletion rejects a mismatched topic result",
+        "rdkafka-hs-integration.topic-configuration.deletion reports a missing response as a timeout"
+      ],
+      "status": "tested",
+      "fingerprint": "f0544d9f21671d2c2a21c9e5ec250df6ab1e839507204bfc2ba47a0f46e2e9ae",
+      "evidence_revision": "293f8cc74e233454cccc9448430ae8ffa4048314",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Transaction-TxError",
@@ -4431,11 +4535,83 @@
       "owner": 8,
       "behavior": "Topic admin construction, event decode and submission errors",
       "inputs": "success, injected failure, interruption, repeated calls and boundaries",
-      "expected": "Exact behavior or allocation balance with effective negative controls",
+      "expected": "Observed native application allocation/release balance on success, local/broker errors, post-allocation interruption, malformed responses and overlap; retained-request positive control and cleanup-removal mutations fail",
       "modes": "all supported modes",
-      "ownership": "Every native admin handle has an allocation/acquisition -> release path, including invalid config before request submission",
-      "tests": [],
-      "status": "unimplemented"
+      "ownership": "Raw NewTopic bracket owns its manual destroy; DeleteTopic/options/queue/event scopes consume their ForeignPtr finalizer once; borrowed configuration and event payloads retain their parent and receive no native deallocator",
+      "tests": [
+        "rdkafka-hs-integration.topic-configuration.singleton configuration reaches the broker",
+        "rdkafka-hs-integration.topic-configuration.native allocation control detects a retained request",
+        "rdkafka-hs-integration.topic-configuration.setter rejection releases allocated request before submission",
+        "rdkafka-hs-integration.topic-configuration.interruption after allocation releases request before submission",
+        "rdkafka-hs-integration.topic-configuration.multiple configuration entries reach the broker",
+        "rdkafka-hs-integration.topic-configuration.broker-rejected values release requests and response events repeatedly",
+        "rdkafka-hs-integration.topic-configuration.unrepresentable partition count never wraps to broker defaults",
+        "rdkafka-hs-integration.topic-configuration.NUL in a topic name never creates a truncated topic",
+        "rdkafka-hs-integration.topic-configuration.unresponsive broker preserves the native timeout error",
+        "rdkafka-hs-integration.topic-configuration.empty configuration creates a usable topic",
+        "rdkafka-hs-integration.topic-configuration.later setter rejection releases partially configured request",
+        "rdkafka-hs-integration.topic-configuration.duplicate creation preserves the existing topic",
+        "rdkafka-hs-integration.topic-configuration.deletion removes exactly the existing topic",
+        "rdkafka-hs-integration.topic-configuration.missing topic deletion preserves its error and releases the request",
+        "rdkafka-hs-integration.topic-configuration.NUL deletion cannot remove a truncated victim name",
+        "rdkafka-hs-integration.topic-configuration.broker default partition and replication counts remain supported",
+        "rdkafka-hs-integration.topic-configuration.replication above the available broker count is rejected",
+        "rdkafka-hs-integration.topic-configuration.unsupported configuration follows the declared broker policy",
+        "rdkafka-hs-integration.topic-configuration.minimum unrepresentable partition count is rejected",
+        "rdkafka-hs-integration.topic-configuration.maximum unrepresentable replication count is rejected",
+        "rdkafka-hs-integration.topic-configuration.minimum unrepresentable replication count is rejected",
+        "rdkafka-hs-integration.topic-configuration.NUL configuration key is rejected before native allocation",
+        "rdkafka-hs-integration.topic-configuration.NUL configuration value is rejected before native allocation",
+        "rdkafka-hs-integration.topic-configuration.negative invalid partition count retains native validation",
+        "rdkafka-hs-integration.topic-configuration.maximum C partition count retains native validation",
+        "rdkafka-hs-integration.topic-configuration.negative invalid replication count retains native validation",
+        "rdkafka-hs-integration.topic-configuration.maximum C replication count retains native validation",
+        "rdkafka-hs-integration.topic-configuration.empty topic name is rejected by the broker",
+        "rdkafka-hs-integration.topic-configuration.space in a topic name is rejected by the broker",
+        "rdkafka-hs-integration.topic-configuration.overlong topic name is rejected by the broker",
+        "rdkafka-hs-integration.topic-configuration.zero partition count is rejected by the broker",
+        "rdkafka-hs-integration.topic-configuration.zero replication count is rejected by the broker",
+        "rdkafka-hs-integration.topic-configuration.wrong event type fails and releases its event",
+        "rdkafka-hs-integration.topic-configuration.empty response fails and releases its event",
+        "rdkafka-hs-integration.topic-configuration.wrong topic response cannot report success",
+        "rdkafka-hs-integration.topic-configuration.missing polled event reports a timeout",
+        "rdkafka-hs-integration.topic-configuration.delayed response succeeds with balanced ownership",
+        "rdkafka-hs-integration.topic-configuration.consumer administration applies settings in async mode",
+        "rdkafka-hs-integration.topic-configuration.consumer administration applies settings in sync mode",
+        "rdkafka-hs-integration.topic-configuration.consumer administration applies settings in async-closed mode",
+        "rdkafka-hs-integration.topic-configuration.consumer administration applies settings in sync-closed mode",
+        "rdkafka-hs-integration.topic-configuration.concurrent requests keep their own queues and responses",
+        "rdkafka-hs-integration.topic-configuration.unresponsive deletion preserves the native timeout error",
+        "rdkafka-hs-integration.topic-configuration.deletion rejects a wrong event type and releases it",
+        "rdkafka-hs-integration.topic-configuration.deletion rejects an empty result and releases its event",
+        "rdkafka-hs-integration.topic-configuration.deletion rejects a mismatched topic result",
+        "rdkafka-hs-integration.topic-configuration.deletion reports a missing response as a timeout",
+        "rdkafka-hs-integration.topic-configuration.missing native timeout configuration returns an error",
+        "rdkafka-hs-integration.topic-configuration.malformed native timeout configuration returns an error",
+        "rdkafka-hs-integration.topic-configuration.zero native timeout configuration returns an error",
+        "rdkafka-hs-integration.topic-configuration.negative native timeout configuration returns an error",
+        "rdkafka-hs-integration.topic-configuration.overflowing native timeout configuration returns an error",
+        "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
+      ],
+      "status": "tested",
+      "fingerprint": "f0544d9f21671d2c2a21c9e5ec250df6ab1e839507204bfc2ba47a0f46e2e9ae",
+      "evidence_revision": "293f8cc74e233454cccc9448430ae8ffa4048314",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "OWN-headers",
@@ -4582,8 +4758,8 @@
         "rdkafka-hs-integration.Fixture error controls.weak control retains while rooted and collects after release"
       ],
       "status": "tested",
-      "fingerprint": "3867af1e625927d5799e2c4f189ba7f999b778bb74a9dd89ef382f754f4fdb03",
-      "evidence_revision": "2b023c72b7d1aa257ffbb0cdc05a9aff5039885d",
+      "fingerprint": "f0544d9f21671d2c2a21c9e5ec250df6ab1e839507204bfc2ba47a0f46e2e9ae",
+      "evidence_revision": "293f8cc74e233454cccc9448430ae8ffa4048314",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4592,8 +4768,165 @@
             "node_id": 0,
             "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
           }
-        ]
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
       }
+    },
+    {
+      "id": "TOPIC-input-representation",
+      "symbols": [
+        "Kafka.Topic.createTopic",
+        "Kafka.Topic.deleteTopic"
+      ],
+      "owner": 8,
+      "behavior": "Topic C-string and integer marshalling never truncates or wraps into another valid operation",
+      "inputs": "NUL names/keys/values; C-unrepresentable high/low counts; representable native invalid boundaries",
+      "expected": "KafkaBadSpecification before allocation for unrepresentable inputs; native validation retained for ordinary representable values; NUL deletion preserves the victim",
+      "modes": "producer; consumer async/sync; native failure injection where required",
+      "ownership": "Scoped application-owned native resources with client/event retention for borrowed views",
+      "tests": [
+        "rdkafka-hs-integration.topic-configuration.unrepresentable partition count never wraps to broker defaults",
+        "rdkafka-hs-integration.topic-configuration.NUL in a topic name never creates a truncated topic",
+        "rdkafka-hs-integration.topic-configuration.NUL deletion cannot remove a truncated victim name",
+        "rdkafka-hs-integration.topic-configuration.minimum unrepresentable partition count is rejected",
+        "rdkafka-hs-integration.topic-configuration.maximum unrepresentable replication count is rejected",
+        "rdkafka-hs-integration.topic-configuration.minimum unrepresentable replication count is rejected",
+        "rdkafka-hs-integration.topic-configuration.NUL configuration key is rejected before native allocation",
+        "rdkafka-hs-integration.topic-configuration.NUL configuration value is rejected before native allocation",
+        "rdkafka-hs-integration.topic-configuration.negative invalid partition count retains native validation",
+        "rdkafka-hs-integration.topic-configuration.maximum C partition count retains native validation",
+        "rdkafka-hs-integration.topic-configuration.negative invalid replication count retains native validation",
+        "rdkafka-hs-integration.topic-configuration.maximum C replication count retains native validation"
+      ],
+      "status": "tested",
+      "fingerprint": "f0544d9f21671d2c2a21c9e5ec250df6ab1e839507204bfc2ba47a0f46e2e9ae",
+      "evidence_revision": "293f8cc74e233454cccc9448430ae8ffa4048314",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
+    },
+    {
+      "id": "TOPIC-request-results",
+      "symbols": [
+        "Kafka.Topic.createTopic",
+        "Kafka.Topic.deleteTopic"
+      ],
+      "owner": 8,
+      "behavior": "Single-topic admin calls preserve request and per-topic errors and require matching complete results",
+      "inputs": "native global timeout; wrong event type; empty/mismatched result; missing/delayed poll; malformed native timeout getter",
+      "expected": "Exact native errors or KafkaInvalidReturnValue; configured monotonic deadline; actual broker state observed and run-owned topics removed",
+      "modes": "producer; consumer async/sync; native failure injection where required",
+      "ownership": "Scoped application-owned native resources with client/event retention for borrowed views",
+      "tests": [
+        "rdkafka-hs-integration.topic-configuration.broker-rejected values release requests and response events repeatedly",
+        "rdkafka-hs-integration.topic-configuration.unresponsive broker preserves the native timeout error",
+        "rdkafka-hs-integration.topic-configuration.wrong event type fails and releases its event",
+        "rdkafka-hs-integration.topic-configuration.empty response fails and releases its event",
+        "rdkafka-hs-integration.topic-configuration.wrong topic response cannot report success",
+        "rdkafka-hs-integration.topic-configuration.missing polled event reports a timeout",
+        "rdkafka-hs-integration.topic-configuration.delayed response succeeds with balanced ownership",
+        "rdkafka-hs-integration.topic-configuration.concurrent requests keep their own queues and responses",
+        "rdkafka-hs-integration.topic-configuration.unresponsive deletion preserves the native timeout error",
+        "rdkafka-hs-integration.topic-configuration.deletion rejects a wrong event type and releases it",
+        "rdkafka-hs-integration.topic-configuration.deletion rejects an empty result and releases its event",
+        "rdkafka-hs-integration.topic-configuration.deletion reports a missing response as a timeout",
+        "rdkafka-hs-integration.topic-configuration.missing native timeout configuration returns an error",
+        "rdkafka-hs-integration.topic-configuration.malformed native timeout configuration returns an error",
+        "rdkafka-hs-integration.topic-configuration.zero native timeout configuration returns an error",
+        "rdkafka-hs-integration.topic-configuration.negative native timeout configuration returns an error",
+        "rdkafka-hs-integration.topic-configuration.overflowing native timeout configuration returns an error",
+        "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
+      ],
+      "status": "tested",
+      "fingerprint": "f0544d9f21671d2c2a21c9e5ec250df6ab1e839507204bfc2ba47a0f46e2e9ae",
+      "evidence_revision": "293f8cc74e233454cccc9448430ae8ffa4048314",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
+    },
+    {
+      "id": "TOPIC-client-lifetimes",
+      "symbols": [
+        "Kafka.Topic.createTopic",
+        "Kafka.Topic.deleteTopic"
+      ],
+      "owner": 8,
+      "behavior": "Producer and consumer admin calls keep the client and independent scoped queues alive",
+      "inputs": "both consumer callback modes before/after close; observed post-allocation interruption; 20 concurrent requests with overlapping native queue ownership",
+      "expected": "Exact independent topic responses and metadata; observed kill delivery boundary; every owned resource released once",
+      "modes": "producer; consumer async/sync; native failure injection where required",
+      "ownership": "Scoped application-owned native resources with client/event retention for borrowed views",
+      "tests": [
+        "rdkafka-hs-integration.topic-configuration.native allocation control detects a retained request",
+        "rdkafka-hs-integration.topic-configuration.interruption after allocation releases request before submission",
+        "rdkafka-hs-integration.topic-configuration.consumer administration applies settings in async mode",
+        "rdkafka-hs-integration.topic-configuration.consumer administration applies settings in sync mode",
+        "rdkafka-hs-integration.topic-configuration.consumer administration applies settings in async-closed mode",
+        "rdkafka-hs-integration.topic-configuration.consumer administration applies settings in sync-closed mode",
+        "rdkafka-hs-integration.topic-configuration.concurrent requests keep their own queues and responses"
+      ],
+      "status": "tested",
+      "fingerprint": "f0544d9f21671d2c2a21c9e5ec250df6ab1e839507204bfc2ba47a0f46e2e9ae",
+      "evidence_revision": "293f8cc74e233454cccc9448430ae8ffa4048314",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
+    },
+    {
+      "id": "ENV-topic-configuration-policy",
+      "symbols": [],
+      "owner": 15,
+      "behavior": "Unrecognized topic configuration follows each actual broker fixture policy",
+      "inputs": "primary Redpanda ignore policy and Apache Kafka reject policy, declared explicitly for each compatibility tuple",
+      "expected": "The same named native-argument/effective-property test passes under both actual declared broker policies",
+      "modes": "required broker compatibility tuples",
+      "ownership": "Configuration forwarding and native error resources retain EP-8 scopes",
+      "tests": [],
+      "status": "unimplemented"
     }
   ]
 }

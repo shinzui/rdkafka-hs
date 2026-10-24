@@ -7,6 +7,18 @@ this project adheres to the [Haskell Package Versioning Policy](https://pvp.hask
 
 ## [Unreleased]
 
+### Fixed
+
+- Topic creation now applies nonempty configuration maps using the allocated
+  request, fixing an inherited `Prelude.undefined` crash. Topic administration
+  releases requests, options, application queue references and response events
+  on success, broker errors and interruption.
+- Topic creation/deletion preserve native request errors and wait for the
+  configured `socket.timeout.ms` request deadline instead of failing after
+  one idle poll. Malformed response topics cannot report success.
+- Topic administration rejects embedded NUL inputs and counts outside the C
+  integer range, preventing inherited name truncation and numeric wrapping.
+
 ## [1.0.0.1] - 2026-10-23
 
 ### Fixed

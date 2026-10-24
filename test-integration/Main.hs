@@ -15,6 +15,7 @@ import Kafka.Integration.PerMessageCommitTest qualified as PerMessageCommitTest
 import Kafka.Integration.QueueEventTest qualified as QueueEventTest
 import Kafka.Integration.ReadCommittedTest qualified as ReadCommittedTest
 import Kafka.Integration.StoreOffsetsTest qualified as StoreOffsetsTest
+import Kafka.Integration.TopicConfigurationTest qualified as TopicConfigurationTest
 import Kafka.Integration.TopicTest qualified as TopicTest
 import Kafka.TestEnv (checkBrokerReachable, newTestEnv, resolveBrokers)
 import System.Environment (lookupEnv)
@@ -35,6 +36,7 @@ main = do
       [ FixtureSupportTest.tests,
         ConfigurationTest.tests,
         LifecycleTest.tests env,
+        TopicConfigurationTest.tests env,
         -- The groups share the run's topic and consumer group, so later groups
         -- depend on the records and offsets earlier ones leave behind.
         dependentTestGroup

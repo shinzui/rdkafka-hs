@@ -31,6 +31,12 @@ class GateControls(unittest.TestCase):
     def setUp(self):
         self.matrix = json.loads((checker.ROOT / "docs/testing/coverage-matrix.json").read_text())
         self.exports = self.matrix["exports"]
+        # These are schema/gate controls, independent of live candidate rows.
+        # A real accepted row may legitimately be stale during implementation.
+        for row in self.matrix["contracts"]:
+            row["status"] = "unimplemented"
+            row["tests"] = []
+            row.pop("fingerprint", None)
         self.evidence = dict(fingerprint="candidate", tests=["suite.case"], suites=["rdkafka-hs-test", "rdkafka-hs-integration"],
                              artifacts={"README.md": hashlib.sha256((checker.ROOT / "README.md").read_bytes()).hexdigest()},
                              measured_native_wrapper_ticks=1, misses=[])
@@ -58,6 +64,16 @@ class GateControls(unittest.TestCase):
         self.exports = copy.deepcopy(self.exports)
         self.exports["Kafka.Version"][0]["members"].append("Kafka.Version.NewConstructor")
         self.assertTrue(any("public exports changed" in e for e in self.errors()))
+
+    def test_current_tested_row_is_accepted(self):
+        row = self.matrix["contracts"][0]
+        row.update(status="tested", tests=["suite.case"], fingerprint="candidate")
+        self.assertEqual(self.errors(), [])
+
+    def test_stale_tested_row_is_rejected_with_current_measurements(self):
+        row = self.matrix["contracts"][0]
+        row.update(status="tested", tests=["suite.case"], fingerprint="previous candidate")
+        self.assertTrue(any(row["id"] + ": stale source evidence" in error for error in self.errors()))
 
     def test_missing_test_is_rejected(self):
         self.matrix["contracts"][0]["tests"] = ["removed.test"]
@@ -118,6 +134,14 @@ class GateControls(unittest.TestCase):
             self.assertIn("unassigned public symbol Kafka.Version.untestedExport", self.errors())
 
     def test_semantic_fixture_mutations_fail_after_successful_compilation(self):
+        prepared = subprocess.run(["cabal", "build", "rdkafka-hs-integration", "-f", "integration"], cwd=checker.ROOT, capture_output=True, text=True)
+        self.assertEqual(prepared.returncode, 0, prepared.stdout + prepared.stderr)
+        plan = json.loads((checker.ROOT / "dist-newstyle/cache/plan.json").read_text())
+        component = next(c for c in plan["install-plan"] if c.get("pkg-name") == "rdkafka-hs" and c.get("component-name") == "test:rdkafka-hs-integration")
+        # Expose the exact selected component dependencies. Broad -package NAME
+        # flags can expose several installed variants; cabal exec's default
+        # library environment omits test-only packages such as network.
+        packages = [arg for unit in component["depends"] for arg in ("-package-id", unit)]
         with tempfile.TemporaryDirectory(prefix="rdkafka-fixture-controls-") as directory:
             root = Path(directory)
             for name in ("FixtureSupport", "FixtureSupportTest", "CallbackTestSupport", "FaultTestSupport"):
@@ -136,7 +160,7 @@ class GateControls(unittest.TestCase):
                     if failed_case:
                         self.assertNotEqual(source, text)
                     source_path.write_text(text)
-                    command = ["cabal", "exec", "--", "ghc", "--make", "-O1", "-threaded", "-XGHC2024", "-XOverloadedStrings", "-i" + str(root), "-package", "rdkafka-hs", str(root / "Main.hs"), "-o", str(root / "controls")]
+                    command = ["cabal", "exec", "--", "ghc", "--make", "-O1", "-threaded", "-XGHC2024", "-XOverloadedStrings", "-i" + str(root), "-hide-all-packages", *packages, str(root / "Main.hs"), "-o", str(root / "controls")]
                     compiled = subprocess.run(command, cwd=checker.ROOT, capture_output=True, text=True)
                     self.assertEqual(compiled.returncode, 0, compiled.stdout + compiled.stderr)
                     result = subprocess.run([str(root / "controls")], capture_output=True, text=True)
