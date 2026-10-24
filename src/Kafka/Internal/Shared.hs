@@ -17,6 +17,9 @@ module Kafka.Internal.Shared
     readTimestamp,
     readBS,
     setSaslCredentials',
+    validateCStringInput,
+    validateTopicNameInput,
+    validateTopicPartitions,
   )
 where
 
@@ -24,10 +27,12 @@ import Control.Exception (throw)
 import Control.Monad (void)
 import Data.ByteString qualified as BS
 import Data.ByteString.Internal qualified as BSI
+import Data.Maybe (listToMaybe, mapMaybe)
 import Data.Text (Text)
 import Data.Text qualified as Text
 import Data.Word (Word8)
 import Foreign.C.Error (Errno (..))
+import Foreign.C.Types (CInt)
 import Foreign.ForeignPtr (newForeignPtr_)
 import Foreign.Marshal.Alloc (alloca)
 import Foreign.Marshal.Utils (copyBytes)
@@ -36,7 +41,7 @@ import Foreign.Storable (Storable (peek))
 import Kafka.Consumer.Types (Timestamp (..))
 import Kafka.Internal.RdKafka (RdKafkaMessageT (..), RdKafkaMessageTPtr, RdKafkaRespErrT (..), RdKafkaTimestampTypeT (..), Word8Ptr, rdKafkaErrno2err, rdKafkaHeaderGetAll, rdKafkaMessageHeaders, rdKafkaMessageTimestamp, rdKafkaPoll, rdKafkaSaslSetCredentials, rdKafkaTopicName)
 import Kafka.Internal.Setup (HasKafka (..), Kafka (..))
-import Kafka.Types (Headers, KafkaError (..), Millis (..), Timeout (..), headersFromList)
+import Kafka.Types (Headers, KafkaError (..), Millis (..), PartitionId (..), Timeout (..), TopicName (..), headersFromList)
 
 -- | Replace a client's SASL username and password
 -- (@rd_kafka_sasl_set_credentials@).
@@ -145,3 +150,22 @@ readBS flen fdata s =
   if fdata s == nullPtr
     then return Nothing
     else Just <$> word8PtrToBS (flen s) (fdata s)
+
+-- C strings and native partition integers must preserve the caller's identity.
+-- Keep all other validation with librdkafka and preserve input error order.
+validateCStringInput :: Text -> Text -> Maybe KafkaError
+validateCStringInput label value
+  | Text.any (== '\0') value = Just (KafkaBadSpecification (label <> " contains NUL"))
+  | otherwise = Nothing
+
+validateTopicNameInput :: TopicName -> Maybe KafkaError
+validateTopicNameInput (TopicName name) = validateCStringInput "topic name" name
+
+validateTopicPartitions :: [(TopicName, PartitionId)] -> Maybe KafkaError
+validateTopicPartitions = listToMaybe . mapMaybe invalid
+  where
+    invalid (topic, PartitionId partition)
+      | Just failure <- validateTopicNameInput topic = Just failure
+      | toInteger partition < toInteger (minBound :: CInt) || toInteger partition > toInteger (maxBound :: CInt) =
+          Just (KafkaBadSpecification "partition is outside the C int range")
+      | otherwise = Nothing

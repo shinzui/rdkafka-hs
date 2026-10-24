@@ -18,6 +18,7 @@ import Kafka.Integration.ConsumerCommitContractTest qualified as ConsumerCommitC
 import Kafka.Integration.ConsumerStateContractTest qualified as ConsumerStateContractTest
 import Kafka.Integration.DeprecatedRunnerContractTest qualified as DeprecatedRunnerContractTest
 import Kafka.Integration.DiagnosticContractTest qualified as DiagnosticContractTest
+import Kafka.Integration.InputBoundaryContractTest qualified as InputBoundaryContractTest
 import Kafka.Integration.MetadataContractTest qualified as MetadataContractTest
 import Kafka.Integration.RuntimeContractTest qualified as RuntimeContractTest
 import Kafka.MessageTestSupport
@@ -150,6 +151,7 @@ tests testEnv =
       ConsumerStateContractTest.tests testEnv,
       ConsumerCommitContractTest.tests testEnv,
       DiagnosticContractTest.tests testEnv,
+      InputBoundaryContractTest.tests testEnv,
       DeprecatedRunnerContractTest.tests testEnv,
       RuntimeContractTest.tests testEnv,
       MetadataContractTest.tests testEnv,

@@ -114,7 +114,7 @@ import Kafka.Consumer.Convert (copyMessagePtr, copyMessagePtrAttributed, fromMes
 import Kafka.Consumer.Types (KafkaConsumer (..))
 import Kafka.Internal.RdKafka (RdKafkaQueueTPtr, RdKafkaRespErrT (..), RdKafkaTPtr, RdKafkaTopicPartitionListTPtr, RdKafkaTypeT (..), newRdKafkaT, newRdKafkaTopicPartitionListT, newRdKafkaTopicT, rdKafkaAssign, rdKafkaAssignment, rdKafkaAssignmentLost, rdKafkaCommit, rdKafkaCommitted, rdKafkaConsumeBatchQueue, rdKafkaConsumeQueue, rdKafkaConsumerClose, rdKafkaConsumerClosed, rdKafkaConsumerPoll, rdKafkaErrorCode, rdKafkaErrorDestroy, rdKafkaFatalError, rdKafkaMessageDestroy, rdKafkaOffsetsStore, rdKafkaPausePartitions, rdKafkaPollSetConsumer, rdKafkaPosition, rdKafkaQueueDestroy, rdKafkaQueueGetConsumer, rdKafkaQueueIoEventEnable, rdKafkaQueueNew, rdKafkaResumePartitions, rdKafkaSeek, rdKafkaSeekPartitions, rdKafkaSetLogLevel, rdKafkaSubscribe, rdKafkaSubscription, rdKafkaTopicPartitionListAdd)
 import Kafka.Internal.Setup (Callback (..), CallbackPollStatus (..), ClientLifecycle (..), Kafka (..), KafkaConf (..), KafkaProps (..), PendingMessage (..), PendingMessages (..), PendingTimestamp (..), TopicProps (..), discardPendingMessages, emptyPendingMessages, getKafkaConf, getRdKafka, getRdMsgQueue, kafkaConf, pendingMessagePartition, resetPendingMessages, setAllKafkaConfValues, topicConf)
-import Kafka.Internal.Shared (kafkaErrorToMaybe, maybeToLeft, rdKafkaErrorToEither, setSaslCredentials')
+import Kafka.Internal.Shared (kafkaErrorToMaybe, maybeToLeft, rdKafkaErrorToEither, setSaslCredentials', validateTopicPartitions)
 import System.Posix.Types (Fd (..))
 
 import Kafka.Consumer.ConsumerProperties as X
@@ -159,6 +159,7 @@ newConsumer ::
 newConsumer props (Subscription ts tp)
   | effectiveCallbackPollMode props == CallbackPollModeAsync && not rtsSupportsBoundThreads =
       pure (Left (KafkaBadSpecification "Async callback polling requires -threaded; select CallbackPollModeSync for a nonthreaded runtime."))
+  | Just failure <- validateTopicPartitions [(topic, PartitionId 0) | topic <- Set.toList ts] = pure (Left failure)
   | otherwise = liftIO $ mask $ \restore -> do
       -- Both modes track rebalance invalidation. A later user callback replaces
       -- the no-op handler while retaining the same checked state transitions.
@@ -450,6 +451,7 @@ commitOffsetMessage ::
   KafkaConsumer ->
   ConsumerRecord k v ->
   m (Maybe KafkaError)
+commitOffsetMessage _ _ record | Just failure <- validateTopicPartitions [(crTopic record, crPartition record)] = pure (Just failure)
 commitOffsetMessage o k m =
   liftIO $ withPartitionList k (toNativeTopicPartitionList [topicPartitionFromMessageForCommit m]) (commitOffsets o k)
 
@@ -459,6 +461,7 @@ storeOffsetMessage ::
   KafkaConsumer ->
   ConsumerRecord k v ->
   m (Maybe KafkaError)
+storeOffsetMessage _ record | Just failure <- validateTopicPartitions [(crTopic record, crPartition record)] = pure (Just failure)
 storeOffsetMessage k m =
   liftIO $ withPartitionList k (toNativeTopicPartitionList [topicPartitionFromMessageForCommit m]) (commitOffsetsStore k)
 
@@ -468,6 +471,7 @@ storeOffsets ::
   KafkaConsumer ->
   [TopicPartition] ->
   m (Maybe KafkaError)
+storeOffsets _ ps | Just failure <- validateTopicPartitions [(tpTopicName p, tpPartition p) | p <- ps] = pure (Just failure)
 storeOffsets k ps =
   liftIO $ withPartitionList k (toNativeTopicPartitionList ps) (commitOffsetsStore k)
 
@@ -487,6 +491,7 @@ commitPartitionsOffsets ::
   KafkaConsumer ->
   [TopicPartition] ->
   m (Maybe KafkaError)
+commitPartitionsOffsets _ _ ps | Just failure <- validateTopicPartitions [(tpTopicName p, tpPartition p) | p <- ps] = pure (Just failure)
 commitPartitionsOffsets o k ps =
   liftIO $ withPartitionList k (toNativeTopicPartitionList ps) (commitOffsets o k)
 
@@ -500,6 +505,7 @@ commitPartitionsOffsets o k ps =
 -- Use this on a consumer from 'newAssignedConsumer'; on a subscribed consumer the
 -- rebalance callback assigns partitions.
 assign :: (MonadIO m) => KafkaConsumer -> [TopicPartition] -> m (Maybe KafkaError)
+assign _ ps | Just failure <- validateTopicPartitions [(tpTopicName p, tpPartition p) | p <- ps] = pure (Just failure)
 assign c@(KafkaConsumer (Kafka k) conf) ps = liftIO $ withForeignPtr k $ \_ -> mask_ $ bracket (toNativeTopicPartitionList ps) finalizeForeignPtr $ \tps -> do
   let partitions = (tpTopicName &&& tpPartition) <$> ps
   forwardPartitionsToMessageQueue c partitions
@@ -549,6 +555,7 @@ resumePartitions :: (MonadIO m) => KafkaConsumer -> [(TopicName, PartitionId)] -
 resumePartitions consumer ps = changePause consumer ps False rdKafkaResumePartitions
 
 changePause :: (MonadIO m) => KafkaConsumer -> [(TopicName, PartitionId)] -> Bool -> (RdKafkaTPtr -> RdKafkaTopicPartitionListTPtr -> IO RdKafkaRespErrT) -> m KafkaError
+changePause _ ps _ _ | Just failure <- validateTopicPartitions ps = pure failure
 changePause consumer ps paused action = liftIO $ withForeignPtr (getRdKafka consumer) $ \_ -> mask_ $
   bracket (newRdKafkaTopicPartitionListT (length ps)) finalizeForeignPtr $ \list -> do
     mapM_ (\(TopicName topic, PartitionId partition) -> rdKafkaTopicPartitionListAdd list (Text.unpack topic) partition) ps
@@ -565,6 +572,7 @@ changePause consumer ps paused action = liftIO $ withForeignPtr (getRdKafka cons
 -- | Seek a particular offset for each provided 'TopicPartition'
 {-# DEPRECATED seek "Use seekPartitions instead" #-}
 seek :: (MonadIO m) => KafkaConsumer -> Timeout -> [TopicPartition] -> m (Maybe KafkaError)
+seek _ _ ps | Just failure <- validateTopicPartitions [(tpTopicName p, tpPartition p) | p <- ps] = pure (Just failure)
 seek consumer@(KafkaConsumer (Kafka k) _) (Timeout timeout) tps =
   liftIO $ withForeignPtr k $ \_ ->
     either Just (const Nothing) <$> withTopics tps seekAll
@@ -603,6 +611,7 @@ seek consumer@(KafkaConsumer (Kafka k) _) (Timeout timeout) tps =
 -- member markers are ignored only in that case; immediate errors are returned.
 -- 'PartitionOffsetStored' is not supported by native seek (use 'rewindConsumer').
 seekPartitions :: (MonadIO m) => KafkaConsumer -> [TopicPartition] -> Timeout -> m (Maybe KafkaError)
+seekPartitions _ ps _ | Just failure <- validateTopicPartitions [(tpTopicName p, tpPartition p) | p <- ps] = pure (Just failure)
 seekPartitions consumer@(KafkaConsumer (Kafka k) _) ps (Timeout timeout) = liftIO $ withForeignPtr k $ \_ -> mask_ $ bracket (toNativeTopicPartitionList ps) finalizeForeignPtr $ \tps -> do
   err <- bracket (rdKafkaSeekPartitions k tps timeout) rdKafkaErrorDestroy rdKafkaErrorCode
   case rdKafkaErrorToEither err of
@@ -619,6 +628,7 @@ seekPartitions consumer@(KafkaConsumer (Kafka k) _) ps (Timeout timeout) = liftI
 
 -- | Retrieve committed offsets for topics+partitions.
 committed :: (MonadIO m) => KafkaConsumer -> Timeout -> [(TopicName, PartitionId)] -> m (Either KafkaError [TopicPartition])
+committed _ _ ps | Just failure <- validateTopicPartitions ps = pure (Left failure)
 committed (KafkaConsumer (Kafka k) _) (Timeout timeout) tps = liftIO $ withForeignPtr k $ \_ -> bracket (toNativeTopicPartitionList' tps) finalizeForeignPtr $ \ntps -> do
   failure <- partitionListError ntps =<< rdKafkaCommitted k ntps timeout
   case failure of
@@ -628,6 +638,7 @@ committed (KafkaConsumer (Kafka k) _) (Timeout timeout) tps = liftIO $ withForei
 -- | Retrieve current positions (last consumed message offset+1) for the current running instance of the consumer.
 -- If the current consumer hasn't received any messages for a given partition, 'PartitionOffsetInvalid' is returned.
 position :: (MonadIO m) => KafkaConsumer -> [(TopicName, PartitionId)] -> m (Either KafkaError [TopicPartition])
+position _ ps | Just failure <- validateTopicPartitions ps = pure (Left failure)
 position (KafkaConsumer (Kafka k) _) tps = liftIO $ withForeignPtr k $ \_ -> bracket (toNativeTopicPartitionList' tps) finalizeForeignPtr $ \ntps -> do
   failure <- partitionListError ntps =<< rdKafkaPosition k ntps
   case failure of

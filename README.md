@@ -138,6 +138,11 @@ processMessages kafka = do
     return $ Right ()
 ```
 
+Consumer topic names and metadata group queries reject embedded NUL. Partition
+IDs outside the native C integer range return `KafkaBadSpecification` through
+the operation’s existing error result before changing state. Other invalid
+inputs retain librdkafka’s validation and error conventions.
+
 The examples in the sections below assume `import Kafka.Consumer` (or
 `import Kafka.Producer`) and the `LambdaCase` and `OverloadedStrings`
 extensions.

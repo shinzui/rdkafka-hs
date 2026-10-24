@@ -45,7 +45,7 @@ import Kafka.Consumer.Convert (fromNativeTopicPartitionList'', nativeTopicPartit
 import Kafka.Consumer.Types (ConsumerGroupId (..), Offset (..), PartitionOffset (..), TopicPartition (..))
 import Kafka.Internal.RdKafka (RdKafkaGroupInfoT (..), RdKafkaGroupListT (..), RdKafkaGroupListTPtr, RdKafkaGroupMemberInfoT (..), RdKafkaMetadataBrokerT (..), RdKafkaMetadataPartitionT (..), RdKafkaMetadataT (..), RdKafkaMetadataTPtr, RdKafkaMetadataTopicT (..), RdKafkaRespErrT (..), RdKafkaTPtr, destroyUnmanagedRdKafkaTopic, newUnmanagedRdKafkaTopicT, peekCText, rdKafkaListGroups, rdKafkaMetadata, rdKafkaOffsetsForTimes, rdKafkaQueryWatermarkOffsets)
 import Kafka.Internal.Setup (HasKafka (..), Kafka (..))
-import Kafka.Internal.Shared (kafkaErrorToMaybe)
+import Kafka.Internal.Shared (kafkaErrorToMaybe, validateCStringInput, validateTopicNameInput, validateTopicPartitions)
 import Kafka.Types (BrokerId (..), ClientId (..), KafkaError (..), Millis (..), PartitionId (..), Timeout (..), TopicName (..))
 
 import Data.Set qualified as S
@@ -138,6 +138,7 @@ allTopicsMetadata k (Timeout timeout) =
 
 -- | Returns metadata only for specified topic
 topicMetadata :: (MonadIO m, HasKafka k) => k -> Timeout -> TopicName -> m (Either KafkaError KafkaMetadata)
+topicMetadata _ _ topic | Just failure <- validateTopicNameInput topic = pure (Left failure)
 topicMetadata k (Timeout timeout) (TopicName tn) = liftIO $ withForeignPtr (getKafkaPtr k) $ \_ ->
   bracket mkTopic clTopic $ \mbt -> case mbt of
     Left err -> return (Left $ KafkaError (Text.pack err))
@@ -169,6 +170,7 @@ watermarkOffsets' k timeout tm = case tmError tm of
 
 -- | Query broker for low (oldest/beginning) and high (newest/end) offsets for a specific partition
 partitionWatermarkOffsets :: (MonadIO m, HasKafka k) => k -> Timeout -> TopicName -> PartitionId -> m (Either KafkaError WatermarkOffsets)
+partitionWatermarkOffsets _ _ topic partition | Just failure <- validateTopicPartitions [(topic, partition)] = pure (Left failure)
 partitionWatermarkOffsets k (Timeout timeout) (TopicName t) (PartitionId p) = liftIO $ do
   offs <- rdKafkaQueryWatermarkOffsets (getKafkaPtr k) (Text.unpack t) p timeout
   return $ bimap KafkaResponseError toWatermark offs
@@ -211,6 +213,7 @@ offsetsForTime' k timeout timestamp t = case tmError t of
 -- timestamp is greater than or equal to the given timestamp in the
 -- corresponding partition.
 offsetsForTime :: (MonadIO m, HasKafka k) => k -> Timeout -> Millis -> [(TopicName, PartitionId)] -> m (Either KafkaError [TopicPartition])
+offsetsForTime _ _ _ ps | Just failure <- validateTopicPartitions ps = pure (Left failure)
 offsetsForTime k (Timeout timeout) (Millis t) tps = liftIO $ withForeignPtr (getKafkaPtr k) $ \_ -> bracket (toNativeTopicPartitionList (mkTopicPartition <$> uniqueTps)) finalizeForeignPtr $ \ntps -> do
   res <- rdKafkaOffsetsForTimes (getKafkaPtr k) ntps timeout
   case res of
@@ -235,6 +238,7 @@ allConsumerGroupsInfo k (Timeout t) =
 -- | Describe a given consumer group. Unsupported native group-state names
 -- return a descriptive error; a missing group returns an empty list.
 consumerGroupInfo :: (MonadIO m, HasKafka k) => k -> Timeout -> ConsumerGroupId -> m (Either KafkaError [GroupInfo])
+consumerGroupInfo _ _ (ConsumerGroupId name) | Just failure <- validateCStringInput "consumer group" name = pure (Left failure)
 consumerGroupInfo k (Timeout timeout) (ConsumerGroupId gn) =
   liftIO $
     withNativeResult k (rdKafkaListGroups (getKafkaPtr k) (Just (Text.unpack gn)) timeout) fromGroupInfoListPtr

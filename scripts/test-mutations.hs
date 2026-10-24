@@ -262,6 +262,16 @@ families "buffer" =
   ]
   where
     b label change test = mutation "public-contract" label consumer change test
+families "inputs" =
+  [ control "unchanged-control" integration "input-boundaries",
+    i "input-topic-nul-guard-removed" (replace "Text.any (== '\\0') value" "False") "async assign rejects nul-topic",
+    i "input-partition-upper-bound-removed" (replace "toInteger partition > toInteger (maxBound :: CInt)" "False") "async assign rejects overflow-partition",
+    i "input-partition-lower-bound-removed" (replace "toInteger partition < toInteger (minBound :: CInt)" "False") "sync assign rejects underflow-partition",
+    i "input-list-tail-not-validated" (replace "validateTopicPartitions = listToMaybe . mapMaybe invalid" "validateTopicPartitions = listToMaybe . mapMaybe invalid . take 1") "async string queries and subscription reject NUL before native effects",
+    mutation "input-boundaries" "subscription-topic-guard-removed" consumer (section "newConsumer ::" "newAssignedConsumer ::" (replace "validateTopicPartitions [(topic, PartitionId 0) | topic <- Set.toList ts]" "Nothing")) "sync string queries and subscription reject NUL before native effects"
+  ]
+  where
+    i label change test = mutation "input-boundaries" label "src/Kafka/Internal/Shared.hs" change test
 families "runners" =
   [ control "unchanged-control" integration "deprecated-runners",
     mutation "deprecated-runners" "producer-wrapper-skips-flush" producer (replace "clProducer (Right prod) = closeProducer prod" "clProducer (Right _) = pure ()") "producer flushes after Thrown",
@@ -314,7 +324,7 @@ families "config" =
     mutation "config-strings" "c-string-key-guard-removed" "src/Kafka/Internal/Setup.hs" (replace "Text.any (== '\\0') key" "False") "producer topic rejects NUL key",
     mutation "config-strings" "c-string-value-guard-removed" "src/Kafka/Internal/Setup.hs" (replace "Text.any (== '\\0') value" "False") "producer global rejects NUL value"
   ]
-families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata, metadata-utf8, metadata-partitions, metadata-fields, consumer-commit, runners, buffer, data or config")
+families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata, metadata-utf8, metadata-partitions, metadata-fields, consumer-commit, runners, inputs, buffer, data or config")
 
 replace :: String -> String -> String -> String
 replace old new source = case [i | (i, rest) <- zip [0 ..] (tails source), old `isPrefixOf` rest] of

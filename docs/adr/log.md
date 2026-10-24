@@ -1,6 +1,7 @@
 # Bundle Update Log
 
 ## 2026-10-24
+* **created**: Reject topic truncation and partition wrapping before consumer or metadata native effects.
 * **created**: Preserve manual sync callback polling with copied results, partition state transitions and scoped native ownership.
 * **updated**: Preserve supplied and decoded partition errors in metadata helpers and distinguish native group query deadlines.
 * **updated**: Preserve Unicode group query and metadata field identities with matching native text marshalling.

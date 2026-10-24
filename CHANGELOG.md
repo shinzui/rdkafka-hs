@@ -9,6 +9,11 @@ this project adheres to the [Haskell Package Versioning Policy](https://pvp.hask
 
 ### Fixed
 
+- Consumer and metadata inputs reject embedded NUL topic/group names and
+  partition IDs outside the native C integer range with `KafkaBadSpecification`,
+  preventing inherited truncation and wrapping from targeting another identity.
+  Malformed lists are rejected before state changes.
+
 - Metadata and group queries now scope native result ownership through copying,
   including cancellation at acquisition. Convenience queries preserve missing
   topic errors, and timestamp lookups report partition errors. Group decoding

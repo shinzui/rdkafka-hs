@@ -141,6 +141,8 @@ EP-14 M1 is Complete: 65 unit and four focused native cases pass normally and in
 
 ## Surprises & Discoveries
 
+EP-14 now rejects topic/group NUL truncation and partition integer wrapping before native state changes. All 78 compiled baseline cases fail; 80 repaired normal/Haskell/native-instrumented cases, 30 retained normal/mapped cases, five compiled mutations and package checks pass. See [input evidence](../testing/input-identity-evidence.json) and [ADR-26](../adr/consumer-inputs-preserve-native-topic-and-partition-identity.md). The preceding full manifest remains an earlier checkpoint until final recollection and exception-coordinate reconciliation.
+
 EP-14's refreshed full candidate passes 662 registered tests normally and mapped, plus four actual nonthreaded checks and 24 tooling controls. The inventory now has 146 tested and 35 open rows; 255 handwritten misses remain unexplained after exact source audits. [Checkpoint evidence](../testing/post-wrapper-evidence.json) retains the source-bound counts. Input probes reproduce topic truncation and partition wrapping; those repairs are next. EP-14 remains In Progress and EP-15 is Not Started.
 
 The actual producer/consumer example passes bounded normal/Haskell/native-instrumented runs on a private run-owned topic, with independent exact-record/header/commit verification; see [example evidence](../testing/example-evidence.json). Remaining EP-14 contracts continue.

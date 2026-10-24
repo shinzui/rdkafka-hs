@@ -1,0 +1,58 @@
+{
+  "status": "accepted input-identity checkpoint; EP-14 incomplete",
+  "fingerprint": "77945edc43e5baeec2756b998f802bd8b6420bb872299d3b65bdae1ebb33784e",
+  "baseline": {
+    "log": "/tmp/rdkafka-ep14-input-baseline-compiled.log",
+    "failed": 78,
+    "total": 78,
+    "seconds": 25.64
+  },
+  "runs": {
+    "normal": {
+      "log": "/tmp/rdkafka-ep14-input-normal.log",
+      "sha256": "581977cb6c03cbf6dd9799c95f2dcb93b0d682f48cd26a13c5b2560944227fbf",
+      "passed": 80
+    },
+    "instrumented-haskell": {
+      "log": "/tmp/rdkafka-ep14-input-hpc.log",
+      "sha256": "f78ac7b99132af397c14ae149992e7efc1d552fc527304ac2894c62b47cf4ddc",
+      "passed": 80
+    },
+    "instrumented-native": {
+      "log": "/tmp/rdkafka-ep14-input-asan.log",
+      "sha256": "7268544aaec5f4c26ff676cad9aa7c2a1c1735cdb602b293331491b637a2b491",
+      "passed": 80
+    }
+  },
+  "regression_runs": {
+    "normal": {
+      "log": "/tmp/rdkafka-ep14-input-regression-normal.log",
+      "sha256": "f6b417195acd17a5ebbeaf3fe7b29defdffbd6e20e6c2b60067dfd1ba7c205ee",
+      "passed": 30
+    },
+    "instrumented-haskell": {
+      "log": "/tmp/rdkafka-ep14-input-regression-hpc.log",
+      "sha256": "d7a11ae5ab4864206b67baacc10ce35a597ed4b4e2b77651a3d68b2128630973",
+      "passed": 30
+    }
+  },
+  "mutations": "dist-mutations/20261024T212523Z-inputs-67341-0/results.json",
+  "compiled_mutations_caught": 5,
+  "controls": 1,
+  "scope": [
+    "Thirteen consumer and metadata operations reject NUL topics and upper/lower partition overflow in both callback modes",
+    "All rejected operations preserve prior assignment and the exact next record",
+    "Metadata convenience/group queries and subscription construction reject NUL",
+    "Mixed malformed assignment is rejected before native effects; a representable maximum C int retains native query behavior"
+  ],
+  "native_library": "mori://confluentinc/librdkafka",
+  "native_version": "2.15.0",
+  "native_diagnostic_control": "docs/testing/callback-native-diagnostics.json",
+  "leak_instrumentation": false,
+  "excluded": "The first baseline attempt failed to compile due to an ambiguous Tasty Timeout import; only the corrected 78-case compiled run counts as defect evidence.",
+  "remaining": "Whole-candidate collection/inventory remains at the preceding 662-case checkpoint. Remaining API cases, saved seek diagnosis, reachable ownership/error coverage and EP-15 environments remain open. Coverage exception coordinates must be reconciled after these source-line shifts.",
+  "required_checks": {
+    "log": "/tmp/rdkafka-ep14-input-check.log",
+    "sha256": "2211cecb0715f4fddd0007b416ebfb20964e2d03f1fd5bfa5f9b650224bed9a7"
+  }
+}

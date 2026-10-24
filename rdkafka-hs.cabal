@@ -198,6 +198,7 @@ test-suite rdkafka-hs-integration
     Kafka.Integration.DiagnosticContractTest
     Kafka.Integration.FatalErrorTest
     Kafka.Integration.HeadersTest
+    Kafka.Integration.InputBoundaryContractTest
     Kafka.Integration.LifecycleTest
     Kafka.Integration.MetadataContractTest
     Kafka.Integration.ObserverTest
