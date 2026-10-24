@@ -46,5 +46,15 @@
   "native_diagnostic_control": "docs/testing/callback-native-diagnostics.json",
   "leak_instrumentation": false,
   "required_checks": "/tmp/rdkafka-ep14-state-check.log",
-  "remaining": "The saved intermittent deprecated-seek failure remains unexplained. Further consumer, metadata and diagnostics contracts, full mapped coverage/inventory reconciliation and EP-15 environments remain open."
+  "remaining": "The saved intermittent deprecated-seek failure remains unexplained. Further consumer, metadata and diagnostics contracts, full mapped coverage/inventory reconciliation and EP-15 environments remain open.",
+  "full-normal": {
+    "revision": "e76cbc8",
+    "fingerprint": "74ec9986830adf22345722247d511b7b13879c9e4d9babb1f45225765f054917",
+    "log": "/tmp/rdkafka-ep14-state-full-normal.log",
+    "sha256": "a583c03a165284670ba21f35b32c972fe9334ef66a9be5ee4bcfa98cf990b297",
+    "unit": 65,
+    "integration": 495,
+    "seconds": 222.19,
+    "scope": "Binary built before the subsequent diagnostic test additions."
+  }
 }

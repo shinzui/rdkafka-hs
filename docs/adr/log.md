@@ -1,6 +1,7 @@
 # Bundle Update Log
 
 ## 2026-10-24
+* **created**: Scope diagnostic streams and native dump arrays while preserving caller handles
 * **updated**: Apply explicit-key topic configuration merging to consumers
 * **created**: Preserve member failures and partial success in consumer partition operations
 * **created**: Check native rebalance failures and scope cooperative error ownership

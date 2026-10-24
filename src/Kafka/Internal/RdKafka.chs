@@ -28,7 +28,7 @@ import Data.ByteString qualified as BS
 import Text.Read (readMaybe)
 import Data.Text (Text)
 import Data.Text qualified as Text
-import Control.Exception (bracket, finally, mask_)
+import Control.Exception (bracket, bracketOnError, finally, mask_)
 import Kafka.Internal.CallbackOwner (CallbackOwner, installCallback, checkCallbackOwner, attachCallbackOwner, releaseCallbackOwner, containCallbackException, containCallbackResult)
 import Control.Monad (liftM)
 import Data.Int (Int32, Int64)
@@ -39,11 +39,12 @@ import Foreign.Marshal.Array (peekArray, allocaArray, withArrayLen)
 import Foreign.Storable (Storable(..))
 import Foreign.Ptr (Ptr, FunPtr, castFunPtr, castPtr, nullPtr)
 import Foreign.ForeignPtr (FinalizerPtr, addForeignPtrFinalizer, newForeignPtr_, withForeignPtr, ForeignPtr, newForeignPtr, touchForeignPtr)
-import Foreign.C.Error (Errno(..), getErrno)
-import Foreign.C.String (CString, newCString, withCString, withCAString, peekCAString, peekCString)
+import Foreign.C.Error (Errno(..), getErrno, throwErrnoIfNull, throwErrnoIfMinus1_)
+import Foreign.C.String (CString, withCString, withCAString, peekCAString, peekCString)
 import Foreign.C.Types (CFile, CInt(..), CSize, CChar, CLong)
-import System.IO (Handle, stdin, stdout, stderr)
-import System.Posix.IO (handleToFd)
+import System.IO (Handle, hClose)
+import GHC.IO.Handle (hDuplicate)
+import System.Posix.IO (handleToFd, closeFd)
 import System.Posix.Types (Fd(..))
 
 #include <librdkafka/rdkafka.h>
@@ -1513,22 +1514,17 @@ peekPtr :: Ptr a -> IO (Ptr b)
 peekPtr = peek . castPtr
 {-# INLINE peekPtr #-}
 
--- Handle -> File descriptor
+-- Borrow the caller's handle through an owned duplicate. fdopen takes the
+-- duplicate descriptor only on success; fclose flushes and releases it.
+foreign import ccall safe "fdopen" fdopen :: Fd -> CString -> IO (Ptr CFile)
+foreign import ccall safe "fclose" fclose :: Ptr CFile -> IO CInt
 
-foreign import ccall "" fdopen :: Fd -> CString -> IO (Ptr CFile)
-
-handleToCFile :: Handle -> String -> IO (CFilePtr)
-handleToCFile h m =
- do iomode <- newCString m
-    fd <- handleToFd h
-    fdopen fd iomode
-
-c_stdin :: IO CFilePtr
-c_stdin = handleToCFile stdin "r"
-c_stdout :: IO CFilePtr
-c_stdout = handleToCFile stdout "w"
-c_stderr :: IO CFilePtr
-c_stderr = handleToCFile stderr "w"
+withCFile :: Handle -> String -> (CFilePtr -> IO a) -> IO a
+withCFile handle mode = bracket acquire (throwErrnoIfMinus1_ "fclose" . fclose)
+  where
+    acquire = bracketOnError (hDuplicate handle) hClose $ \duplicate ->
+      bracketOnError (handleToFd duplicate) closeFd $ \fd ->
+        withCString mode $ \modeString -> throwErrnoIfNull "fdopen" (fdopen fd modeString)
 
 
 withForeignPtrs :: ForeignPtr kafkaPtr

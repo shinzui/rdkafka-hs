@@ -15,13 +15,13 @@ where
 
 import Kafka.Internal.RdKafka
   ( CSizePtr,
-    handleToCFile,
     peekCText,
     rdKafkaConfDump,
     rdKafkaConfDumpFree,
     rdKafkaConfPropertiesShow,
     rdKafkaDump,
     rdKafkaTopicConfDump,
+    withCFile,
   )
 import Kafka.Internal.Setup
   ( HasKafka (..),
@@ -32,22 +32,27 @@ import Kafka.Internal.Setup
     getRdTopicConf,
   )
 
+import Control.Exception (bracket, evaluate)
 import Control.Monad ((<=<))
 import Control.Monad.IO.Class (MonadIO (liftIO))
 import Data.Map.Strict (Map)
 import Data.Map.Strict qualified as Map
 import Data.Text (Text)
-import Foreign (Ptr, Storable (peek, peekElemOff), alloca)
+import Foreign (Ptr, Storable (peek, peekElemOff), alloca, withForeignPtr)
 import Foreign.C.String (CString)
 import System.IO (Handle)
 
--- | Prints out all supported Kafka conf properties to a handle
+-- | Prints supported Kafka properties, flushing the native output before
+-- returning. The handle stays open and owned by the caller. Serialize other
+-- access to this handle while printing.
 hPrintSupportedKafkaConf :: (MonadIO m) => Handle -> m ()
-hPrintSupportedKafkaConf h = liftIO $ handleToCFile h "w" >>= rdKafkaConfPropertiesShow
+hPrintSupportedKafkaConf h = liftIO $ withCFile h "w" rdKafkaConfPropertiesShow
 
--- | Prints out all data associated with a specific kafka object to a handle
+-- | Prints native client diagnostics, flushing before returning. The handle
+-- stays open and owned by the caller. Serialize other access while printing.
 hPrintKafka :: (MonadIO m, HasKafka k) => Handle -> k -> m ()
-hPrintKafka h k = liftIO $ handleToCFile h "w" >>= \f -> rdKafkaDump f (getRdKafka k)
+hPrintKafka h k = liftIO $ withForeignPtr (getRdKafka k) $ \_ ->
+  withCFile h "w" (\file -> rdKafkaDump file (getRdKafka k))
 
 -- | Returns a map of the current topic configuration
 dumpTopicConf :: (MonadIO m, HasTopicConf t) => t -> m (Map Text Text)
@@ -58,15 +63,18 @@ dumpKafkaConf :: (MonadIO m, HasKafkaConf k) => k -> m (Map Text Text)
 dumpKafkaConf k = liftIO $ parseDump (rdKafkaConfDump (getRdKafkaConf k))
 
 parseDump :: (CSizePtr -> IO (Ptr CString)) -> IO (Map Text Text)
-parseDump cstr = alloca $ \sizeptr -> do
-  strPtr <- cstr sizeptr
-  size <- peek sizeptr
-
-  keysAndValues <- mapM (peekCText <=< peekElemOff strPtr) [0 .. (fromIntegral size - 1)]
-
-  let ret = Map.fromList $ listToTuple keysAndValues
-  rdKafkaConfDumpFree strPtr size
-  return ret
+parseDump cstr = alloca $ \sizeptr ->
+  bracket
+    ( do
+        pointer <- cstr sizeptr
+        size <- peek sizeptr
+        pure (pointer, size)
+    )
+    (uncurry rdKafkaConfDumpFree)
+    ( \(pointer, size) -> do
+        keysAndValues <- mapM (peekCText <=< peekElemOff pointer) [0 .. (fromIntegral size - 1)]
+        evaluate (Map.fromList (listToTuple keysAndValues))
+    )
 
 listToTuple :: [Text] -> [(Text, Text)]
 listToTuple [] = []

@@ -220,7 +220,15 @@ families "state" =
   ]
   where
     c label change test = mutation "consumer-state" label consumer change test
-families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance or state")
+families "diagnostics" =
+  [ control "unchanged-control" integration "diagnostics",
+    d "dump-array-release-removed" "src/Kafka/Dump.hs" (replace "(uncurry rdKafkaConfDumpFree)" "(const (pure ()))") "global cancellation at native acquisition releases its array",
+    d "native-stream-close-removed" "src/Kafka/Internal/RdKafka.chs" (replace "(throwErrnoIfMinus1_ \"fclose\" . fclose)" "(const (pure ()))") "supported-property print flushes and preserves the caller handle",
+    d "caller-handle-consumed" "src/Kafka/Internal/RdKafka.chs" (replace "(hDuplicate handle)" "(pure handle)") "client print flushes and preserves the caller handle"
+  ]
+  where
+    d = mutation "diagnostics"
+families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state or diagnostics")
 
 replace :: String -> String -> String -> String
 replace old new source = case [i | (i, rest) <- zip [0 ..] (tails source), old `isPrefixOf` rest] of

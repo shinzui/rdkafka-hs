@@ -9,6 +9,11 @@ this project adheres to the [Haskell Package Versioning Policy](https://pvp.hask
 
 ### Fixed
 
+- Diagnostic printing now flushes its native output and keeps the caller’s
+  handle open. Native streams and duplicate descriptors are scoped through
+  failures; configuration dump arrays are freed on cancellation and conversion
+  errors.
+
 - Consumer construction preserves topic settings supplied globally and applies
   explicit subscription values afterwards. Pause, resume, store, position and
   committed-offset calls now report native per-partition errors after any

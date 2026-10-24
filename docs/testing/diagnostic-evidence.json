@@ -1,0 +1,42 @@
+{
+  "status": "accepted M2 diagnostics checkpoint; EP-14 incomplete",
+  "fingerprint": "16d04c1a0afc4f53ca7c488ddef0c4200e3a4c22066d3e1f97793d8b5773a47f",
+  "runs": {
+    "normal": {
+      "log": "/tmp/rdkafka-ep14-diagnostic-normal.log",
+      "sha256": "1d7b9bac8e0a2793cd32638fb179d3f737864f1f731c0666a2078c3d9553035a",
+      "passed": 9,
+      "seconds": 0.03
+    },
+    "instrumented-haskell": {
+      "log": "/tmp/rdkafka-ep14-diagnostic-hpc.log",
+      "sha256": "d33d6b90a8e499b2fdb8e21bcbc2e48c68788c704a72a5d64c5dd50df905d224",
+      "passed": 9,
+      "seconds": 0.03
+    },
+    "instrumented-native": {
+      "log": "/tmp/rdkafka-ep14-diagnostic-asan.log",
+      "sha256": "183b1ebd58c1c54180bead9576d222ed5602d6419bced346c1d8e0c306019322",
+      "passed": 9,
+      "seconds": 0.04
+    }
+  },
+  "mutations": "dist-mutations/20261024T162611Z-diagnostics-46539-0/results.json",
+  "compiled_mutations_caught": 3,
+  "controls": 1,
+  "baseline": {
+    "revision": "e76cbc8",
+    "log": "/tmp/rdkafka-ep14-diagnostic-ownership-baseline.log",
+    "failed": 4,
+    "total": 7,
+    "observed": "Both print functions consume the caller handle; cancellation at global/topic native dump return leaves one native array outstanding."
+  },
+  "native_ownership": "Count actual native arrays, fdopen streams and fclose calls; verify 200 arrays are freed after repeated exact map assertions. A deliberately retained native array validates the counter and is freed after assertion. Observe pending ThreadKilled before releasing each acquisition barrier.",
+  "native_stream_failures": "Inject fdopen EMFILE and fclose EIO after the real close. Verify exceptions, duplicate descriptor closure through fcntl, and continued caller-handle usability.",
+  "native_library": "mori://confluentinc/librdkafka",
+  "native_version": "2.15.0",
+  "native_diagnostic_control": "docs/testing/callback-native-diagnostics.json",
+  "leak_instrumentation": false,
+  "required_checks": "/tmp/rdkafka-ep14-diagnostic-check.log",
+  "remaining": "Further consumer/metadata/runtime contracts, saved deprecated-seek failure, global mapped coverage/inventory reconciliation and EP-15 environments remain open."
+}

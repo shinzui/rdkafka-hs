@@ -143,6 +143,7 @@ test-suite rdkafka-hs-integration
     test-integration/cbits/admin_ownership.c
     test-integration/cbits/callback_lifetime.c
     test-integration/cbits/consumer_state.c
+    test-integration/cbits/diagnostics.c
     test-integration/cbits/message_ownership.c
     test-integration/cbits/producer_ownership.c
     test-integration/cbits/seek_faults.c
@@ -177,6 +178,7 @@ test-suite rdkafka-hs-integration
     Kafka.CallbackLifetimeSupport
     Kafka.CallbackTestSupport
     Kafka.ConsumerStateSupport
+    Kafka.DiagnosticTestSupport
     Kafka.FaultTestSupport
     Kafka.FixtureSupport
     Kafka.FixtureSupportTest
@@ -189,6 +191,7 @@ test-suite rdkafka-hs-integration
     Kafka.Integration.ConsumerStateContractTest
     Kafka.Integration.ConsumerTest
     Kafka.Integration.DestroyTest
+    Kafka.Integration.DiagnosticContractTest
     Kafka.Integration.FatalErrorTest
     Kafka.Integration.HeadersTest
     Kafka.Integration.LifecycleTest
