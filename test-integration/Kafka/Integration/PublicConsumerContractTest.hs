@@ -82,6 +82,22 @@ tests testEnv =
           <> [ testCase "callback-event polling cancellation releases a returned message" $
                  withRecords testEnv "events-cancel" CallbackPollModeSync $ \_ consumer ->
                    withMessageFault 13 (cancelled 1 (pollConsumerEvents consumer (Just (Timeout 10000)))),
+               testCase "callback buffer preserves attributed header failure" $
+                 withRecords testEnv "buffer-attributed-header" CallbackPollModeSync $ \topic consumer -> do
+                   withMessageFault 15 $ do
+                     pollConsumerEvents consumer (Just (Timeout 10000))
+                     balanced 1
+                   pollMessageAttributed consumer (Timeout 0) >>= (@?= Left (ConsumerMessageError (KafkaResponseError RdKafkaRespErrBadMsg) (Just topic) (Just (PartitionId 0)) (Just (Offset 0))))
+                   message <- pollMessage consumer (Timeout 10000) >>= either throwIO pure
+                   crOffset message @?= Offset 1,
+               testCase "callback buffer preserves plain header failure" $
+                 withRecords testEnv "buffer-plain-header" CallbackPollModeSync $ \_ consumer -> do
+                   withMessageFault 15 $ do
+                     pollConsumerEvents consumer (Just (Timeout 10000))
+                     balanced 1
+                   pollMessage consumer (Timeout 0) >>= (@?= Left (KafkaResponseError RdKafkaRespErrBadMsg))
+                   message <- pollMessage consumer (Timeout 10000) >>= either throwIO pure
+                   crOffset message @?= Offset 1,
                testCase "zero batch size leaves the queued records available" $
                  withRecords testEnv "batch-zero" CallbackPollModeAsync $ \_ consumer -> withMessageFault 0 $ do
                    pollMessageBatch consumer (Timeout 1000) (BatchSize 0) >>= (@?= [])

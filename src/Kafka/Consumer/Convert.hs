@@ -15,6 +15,7 @@ module Kafka.Consumer.Convert
     fromMessagePtr,
     fromMessagePtrAttributed,
     copyMessagePtr,
+    copyMessagePtrAttributed,
     withPolledMessage,
     offsetCommitToBool,
   )

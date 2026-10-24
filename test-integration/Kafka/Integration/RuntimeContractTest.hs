@@ -4,7 +4,7 @@ module Kafka.Integration.RuntimeContractTest (tests) where
 
 import Control.Concurrent (rtsSupportsBoundThreads)
 import Control.Exception (bracket, finally, throwIO)
-import Data.IORef (newIORef, readIORef, writeIORef)
+import Data.IORef (modifyIORef', newIORef, readIORef, writeIORef)
 import Kafka.Consumer
 import Kafka.TestEnv
 import Test.Tasty (TestTree, testGroup)
@@ -33,8 +33,12 @@ tests env =
       testCase "sync subscription delivers an exact record" $
         withTopic env "runtime-sync" 1 $ \topic producer -> do
           produceTo producer topic 0 "runtime-record"
-          bracket (newConsumer (base "sync" <> callbackPollMode CallbackPollModeSync) (topics [topic] <> offsetReset Earliest) >>= either throwIO pure) releaseConsumer $ \consumer -> do
-            message <- pollMessage consumer (Timeout 10000) >>= either throwIO pure
+          events <- newIORef []
+          let props = base "sync" <> callbackPollMode CallbackPollModeSync <> setCallback (rebalanceCallback (\_ event -> modifyIORef' events (<> [event])))
+          bracket (newConsumer props (topics [topic] <> offsetReset Earliest) >>= either throwIO pure) releaseConsumer $ \consumer -> do
+            pollConsumerEvents consumer (Just (Timeout 10000))
+            readIORef events >>= (@?= [RebalanceBeforeAssign [(topic, PartitionId 0)], RebalanceAssign [(topic, PartitionId 0)]])
+            message <- pollMessage consumer (Timeout 0) >>= either throwIO pure
             (crTopic message, crPartition message, crOffset message, crValue message) @?= (topic, PartitionId 0, Offset 0, Just "runtime-record"),
       testCase "deprecated sync runner closes after an exact record" $
         withTopic env "runtime-runner" 1 $ \topic producer -> do

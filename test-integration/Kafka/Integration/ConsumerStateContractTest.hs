@@ -8,9 +8,11 @@ import Data.ByteString.Char8 qualified as BS
 import Data.Map.Strict qualified as M
 import Data.Text qualified as Text
 import Kafka.Consumer
+import Kafka.MessageTestSupport (messageStat, withMessageFault)
+import Kafka.Producer qualified as P
 import Kafka.TestEnv
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.HUnit (testCase, (@?=))
+import Test.Tasty.HUnit (assertBool, assertFailure, testCase, (@?=))
 
 tests :: TestEnv -> TestTree
 tests env =
@@ -44,6 +46,57 @@ tests env =
             resumePartitions consumer [(topic, PartitionId 0)] >>= (@?= KafkaResponseError RdKafkaRespErrNoError)
             record consumer topic 0 1
             record consumer topic 0 2,
+          scenario "callback-event-poll-preserves-application-records" $ \topic consumer -> do
+            assign consumer [part topic 0 (PartitionOffset 0)] >>= (@?= Nothing)
+            pollConsumerEvents consumer (Just (Timeout 1000))
+            forM_ [0 .. 2] (record consumer topic 0),
+          scenario "callback-buffer-seek-replaces-pending-records" $ \topic consumer -> do
+            assign consumer [part topic 0 (PartitionOffset 0)] >>= (@?= Nothing)
+            pollConsumerEvents consumer (Just (Timeout 1000))
+            seekPartitions consumer [part topic 0 (PartitionOffset 2)] (Timeout 2000) >>= (@?= Nothing)
+            record consumer topic 0 2,
+          scenario "callback-buffer-reassignment-replaces-pending-records" $ \topic consumer -> do
+            assign consumer [part topic 0 (PartitionOffset 0)] >>= (@?= Nothing)
+            pollConsumerEvents consumer (Just (Timeout 1000))
+            assign consumer [part topic 1 (PartitionOffset 1)] >>= (@?= Nothing)
+            record consumer topic 1 1,
+          scenario "callback-buffer-pause-defers-pending-records" $ \topic consumer -> do
+            assign consumer [part topic 0 (PartitionOffset 0)] >>= (@?= Nothing)
+            pollConsumerEvents consumer (Just (Timeout 1000))
+            pausePartitions consumer [(topic, PartitionId 0)] >>= (@?= KafkaResponseError RdKafkaRespErrNoError)
+            pollMessage consumer (Timeout 100) >>= (@?= Left (KafkaResponseError RdKafkaRespErrTimedOut))
+            resumePartitions consumer [(topic, PartitionId 0)] >>= (@?= KafkaResponseError RdKafkaRespErrNoError)
+            forM_ [0 .. 2] (record consumer topic 0),
+          scenario "callback-buffer-legacy-seek-replaces-pending-records" $ \topic consumer -> do
+            assign consumer [part topic 0 (PartitionOffset 0)] >>= (@?= Nothing)
+            pollConsumerEvents consumer (Just (Timeout 1000))
+            seek consumer (Timeout 2000) [part topic 0 (PartitionOffset 2)] >>= (@?= Nothing)
+            record consumer topic 0 2,
+          scenario "callback-buffer-legacy-partial-seek-keeps-success" $ \topic consumer -> do
+            assign consumer [part topic 0 (PartitionOffset 0)] >>= (@?= Nothing)
+            pollConsumerEvents consumer (Just (Timeout 1000))
+            seek consumer (Timeout 2000) [part topic 0 (PartitionOffset 2), part topic 1 (PartitionOffset 2)] >>= (@?= Just (KafkaResponseError RdKafkaRespErrState))
+            record consumer topic 0 2,
+          scenario "callback-buffer-paused-partition-does-not-block-another" $ \topic consumer -> do
+            assign consumer [part topic 0 (PartitionOffset 0), part topic 1 (PartitionOffset 0)] >>= (@?= Nothing)
+            forM_ [1 .. if mode == CallbackPollModeSync then 6 else 1 :: Int] $ \_ -> pollConsumerEvents consumer (Just (Timeout 1000))
+            pausePartitions consumer [(topic, PartitionId 0), (unknown topic, PartitionId 42)] >>= (@?= KafkaResponseError RdKafkaRespErrUnknownPartition)
+            forM_ [0 .. 2] (record consumer topic 1)
+            pollMessage consumer (Timeout 100) >>= (@?= Left (KafkaResponseError RdKafkaRespErrTimedOut))
+            resumePartitions consumer [(unknown topic, PartitionId 42), (topic, PartitionId 0)] >>= (@?= KafkaResponseError RdKafkaRespErrUnknownPartition)
+            forM_ [0 .. 2] (record consumer topic 0),
+          scenario "callback-buffer-unassignment-discards-pending-records" $ \topic consumer -> do
+            assign consumer [part topic 0 (PartitionOffset 0)] >>= (@?= Nothing)
+            pollConsumerEvents consumer (Just (Timeout 1000))
+            assign consumer [] >>= (@?= Nothing)
+            pollMessage consumer (Timeout 100) >>= (@?= Left (KafkaResponseError RdKafkaRespErrTimedOut)),
+          scenario "pausing-one-partition-leaves-the-other-running" $ \topic consumer -> do
+            assign consumer [part topic 0 (PartitionOffset 0), part topic 1 (PartitionOffset 0)] >>= (@?= Nothing)
+            forM_ [1 .. 2 :: Int] $ \_ -> pausePartitions consumer [(topic, PartitionId 0)] >>= (@?= KafkaResponseError RdKafkaRespErrNoError)
+            forM_ [0 .. 2] (record consumer topic 1)
+            pollMessage consumer (Timeout 100) >>= (@?= Left (KafkaResponseError RdKafkaRespErrTimedOut))
+            forM_ [1 .. 2 :: Int] $ \_ -> resumePartitions consumer [(topic, PartitionId 0)] >>= (@?= KafkaResponseError RdKafkaRespErrNoError)
+            forM_ [0 .. 2] (record consumer topic 0),
           scenario "pause-mixed-member-error" $ \topic consumer -> do
             assign consumer [part topic 0 (PartitionOffset 0)] >>= (@?= Nothing)
             record consumer topic 0 0
@@ -116,6 +169,36 @@ tests env =
               forM_ [0, 1] $ \partition -> forM_ [0 .. 2] $ \offset -> produceTo producer topic partition (payload partition offset)
               bracket (newAssignedConsumer (base name) >>= either throwIO pure) releaseConsumer (action topic)
     ]
+      <> bufferFieldTests env
+
+bufferFieldTests :: TestEnv -> [TestTree]
+bufferFieldTests env =
+  [ testCase ("sync-buffer-fields-" <> label) $
+      withTopic env (Text.pack ("buffer-fields-" <> label)) 1 $ \topic producer -> do
+        let fields = [(Just "\0\255key", Just "\255\0value", headersFromList [("same", ""), ("same", "\0\255")]), (Nothing, Nothing, mempty), (Just "", Just "", mempty)]
+        forM_ fields $ \(key, value, headers) -> P.produceMessage producer (P.ProducerRecord topic (P.SpecifiedPartition 0) key value headers) >>= (@?= Nothing)
+        P.flushProducerTimeout producer (Timeout 5000) >>= (@?= Nothing)
+        let props = brokersList (teBrokers env) <> groupId (makeGroupId env (Text.pack ("buffer-fields-" <> label))) <> noAutoCommit <> callbackPollMode CallbackPollModeSync <> extraProp "enable.partition.eof" "true"
+        bracket (newAssignedConsumer props >>= either throwIO pure) releaseConsumer $ \consumer -> do
+          assign consumer [part topic 0 (PartitionOffset 0)] >>= (@?= Nothing)
+          forM_ [1 .. 3 :: Int] $ \_ -> withMessageFault fault $ do
+            pollConsumerEvents consumer (Just (Timeout 3000))
+            mapM messageStat [1, 2, 5] >>= (@?= [1, 1, 0])
+          -- EOF is retained with its origin; an empty poll must not add a timeout.
+          pollConsumerEvents consumer (Just (Timeout 1000))
+          pollConsumerEvents consumer (Just (Timeout 100))
+          forM_ (zip [0 ..] fields) $ \(offset, (key, value, headers)) -> do
+            message <- if offset == 1 then pollMessageAttributed consumer (Timeout 0) >>= either (assertFailure . show) pure else pollMessage consumer (Timeout 0) >>= either throwIO pure
+            (crTopic message, crPartition message, crOffset message, crKey message, crValue message, crHeaders message) @?= (topic, PartitionId 0, Offset offset, key, value, headers)
+            case timestamp of
+              Just expected -> crTimestamp message @?= expected
+              Nothing -> case crTimestamp message of
+                CreateTime (Millis value) -> assertBool "timestamp is missing" (value > 0)
+                other -> assertFailure (show other)
+          pollMessageAttributed consumer (Timeout 0) >>= (@?= Left (ConsumerMessageError (KafkaResponseError RdKafkaRespErrPartitionEof) (Just topic) (Just (PartitionId 0)) (Just (Offset 3))))
+          pollMessage consumer (Timeout 50) >>= (@?= Left (KafkaResponseError RdKafkaRespErrTimedOut))
+  | (label, fault, timestamp) <- [("native-time", 16, Nothing), ("no-time", 17, Just NoTimestamp), ("append-time", 18, Just (LogAppendTime (Millis 123456789))), ("create-time", 19, Just (CreateTime (Millis 987654321)))]
+  ]
 
 part :: TopicName -> Int -> PartitionOffset -> TopicPartition
 part topic partition = TopicPartition topic (PartitionId partition)

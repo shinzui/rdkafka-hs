@@ -124,7 +124,7 @@ runProducer props f =
 -- existing configuration-exception convention.
 newProducer :: (MonadIO m) => ProducerProperties -> m (Either KafkaError KafkaProducer)
 newProducer pps = liftIO $ mask $ \restore -> do
-  kc@(KafkaConf kc' _ _ _ _) <- kafkaConf (KafkaProps $ (ppKafkaProps pps))
+  kc@(KafkaConf kc' _ _ _ _ _) <- kafkaConf (KafkaProps $ (ppKafkaProps pps))
   flip onException (releaseUnattachedCallbacks (kcfgCallbackOwner kc)) $ restore $ do
     tc <- topicConf (TopicProps $ (ppTopicProps pps))
     -- librdkafka accepts topic properties on the global configuration. Merge

@@ -9,7 +9,7 @@ module Kafka.Consumer.Callbacks
 where
 
 import Control.Arrow ((&&&))
-import Control.Exception (bracket, throwIO)
+import Control.Exception (bracket, mask_, throwIO)
 import Control.Monad (forM_, void)
 import Foreign.ForeignPtr (finalizeForeignPtr, newForeignPtr_, withForeignPtr)
 import Foreign.Ptr (nullPtr)
@@ -18,16 +18,17 @@ import Kafka.Consumer.Convert (fromNativeTopicPartitionList', fromNativeTopicPar
 import Kafka.Consumer.Types (KafkaConsumer (..), RebalanceEvent (..), TopicPartition (..))
 import Kafka.Internal.CallbackOwner (containCallbackException)
 import Kafka.Internal.RdKafka
-import Kafka.Internal.Setup (Callback (..), HasKafka (..), HasKafkaConf (..), Kafka (..), KafkaConf (..), getRdMsgQueue)
+import Kafka.Internal.Setup (Callback (..), HasKafka (..), HasKafkaConf (..), Kafka (..), KafkaConf (..), forgetPendingPartitions, getRdMsgQueue, resetPendingMessages)
 import Kafka.Internal.Shared (rdKafkaErrorToEither)
 import Kafka.Types (KafkaError (..), PartitionId (..), TopicName (..))
 
+import Data.Set qualified as Set
 import Data.Text qualified as Text
 
 -- | Sets a callback that is called when rebalance is needed.
 rebalanceCallback :: (KafkaConsumer -> RebalanceEvent -> IO ()) -> Callback
 rebalanceCallback callback =
-  Callback $ \kc@(KafkaConf con _ _ _ _) -> rdKafkaConfSetRebalanceCb (kcfgCallbackOwner kc) con (realCb kc)
+  Callback $ \kc@(KafkaConf con _ _ _ _ _) -> rdKafkaConfSetRebalanceCb (kcfgCallbackOwner kc) con (realCb kc)
   where
     realCb kc k err pl = do
       k' <- newForeignPtr_ k
@@ -44,7 +45,7 @@ rebalanceCallback callback =
 -- an error.
 offsetCommitCallback :: (KafkaConsumer -> KafkaError -> [TopicPartition] -> IO ()) -> Callback
 offsetCommitCallback callback =
-  Callback $ \kc@(KafkaConf conf _ _ _ _) -> rdKafkaConfSetOffsetCommitCb (kcfgCallbackOwner kc) conf (realCb kc)
+  Callback $ \kc@(KafkaConf conf _ _ _ _ _) -> rdKafkaConfSetOffsetCommitCb (kcfgCallbackOwner kc) conf (realCb kc)
   where
     realCb kc k err pl = do
       k' <- newForeignPtr_ k
@@ -89,9 +90,10 @@ setRebalanceCallback f k e pls = do
     KafkaResponseError RdKafkaRespErrAssignPartitions -> do
       containCallbackException $ f k (RebalanceBeforeAssign assignment)
       protocol <- rdKafkaRebalanceProtocol kptr
-      if protocol == "COOPERATIVE"
-        then checkRebalanceError (rdKafkaIncrementalAssign kptr pls)
-        else checkRebalanceCode (rdKafkaAssign kptr pls)
+      mask_ $
+        if protocol == "COOPERATIVE"
+          then checkRebalanceError (rdKafkaIncrementalAssign kptr pls) >> forgetPendingPartitions (getKafkaConf k) (Set.fromList assignment)
+          else checkRebalanceCode (rdKafkaAssign kptr pls) >> resetPendingMessages (getKafkaConf k)
 
       mbq <- getRdMsgQueue $ getKafkaConf k
       case mbq of
@@ -109,9 +111,10 @@ setRebalanceCallback f k e pls = do
     KafkaResponseError RdKafkaRespErrRevokePartitions -> do
       containCallbackException $ f k (RebalanceBeforeRevoke assignment)
       protocol <- rdKafkaRebalanceProtocol kptr
-      if protocol == "COOPERATIVE"
-        then checkRebalanceError (rdKafkaIncrementalUnassign kptr pls)
-        else checkRebalanceCode (newForeignPtr_ nullPtr >>= rdKafkaAssign kptr)
+      mask_ $
+        if protocol == "COOPERATIVE"
+          then checkRebalanceError (rdKafkaIncrementalUnassign kptr pls) >> forgetPendingPartitions (getKafkaConf k) (Set.fromList assignment)
+          else checkRebalanceCode (newForeignPtr_ nullPtr >>= rdKafkaAssign kptr) >> resetPendingMessages (getKafkaConf k)
       containCallbackException $ f k (RebalanceRevoke assignment)
     x -> error $ "Rebalance: UNKNOWN response: " <> show x
 

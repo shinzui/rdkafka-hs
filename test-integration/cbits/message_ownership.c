@@ -111,7 +111,7 @@ ssize_t rd_kafka_consume_batch_queue(rd_kafka_queue_t *queue, int timeout,
 
 static rd_kafka_message_t *single(rd_kafka_message_t *message, int app, int queue) {
   pthread_mutex_lock(&lock);
-  int selected = queue ? mode >= 10 && mode <= 12 : mode >= 13 && mode <= 15;
+  int selected = queue ? mode >= 10 && mode <= 12 : mode >= 13 && mode <= 19;
   if (enabled && app && selected && message && message->err == RD_KAFKA_RESP_ERR_NO_ERROR) {
     acquired(message);
     if (mode == 10 || mode == 13) boundary();
@@ -148,6 +148,18 @@ rd_kafka_resp_err_t rd_kafka_message_headers(const rd_kafka_message_t *message,
   }
   pthread_mutex_unlock(&lock);
   return real(message, headers);
+}
+int64_t rd_kafka_message_timestamp(const rd_kafka_message_t *message, rd_kafka_timestamp_type_t *type) {
+  REAL(rd_kafka_message_timestamp);
+  pthread_mutex_lock(&lock);
+  int selected = 0;
+  for (int i = 0; i < count; ++i) if (messages[i] == message && live[i]) selected = 1;
+  int current = enabled && selected ? mode : 0;
+  pthread_mutex_unlock(&lock);
+  if (current == 17) { if (type) *type = RD_KAFKA_TIMESTAMP_NOT_AVAILABLE; return -1; }
+  if (current == 18) { if (type) *type = RD_KAFKA_TIMESTAMP_LOG_APPEND_TIME; return 123456789; }
+  if (current == 19) { if (type) *type = RD_KAFKA_TIMESTAMP_CREATE_TIME; return 987654321; }
+  return real(message, type);
 }
 void rd_kafka_message_destroy(rd_kafka_message_t *message) {
   REAL(rd_kafka_message_destroy);

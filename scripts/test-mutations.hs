@@ -213,7 +213,7 @@ families "rebalance" =
     r label change test = mutation "public-contract" label "src/Kafka/Consumer/Callbacks.hs" change test
 families "state" =
   [ control "unchanged-control" integration "consumer-state",
-    c "pause-omitted" (replace "partitionListError pl =<< rdKafkaPausePartitions k pl" "partitionListError pl =<< pure RdKafkaRespErrNoError") "pause-resume-preserves-records",
+    c "pause-omitted" (replace "changePause consumer ps True rdKafkaPausePartitions" "changePause consumer ps True (\\_ _ -> pure RdKafkaRespErrNoError)") "pause-resume-preserves-records",
     c "member-errors-suppressed" (replace "Right () -> fmap KafkaResponseError . find (/= RdKafkaRespErrNoError) <$> nativeTopicPartitionErrors partitions" "Right () -> pure Nothing") "pause-mixed-member-error",
     c "store-member-errors-suppressed" (replace "partitionListError pl =<< rdKafkaOffsetsStore k pl" "kafkaErrorToMaybe . KafkaResponseError <$> rdKafkaOffsetsStore k pl") "store-mixed-member-error",
     c "global-consumer-topic-setting-discarded" (replace "setAllKafkaConfValues kc (KafkaProps tp)" "setAllKafkaConfValues kc (KafkaProps (M.insert \"auto.offset.reset\" \"latest\" tp))") "global-topic-setting-survives-empty-subscription-properties"
@@ -249,6 +249,19 @@ families "metadata" =
   ]
   where
     d label change test = mutation "metadata-contract" label "src/Kafka/Metadata.hs" change test
+families "buffer" =
+  [ control "unchanged-control" integration "public-contract",
+    b "callback-record-not-retained" (replace "bufferedMessages buffer |> packPendingMessage copied" "bufferedMessages buffer") "callback-event-poll-preserves-application-records",
+    b "callback-buffer-reversed" (replace "bufferedMessages buffer |> packPendingMessage copied" "packPendingMessage copied Seq.<| bufferedMessages buffer") "sync-buffer-fields-create-time",
+    b "callback-origin-offset-lost" (replace "(Offset <$> offset)" "(const (Offset 0) <$> offset)") "sync-buffer-fields-create-time",
+    b "callback-append-time-changed" (replace "packTimestamp (LogAppendTime time) = PendingLogAppendTime time" "packTimestamp (LogAppendTime time) = PendingCreateTime time") "sync-buffer-fields-append-time",
+    b "callback-buffer-kept-after-assignment" (replace "when (err == RdKafkaRespErrNoError) (resetPendingMessages conf)" "pure ()") "callback-buffer-reassignment-replaces-pending-records",
+    b "callback-buffer-kept-after-seek" (replace "discardPendingMessages (getKafkaConf consumer) initiated" "pure ()") "callback-buffer-seek-replaces-pending-records",
+    b "callback-buffer-pause-ignored" (replace "let ready = maybe True (`Set.notMember` pendingPausedPartitions buffer) . pendingMessagePartition" "let ready _ = True") "callback-buffer-pause-defers-pending-records",
+    b "callback-buffer-kept-after-legacy-seek" (replace "when (result == RdKafkaRespErrNoError) (discardPendingMessages (getKafkaConf consumer) (Set.singleton (topic, partition)))" "pure ()") "callback-buffer-legacy-partial-seek-keeps-success"
+  ]
+  where
+    b label change test = mutation "public-contract" label consumer change test
 families "metadata-partitions" =
   [ control "unchanged-control" integration "metadata-contract",
     d "watermark-partition-error-ignored" (replace "case pmError partition of" "case Nothing of") "provided metadata preserves partition failures in convenience helpers",
@@ -279,7 +292,7 @@ families "config" =
     mutation "config-strings" "c-string-key-guard-removed" "src/Kafka/Internal/Setup.hs" (replace "Text.any (== '\\0') key" "False") "producer topic rejects NUL key",
     mutation "config-strings" "c-string-value-guard-removed" "src/Kafka/Internal/Setup.hs" (replace "Text.any (== '\\0') value" "False") "producer global rejects NUL value"
   ]
-families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata, metadata-utf8, metadata-partitions, data or config")
+families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata, metadata-utf8, metadata-partitions, buffer, data or config")
 
 replace :: String -> String -> String -> String
 replace old new source = case [i | (i, rest) <- zip [0 ..] (tails source), old `isPrefixOf` rest] of

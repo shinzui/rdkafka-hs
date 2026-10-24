@@ -1,0 +1,95 @@
+{
+  "status": "accepted manual sync callback polling checkpoint; EP-14 incomplete",
+  "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+  "user_decision": "Preserve manual sync callback polling",
+  "runs": {
+    "normal-unit": {
+      "log": "/tmp/rdkafka-ep14-buffer-unit-final.log",
+      "sha256": "bc425907d26104c2a4995d0a1dd5c76391025e3be693af846f90780bfe29e10b",
+      "passed": 78
+    },
+    "normal-integration": {
+      "log": "/tmp/rdkafka-ep14-buffer-integration-final.log",
+      "sha256": "17e770c6c241f30c4d566147d72a71e5556e3e90e408fdc78baa2f5ce9f28694",
+      "passed": 560
+    },
+    "instrumented-haskell": {
+      "manifest": "docs/testing/coverage-evidence.json",
+      "unit": 78,
+      "integration": 560,
+      "nonthreaded_runtime": 4
+    },
+    "instrumented-native": {
+      "log": "/tmp/rdkafka-ep14-buffer-asan-final.log",
+      "sha256": "f40c7ecddff5e41c2e91a71a11b588a4768671de4230da19e0a0a28e9c382e54",
+      "passed": 130
+    }
+  },
+  "mutations": "dist-mutations/20261024T200227Z-buffer-65215-0/results.json",
+  "compiled_mutations_caught": 8,
+  "controls": 1,
+  "retained_state_sensitivity": {
+    "mutations": "dist-mutations/20261024T200733Z-state-78197-0/results.json",
+    "compiled_mutations_caught": 4,
+    "controls": 1,
+    "reason": "Update the omitted-pause mutation anchor after sharing native pause/resume bookkeeping; preserve the four original state regressions."
+  },
+  "baseline": {
+    "record_loss": {
+      "log": "/tmp/rdkafka-ep14-consumer-extra-probe-accepted.log",
+      "sha256": "fea8a66fe0aa0bffdc069aca92531a2e521b311a4db5b2711f3dd38e6614e0e1"
+    },
+    "record_loss_failures": 1,
+    "record_loss_cases": 30,
+    "prototype_state_failures": {
+      "log": "/tmp/rdkafka-ep14-buffer-state-baseline.log",
+      "sha256": "2b1cef3319f3851de6d82cc1ba92f67a95b27fcd09e681755220d40a017880a5"
+    },
+    "prototype_failed": 3,
+    "prototype_cases": 6
+  },
+  "discarded_probes": [
+    {
+      "log": "/tmp/rdkafka-ep14-consumer-extra-probe.log",
+      "reason": "An unsupported compound Tasty pattern selected zero tests; no behavioral acceptance. The accepted baseline selects the whole consumer-state group."
+    },
+    {
+      "log": "/tmp/rdkafka-ep14-consumer-buffer-normal.log",
+      "reason": "The private attributed-copy helper initially needed an explicit export; a compile failure is excluded."
+    },
+    {
+      "log": "/tmp/rdkafka-ep14-buffer-fields-normal.log",
+      "reason": "The test initially expected Either from produceMessage, whose result is Maybe; corrected before acceptance."
+    },
+    {
+      "log": "/tmp/rdkafka-ep14-buffer-check.log",
+      "reason": "Formatting failed; nix fmt corrected imports/layout before the accepted package checks."
+    }
+  ],
+  "ownership": "Copy records/errors within the existing native-message bracket, release native messages before callback polling returns, and retain only Haskell-owned values. Clear copies on teardown, replace successful seek/assignment scopes, and defer paused partitions without blocking other partitions. Both modes install checked rebalance transitions; sync application polls continue serving ready callbacks while copies exist.",
+  "scope": [
+    "Exact FIFO, binary/empty/null fields, duplicate headers and three timestamp forms",
+    "Attributed EOF and decoder errors, without queued idle timeouts",
+    "Partial legacy seeks, replacement seeks, reassignment and unassignment",
+    "Pause/resume with other partitions progressing and mixed native failures",
+    "Native acquisition cancellation and immediate native-message destruction counters",
+    "Real manual sync rebalance callbacks and exact record preservation in actual threaded/nonthreaded runtimes"
+  ],
+  "native_library": "mori://confluentinc/librdkafka",
+  "native_version": "2.15.0",
+  "native_diagnostic_control": "docs/testing/callback-native-diagnostics.json",
+  "leak_instrumentation": false,
+  "required_checks": {
+    "log": "/tmp/rdkafka-ep14-buffer-check-final.log",
+    "sha256": "07254125e7b02d850e95d0c77d096cefd2bec6f38e689348bd6c1421d6cd0fe3"
+  },
+  "tooling_controls": 22,
+  "inventory": {
+    "newly_reconciled": 7,
+    "statuses": {
+      "tested": 132,
+      "unimplemented": 49
+    }
+  },
+  "remaining": "Consumer commit/deprecated/example/input-boundary obligations, remaining metadata field checks, saved historical deprecated-seek diagnosis, remaining handwritten misses and EP-15 environments remain open."
+}

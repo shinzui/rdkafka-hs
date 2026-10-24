@@ -1,0 +1,26 @@
+{
+  "status": "source-backed partial M3 audit; public contract and remaining coverage gaps remain open",
+  "binding_source_sha256": "95633699b8e19f1140bdb6154a2521ab6e27902b4fda4fc1f4a60dfa89b9a991",
+  "baseline_evidence": "docs/testing/coverage-evidence.json",
+  "classified_missing_ticks": 484,
+  "classification_keys": 120,
+  "audit": [
+    "rdkafka-hs.cabal does not expose Kafka.Internal.RdKafka",
+    "All handwritten poke/pokeArray/pokeElemOff/pokeByteOff and withArray references under src were reviewed",
+    "Returned native structures are read only; native partition setters mutate list contents",
+    "Among the audited private native structures, only outbound RdKafkaVuT uses aggregate Haskell writes through withArrayLen. Pointer arrays and primitive output buffers use separate Storable instances and are not classified.",
+    "Compiler-generated Storable default forwarding wrappers are identified by exact tick labels at instance declarations"
+  ],
+  "excluded": "No classification applies to reachable public operations, native error paths, private methods actually used by array conversion, or outbound union constructors.",
+  "baseline_fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
+  "audited_source_hashes": {
+    "src/Kafka/Internal/RdKafka.chs": "95633699b8e19f1140bdb6154a2521ab6e27902b4fda4fc1f4a60dfa89b9a991",
+    "src/Kafka/Consumer/Convert.hs": "61ce0505eaa2aead929700fc60b31dcf27125c095a944f92874146c1a15091e1",
+    "src/Kafka/Metadata.hs": "fd84532b5f4c5588a07298f9f0bc3a0d9be3bfab3bb2664687b192a927e2bb00",
+    "src/Kafka/Producer.hs": "b433ed35ead2ec4504d3c392eb8f8958e23c4ceb83b9411682a71b3a30c9beb0",
+    "rdkafka-hs.cabal": "a0035cc2e49c8b9e807d30d99c71077255d7d6f89d529da97f4de1e1f5ab4e7e"
+  },
+  "baseline_revision": "542b0d7",
+  "verified_on_candidate": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+  "candidate_classified_ticks": 484
+}

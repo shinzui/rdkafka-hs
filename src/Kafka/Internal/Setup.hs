@@ -3,6 +3,14 @@ module Kafka.Internal.Setup
     TopicProps (..),
     Kafka (..),
     KafkaConf (..),
+    PendingMessages (..),
+    emptyPendingMessages,
+    pendingMessagePartition,
+    resetPendingMessages,
+    discardPendingMessages,
+    forgetPendingPartitions,
+    PendingMessage (..),
+    PendingTimestamp (..),
     TopicConf (..),
     HasKafka (..),
     HasKafkaConf (..),
@@ -28,12 +36,18 @@ where
 
 import Kafka.Internal.CallbackOwner (CallbackOwner, newCallbackOwner)
 import Kafka.Internal.RdKafka (CCharBufPointer, RdKafkaConfResT (..), RdKafkaConfTPtr, RdKafkaQueueTPtr, RdKafkaTPtr, RdKafkaTopicConfTPtr, nErrorBytes, newRdKafkaConfT, newRdKafkaTopicConfT, rdKafkaConfSet, rdKafkaTopicConfSet)
-import Kafka.Types (KafkaError (..))
+import Kafka.Types (Headers, KafkaError (..), Millis, PartitionId, TopicName)
 
 import Control.Concurrent.MVar (MVar, newMVar)
 import Control.Exception (throw, throwIO)
-import Data.IORef (IORef, newIORef, readIORef)
+import Data.ByteString (ByteString)
+import Data.IORef (IORef, atomicModifyIORef', newIORef, readIORef)
+import Data.Int (Int64)
 import Data.Map (Map)
+import Data.Sequence (Seq)
+import Data.Sequence qualified as Seq
+import Data.Set (Set)
+import Data.Set qualified as Set
 import Data.Text (Text)
 import Foreign.C.String (peekCString)
 import Foreign.Marshal.Alloc (allocaBytes)
@@ -82,8 +96,42 @@ data KafkaConf = KafkaConf
     -- | Serializes consumer close and destroy.
     kcfgLifecycle :: MVar ClientLifecycle,
     -- | Persistent callback bridges, transferred to the native client finalizer.
-    kcfgCallbackOwner :: CallbackOwner
+    kcfgCallbackOwner :: CallbackOwner,
+    -- | Copied records/errors returned while serving callbacks. No native owners.
+    kcfgPendingMessages :: IORef PendingMessages
   }
+
+-- Kept independent of Consumer.Types, which uses KafkaConf for its client.
+data PendingTimestamp = PendingNoTimestamp | PendingCreateTime Millis | PendingLogAppendTime Millis
+
+data PendingMessage
+  = PendingMessageError KafkaError (Maybe TopicName) (Maybe PartitionId) (Maybe Int64)
+  | PendingMessageRecord TopicName PartitionId Int64 PendingTimestamp Headers (Maybe ByteString) (Maybe ByteString)
+
+data PendingMessages = PendingMessages
+  { bufferedMessages :: Seq PendingMessage,
+    pendingPausedPartitions :: Set (TopicName, PartitionId)
+  }
+
+emptyPendingMessages :: PendingMessages
+emptyPendingMessages = PendingMessages Seq.empty Set.empty
+
+pendingMessagePartition :: PendingMessage -> Maybe (TopicName, PartitionId)
+pendingMessagePartition (PendingMessageError _ topic partition _) = (,) <$> topic <*> partition
+pendingMessagePartition (PendingMessageRecord topic partition _ _ _ _ _) = Just (topic, partition)
+
+resetPendingMessages :: KafkaConf -> IO ()
+resetPendingMessages conf = atomicModifyIORef' (kcfgPendingMessages conf) (const (emptyPendingMessages, ()))
+
+-- Successful seeks replace cached records only for affected partitions.
+discardPendingMessages :: KafkaConf -> Set (TopicName, PartitionId) -> IO ()
+discardPendingMessages conf partitions = atomicModifyIORef' (kcfgPendingMessages conf) $ \buffer ->
+  (buffer {bufferedMessages = Seq.filter (maybe True (`Set.notMember` partitions) . pendingMessagePartition) (bufferedMessages buffer)}, ())
+
+-- Revocation also forgets the application's pause state for those partitions.
+forgetPendingPartitions :: KafkaConf -> Set (TopicName, PartitionId) -> IO ()
+forgetPendingPartitions conf partitions = atomicModifyIORef' (kcfgPendingMessages conf) $ \buffer ->
+  (buffer {bufferedMessages = Seq.filter (maybe True (`Set.notMember` partitions) . pendingMessagePartition) (bufferedMessages buffer), pendingPausedPartitions = pendingPausedPartitions buffer `Set.difference` partitions}, ())
 
 class HasKafka a where
   getKafka :: a -> Kafka
@@ -111,12 +159,12 @@ getRdKafka k = let (Kafka k') = getKafka k in k'
 {-# INLINE getRdKafka #-}
 
 getRdKafkaConf :: (HasKafkaConf k) => k -> RdKafkaConfTPtr
-getRdKafkaConf k = let (KafkaConf k' _ _ _ _) = getKafkaConf k in k'
+getRdKafkaConf k = let (KafkaConf k' _ _ _ _ _) = getKafkaConf k in k'
 {-# INLINE getRdKafkaConf #-}
 
 getRdMsgQueue :: (HasKafkaConf k) => k -> IO (Maybe RdKafkaQueueTPtr)
 getRdMsgQueue k =
-  let (KafkaConf _ rq _ _ _) = getKafkaConf k
+  let (KafkaConf _ rq _ _ _ _) = getKafkaConf k
    in readIORef rq
 
 getRdTopicConf :: (HasTopicConf t) => t -> RdKafkaTopicConfTPtr
@@ -127,7 +175,7 @@ newTopicConf :: IO TopicConf
 newTopicConf = TopicConf <$> newRdKafkaTopicConfT
 
 newKafkaConf :: IO KafkaConf
-newKafkaConf = KafkaConf <$> newRdKafkaConfT <*> newIORef Nothing <*> newMVar CallbackPollEnabled <*> newMVar ClientOpen <*> newCallbackOwner
+newKafkaConf = KafkaConf <$> newRdKafkaConfT <*> newIORef Nothing <*> newMVar CallbackPollEnabled <*> newMVar ClientOpen <*> newCallbackOwner <*> newIORef emptyPendingMessages
 
 kafkaConf :: KafkaProps -> IO KafkaConf
 kafkaConf overrides = do
@@ -152,7 +200,7 @@ checkConfSetValue err charPtr = case err of
     throw $ KafkaUnknownConfigurationKey (Text.pack str)
 
 setKafkaConfValue :: KafkaConf -> Text -> Text -> IO ()
-setKafkaConfValue (KafkaConf confPtr _ _ _ _) key value = do
+setKafkaConfValue (KafkaConf confPtr _ _ _ _ _) key value = do
   validateConfigStrings key value
   allocaBytes nErrorBytes $ \charPtr -> do
     err <- rdKafkaConfSet confPtr (Text.unpack key) (Text.unpack value) charPtr (fromIntegral nErrorBytes)

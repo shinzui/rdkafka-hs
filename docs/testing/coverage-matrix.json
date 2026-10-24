@@ -2278,8 +2278,8 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2345,8 +2345,8 @@
         "rdkafka-hs-integration.producer-properties.callback composition preserves order and identity"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2440,9 +2440,9 @@
         "rdkafka-hs-integration.seek-partitions.sync.native tail sentinel replays final two records"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
       "evidence": "docs/testing/seek-evidence.json",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2519,8 +2519,8 @@
         "rdkafka-hs-integration.producer-regressions.later delivery callback replaces the earlier callback"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2628,8 +2628,8 @@
       "status": "tested",
       "native_diagnostics": "docs/testing/callback-native-diagnostics.json",
       "mutations": "dist-mutations/20261024T135134Z-callback-6370-0/results.json",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2686,8 +2686,8 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2747,8 +2747,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2808,8 +2808,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2869,8 +2869,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2930,8 +2930,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2991,8 +2991,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -3052,8 +3052,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -3113,8 +3113,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -3174,8 +3174,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -3235,8 +3235,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -3296,8 +3296,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -3357,8 +3357,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -3418,8 +3418,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -3479,8 +3479,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -3540,8 +3540,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -3601,8 +3601,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -3662,8 +3662,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -3723,8 +3723,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -3784,8 +3784,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -3845,8 +3845,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -3900,8 +3900,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -3955,8 +3955,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4010,8 +4010,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4065,8 +4065,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4111,8 +4111,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4157,8 +4157,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4202,8 +4202,8 @@
         "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4262,8 +4262,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4308,8 +4308,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4354,8 +4354,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4400,8 +4400,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4446,8 +4446,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4492,8 +4492,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4538,8 +4538,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4584,8 +4584,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4630,8 +4630,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4676,8 +4676,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4721,8 +4721,8 @@
         "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4766,8 +4766,8 @@
         "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4811,8 +4811,8 @@
         "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4856,8 +4856,8 @@
         "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4901,8 +4901,8 @@
         "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4946,8 +4946,8 @@
         "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4991,8 +4991,8 @@
         "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5036,8 +5036,8 @@
         "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5089,8 +5089,8 @@
         "rdkafka-hs-integration.public-contract.consumer-state.sync.empty-requests-preserve-empty-assignment"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5194,8 +5194,8 @@
         "rdkafka-hs-integration.public-contract.runtime-contract.deprecated sync runner closes after an exact record"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5238,8 +5238,82 @@
       "expected": "Paused partitions yield no records; others continue; errors surfaced",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs-integration.public-contract.messages.callback-event polling cancellation releases a returned message",
+        "rdkafka-hs-integration.public-contract.messages.callback buffer preserves attributed header failure",
+        "rdkafka-hs-integration.public-contract.messages.callback buffer preserves plain header failure",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.assignment-replacement",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.empty-requests-preserve-empty-assignment",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.unknown-position-is-invalid-without-native-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.pause-resume-preserves-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-event-poll-preserves-application-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-buffer-seek-replaces-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-buffer-reassignment-replaces-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-buffer-pause-defers-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-buffer-legacy-seek-replaces-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-buffer-legacy-partial-seek-keeps-success",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-buffer-paused-partition-does-not-block-another",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-buffer-unassignment-discards-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.pausing-one-partition-leaves-the-other-running",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.pause-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.resume-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.store-commit-next-offset",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.store-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.position-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.deprecated-seek-exact-repeated-replay",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.explicit-subscription-overrides-global-reset",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.regex-subscription-selects-run-owned-topic",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.global-topic-setting-survives-empty-subscription-properties",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.assignment-replacement",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.empty-requests-preserve-empty-assignment",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.unknown-position-is-invalid-without-native-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.pause-resume-preserves-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-event-poll-preserves-application-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-buffer-seek-replaces-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-buffer-reassignment-replaces-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-buffer-pause-defers-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-buffer-legacy-seek-replaces-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-buffer-legacy-partial-seek-keeps-success",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-buffer-paused-partition-does-not-block-another",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-buffer-unassignment-discards-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.pausing-one-partition-leaves-the-other-running",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.pause-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.resume-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.store-commit-next-offset",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.store-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.position-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.deprecated-seek-exact-repeated-replay",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.explicit-subscription-overrides-global-reset",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.regex-subscription-selects-run-owned-topic",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.global-topic-setting-survives-empty-subscription-properties",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync-buffer-fields-native-time",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync-buffer-fields-no-time",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync-buffer-fields-append-time",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync-buffer-fields-create-time",
+        "rdkafka-hs-integration.public-contract.runtime-contract.RTS capability is observed by async construction",
+        "rdkafka-hs-integration.public-contract.runtime-contract.explicit async construction checks the runtime",
+        "rdkafka-hs-integration.public-contract.runtime-contract.sync subscription delivers an exact record",
+        "rdkafka-hs-integration.public-contract.runtime-contract.deprecated sync runner closes after an exact record"
+      ],
+      "status": "tested",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-pollConsumerEvents",
@@ -5252,8 +5326,82 @@
       "expected": "Callbacks served in sync mode; record destination retains every record",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs-integration.public-contract.messages.callback-event polling cancellation releases a returned message",
+        "rdkafka-hs-integration.public-contract.messages.callback buffer preserves attributed header failure",
+        "rdkafka-hs-integration.public-contract.messages.callback buffer preserves plain header failure",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.assignment-replacement",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.empty-requests-preserve-empty-assignment",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.unknown-position-is-invalid-without-native-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.pause-resume-preserves-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-event-poll-preserves-application-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-buffer-seek-replaces-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-buffer-reassignment-replaces-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-buffer-pause-defers-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-buffer-legacy-seek-replaces-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-buffer-legacy-partial-seek-keeps-success",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-buffer-paused-partition-does-not-block-another",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-buffer-unassignment-discards-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.pausing-one-partition-leaves-the-other-running",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.pause-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.resume-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.store-commit-next-offset",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.store-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.position-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.deprecated-seek-exact-repeated-replay",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.explicit-subscription-overrides-global-reset",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.regex-subscription-selects-run-owned-topic",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.global-topic-setting-survives-empty-subscription-properties",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.assignment-replacement",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.empty-requests-preserve-empty-assignment",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.unknown-position-is-invalid-without-native-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.pause-resume-preserves-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-event-poll-preserves-application-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-buffer-seek-replaces-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-buffer-reassignment-replaces-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-buffer-pause-defers-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-buffer-legacy-seek-replaces-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-buffer-legacy-partial-seek-keeps-success",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-buffer-paused-partition-does-not-block-another",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-buffer-unassignment-discards-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.pausing-one-partition-leaves-the-other-running",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.pause-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.resume-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.store-commit-next-offset",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.store-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.position-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.deprecated-seek-exact-repeated-replay",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.explicit-subscription-overrides-global-reset",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.regex-subscription-selects-run-owned-topic",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.global-topic-setting-survives-empty-subscription-properties",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync-buffer-fields-native-time",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync-buffer-fields-no-time",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync-buffer-fields-append-time",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync-buffer-fields-create-time",
+        "rdkafka-hs-integration.public-contract.runtime-contract.RTS capability is observed by async construction",
+        "rdkafka-hs-integration.public-contract.runtime-contract.explicit async construction checks the runtime",
+        "rdkafka-hs-integration.public-contract.runtime-contract.sync subscription delivers an exact record",
+        "rdkafka-hs-integration.public-contract.runtime-contract.deprecated sync runner closes after an exact record"
+      ],
+      "status": "tested",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-pollMessage",
@@ -5322,8 +5470,82 @@
       "expected": "Exact subsequent record sequence and errors",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs-integration.public-contract.messages.callback-event polling cancellation releases a returned message",
+        "rdkafka-hs-integration.public-contract.messages.callback buffer preserves attributed header failure",
+        "rdkafka-hs-integration.public-contract.messages.callback buffer preserves plain header failure",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.assignment-replacement",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.empty-requests-preserve-empty-assignment",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.unknown-position-is-invalid-without-native-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.pause-resume-preserves-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-event-poll-preserves-application-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-buffer-seek-replaces-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-buffer-reassignment-replaces-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-buffer-pause-defers-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-buffer-legacy-seek-replaces-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-buffer-legacy-partial-seek-keeps-success",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-buffer-paused-partition-does-not-block-another",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.callback-buffer-unassignment-discards-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.pausing-one-partition-leaves-the-other-running",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.pause-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.resume-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.store-commit-next-offset",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.store-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.position-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.deprecated-seek-exact-repeated-replay",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.explicit-subscription-overrides-global-reset",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.regex-subscription-selects-run-owned-topic",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.global-topic-setting-survives-empty-subscription-properties",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.assignment-replacement",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.empty-requests-preserve-empty-assignment",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.unknown-position-is-invalid-without-native-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.pause-resume-preserves-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-event-poll-preserves-application-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-buffer-seek-replaces-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-buffer-reassignment-replaces-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-buffer-pause-defers-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-buffer-legacy-seek-replaces-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-buffer-legacy-partial-seek-keeps-success",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-buffer-paused-partition-does-not-block-another",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.callback-buffer-unassignment-discards-pending-records",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.pausing-one-partition-leaves-the-other-running",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.pause-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.resume-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.store-commit-next-offset",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.store-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.position-mixed-member-error",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.deprecated-seek-exact-repeated-replay",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.explicit-subscription-overrides-global-reset",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.regex-subscription-selects-run-owned-topic",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.global-topic-setting-survives-empty-subscription-properties",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync-buffer-fields-native-time",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync-buffer-fields-no-time",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync-buffer-fields-append-time",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync-buffer-fields-create-time",
+        "rdkafka-hs-integration.public-contract.runtime-contract.RTS capability is observed by async construction",
+        "rdkafka-hs-integration.public-contract.runtime-contract.explicit async construction checks the runtime",
+        "rdkafka-hs-integration.public-contract.runtime-contract.sync subscription delivers an exact record",
+        "rdkafka-hs-integration.public-contract.runtime-contract.deprecated sync runner closes after an exact record"
+      ],
+      "status": "tested",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-rewindConsumer",
@@ -5353,9 +5575,9 @@
         "rdkafka-hs-integration.seek-partitions.sync.rewind propagates assignment change after committed lookup"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
       "evidence": "docs/testing/seek-evidence.json",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5480,8 +5702,8 @@
         "rdkafka-hs-integration.public-contract.diagnostics.topic cancellation at native acquisition releases its array"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5522,8 +5744,8 @@
         "rdkafka-hs-integration.public-contract.diagnostics.topic cancellation at native acquisition releases its array"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5564,8 +5786,8 @@
         "rdkafka-hs-integration.public-contract.diagnostics.topic cancellation at native acquisition releases its array"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5606,8 +5828,8 @@
         "rdkafka-hs-integration.public-contract.diagnostics.topic cancellation at native acquisition releases its array"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5640,8 +5862,8 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5698,8 +5920,42 @@
       "expected": "Exact broker/topic/partition/group identities, offsets and error details; no success-only or length-only assertion",
       "modes": "all supported modes",
       "ownership": "Temporary topic/metadata/group-list/partition-list handles released after decoding on success and error",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs-integration.public-contract.metadata-contract.native metadata counter detects an unreleased result",
+        "rdkafka-hs-integration.public-contract.metadata-contract.topic identity replica sets and exact watermarks",
+        "rdkafka-hs-integration.public-contract.metadata-contract.provided metadata preserves partition failures in convenience helpers",
+        "rdkafka-hs-integration.public-contract.metadata-contract.native metadata partition failures survive convenience helpers",
+        "rdkafka-hs-integration.public-contract.metadata-contract.group query timeout preserves initial metadata wait failure",
+        "rdkafka-hs-integration.public-contract.metadata-contract.missing topic errors survive convenience helpers",
+        "rdkafka-hs-integration.public-contract.metadata-contract.timestamp lookup distinguishes before at and after actual record times",
+        "rdkafka-hs-integration.public-contract.metadata-contract.mixed timestamp request preserves native partition failure",
+        "rdkafka-hs-integration.public-contract.metadata-contract.metadata timeouts preserve the native error",
+        "rdkafka-hs-integration.public-contract.metadata-contract.metadata native acquisition cancellation releases its result",
+        "rdkafka-hs-integration.public-contract.metadata-contract.groups native acquisition cancellation releases its result",
+        "rdkafka-hs-integration.public-contract.metadata-contract.async group identity lifecycle and supported native states",
+        "rdkafka-hs-integration.public-contract.metadata-contract.sync group identity lifecycle and supported native states"
+      ],
+      "status": "tested",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Metadata-GroupMemberInfo",
@@ -5712,8 +5968,42 @@
       "expected": "Exact broker/topic/partition/group identities, offsets and error details; no success-only or length-only assertion",
       "modes": "all supported modes",
       "ownership": "Temporary topic/metadata/group-list/partition-list handles released after decoding on success and error",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs-integration.public-contract.metadata-contract.native metadata counter detects an unreleased result",
+        "rdkafka-hs-integration.public-contract.metadata-contract.topic identity replica sets and exact watermarks",
+        "rdkafka-hs-integration.public-contract.metadata-contract.provided metadata preserves partition failures in convenience helpers",
+        "rdkafka-hs-integration.public-contract.metadata-contract.native metadata partition failures survive convenience helpers",
+        "rdkafka-hs-integration.public-contract.metadata-contract.group query timeout preserves initial metadata wait failure",
+        "rdkafka-hs-integration.public-contract.metadata-contract.missing topic errors survive convenience helpers",
+        "rdkafka-hs-integration.public-contract.metadata-contract.timestamp lookup distinguishes before at and after actual record times",
+        "rdkafka-hs-integration.public-contract.metadata-contract.mixed timestamp request preserves native partition failure",
+        "rdkafka-hs-integration.public-contract.metadata-contract.metadata timeouts preserve the native error",
+        "rdkafka-hs-integration.public-contract.metadata-contract.metadata native acquisition cancellation releases its result",
+        "rdkafka-hs-integration.public-contract.metadata-contract.groups native acquisition cancellation releases its result",
+        "rdkafka-hs-integration.public-contract.metadata-contract.async group identity lifecycle and supported native states",
+        "rdkafka-hs-integration.public-contract.metadata-contract.sync group identity lifecycle and supported native states"
+      ],
+      "status": "tested",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Metadata-GroupProtocol",
@@ -5740,8 +6030,42 @@
       "expected": "Exact broker/topic/partition/group identities, offsets and error details; no success-only or length-only assertion",
       "modes": "all supported modes",
       "ownership": "Temporary topic/metadata/group-list/partition-list handles released after decoding on success and error",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs-integration.public-contract.metadata-contract.native metadata counter detects an unreleased result",
+        "rdkafka-hs-integration.public-contract.metadata-contract.topic identity replica sets and exact watermarks",
+        "rdkafka-hs-integration.public-contract.metadata-contract.provided metadata preserves partition failures in convenience helpers",
+        "rdkafka-hs-integration.public-contract.metadata-contract.native metadata partition failures survive convenience helpers",
+        "rdkafka-hs-integration.public-contract.metadata-contract.group query timeout preserves initial metadata wait failure",
+        "rdkafka-hs-integration.public-contract.metadata-contract.missing topic errors survive convenience helpers",
+        "rdkafka-hs-integration.public-contract.metadata-contract.timestamp lookup distinguishes before at and after actual record times",
+        "rdkafka-hs-integration.public-contract.metadata-contract.mixed timestamp request preserves native partition failure",
+        "rdkafka-hs-integration.public-contract.metadata-contract.metadata timeouts preserve the native error",
+        "rdkafka-hs-integration.public-contract.metadata-contract.metadata native acquisition cancellation releases its result",
+        "rdkafka-hs-integration.public-contract.metadata-contract.groups native acquisition cancellation releases its result",
+        "rdkafka-hs-integration.public-contract.metadata-contract.async group identity lifecycle and supported native states",
+        "rdkafka-hs-integration.public-contract.metadata-contract.sync group identity lifecycle and supported native states"
+      ],
+      "status": "tested",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Metadata-GroupState",
@@ -5754,8 +6078,42 @@
       "expected": "Exact broker/topic/partition/group identities, offsets and error details; no success-only or length-only assertion",
       "modes": "all supported modes",
       "ownership": "Temporary topic/metadata/group-list/partition-list handles released after decoding on success and error",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs-integration.public-contract.metadata-contract.native metadata counter detects an unreleased result",
+        "rdkafka-hs-integration.public-contract.metadata-contract.topic identity replica sets and exact watermarks",
+        "rdkafka-hs-integration.public-contract.metadata-contract.provided metadata preserves partition failures in convenience helpers",
+        "rdkafka-hs-integration.public-contract.metadata-contract.native metadata partition failures survive convenience helpers",
+        "rdkafka-hs-integration.public-contract.metadata-contract.group query timeout preserves initial metadata wait failure",
+        "rdkafka-hs-integration.public-contract.metadata-contract.missing topic errors survive convenience helpers",
+        "rdkafka-hs-integration.public-contract.metadata-contract.timestamp lookup distinguishes before at and after actual record times",
+        "rdkafka-hs-integration.public-contract.metadata-contract.mixed timestamp request preserves native partition failure",
+        "rdkafka-hs-integration.public-contract.metadata-contract.metadata timeouts preserve the native error",
+        "rdkafka-hs-integration.public-contract.metadata-contract.metadata native acquisition cancellation releases its result",
+        "rdkafka-hs-integration.public-contract.metadata-contract.groups native acquisition cancellation releases its result",
+        "rdkafka-hs-integration.public-contract.metadata-contract.async group identity lifecycle and supported native states",
+        "rdkafka-hs-integration.public-contract.metadata-contract.sync group identity lifecycle and supported native states"
+      ],
+      "status": "tested",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Metadata-KafkaMetadata",
@@ -5996,8 +6354,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -6058,8 +6416,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -6120,8 +6478,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -6182,8 +6540,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -6244,8 +6602,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -6306,8 +6664,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -6368,8 +6726,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -6430,8 +6788,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -6492,8 +6850,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -6554,8 +6912,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -6600,8 +6958,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -6674,8 +7032,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -6720,8 +7078,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -6766,8 +7124,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -6820,8 +7178,8 @@
         "rdkafka-hs-integration.producer-regressions.empty queue supports repeated flush and close"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -6874,8 +7232,8 @@
         "rdkafka-hs-integration.producer-regressions.empty queue supports repeated flush and close"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -6928,8 +7286,8 @@
         "rdkafka-hs-integration.producer-regressions.empty queue supports repeated flush and close"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -7002,8 +7360,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -7048,8 +7406,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -7094,8 +7452,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -7140,8 +7498,8 @@
         "rdkafka-hs-integration.topic-configuration.deletion reports a missing response as a timeout"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -7194,8 +7552,8 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -7246,8 +7604,8 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -7301,8 +7659,8 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -7355,8 +7713,8 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -7409,8 +7767,8 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -7463,8 +7821,8 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -7517,8 +7875,8 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -7563,8 +7921,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -7609,8 +7967,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -7655,8 +8013,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -7701,8 +8059,8 @@
         "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -7750,8 +8108,8 @@
         "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -7799,8 +8157,8 @@
         "rdkafka-hs.Public data contracts.builders.debug contexts preserve order duplicates and the empty-list identity"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -7848,8 +8206,8 @@
         "rdkafka-hs.Public data contracts.builders.debug contexts preserve order duplicates and the empty-list identity"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -7898,8 +8256,8 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -7948,8 +8306,8 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -7998,8 +8356,8 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -8048,8 +8406,8 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -8098,8 +8456,8 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -8148,8 +8506,8 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -8198,8 +8556,8 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -8248,8 +8606,8 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -8298,8 +8656,8 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -8348,8 +8706,8 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -8398,8 +8756,8 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -8448,8 +8806,8 @@
         "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -8487,8 +8845,8 @@
         "rdkafka-hs.Public properties.version.fixed zero and full version byte boundaries"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -8526,8 +8884,8 @@
         "rdkafka-hs.Public properties.version.fixed zero and full version byte boundaries"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -8565,8 +8923,8 @@
         "rdkafka-hs.Public properties.version.fixed zero and full version byte boundaries"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -8604,8 +8962,8 @@
         "rdkafka-hs.Public properties.version.fixed zero and full version byte boundaries"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -8643,8 +9001,8 @@
         "rdkafka-hs.Public properties.version.fixed zero and full version byte boundaries"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -8699,8 +9057,8 @@
       "status": "tested",
       "native_diagnostics": "docs/testing/callback-native-diagnostics.json",
       "mutations": "dist-mutations/20261024T135134Z-callback-6370-0/results.json",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -8783,8 +9141,8 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -8843,8 +9201,8 @@
         "rdkafka-hs-integration.producer-regressions.known invalid partition rejection releases capture"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -8931,8 +9289,8 @@
       "status": "tested",
       "native_diagnostics": "docs/testing/callback-native-diagnostics.json",
       "mutations": "dist-mutations/20261024T135134Z-callback-6370-0/results.json",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -8979,8 +9337,8 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -9095,8 +9453,8 @@
         "rdkafka-hs-integration.Fixture error controls.weak control retains while rooted and collects after release"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -9141,8 +9499,8 @@
         "rdkafka-hs-integration.topic-configuration.maximum C replication count retains native validation"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -9193,8 +9551,8 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -9234,8 +9592,8 @@
         "rdkafka-hs-integration.topic-configuration.concurrent requests keep their own queues and responses"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -9314,8 +9672,8 @@
         "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: minimum unrepresentable partition"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -9363,8 +9721,8 @@
         "rdkafka-hs-integration.producer-regressions.empty queue supports repeated flush and close"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -9401,8 +9759,8 @@
         "rdkafka-hs-integration.producer-regressions.later delivery callback replaces the earlier callback"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -9437,8 +9795,8 @@
         "rdkafka-hs-integration.producer-regressions.native error decoding failure releases rejected callback capture"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -9476,8 +9834,8 @@
         "rdkafka-hs-integration.producer-properties.callback composition preserves order and identity"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -9522,8 +9880,8 @@
         "rdkafka-hs-integration.public-contract.config-strings.empty global key retains native unknown-key rejection"
       ],
       "status": "tested",
-      "fingerprint": "d640380b9a73fdbd8dabbaa2dc7139e11f2d982a946cf35d4c6614b3f28b51e9",
-      "evidence_revision": "c4198c1beceffcda092af28682e29e9b3af91670",
+      "fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+      "evidence_revision": "542b0d782caeca7e7d3b1e91baaf177280bc0885",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -9592,6 +9950,606 @@
       "status": "unreachable",
       "rationale": "The only registration exception cleanup is guarded by the phase check at line 44. Fresh constructor-private ownership and masked installation exclude a phase change there through public routes; no user code runs in the registry update. Ordinary installation/allocation failure cleanup is exercised separately by counted real bridge tests.",
       "evidence": "test/Kafka/Internal/CallbackOwnerSpec.hs; docs/testing/callback-ownership-inventory.json"
+    },
+    "Kafka.Internal.RdKafka:1202:TopLevelBox [\"peekElemOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:1202:TopLevelBox [\"peekByteOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:818:ExpBox False": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:818:TopLevelBox [\"sizeOf\"]": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:817:ExpBox False": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:817:TopLevelBox [\"alignment\"]": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:816:TopLevelBox [\"peekElemOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:816:TopLevelBox [\"pokeElemOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:816:TopLevelBox [\"peekByteOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:816:TopLevelBox [\"pokeByteOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:823:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:824:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:822:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:822:TopLevelBox [\"poke\"]": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:789:ExpBox False": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:789:TopLevelBox [\"alignment\"]": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:788:TopLevelBox [\"pokeElemOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:788:TopLevelBox [\"pokeByteOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:801:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:802:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:803:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:804:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:805:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:806:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:807:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:808:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:800:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:800:TopLevelBox [\"poke\"]": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:757:ExpBox False": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:757:TopLevelBox [\"alignment\"]": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:756:TopLevelBox [\"pokeElemOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:756:TopLevelBox [\"pokeByteOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:768:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:769:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:770:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:771:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:772:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:773:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:774:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:767:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:767:TopLevelBox [\"poke\"]": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:303:ExpBox False": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:303:TopLevelBox [\"sizeOf\"]": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:302:ExpBox False": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:302:TopLevelBox [\"alignment\"]": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:301:TopLevelBox [\"peekElemOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:301:TopLevelBox [\"pokeElemOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:301:TopLevelBox [\"peekByteOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:301:TopLevelBox [\"pokeByteOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:310:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:310:TopLevelBox [\"poke\"]": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:281:ExpBox False": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:281:TopLevelBox [\"alignment\"]": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:280:TopLevelBox [\"pokeElemOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:280:TopLevelBox [\"pokeByteOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:288:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:288:TopLevelBox [\"poke\"]": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:257:ExpBox False": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:257:TopLevelBox [\"alignment\"]": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:256:TopLevelBox [\"pokeElemOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:256:TopLevelBox [\"pokeByteOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:268:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:268:TopLevelBox [\"poke\"]": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:237:ExpBox False": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:237:TopLevelBox [\"alignment\"]": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:236:TopLevelBox [\"pokeElemOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:236:TopLevelBox [\"pokeByteOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:243:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:243:TopLevelBox [\"poke\"]": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:202:ExpBox False": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:202:TopLevelBox [\"sizeOf\"]": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:201:ExpBox False": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:201:TopLevelBox [\"alignment\"]": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:200:TopLevelBox [\"peekElemOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:200:TopLevelBox [\"pokeElemOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:200:TopLevelBox [\"peekByteOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:200:TopLevelBox [\"pokeByteOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:214:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:215:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:216:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:217:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:218:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:219:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:220:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:221:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:222:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:213:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:213:TopLevelBox [\"poke\"]": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:174:ExpBox False": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:174:TopLevelBox [\"sizeOf\"]": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:173:ExpBox False": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:173:TopLevelBox [\"alignment\"]": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:172:TopLevelBox [\"peekElemOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:172:TopLevelBox [\"pokeElemOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:172:TopLevelBox [\"peekByteOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:172:TopLevelBox [\"pokeByteOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:180:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:181:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:182:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:179:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:179:TopLevelBox [\"poke\"]": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:142:ExpBox False": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:142:TopLevelBox [\"alignment\"]": {
+      "status": "inapplicable",
+      "rationale": "This private Storable size/alignment capability is not needed by the corresponding public conversion. Native code allocates the object; singleton readers call peek directly, while array readers use the applicable sizeOf methods. The missed capability is never requested by library call sites. Outbound RdKafkaVuT allocation remains measured separately.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:141:TopLevelBox [\"pokeElemOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:141:TopLevelBox [\"pokeByteOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:153:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:154:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:155:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:156:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:157:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:158:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:159:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:152:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:152:TopLevelBox [\"poke\"]": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:871:TopLevelBox [\"peekElemOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:871:TopLevelBox [\"pokeElemOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:871:TopLevelBox [\"peekByteOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:871:TopLevelBox [\"pokeByteOff\"]": {
+      "status": "inapplicable",
+      "rationale": "GHC synthesizes this Storable default-method forwarding wrapper at the instance declaration. It is not a handwritten implementation; public conversions use the explicit peek/poke or relevant array methods. No native pointer API exposes this private Storable instance to callers.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:875:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:875:TopLevelBox [\"poke\"]": {
+      "status": "unreachable",
+      "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
     }
   }
 }

@@ -102,16 +102,18 @@ import Data.IORef (IORef, atomicModifyIORef', readIORef, writeIORef)
 import Data.List (find)
 import Data.Map qualified as M hiding (foldr, map)
 import Data.Maybe (fromMaybe, isJust)
+import Data.Sequence (ViewL (..), (|>))
+import Data.Sequence qualified as Seq
 import Data.Set (Set)
 import Data.Set qualified as Set
 import Data.Text (Text)
 import Data.Text qualified as Text
 import Foreign hiding (void)
 import Kafka.Consumer.Callbacks (forwardPartitionsToMessageQueue)
-import Kafka.Consumer.Convert (copyMessagePtr, fromMessagePtr, fromMessagePtrAttributed, fromNativeTopicPartitionList'', nativeTopicPartitionErrors, offsetCommitToBool, offsetToInt64, toMap, toNativeTopicPartitionList, toNativeTopicPartitionList', topicPartitionFromMessageForCommit, withPolledMessage)
+import Kafka.Consumer.Convert (copyMessagePtr, copyMessagePtrAttributed, fromMessagePtr, fromMessagePtrAttributed, fromNativeTopicPartitionList'', nativeTopicPartitionErrors, offsetCommitToBool, offsetToInt64, toMap, toNativeTopicPartitionList, toNativeTopicPartitionList', topicPartitionFromMessageForCommit, withPolledMessage)
 import Kafka.Consumer.Types (KafkaConsumer (..))
-import Kafka.Internal.RdKafka (RdKafkaQueueTPtr, RdKafkaRespErrT (..), RdKafkaTopicPartitionListTPtr, RdKafkaTypeT (..), newRdKafkaT, newRdKafkaTopicPartitionListT, newRdKafkaTopicT, rdKafkaAssign, rdKafkaAssignment, rdKafkaAssignmentLost, rdKafkaCommit, rdKafkaCommitted, rdKafkaConsumeBatchQueue, rdKafkaConsumeQueue, rdKafkaConsumerClose, rdKafkaConsumerClosed, rdKafkaConsumerPoll, rdKafkaErrorCode, rdKafkaErrorDestroy, rdKafkaFatalError, rdKafkaMessageDestroy, rdKafkaOffsetsStore, rdKafkaPausePartitions, rdKafkaPollSetConsumer, rdKafkaPosition, rdKafkaQueueDestroy, rdKafkaQueueGetConsumer, rdKafkaQueueIoEventEnable, rdKafkaQueueNew, rdKafkaResumePartitions, rdKafkaSeek, rdKafkaSeekPartitions, rdKafkaSetLogLevel, rdKafkaSubscribe, rdKafkaSubscription, rdKafkaTopicPartitionListAdd)
-import Kafka.Internal.Setup (Callback (..), CallbackPollStatus (..), ClientLifecycle (..), Kafka (..), KafkaConf (..), KafkaProps (..), TopicProps (..), getKafkaConf, getRdKafka, getRdMsgQueue, kafkaConf, setAllKafkaConfValues, topicConf)
+import Kafka.Internal.RdKafka (RdKafkaQueueTPtr, RdKafkaRespErrT (..), RdKafkaTPtr, RdKafkaTopicPartitionListTPtr, RdKafkaTypeT (..), newRdKafkaT, newRdKafkaTopicPartitionListT, newRdKafkaTopicT, rdKafkaAssign, rdKafkaAssignment, rdKafkaAssignmentLost, rdKafkaCommit, rdKafkaCommitted, rdKafkaConsumeBatchQueue, rdKafkaConsumeQueue, rdKafkaConsumerClose, rdKafkaConsumerClosed, rdKafkaConsumerPoll, rdKafkaErrorCode, rdKafkaErrorDestroy, rdKafkaFatalError, rdKafkaMessageDestroy, rdKafkaOffsetsStore, rdKafkaPausePartitions, rdKafkaPollSetConsumer, rdKafkaPosition, rdKafkaQueueDestroy, rdKafkaQueueGetConsumer, rdKafkaQueueIoEventEnable, rdKafkaQueueNew, rdKafkaResumePartitions, rdKafkaSeek, rdKafkaSeekPartitions, rdKafkaSetLogLevel, rdKafkaSubscribe, rdKafkaSubscription, rdKafkaTopicPartitionListAdd)
+import Kafka.Internal.Setup (Callback (..), CallbackPollStatus (..), ClientLifecycle (..), Kafka (..), KafkaConf (..), KafkaProps (..), PendingMessage (..), PendingMessages (..), PendingTimestamp (..), TopicProps (..), discardPendingMessages, emptyPendingMessages, getKafkaConf, getRdKafka, getRdMsgQueue, kafkaConf, pendingMessagePartition, resetPendingMessages, setAllKafkaConfValues, topicConf)
 import Kafka.Internal.Shared (kafkaErrorToMaybe, maybeToLeft, rdKafkaErrorToEither, setSaslCredentials')
 import System.Posix.Types (Fd (..))
 
@@ -158,10 +160,10 @@ newConsumer props (Subscription ts tp)
   | effectiveCallbackPollMode props == CallbackPollModeAsync && not rtsSupportsBoundThreads =
       pure (Left (KafkaBadSpecification "Async callback polling requires -threaded; select CallbackPollModeSync for a nonthreaded runtime."))
   | otherwise = liftIO $ mask $ \restore -> do
-      let cp = case effectiveCallbackPollMode props of
-            CallbackPollModeAsync -> setCallback (rebalanceCallback (\_ _ -> return ())) <> props
-            CallbackPollModeSync -> props
-      kc@(KafkaConf kc' qref _ _ _) <- newConsumerConf cp
+      -- Both modes track rebalance invalidation. A later user callback replaces
+      -- the no-op handler while retaining the same checked state transitions.
+      let cp = setCallback (rebalanceCallback (\_ _ -> return ())) <> props
+      kc@(KafkaConf kc' qref _ _ _ _) <- newConsumerConf cp
       flip onException (releaseUnattachedCallbacks (kcfgCallbackOwner kc)) $ restore $ do
         -- Validate subscription values as topic properties, then merge only their
         -- explicit keys so globally supplied topic settings remain effective.
@@ -243,15 +245,19 @@ pollMessage ::
   Timeout ->
   -- | Left on error or timeout, right for success
   m (Either KafkaError (ConsumerRecord (Maybe BS.ByteString) (Maybe BS.ByteString)))
-pollMessage c@(KafkaConsumer _ (KafkaConf _ qr _ _ _)) (Timeout ms) =
+pollMessage c@(KafkaConsumer _ (KafkaConf _ qr _ _ _ _)) (Timeout ms) =
   liftIO $ withForeignPtr (getRdKafka c) $ \_ ->
     pollFatalError c >>= \case
       Just err -> pure (Left err)
       Nothing -> do
-        mbq <- readIORef qr
-        case mbq of
-          Nothing -> fromMessagePtr (rdKafkaConsumerPoll (getRdKafka c) ms)
-          Just q -> fromMessagePtr (rdKafkaConsumeQueue q ms)
+        servePendingCallbacks c
+        nextPendingMessage c >>= \case
+          Just message -> pure (first cmeError message)
+          Nothing -> do
+            mbq <- readIORef qr
+            case mbq of
+              Nothing -> fromMessagePtr (rdKafkaConsumerPoll (getRdKafka c) ms)
+              Just q -> fromMessagePtr (rdKafkaConsumeQueue q ms)
 
 -- | Like 'pollMessage', but an error comes with the topic, partition and offset
 -- librdkafka attached to the errored message, so an application can tell, for
@@ -266,15 +272,19 @@ pollMessageAttributed ::
   -- | the timeout, in milliseconds
   Timeout ->
   m (Either ConsumerMessageError (ConsumerRecord (Maybe BS.ByteString) (Maybe BS.ByteString)))
-pollMessageAttributed c@(KafkaConsumer _ (KafkaConf _ qr _ _ _)) (Timeout ms) =
+pollMessageAttributed c@(KafkaConsumer _ (KafkaConf _ qr _ _ _ _)) (Timeout ms) =
   liftIO $ withForeignPtr (getRdKafka c) $ \_ ->
     pollFatalError c >>= \case
       Just err -> pure (Left (ConsumerMessageError err Nothing Nothing Nothing))
       Nothing -> do
-        mbq <- readIORef qr
-        case mbq of
-          Nothing -> fromMessagePtrAttributed (rdKafkaConsumerPoll (getRdKafka c) ms)
-          Just q -> fromMessagePtrAttributed (rdKafkaConsumeQueue q ms)
+        servePendingCallbacks c
+        nextPendingMessage c >>= \case
+          Just message -> pure message
+          Nothing -> do
+            mbq <- readIORef qr
+            case mbq of
+              Nothing -> fromMessagePtrAttributed (rdKafkaConsumerPoll (getRdKafka c) ms)
+              Just q -> fromMessagePtrAttributed (rdKafkaConsumeQueue q ms)
 
 -- | Polls up to 'BatchSize' messages.
 -- A normal timeout returns an empty batch; native acquisition failures and
@@ -296,7 +306,7 @@ pollMessageBatch ::
   Timeout ->
   BatchSize ->
   m [Either KafkaError (ConsumerRecord (Maybe BS.ByteString) (Maybe BS.ByteString))]
-pollMessageBatch c@(KafkaConsumer _ (KafkaConf _ qr _ _ _)) (Timeout ms) (BatchSize b) =
+pollMessageBatch c@(KafkaConsumer _ (KafkaConf _ qr _ _ _ _)) (Timeout ms) (BatchSize b) =
   liftIO $ withForeignPtr (getRdKafka c) $ \_ ->
     pollFatalError c >>= \case
       Just err -> pure [Left err]
@@ -379,7 +389,7 @@ consumerClosed c = liftIO $ rdKafkaConsumerClosed (getRdKafka c)
 -- Serialize this with 'closeConsumer' and assignment changes: do not call it
 -- concurrently with them, nor from a librdkafka callback.
 setConsumerQueueIOEvent :: (MonadIO m) => KafkaConsumer -> Maybe (Fd, BS.ByteString) -> m ()
-setConsumerQueueIOEvent c@(KafkaConsumer _ (KafkaConf _ qr statusVar _ _)) event =
+setConsumerQueueIOEvent c@(KafkaConsumer _ (KafkaConf _ qr statusVar _ _ _)) event =
   liftIO $ withMVar statusVar $ \case
     CallbackPollDisabled -> pure ()
     CallbackPollEnabled ->
@@ -490,10 +500,11 @@ commitPartitionsOffsets o k ps =
 -- Use this on a consumer from 'newAssignedConsumer'; on a subscribed consumer the
 -- rebalance callback assigns partitions.
 assign :: (MonadIO m) => KafkaConsumer -> [TopicPartition] -> m (Maybe KafkaError)
-assign c@(KafkaConsumer (Kafka k) conf) ps = liftIO $ withForeignPtr k $ \_ -> bracket (toNativeTopicPartitionList ps) finalizeForeignPtr $ \tps -> do
+assign c@(KafkaConsumer (Kafka k) conf) ps = liftIO $ withForeignPtr k $ \_ -> mask_ $ bracket (toNativeTopicPartitionList ps) finalizeForeignPtr $ \tps -> do
   let partitions = (tpTopicName &&& tpPartition) <$> ps
   forwardPartitionsToMessageQueue c partitions
   err <- rdKafkaAssign k tps
+  when (err == RdKafkaRespErrNoError) (resetPendingMessages conf)
   -- Reassigning a partition stops its fetcher, and librdkafka clears the
   -- partition queue's forwarding when that stop is processed, after
   -- rd_kafka_assign has returned. The stop requests and rd_kafka_assignment's
@@ -530,21 +541,31 @@ subscription (KafkaConsumer (Kafka k) _) = liftIO $ withForeignPtr k $ \_ -> bra
 -- | Pauses specified partitions on the current consumer. Reports the overall
 -- native error or the first member error; successful members remain paused.
 pausePartitions :: (MonadIO m) => KafkaConsumer -> [(TopicName, PartitionId)] -> m KafkaError
-pausePartitions (KafkaConsumer (Kafka k) _) ps = liftIO $ withForeignPtr k $ \_ -> bracket (newRdKafkaTopicPartitionListT (length ps)) finalizeForeignPtr $ \pl -> do
-  mapM_ (\(TopicName topicName, PartitionId partitionId) -> rdKafkaTopicPartitionListAdd pl (Text.unpack topicName) partitionId) ps
-  fromMaybe (KafkaResponseError RdKafkaRespErrNoError) <$> (partitionListError pl =<< rdKafkaPausePartitions k pl)
+pausePartitions consumer ps = changePause consumer ps True rdKafkaPausePartitions
 
--- | Resumes specified partitions on the current consumer. Reports the overall
--- native error or the first member error; successful members remain resumed.
+-- | Resumes specified partitions on the current consumer. Successful members
+-- resume even when another member reports an error.
 resumePartitions :: (MonadIO m) => KafkaConsumer -> [(TopicName, PartitionId)] -> m KafkaError
-resumePartitions (KafkaConsumer (Kafka k) _) ps = liftIO $ withForeignPtr k $ \_ -> bracket (newRdKafkaTopicPartitionListT (length ps)) finalizeForeignPtr $ \pl -> do
-  mapM_ (\(TopicName topicName, PartitionId partitionId) -> rdKafkaTopicPartitionListAdd pl (Text.unpack topicName) partitionId) ps
-  fromMaybe (KafkaResponseError RdKafkaRespErrNoError) <$> (partitionListError pl =<< rdKafkaResumePartitions k pl)
+resumePartitions consumer ps = changePause consumer ps False rdKafkaResumePartitions
+
+changePause :: (MonadIO m) => KafkaConsumer -> [(TopicName, PartitionId)] -> Bool -> (RdKafkaTPtr -> RdKafkaTopicPartitionListTPtr -> IO RdKafkaRespErrT) -> m KafkaError
+changePause consumer ps paused action = liftIO $ withForeignPtr (getRdKafka consumer) $ \_ -> mask_ $
+  bracket (newRdKafkaTopicPartitionListT (length ps)) finalizeForeignPtr $ \list -> do
+    mapM_ (\(TopicName topic, PartitionId partition) -> rdKafkaTopicPartitionListAdd list (Text.unpack topic) partition) ps
+    code <- action (getRdKafka consumer) list
+    when (code == RdKafkaRespErrNoError) $ do
+      errors <- nativeTopicPartitionErrors list
+      let successful = Set.fromList [partition | (partition, result) <- zip ps errors, result == RdKafkaRespErrNoError]
+      atomicModifyIORef' (kcfgPendingMessages (getKafkaConf consumer)) $ \buffer ->
+        let states = pendingPausedPartitions buffer
+            updated = if paused then Set.union states successful else states `Set.difference` successful
+         in (buffer {pendingPausedPartitions = updated}, ())
+    fromMaybe (KafkaResponseError RdKafkaRespErrNoError) <$> partitionListError list code
 
 -- | Seek a particular offset for each provided 'TopicPartition'
 {-# DEPRECATED seek "Use seekPartitions instead" #-}
 seek :: (MonadIO m) => KafkaConsumer -> Timeout -> [TopicPartition] -> m (Maybe KafkaError)
-seek (KafkaConsumer (Kafka k) _) (Timeout timeout) tps =
+seek consumer@(KafkaConsumer (Kafka k) _) (Timeout timeout) tps =
   liftIO $ withForeignPtr k $ \_ ->
     either Just (const Nothing) <$> withTopics tps seekAll
   where
@@ -555,20 +576,22 @@ seek (KafkaConsumer (Kafka k) _) (Timeout timeout) tps =
       topicPair tp >>= \case
         Left err -> pure (Left err)
         Right owned ->
-          bracket (pure owned) (\(ptr, _, _) -> finalizeForeignPtr ptr) $ \_ ->
+          bracket (pure owned) (\(ptr, _, _, _) -> finalizeForeignPtr ptr) $ \_ ->
             withTopics rest (\remaining -> action (owned : remaining))
 
     seekAll pairs =
       runExceptT $
-        mapM_ (\(kt, p, o) -> ExceptT (rdSeek kt p o)) pairs
+        mapM_ (\(kt, topic, p, o) -> ExceptT (rdSeek kt topic p o)) pairs
 
-    rdSeek kt (PartitionId p) o =
-      rdKafkaErrorToEither <$> rdKafkaSeek kt (fromIntegral p) (offsetToInt64 o) timeout
+    rdSeek kt topic partition@(PartitionId p) o = mask_ $ do
+      result <- rdKafkaSeek kt (fromIntegral p) (offsetToInt64 o) timeout
+      when (result == RdKafkaRespErrNoError) (discardPendingMessages (getKafkaConf consumer) (Set.singleton (topic, partition)))
+      pure (rdKafkaErrorToEither result)
 
     topicPair tp = do
       let (TopicName tn) = tpTopicName tp
       nt <- newRdKafkaTopicT k (Text.unpack tn) Nothing
-      return $ bimap KafkaError (,tpPartition tp,tpOffset tp) (first Text.pack nt)
+      return $ bimap KafkaError (,tpTopicName tp,tpPartition tp,tpOffset tp) (first Text.pack nt)
 
 -- | Seek already assigned partitions to their requested offsets. A nonzero
 -- timeout waits for the fetcher update and discards prefetched records from the
@@ -580,12 +603,14 @@ seek (KafkaConsumer (Kafka k) _) (Timeout timeout) tps =
 -- member markers are ignored only in that case; immediate errors are returned.
 -- 'PartitionOffsetStored' is not supported by native seek (use 'rewindConsumer').
 seekPartitions :: (MonadIO m) => KafkaConsumer -> [TopicPartition] -> Timeout -> m (Maybe KafkaError)
-seekPartitions (KafkaConsumer (Kafka k) _) ps (Timeout timeout) = liftIO $ withForeignPtr k $ \_ -> bracket (toNativeTopicPartitionList ps) finalizeForeignPtr $ \tps -> do
+seekPartitions consumer@(KafkaConsumer (Kafka k) _) ps (Timeout timeout) = liftIO $ withForeignPtr k $ \_ -> mask_ $ bracket (toNativeTopicPartitionList ps) finalizeForeignPtr $ \tps -> do
   err <- bracket (rdKafkaSeekPartitions k tps timeout) rdKafkaErrorDestroy rdKafkaErrorCode
   case rdKafkaErrorToEither err of
     Left failure -> pure (Just failure)
     Right () -> do
       errors <- nativeTopicPartitionErrors tps
+      let initiated = Set.fromList [(tpTopicName partition, tpPartition partition) | (partition, code) <- zip ps errors, code == RdKafkaRespErrNoError || code == RdKafkaRespErrInProgress]
+      discardPendingMessages (getKafkaConf consumer) initiated
       pure $ KafkaResponseError <$> find substantive errors
   where
     substantive code =
@@ -616,19 +641,15 @@ position (KafkaConsumer (Kafka k) _) tps = liftIO $ withForeignPtr k $ \_ -> bra
 -- The 'Timeout' argument specifies the maximum amount of time
 -- (in milliseconds) that the call will block waiting for events.
 --
--- This function is called on each 'pollMessage' and, if runtime allows
--- multi threading, it is called periodically in a separate thread
--- to ensure the callbacks are handled ASAP.
+-- In async mode a background thread serves callbacks periodically. In sync
+-- mode 'pollMessage' serves callbacks during its native poll. Calling this
+-- function explicitly in sync mode copies any returned records or attributed
+-- errors into a private FIFO for the next application polls; native messages
+-- are released before this call returns. Empty polls add nothing to the FIFO.
 --
--- There is no particular need to call this function manually
--- unless some special cases in a single-threaded environment
--- when polling for events on each 'pollMessage' is not
--- frequent enough.
---
--- Any message librdkafka returns from this poll (a fetched record that raced a
--- partition-queue redirect, or a consumer error) is discarded and destroyed.
--- Fatal errors remain observable through 'pollMessage', 'pollMessageBatch' and
--- 'consumerFatalError', which read librdkafka's fatal state directly.
+-- In async mode application records use separate partition queues. Any message
+-- returned on the callback queue is discarded and destroyed. Fatal errors stay
+-- observable through the public polling APIs and 'consumerFatalError'.
 pollConsumerEvents :: KafkaConsumer -> Maybe Timeout -> IO ()
 pollConsumerEvents k timeout =
   void . withCallbackPollEnabled k $ pollConsumerEvents' k timeout
@@ -645,7 +666,7 @@ pollConsumerEvents k timeout =
 --
 -- See 'newConsumer'
 closeConsumer :: (MonadIO m) => KafkaConsumer -> m (Maybe KafkaError)
-closeConsumer (KafkaConsumer (Kafka k) (KafkaConf _ qr statusVar lifecycle _)) = liftIO $
+closeConsumer (KafkaConsumer (Kafka k) (KafkaConf _ qr statusVar lifecycle _ pending)) = liftIO $
   modifyMVar lifecycle $ \case
     ClientOpen -> do
       -- because closing the consumer will raise callbacks,
@@ -654,6 +675,7 @@ closeConsumer (KafkaConsumer (Kafka k) (KafkaConf _ qr statusVar lifecycle _)) =
         -- librdkafka says:
         --   Prior to destroying the client instance, loose your reference to the
         --   background queue by calling rd_kafka_queue_destroy()
+        atomicModifyIORef' pending (const (emptyPendingMessages, ()))
         releaseMessageQueue qr
         res <- kafkaErrorToMaybe . KafkaResponseError <$> rdKafkaConsumerClose k
         pure (CallbackPollDisabled, res)
@@ -677,13 +699,14 @@ closeConsumer (KafkaConsumer (Kafka k) (KafkaConf _ qr statusVar lifecycle _)) =
 -- including 'consumerClosed'. Serialize normal operations with teardown, and do
 -- not call this from a librdkafka callback.
 destroyConsumer :: (MonadIO m) => KafkaConsumer -> m ()
-destroyConsumer (KafkaConsumer (Kafka k) (KafkaConf _ qr statusVar lifecycle _)) = liftIO $
+destroyConsumer (KafkaConsumer (Kafka k) (KafkaConf _ qr statusVar lifecycle _ pending)) = liftIO $
   modifyMVarMasked_ lifecycle $ \case
     ClientDestroyed -> pure ClientDestroyed
     _ -> do
       -- Each step is safe to repeat, so a destroy interrupted before it
       -- published ClientDestroyed can be completed by the next call.
       modifyMVarMasked_ statusVar (const (pure CallbackPollDisabled))
+      atomicModifyIORef' pending (const (emptyPendingMessages, ()))
       releaseMessageQueue qr
       finalizeForeignPtr k
       pure ClientDestroyed
@@ -805,7 +828,8 @@ withCallbackPollEnabled k f = do
     CallbackPollDisabled -> pure CallbackPollDisabled
 
 -- | Polls the consumer queue to let librdkafka serve callback-type events, and
--- destroys whatever message that poll hands back.
+-- releases whatever native message that poll hands back. Sync-mode results
+-- are copied into the application FIFO before release.
 --
 -- Most events on the consumer queue are served as callbacks inside librdkafka
 -- during the poll itself and nothing is returned. Two kinds of event are
@@ -825,7 +849,55 @@ withCallbackPollEnabled k f = do
 pollConsumerEvents' :: KafkaConsumer -> Maybe Timeout -> IO ()
 pollConsumerEvents' k timeout = withForeignPtr (getRdKafka k) $ \_ -> do
   let (Timeout tm) = fromMaybe (Timeout 0) timeout
-  withPolledMessage (rdKafkaConsumerPoll (getRdKafka k) tm) (const (pure ()))
+  queue <- getRdMsgQueue k
+  withPolledMessage (rdKafkaConsumerPoll (getRdKafka k) tm) $ \message ->
+    case queue of
+      Just _ -> pure ()
+      Nothing -> withForeignPtr message $ \raw -> when (raw /= nullPtr) $ do
+        copied <- copyMessagePtrAttributed message
+        case copied of
+          Left (ConsumerMessageError (KafkaResponseError RdKafkaRespErrFatal) _ _ _) -> pure ()
+          _ -> atomicModifyIORef' (kcfgPendingMessages (getKafkaConf k)) $ \buffer ->
+            (buffer {bufferedMessages = bufferedMessages buffer |> packPendingMessage copied}, ())
+
+-- A cached result must not bypass ready rebalance/commit callbacks or stop
+-- updating native poll liveness while the application drains copied records.
+servePendingCallbacks :: KafkaConsumer -> IO ()
+servePendingCallbacks consumer =
+  getRdMsgQueue consumer >>= \case
+    Just _ -> pure ()
+    Nothing -> do
+      buffer <- readIORef (kcfgPendingMessages (getKafkaConf consumer))
+      case Seq.viewl (bufferedMessages buffer) of
+        EmptyL -> pure ()
+        _ -> pollConsumerEvents consumer (Just (Timeout 0))
+
+-- Callback polling copies messages before releasing their native owners. The
+-- buffer stores no client references, so it cannot form a callback/client cycle.
+packPendingMessage :: Either ConsumerMessageError (ConsumerRecord (Maybe BS.ByteString) (Maybe BS.ByteString)) -> PendingMessage
+packPendingMessage = \case
+  Left (ConsumerMessageError failure topic partition offset) -> PendingMessageError failure topic partition (unOffset <$> offset)
+  Right (ConsumerRecord topic partition (Offset offset) timestamp headers key value) ->
+    PendingMessageRecord topic partition offset (packTimestamp timestamp) headers key value
+  where
+    packTimestamp NoTimestamp = PendingNoTimestamp
+    packTimestamp (CreateTime time) = PendingCreateTime time
+    packTimestamp (LogAppendTime time) = PendingLogAppendTime time
+
+nextPendingMessage :: KafkaConsumer -> IO (Maybe (Either ConsumerMessageError (ConsumerRecord (Maybe BS.ByteString) (Maybe BS.ByteString))))
+nextPendingMessage consumer = atomicModifyIORef' (kcfgPendingMessages (getKafkaConf consumer)) $ \buffer ->
+  let ready = maybe True (`Set.notMember` pendingPausedPartitions buffer) . pendingMessagePartition
+      (held, available) = Seq.breakl ready (bufferedMessages buffer)
+   in case Seq.viewl available of
+        EmptyL -> (buffer, Nothing)
+        value :< rest -> (buffer {bufferedMessages = held Seq.>< rest}, Just (unpack value))
+  where
+    unpack (PendingMessageError failure topic partition offset) = Left (ConsumerMessageError failure topic partition (Offset <$> offset))
+    unpack (PendingMessageRecord topic partition offset timestamp headers key value) =
+      Right (ConsumerRecord topic partition (Offset offset) (unpackTimestamp timestamp) headers key value)
+    unpackTimestamp PendingNoTimestamp = NoTimestamp
+    unpackTimestamp (PendingCreateTime time) = CreateTime time
+    unpackTimestamp (PendingLogAppendTime time) = LogAppendTime time
 
 -- | The in-band error a poll must report because a fatal error has been raised
 -- on this client, or 'Nothing' when the client is healthy.
