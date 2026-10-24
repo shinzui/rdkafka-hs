@@ -26,6 +26,30 @@ tests env =
     [ testCase "native metadata counter detects an unreleased result" $ withMetadataFault 0 $ do
         metadataLeakControl (teBrokers env)
         mapM metadataStat [0, 1] >>= (@?= [1, 0]),
+      testCase "native topic-constructor failure survives metadata convenience queries" $
+        withClient env "native-topic-failure" $ \consumer -> do
+          let tooLong = TopicName (Text.replicate 513 "x")
+              failure = KafkaError "Local: Invalid argument or configuration"
+          topicMetadata consumer (Timeout 200) tooLong >>= (@?= Left failure)
+          watermarkOffsets consumer (Timeout 200) tooLong >>= (@?= [Left failure])
+          topicOffsetsForTime consumer (Timeout 200) (Millis 0) tooLong >>= (@?= Left failure),
+      testCase "empty native metadata remains empty and releases every result" $
+        withTopic env "metadata-empty-frame" 1 $ \topic producer -> withMetadataFault 20 $ do
+          metadata <- topicMetadata producer (Timeout 5000) topic >>= either throwIO pure
+          kmTopics metadata @?= []
+          watermarkOffsets producer (Timeout 5000) topic >>= (@?= [])
+          topicOffsetsForTime producer (Timeout 5000) (Millis 0) topic >>= (@?= Left (KafkaResponseError RdKafkaRespErrInvalidArg))
+          mapM metadataStat [0, 1] >>= (@?= [3, 3]),
+      testCase "timestamp lookup preserves native overall errors" $
+        withTopic env "metadata-overall-time-error" 1 $ \topic producer -> withMetadataFault 21 $ do
+          offsetsForTime producer (Timeout 5000) (Millis 0) [(topic, PartitionId 0)] >>= (@?= Left (KafkaResponseError RdKafkaRespErrTimedOut))
+          metadataStat 4 >>= (@?= 1),
+      testCase "watermark queries preserve unknown partition errors and empty provided metadata" $
+        withTopic env "metadata-watermark-boundaries" 1 $ \topic producer -> do
+          partitionWatermarkOffsets producer (Timeout 5000) topic (PartitionId 42) >>= (@?= Left (KafkaResponseError RdKafkaRespErrUnknownPartition))
+          let empty = TopicMetadata topic [] Nothing
+          watermarkOffsets' producer (Timeout 5000) empty >>= (@?= [])
+          offsetsForTime' producer (Timeout 5000) (Millis 0) empty >>= (@?= Left (KafkaResponseError RdKafkaRespErrInvalidArg)),
       testCase "topic identity replica sets and exact watermarks" $
         withTopic env "metadata-exact" 2 $ \topic producer -> do
           replicateM_ 3 (produceTo producer topic 0 "partition-zero")

@@ -15,15 +15,12 @@ module Kafka.Integration.FatalErrorTest
 where
 
 import Control.Concurrent (threadDelay)
-import Control.Exception (finally)
+import Control.Exception (bracket, finally, throwIO)
 import Control.Monad (forM_, replicateM, void)
-import Data.Either (isRight)
 import Data.Map qualified as Map
 import Data.Text qualified as Text
 import Kafka.Consumer
-import Kafka.Producer (closeProducer)
 import Kafka.TestEnv
-import Kafka.Topic (NewTopic (..), PartitionCount (..), ReplicationFactor (..), createTopic, deleteTopic)
 import System.Timeout (timeout)
 import Test.Tasty (TestTree, localOption, mkTimeout, testGroup)
 import Test.Tasty.HUnit (Assertion, assertBool, assertFailure, testCase, (@?=))
@@ -45,27 +42,34 @@ fencedStaticMember env mode = do
   let label = case mode of
         CallbackPollModeAsync -> "async"
         CallbackPollModeSync -> "sync"
-      topic = TopicName (prefixedName env ("fatal-" <> label))
       props =
         consumerProps env
           <> groupId (makeGroupId env ("fatal-" <> label))
           <> extraProps (Map.fromList [("group.instance.id", prefixedName env ("fatal-" <> label <> "-member"))])
           <> callbackPollMode mode
-
-  admin <- mkProducer env
-  created <- createTopic admin (NewTopic topic (PartitionCount 1) (ReplicationFactor 1) mempty)
-  assertBool ("createTopic: " <> show created) (isRight created)
-
-  flip finally (void (deleteTopic admin topic) >> closeProducer admin) $ do
-    a <- mkConsumerFor topic props
-    flip finally (void (closeConsumer a)) $ do
+  withTopic env ("fatal-" <> label) 1 $ \topic producer -> do
+    produceTo producer topic 0 "active-member"
+    let acquireA = newConsumer props (topics [topic] <> offsetReset Earliest) >>= either throwIO pure
+        releaseFenced consumer =
+          ( closeConsumer consumer >>= \case
+              Nothing -> pure ()
+              Just err | err == fatal -> pure ()
+              Just err -> throwIO err
+          )
+            `finally` destroyConsumer consumer
+    bracket acquireA releaseFenced $ \a -> do
+      first <- pollMessage a (Timeout 10000) >>= either throwIO pure
+      (crTopic first, crPartition first, crOffset first, crValue first) @?= (topic, PartitionId 0, Offset 0, Just "active-member")
+      assignmentLost a >>= (@?= False)
       -- B replaces A's static membership; the broker fences A.
-      b <- mkConsumerFor topic props
-      flip finally (void (closeConsumer b)) $ do
+      bracket (mkConsumerFor topic props) releaseConsumer $ \b -> do
         result <- timeout 30000000 (awaitFatal a b)
         case result of
           Nothing -> assertFailure "consumer A did not report a fatal error within 30 seconds of being fenced"
           Just () -> pure ()
+
+        pollConsumerEvents a (Just (Timeout 0))
+        assignmentLost b >>= (@?= False)
 
         again <- pollMessage a (Timeout 100)
         either Just (const Nothing) again @?= Just fatal

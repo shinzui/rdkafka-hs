@@ -4,12 +4,14 @@ module Kafka.Integration.DeprecatedRunnerContractTest (tests) where
 
 import Control.Concurrent.MVar (newEmptyMVar, tryPutMVar, tryTakeMVar)
 import Control.Exception (Exception, finally, throwIO, try)
-import Control.Monad (void)
+import Control.Monad (void, when)
 import Data.IORef (newIORef, readIORef, writeIORef)
 import Data.Map.Strict qualified as M
 import Data.Text qualified as Text
 import Kafka.Consumer qualified as C
 import Kafka.Consumer.Types qualified as CT
+import Kafka.Dump (dumpKafkaConf, dumpTopicConf)
+import Kafka.Metadata (kmTopics, tmTopicName, topicMetadata)
 import Kafka.Producer qualified as P
 import Kafka.Producer.Types qualified as PT
 import Kafka.TestEnv
@@ -42,12 +44,17 @@ tests env =
         withTopic env (Text.pack ("runner-producer-" <> show outcome)) 1 $ \topic _ -> do
           retained <- newIORef Nothing
           reports <- newEmptyMVar
-          let props = P.brokersList (teBrokers env) <> P.sendTimeout (C.Timeout 5000) <> P.setCallback (P.deliveryCallback (void . tryPutMVar reports))
+          let props = P.brokersList (teBrokers env) <> P.sendTimeout (C.Timeout 5000) <> P.extraProp "client.id" "raw-producer-holder" <> P.setCallback (P.deliveryCallback (void . tryPutMVar reports))
               cleanup = readIORef retained >>= mapM_ releaseProducer
           flip finally cleanup $ do
             result <- try @HandlerFailure $ P.runProducer props $ \producer -> do
               let alias = PT.KafkaProducer (PT.kpKafkaPtr producer) (PT.kpKafkaConf producer) (PT.kpTopicConf producer)
               writeIORef retained (Just alias)
+              when (outcome == Returned) $ do
+                dumpTopicConf (PT.kpTopicConf alias) >>= (\values -> M.lookup "message.timeout.ms" values @?= Just "5000")
+                dumpKafkaConf (PT.kpKafkaConf alias) >>= (\values -> M.lookup "client.id" values @?= Just "raw-producer-holder")
+                metadata <- topicMetadata (PT.kpKafkaPtr alias) (C.Timeout 5000) topic >>= either throwIO pure
+                map tmTopicName (kmTopics metadata) @?= [topic]
               P.produceMessage alias (P.ProducerRecord topic (P.SpecifiedPartition 0) (Just "runner-key") (Just "runner-value") mempty) >>= (@?= Nothing)
               finish outcome
             checkResult outcome result
@@ -60,12 +67,16 @@ tests env =
              withTopic env (Text.pack ("runner-consumer-" <> label <> "-" <> show outcome)) 1 $ \topic producer -> do
                produceTo producer topic 0 "runner-record"
                retained <- newIORef Nothing
-               let props = C.brokersList (teBrokers env) <> C.groupId (makeGroupId env (Text.pack ("runner-" <> label <> "-" <> show outcome))) <> C.noAutoCommit <> C.callbackPollMode mode
+               let props = C.brokersList (teBrokers env) <> C.groupId (makeGroupId env (Text.pack ("runner-" <> label <> "-" <> show outcome))) <> C.noAutoCommit <> C.clientId (C.ClientId "raw-consumer-holder") <> C.callbackPollMode mode
                    cleanup = readIORef retained >>= mapM_ releaseConsumer
                flip finally cleanup $ do
                  result <- try @HandlerFailure $ C.runConsumer props (C.topics [topic] <> C.offsetReset C.Earliest) $ \consumer -> do
                    let alias = CT.KafkaConsumer (CT.kcKafkaPtr consumer) (CT.kcKafkaConf consumer)
                    writeIORef retained (Just alias)
+                   when (outcome == Returned) $ do
+                     dumpKafkaConf (CT.kcKafkaConf alias) >>= (\values -> M.lookup "client.id" values @?= Just "raw-consumer-holder")
+                     metadata <- topicMetadata (CT.kcKafkaPtr alias) (C.Timeout 5000) topic >>= either throwIO pure
+                     map tmTopicName (kmTopics metadata) @?= [topic]
                    C.consumerFatalError alias >>= (@?= Nothing)
                    message <- C.pollMessage alias (C.Timeout 10000) >>= either throwIO pure
                    (C.crTopic message, C.crPartition message, C.crOffset message, C.crValue message) @?= (topic, C.PartitionId 0, C.Offset 0, Just "runner-record")

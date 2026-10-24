@@ -9,7 +9,6 @@ import Kafka.Integration.ConfigurationTest qualified as ConfigurationTest
 import Kafka.Integration.ConsumerPropertyTest qualified as ConsumerPropertyTest
 import Kafka.Integration.ConsumerTest qualified as ConsumerTest
 import Kafka.Integration.DestroyTest qualified as DestroyTest
-import Kafka.Integration.FatalErrorTest qualified as FatalErrorTest
 import Kafka.Integration.HeadersTest qualified as HeadersTest
 import Kafka.Integration.LifecycleTest qualified as LifecycleTest
 import Kafka.Integration.MetadataContractTest qualified as MetadataContractTest
@@ -72,7 +71,6 @@ integrationMain = do
             ConsumerTest.tests env,
             BatchTest.tests env,
             HeadersTest.tests env,
-            FatalErrorTest.tests env,
             QueueEventTest.tests env,
             AssignOnlyTest.tests env,
             AttributedErrorTest.tests env,

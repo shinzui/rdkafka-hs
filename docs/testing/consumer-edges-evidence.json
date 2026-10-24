@@ -1,0 +1,57 @@
+{
+  "status": "accepted consumer/metadata edge checkpoint; EP-14 incomplete",
+  "fingerprint": "d31e2f8bcfa21f38e94af350e957f10da603a8f7ffb90e670fabbc2f6f5091fb",
+  "runs": {
+    "normal": {
+      "log": "/tmp/rdkafka-ep14-consumer-edges-normal-final2.log",
+      "sha256": "1341cd1a04674cfce5dfcee17f4d0a2dcd183ad5f69c8977a4184909ae35fc75",
+      "passed": 101
+    },
+    "instrumented-haskell": {
+      "log": "/tmp/rdkafka-ep14-consumer-edges-hpc-final2.log",
+      "sha256": "6f9521cbb1166b94aab04ce3883b7e6a1a2160fecb3c26289f82f38ac5fda2c4",
+      "passed": 101
+    },
+    "instrumented-native": {
+      "log": "/tmp/rdkafka-ep14-consumer-edges-asan.log",
+      "sha256": "e4e51b0b619a0e52d6d6eead17f3af31ff2814de6c2f76f22dd2961caafc2446",
+      "passed": 101
+    }
+  },
+  "mutations": "dist-mutations/20261024T214954Z-consumer-edges-85409-0/results.json",
+  "compiled_mutations_caught": 6,
+  "controls": 3,
+  "scope": [
+    "Fourteen added cases cover metadata constructor/empty/overall-error boundaries, asynchronous assignment errors/recovery, integer boundaries, exact multi-topic subscriptions and multi-partition commit isolation",
+    "Exported raw Kafka and configuration holders work through metadata/dump typeclass instances",
+    "Existing static-fencing cases retain exact fatal cause and repeated plain/attributed/batch errors with checked cleanup",
+    "Fencing cases move to the independent public-contract group; their original two cases remain registered",
+    "Stored offsets at or behind committed positions do not cause commit-all to rewind; callbacks retain Invalid entries and broker offsets are checked independently"
+  ],
+  "native_library": "mori://confluentinc/librdkafka",
+  "native_version": "2.15.0",
+  "leak_instrumentation": false,
+  "fixture_corrections": [
+    {
+      "log": "/tmp/rdkafka-ep14-consumer-edges-normal.log",
+      "reason": "The initial callback oracle omitted Invalid entries, and an assignmentLost snapshot after callback processing was not a valid loss-phase oracle. The failed cases do not establish library defects."
+    },
+    {
+      "log": "/tmp/rdkafka-ep14-consumer-edges-normal-accepted.log",
+      "reason": "Backward local storage does not make commit-all rewind; a known-fatal client can return Fatal during close. The fixture now preserves these native semantics and still destroys the client."
+    },
+    {
+      "log": "/tmp/rdkafka-ep14-consumer-edges-corrected-oracles.log",
+      "reason": "Static-member fatal fencing need not deliver a revocation callback. The True loss-phase case remains open under the already planned EP-15 eviction work."
+    },
+    {
+      "log": "/tmp/rdkafka-ep14-consumer-edges-mutations.log",
+      "reason": "Discarded runner attempt stopped at an unchanged commit-control failure before the native storage oracle was corrected."
+    }
+  ],
+  "remaining": "Whole-candidate recollection/inventory and shifted coverage-exception coordinates, queue-notification fixture strength, partition-list ownership, remaining reachable misses and the saved deprecated-seek failure remain open. Actual assignment-loss True evidence and the remaining environment matrix belong to EP-15.",
+  "required_checks": {
+    "log": "/tmp/rdkafka-ep14-consumer-edges-check.log",
+    "sha256": "8adfc119bd99bf0607771a2669b702cb18bccfb892961370c495a4c055d91544"
+  }
+}

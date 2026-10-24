@@ -5125,14 +5125,15 @@
       "symbols": [
         "Kafka.Consumer.assignmentLost"
       ],
-      "owner": 14,
+      "owner": 15,
       "behavior": "Report group ownership loss",
-      "inputs": "ordinary assignment and fenced/lost group",
+      "inputs": "healthy assignment plus actual group eviction/loss; observe the True value in RebalanceBeforeRevoke before native unassignment clears it",
       "expected": "False when valid; True on lost assignment",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
       "tests": [],
-      "status": "unimplemented"
+      "status": "unimplemented",
+      "rationale": "EP-14 verifies healthy False results. The accepted MasterPlan and EP-15 M1 own actual group eviction/handoff behavior; static-member fatal fencing alone does not guarantee an assignment-loss callback. The True case remains open under EP-15."
     },
     {
       "id": "API-Kafka-Consumer-commitAllOffsets",

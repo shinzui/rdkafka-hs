@@ -262,6 +262,20 @@ families "buffer" =
   ]
   where
     b label change test = mutation "public-contract" label consumer change test
+families "consumer-edges" =
+  [ control "unchanged-metadata-control" integration "metadata-contract",
+    control "unchanged-commit-control" integration "consumer-commit",
+    control "unchanged-fencing-control" integration "public-contract.fatal",
+    d "metadata-constructor-error-lost" (section "watermarkOffsets ::" "watermarkOffsets' ::" (replace "Left err -> return [Left err]" "Left _ -> return []")) "native topic-constructor failure survives metadata convenience queries",
+    d "empty-metadata-manufactures-error" (section "watermarkOffsets ::" "watermarkOffsets' ::" (replace "[] -> return []" "[] -> return [Left (KafkaBadSpecification \"empty metadata\")]")) "empty native metadata remains empty and releases every result",
+    d "timestamp-overall-error-ignored" (section "offsetsForTime ::" "allConsumerGroupsInfo ::" (replace "case res of" "case RdKafkaRespErrNoError of")) "timestamp lookup preserves native overall errors",
+    d "watermark-native-error-ignored" (replace "return $ bimap KafkaResponseError toWatermark offs" "return $ Right (toWatermark (0, 0))") "watermark queries preserve unknown partition errors and empty provided metadata",
+    c "message-commit-targets-partition-zero" (section "commitOffsetMessage ::" "storeOffsetMessage ::" (replace "[topicPartitionFromMessageForCommit m]" "[(topicPartitionFromMessageForCommit m) {tpPartition = PartitionId 0}]")),
+    c "message-store-targets-partition-zero" (section "storeOffsetMessage ::" "storeOffsets ::" (replace "[topicPartitionFromMessageForCommit m]" "[(topicPartitionFromMessageForCommit m) {tpPartition = PartitionId 0}]"))
+  ]
+  where
+    d label change test = mutation "metadata-contract" label "src/Kafka/Metadata.hs" change test
+    c label change = mutation "consumer-commit" label consumer change "async message and stored commits preserve unrelated partition offsets"
 families "inputs" =
   [ control "unchanged-control" integration "input-boundaries",
     i "input-topic-nul-guard-removed" (replace "Text.any (== '\\0') value" "False") "async assign rejects nul-topic",
@@ -324,7 +338,7 @@ families "config" =
     mutation "config-strings" "c-string-key-guard-removed" "src/Kafka/Internal/Setup.hs" (replace "Text.any (== '\\0') key" "False") "producer topic rejects NUL key",
     mutation "config-strings" "c-string-value-guard-removed" "src/Kafka/Internal/Setup.hs" (replace "Text.any (== '\\0') value" "False") "producer global rejects NUL value"
   ]
-families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata, metadata-utf8, metadata-partitions, metadata-fields, consumer-commit, runners, inputs, buffer, data or config")
+families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata, metadata-utf8, metadata-partitions, metadata-fields, consumer-commit, runners, inputs, consumer-edges, buffer, data or config")
 
 replace :: String -> String -> String -> String
 replace old new source = case [i | (i, rest) <- zip [0 ..] (tails source), old `isPrefixOf` rest] of

@@ -10,18 +10,18 @@
   if (!real) { fprintf(stderr, "metadata: %s\n", dlerror()); abort(); }
 static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t condition = PTHREAD_COND_INITIALIZER;
-static int enabled, mode, entered, released, stats[4];
+static int enabled, mode, entered, released, stats[5];
 static const struct rd_kafka_metadata *metadata, *control_metadata;
 static const struct rd_kafka_group_list *groups;
 static const char *states[] = {"PreparingRebalance", "AwaitingSync", "CompletingRebalance", "Stable", "Dead", "Empty", "FutureState"};
 void rdkafka_hs_test_metadata_begin(int value) {
   pthread_mutex_lock(&lock); enabled = 1; mode = value; entered = released = 0;
   metadata = control_metadata = NULL; groups = NULL;
-  for (int i = 0; i < 4; ++i) stats[i] = 0;
+  for (int i = 0; i < 5; ++i) stats[i] = 0;
   pthread_mutex_unlock(&lock);
 }
 int rdkafka_hs_test_metadata_stat(int index) {
-  pthread_mutex_lock(&lock); int result = index >= 0 && index < 4 ? stats[index] : -1;
+  pthread_mutex_lock(&lock); int result = index >= 0 && index < 5 ? stats[index] : -1;
   pthread_mutex_unlock(&lock); return result;
 }
 int rdkafka_hs_test_metadata_entered(void) {
@@ -62,9 +62,21 @@ rd_kafka_resp_err_t rd_kafka_metadata(rd_kafka_t *rk, int all_topics, rd_kafka_t
       partition->err = RD_KAFKA_RESP_ERR_TOPIC_AUTHORIZATION_FAILED;
       partition->replicas[0] = 13; partition->isrs[0] = 17;
     }
+    if (mode == 20) {
+      /* Metadata is one native allocation; destroy frees the entire frame. */
+      ((struct rd_kafka_metadata *)(void *)metadata)->topic_cnt = 0;
+    }
     boundary(1);
   }
   pthread_mutex_unlock(&lock); return error;
+}
+rd_kafka_resp_err_t rd_kafka_offsets_for_times(rd_kafka_t *rk, rd_kafka_topic_partition_list_t *partitions, int timeout_ms) {
+  REAL(rd_kafka_offsets_for_times);
+  pthread_mutex_lock(&lock);
+  int controlled = enabled && mode == 21;
+  if (controlled) stats[4]++;
+  pthread_mutex_unlock(&lock);
+  return controlled ? RD_KAFKA_RESP_ERR__TIMED_OUT : real(rk, partitions, timeout_ms);
 }
 void rd_kafka_metadata_destroy(const struct rd_kafka_metadata *value) {
   REAL(rd_kafka_metadata_destroy);

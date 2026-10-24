@@ -3,8 +3,10 @@ module Kafka.Integration.ConsumerCommitContractTest (tests) where
 import Control.Concurrent (threadDelay)
 import Control.Concurrent.MVar (MVar, newEmptyMVar, tryPutMVar, tryTakeMVar)
 import Control.Exception (bracket, throwIO)
-import Control.Monad (void)
+import Control.Monad (forM_, void)
+import Data.List (find, sort)
 import Data.Text qualified as Text
+import Data.Text.Encoding qualified as TE
 import Kafka.Consumer
 import Kafka.ConsumerStateSupport (commitObservation, withStateFault)
 import Kafka.TestEnv
@@ -45,6 +47,7 @@ tests env =
               committed consumer (Timeout 5000) [(topic, PartitionId 0)] >>= (@?= Right [part 2])
     | (label, mode) <- [("async", CallbackPollModeAsync), ("sync", CallbackPollModeSync)]
     ]
+      <> multiPartitionCommitTests env
       <> emptyCommitTests env
       <> mixedCommitTests env
       <> timeoutCommitTests env
@@ -109,3 +112,43 @@ awaitCommit consumer events = timeout 10000000 loop >>= maybe (assertFailure "co
             Right record -> assertFailure ("unexpected extra record while awaiting callback: " <> show record)
           threadDelay 1000
           loop
+
+multiPartitionCommitTests :: TestEnv -> [TestTree]
+multiPartitionCommitTests env =
+  [ testCase (label <> " message and stored commits preserve unrelated partition offsets") $
+      withTopic env (Text.pack ("commit-multiple-" <> label)) 2 $ \topic producer -> do
+        forM_ [0, 1] $ \partition -> forM_ [0 .. 2 :: Int] $ \offset -> produceTo producer topic partition (TE.encodeUtf8 (Text.pack (show (partition, offset))))
+        events <- newEmptyMVar
+        let props = brokersList (teBrokers env) <> groupId (makeGroupId env (Text.pack ("commit-multiple-" <> label))) <> noAutoCommit <> noAutoOffsetStore <> callbackPollMode mode <> setCallback (offsetCommitCallback (\_ err partitions -> void (tryPutMVar events (err, partitions))))
+            part partition offset = TopicPartition topic (PartitionId partition) (PartitionOffset offset)
+            report consumer expected = awaitCommit consumer events >>= (@?= (KafkaResponseError RdKafkaRespErrNoError, expected))
+            query consumer expected = committed consumer (Timeout 5000) [(topic, PartitionId 0), (topic, PartitionId 1)] >>= (@?= Right expected)
+        bracket (newAssignedConsumer props >>= either throwIO pure) releaseConsumer $ \consumer -> do
+          assign consumer [part 0 0, part 1 0] >>= (@?= Nothing)
+          records <- receiveMessages consumer 6 >>= either throwIO pure
+          sort [(crPartition r, crOffset r) | r <- records] @?= [(PartitionId p, Offset n) | p <- [0, 1], n <- [0 .. 2]]
+          let record p n = maybe (assertFailure "expected source record is absent") pure (find (\r -> crPartition r == PartitionId p && crOffset r == Offset n) records)
+          record 0 0 >>= commitOffsetMessage OffsetCommit consumer >>= (@?= Nothing)
+          report consumer [part 0 1]
+          query consumer [part 0 1, TopicPartition topic (PartitionId 1) PartitionOffsetInvalid]
+          record 1 1 >>= commitOffsetMessage OffsetCommitAsync consumer >>= (@?= Nothing)
+          report consumer [part 1 2]
+          query consumer [part 0 1, part 1 2]
+          record 0 2 >>= storeOffsetMessage consumer >>= (@?= Nothing)
+          commitAllOffsets OffsetCommit consumer >>= (@?= Nothing)
+          report consumer [part 0 3, TopicPartition topic (PartitionId 1) PartitionOffsetInvalid]
+          query consumer [part 0 3, part 1 2]
+          record 1 0 >>= storeOffsetMessage consumer >>= (@?= Nothing)
+          commitAllOffsets OffsetCommit consumer >>= (@?= Just (KafkaResponseError RdKafkaRespErrNoOffset))
+          awaitCommit consumer events >>= (@?= (KafkaResponseError RdKafkaRespErrNoOffset, [TopicPartition topic (PartitionId p) PartitionOffsetInvalid | p <- [0, 1]]))
+          query consumer [part 0 3, part 1 2]
+          record 1 2 >>= storeOffsetMessage consumer >>= (@?= Nothing)
+          commitAllOffsets OffsetCommit consumer >>= (@?= Nothing)
+          report consumer [TopicPartition topic (PartitionId 0) PartitionOffsetInvalid, part 1 3]
+          query consumer [part 0 3, part 1 3]
+          storeOffsets consumer [part 0 4, part 1 5] >>= (@?= Nothing)
+          commitAllOffsets OffsetCommitAsync consumer >>= (@?= Nothing)
+          report consumer [part 0 4, part 1 5]
+          query consumer [part 0 4, part 1 5]
+  | (label, mode) <- [("async", CallbackPollModeAsync), ("sync", CallbackPollModeSync)]
+  ]

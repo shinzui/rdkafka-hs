@@ -11,6 +11,12 @@ provenance:
     model: "gpt-6-astra"
     harness: "codex-cli"
     at: 2026-10-24T04:50:25Z
+  revisions:
+    - model: "gpt-6.1-sol"
+      harness: "codex-cli"
+      at: 2026-10-24T21:49:43Z
+      mode: "implement"
+      note: "Keep real assignment-loss True evidence with the existing EP-15 eviction and handoff scenarios."
 ---
 
 # Validate broker failures and supported environments
@@ -69,6 +75,8 @@ Use Mori to locate dependency sources before relying on APIs. `mori://confluenti
 
 
 M1 builds deterministic failure fixtures using a run-owned proxy or isolated broker instances. Exercise connection refusal, an established connection that stops responding, connection loss during produce/poll/commit, broker restart, and recovery within configured timeouts. Verify callback counts and actual offsets/records: duplicates permitted by the chosen delivery mode must be distinguished from loss, and exactly-once claims require transactional proof. Never claim exactly-once delivery from ordinary producer retries. Use two consumers with unique group IDs to verify assignment, revocation, assignmentLost when supported, eager and cooperative strategies actually exposed through properties, and delivery across rebalance in both callback modes. A multi-broker Apache Kafka fixture must exercise leader failover for a replicated topic, with before/after leader metadata and record/commit observations. Broker restart and leader failover are different cases. Own and restore all processes, proxies, topics, and users this run mutates; add preflight checks that refuse shared or unowned endpoints for fault actions.
+
+The assignmentLost inventory row belongs here: EP-14 verifies healthy False results, while static-member fatal fencing does not guarantee a revocation callback. Exercise actual eviction or poll-liveness loss and observe True inside RebalanceBeforeRevoke, before native unassignment can clear it; a later False snapshot or a fatal error alone does not close this obligation.
 
 Reuse EP-12's transaction flow under interruption: source offsets advance with committed output and do not advance on abort, retryable failures recover, and fatal fencing requires a new producer. Use barriers/events or observed protocol state to trigger each failure window; arbitrary sleeps are not evidence the window was exercised. Assertion logs record the state reached before disruption, operation result, cleanup, and recovered state. Missing capabilities must fail the named mandatory case instead of silently skipping it.
 

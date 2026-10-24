@@ -2,15 +2,18 @@
 
 module Kafka.Integration.ConsumerStateContractTest (tests) where
 
+import Control.Concurrent.MVar (newEmptyMVar, readMVar, tryPutMVar)
 import Control.Exception (bracket, throwIO)
-import Control.Monad (forM_)
+import Control.Monad (forM_, void)
 import Data.ByteString.Char8 qualified as BS
+import Data.List (sort)
 import Data.Map.Strict qualified as M
 import Data.Text qualified as Text
 import Kafka.Consumer
 import Kafka.MessageTestSupport (messageStat, withMessageFault)
 import Kafka.Producer qualified as P
 import Kafka.TestEnv
+import System.Timeout (timeout)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (assertBool, assertFailure, testCase, (@?=))
 
@@ -29,6 +32,44 @@ tests env =
             assign consumer [] >>= (@?= Nothing)
             assignment consumer >>= (@?= Right M.empty)
             pollMessage consumer (Timeout 100) >>= (@?= Left (KafkaResponseError RdKafkaRespErrTimedOut)),
+          testCase "unknown-assignment-reports-through-error-callback-and-recovers" $
+            withTopic env (Text.pack ("state-" <> label <> "-unknown-assignment")) 1 $ \topic producer -> do
+              produceTo producer topic 0 "recovered"
+              events <- newEmptyMVar
+              let props = base "unknown-assignment" <> setCallback (errorCallback (\err reason -> void (tryPutMVar events (err, reason))))
+              bracket (newAssignedConsumer props >>= either throwIO pure) releaseConsumer $ \consumer -> do
+                assign consumer [part topic 42 (PartitionOffset 0)] >>= (@?= Nothing)
+                assignment consumer >>= (@?= Right (M.singleton topic [PartitionId 42]))
+                pollMessage consumer (Timeout 1000) >>= (@?= Left (KafkaResponseError RdKafkaRespErrTimedOut))
+                timeout 5000000 (readMVar events) >>= \case
+                  Just (err, reason) -> do
+                    err @?= KafkaResponseError RdKafkaRespErrUnknownPartition
+                    assertBool reason (unTopicName topic `Text.isInfixOf` Text.pack reason)
+                  Nothing -> assertFailure "missing native assignment error callback"
+                assignmentLost consumer >>= (@?= False)
+                assign consumer [part topic 0 (PartitionOffset 0)] >>= (@?= Nothing)
+                message <- pollMessage consumer (Timeout 10000) >>= either throwIO pure
+                (crTopic message, crPartition message, crOffset message, crValue message) @?= (topic, PartitionId 0, Offset 0, Just "recovered"),
+          scenario "representable-partition-boundaries-keep-native-query-semantics" $ \topic consumer -> do
+            let requested = [TopicPartition topic (PartitionId p) PartitionOffsetInvalid | p <- [-2147483648, 2147483647]]
+            position consumer [(tpTopicName p, tpPartition p) | p <- requested] >>= (@?= Right requested),
+          scenario "deprecated-seek-reports-unassigned-state-and-recovers-after-assignment" $ \topic consumer -> do
+            assign consumer [part topic 0 (PartitionOffset 0)] >>= (@?= Nothing)
+            record consumer topic 0 0
+            assign consumer [] >>= (@?= Nothing)
+            seek consumer (Timeout 2000) [part topic 0 (PartitionOffset 1)] >>= (@?= Just (KafkaResponseError RdKafkaRespErrState))
+            assignment consumer >>= (@?= Right M.empty)
+            assign consumer [part topic 0 (PartitionOffset 2)] >>= (@?= Nothing)
+            record consumer topic 0 2,
+          testCase "subscription-preserves-the-exact-multiple-topic-set" $
+            withTopic env (Text.pack ("state-" <> label <> "-subscription-a")) 1 $ \first producerA ->
+              withTopic env (Text.pack ("state-" <> label <> "-subscription-b")) 1 $ \second producerB -> do
+                produceTo producerA first 0 "first-topic"
+                produceTo producerB second 0 "second-topic"
+                bracket (newConsumer (base "multiple-topics" <> logLevel KafkaLogWarning) (topics [second, first, second] <> offsetReset Earliest) >>= either throwIO pure) releaseConsumer $ \consumer -> do
+                  subscription consumer >>= (@?= Right [(first, SubscribedPartitionsAll), (second, SubscribedPartitionsAll)])
+                  records <- receiveMessages consumer 2 >>= either throwIO pure
+                  sort [(crTopic r, crPartition r, crOffset r, crValue r) | r <- records] @?= [(first, PartitionId 0, Offset 0, Just "first-topic"), (second, PartitionId 0, Offset 0, Just "second-topic")],
           scenario "empty-requests-preserve-empty-assignment" $ \_ consumer -> do
             pausePartitions consumer [] >>= (@?= KafkaResponseError RdKafkaRespErrNoError)
             resumePartitions consumer [] >>= (@?= KafkaResponseError RdKafkaRespErrNoError)
