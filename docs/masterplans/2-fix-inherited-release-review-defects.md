@@ -141,6 +141,8 @@ EP-14 M1 is Complete: 65 unit and four focused native cases pass normally and in
 
 ## Surprises & Discoveries
 
+EP-14 adds 26 consumer-state cases with normal/Haskell/native-instrumented passes and four compiled mutation controls. Global consumer topic settings survive empty subscription properties; mixed partition errors are reported while successful effects persist. [State evidence](../testing/consumer-state-evidence.json) records corrected native preconditions. The saved intermittent deprecated-seek failure remains open despite repeated exact replay passing.
+
 EP-14 also closes native rebalance error ownership and propagation: 15 focused cases pass normally, Haskell-instrumented and with native invalid-access instrumentation, and four compiled mutations are caught. Real cooperative assignment/revocation passes in both modes; controlled failure probes cover owned errors and decoder exceptions without claiming real group handoff coverage. See [rebalance evidence](../testing/rebalance-error-evidence.json). The public-contract group now passes 39 cases; whole EP-14 M2/M3 remains open.
 
 EP-14's message audit also reproduced cancellation leaks between single-message native return and conversion, plus silently discarded native header errors. The batch and single scopes now mask acquisition and release all owned messages, including callback-event polling. Twenty-four focused cases pass normally, with Haskell instrumentation and instrumented native code; four compiled mutations fail their intended tests. [Message evidence](../testing/message-ownership-evidence.json) records the 10/14 failing baseline and accepted scope. EP-14 M2/M3 and the remaining known defects are still open.

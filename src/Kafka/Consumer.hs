@@ -110,8 +110,8 @@ import Foreign hiding (void)
 import Kafka.Consumer.Callbacks (forwardPartitionsToMessageQueue)
 import Kafka.Consumer.Convert (copyMessagePtr, fromMessagePtr, fromMessagePtrAttributed, fromNativeTopicPartitionList'', nativeTopicPartitionErrors, offsetCommitToBool, offsetToInt64, toMap, toNativeTopicPartitionList, toNativeTopicPartitionList', topicPartitionFromMessageForCommit, withPolledMessage)
 import Kafka.Consumer.Types (KafkaConsumer (..))
-import Kafka.Internal.RdKafka (RdKafkaQueueTPtr, RdKafkaRespErrT (..), RdKafkaTopicPartitionListTPtr, RdKafkaTypeT (..), newRdKafkaT, newRdKafkaTopicPartitionListT, newRdKafkaTopicT, rdKafkaAssign, rdKafkaAssignment, rdKafkaAssignmentLost, rdKafkaCommit, rdKafkaCommitted, rdKafkaConfSetDefaultTopicConf, rdKafkaConsumeBatchQueue, rdKafkaConsumeQueue, rdKafkaConsumerClose, rdKafkaConsumerClosed, rdKafkaConsumerPoll, rdKafkaErrorCode, rdKafkaErrorDestroy, rdKafkaFatalError, rdKafkaMessageDestroy, rdKafkaOffsetsStore, rdKafkaPausePartitions, rdKafkaPollSetConsumer, rdKafkaPosition, rdKafkaQueueDestroy, rdKafkaQueueGetConsumer, rdKafkaQueueIoEventEnable, rdKafkaQueueNew, rdKafkaResumePartitions, rdKafkaSeek, rdKafkaSeekPartitions, rdKafkaSetLogLevel, rdKafkaSubscribe, rdKafkaSubscription, rdKafkaTopicConfDup, rdKafkaTopicPartitionListAdd)
-import Kafka.Internal.Setup (Callback (..), CallbackPollStatus (..), ClientLifecycle (..), Kafka (..), KafkaConf (..), KafkaProps (..), TopicConf (..), TopicProps (..), getKafkaConf, getRdKafka, getRdMsgQueue, kafkaConf, topicConf)
+import Kafka.Internal.RdKafka (RdKafkaQueueTPtr, RdKafkaRespErrT (..), RdKafkaTopicPartitionListTPtr, RdKafkaTypeT (..), newRdKafkaT, newRdKafkaTopicPartitionListT, newRdKafkaTopicT, rdKafkaAssign, rdKafkaAssignment, rdKafkaAssignmentLost, rdKafkaCommit, rdKafkaCommitted, rdKafkaConsumeBatchQueue, rdKafkaConsumeQueue, rdKafkaConsumerClose, rdKafkaConsumerClosed, rdKafkaConsumerPoll, rdKafkaErrorCode, rdKafkaErrorDestroy, rdKafkaFatalError, rdKafkaMessageDestroy, rdKafkaOffsetsStore, rdKafkaPausePartitions, rdKafkaPollSetConsumer, rdKafkaPosition, rdKafkaQueueDestroy, rdKafkaQueueGetConsumer, rdKafkaQueueIoEventEnable, rdKafkaQueueNew, rdKafkaResumePartitions, rdKafkaSeek, rdKafkaSeekPartitions, rdKafkaSetLogLevel, rdKafkaSubscribe, rdKafkaSubscription, rdKafkaTopicPartitionListAdd)
+import Kafka.Internal.Setup (Callback (..), CallbackPollStatus (..), ClientLifecycle (..), Kafka (..), KafkaConf (..), KafkaProps (..), TopicProps (..), getKafkaConf, getRdKafka, getRdMsgQueue, kafkaConf, setAllKafkaConfValues, topicConf)
 import Kafka.Internal.Shared (kafkaErrorToMaybe, maybeToLeft, rdKafkaErrorToEither, setSaslCredentials')
 import System.Posix.Types (Fd (..))
 
@@ -156,8 +156,10 @@ newConsumer props (Subscription ts tp) = liftIO $ mask $ \restore -> do
         CallbackPollModeSync -> props
   kc@(KafkaConf kc' qref _ _ _) <- newConsumerConf cp
   flip onException (releaseUnattachedCallbacks (kcfgCallbackOwner kc)) $ restore $ do
-    tp' <- topicConf (TopicProps tp)
-    _ <- setDefaultTopicConf kc tp'
+    -- Validate subscription values as topic properties, then merge only their
+    -- explicit keys so globally supplied topic settings remain effective.
+    _ <- topicConf (TopicProps tp)
+    setAllKafkaConfValues kc (KafkaProps tp)
     rdk <- newRdKafkaT (kcfgCallbackOwner kc) RdKafkaConsumer kc'
     case rdk of
       Left err ->
@@ -518,17 +520,19 @@ subscription (KafkaConsumer (Kafka k) _) = liftIO $ withForeignPtr k $ \_ -> bra
     subParts [PartitionId (-1)] = SubscribedPartitionsAll
     subParts ps = SubscribedPartitions ps
 
--- | Pauses specified partitions on the current consumer.
+-- | Pauses specified partitions on the current consumer. Reports the overall
+-- native error or the first member error; successful members remain paused.
 pausePartitions :: (MonadIO m) => KafkaConsumer -> [(TopicName, PartitionId)] -> m KafkaError
 pausePartitions (KafkaConsumer (Kafka k) _) ps = liftIO $ withForeignPtr k $ \_ -> bracket (newRdKafkaTopicPartitionListT (length ps)) finalizeForeignPtr $ \pl -> do
   mapM_ (\(TopicName topicName, PartitionId partitionId) -> rdKafkaTopicPartitionListAdd pl (Text.unpack topicName) partitionId) ps
-  KafkaResponseError <$> rdKafkaPausePartitions k pl
+  fromMaybe (KafkaResponseError RdKafkaRespErrNoError) <$> (partitionListError pl =<< rdKafkaPausePartitions k pl)
 
--- | Resumes specified partitions on the current consumer.
+-- | Resumes specified partitions on the current consumer. Reports the overall
+-- native error or the first member error; successful members remain resumed.
 resumePartitions :: (MonadIO m) => KafkaConsumer -> [(TopicName, PartitionId)] -> m KafkaError
 resumePartitions (KafkaConsumer (Kafka k) _) ps = liftIO $ withForeignPtr k $ \_ -> bracket (newRdKafkaTopicPartitionListT (length ps)) finalizeForeignPtr $ \pl -> do
   mapM_ (\(TopicName topicName, PartitionId partitionId) -> rdKafkaTopicPartitionListAdd pl (Text.unpack topicName) partitionId) ps
-  KafkaResponseError <$> rdKafkaResumePartitions k pl
+  fromMaybe (KafkaResponseError RdKafkaRespErrNoError) <$> (partitionListError pl =<< rdKafkaResumePartitions k pl)
 
 -- | Seek a particular offset for each provided 'TopicPartition'
 {-# DEPRECATED seek "Use seekPartitions instead" #-}
@@ -584,19 +588,19 @@ seekPartitions (KafkaConsumer (Kafka k) _) ps (Timeout timeout) = liftIO $ withF
 -- | Retrieve committed offsets for topics+partitions.
 committed :: (MonadIO m) => KafkaConsumer -> Timeout -> [(TopicName, PartitionId)] -> m (Either KafkaError [TopicPartition])
 committed (KafkaConsumer (Kafka k) _) (Timeout timeout) tps = liftIO $ withForeignPtr k $ \_ -> bracket (toNativeTopicPartitionList' tps) finalizeForeignPtr $ \ntps -> do
-  res <- rdKafkaCommitted k ntps timeout
-  case res of
-    RdKafkaRespErrNoError -> Right <$> fromNativeTopicPartitionList'' ntps
-    err -> return $ Left (KafkaResponseError err)
+  failure <- partitionListError ntps =<< rdKafkaCommitted k ntps timeout
+  case failure of
+    Nothing -> Right <$> fromNativeTopicPartitionList'' ntps
+    Just err -> pure (Left err)
 
 -- | Retrieve current positions (last consumed message offset+1) for the current running instance of the consumer.
 -- If the current consumer hasn't received any messages for a given partition, 'PartitionOffsetInvalid' is returned.
 position :: (MonadIO m) => KafkaConsumer -> [(TopicName, PartitionId)] -> m (Either KafkaError [TopicPartition])
 position (KafkaConsumer (Kafka k) _) tps = liftIO $ withForeignPtr k $ \_ -> bracket (toNativeTopicPartitionList' tps) finalizeForeignPtr $ \ntps -> do
-  res <- rdKafkaPosition k ntps
-  case res of
-    RdKafkaRespErrNoError -> Right <$> fromNativeTopicPartitionList'' ntps
-    err -> return $ Left (KafkaResponseError err)
+  failure <- partitionListError ntps =<< rdKafkaPosition k ntps
+  case failure of
+    Nothing -> Right <$> fromNativeTopicPartitionList'' ntps
+    Just err -> pure (Left err)
 
 -- | Polls the provided kafka consumer for events.
 --
@@ -742,10 +746,6 @@ subscribe (KafkaConsumer (Kafka k) _) ts = withForeignPtr k $ \_ -> bracket (new
   res <- KafkaResponseError <$> rdKafkaSubscribe k pl
   return $ kafkaErrorToMaybe res
 
-setDefaultTopicConf :: KafkaConf -> TopicConf -> IO ()
-setDefaultTopicConf (KafkaConf kc _ _ _ _) (TopicConf tc) =
-  rdKafkaTopicConfDup tc >>= rdKafkaConfSetDefaultTopicConf kc
-
 -- The caller's input list is borrowed by native operations. Release its
 -- private native references before the client can be finalized or destroyed.
 withPartitionList :: KafkaConsumer -> IO RdKafkaTopicPartitionListTPtr -> (RdKafkaTopicPartitionListTPtr -> IO a) -> IO a
@@ -758,7 +758,14 @@ commitOffsets o (KafkaConsumer (Kafka k) _) pl =
 
 commitOffsetsStore :: KafkaConsumer -> RdKafkaTopicPartitionListTPtr -> IO (Maybe KafkaError)
 commitOffsetsStore (KafkaConsumer (Kafka k) _) pl =
-  kafkaErrorToMaybe . KafkaResponseError <$> rdKafkaOffsetsStore k pl
+  partitionListError pl =<< rdKafkaOffsetsStore k pl
+
+-- Preserve an overall error first, then the first failing member in input order.
+-- Successful members of a mixed native request are not rolled back.
+partitionListError :: RdKafkaTopicPartitionListTPtr -> RdKafkaRespErrT -> IO (Maybe KafkaError)
+partitionListError partitions overall = case rdKafkaErrorToEither overall of
+  Left failure -> pure (Just failure)
+  Right () -> fmap KafkaResponseError . find (/= RdKafkaRespErrNoError) <$> nativeTopicPartitionErrors partitions
 
 setConsumerLogLevel :: KafkaConsumer -> KafkaLogLevel -> IO ()
 setConsumerLogLevel (KafkaConsumer (Kafka k) _) level =

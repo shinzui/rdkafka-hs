@@ -211,7 +211,16 @@ families "rebalance" =
   ]
   where
     r label change test = mutation "public-contract" label "src/Kafka/Consumer/Callbacks.hs" change test
-families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages or rebalance")
+families "state" =
+  [ control "unchanged-control" integration "consumer-state",
+    c "pause-omitted" (replace "partitionListError pl =<< rdKafkaPausePartitions k pl" "partitionListError pl =<< pure RdKafkaRespErrNoError") "pause-resume-preserves-records",
+    c "member-errors-suppressed" (replace "Right () -> fmap KafkaResponseError . find (/= RdKafkaRespErrNoError) <$> nativeTopicPartitionErrors partitions" "Right () -> pure Nothing") "pause-mixed-member-error",
+    c "store-member-errors-suppressed" (replace "partitionListError pl =<< rdKafkaOffsetsStore k pl" "kafkaErrorToMaybe . KafkaResponseError <$> rdKafkaOffsetsStore k pl") "store-mixed-member-error",
+    c "global-consumer-topic-setting-discarded" (replace "setAllKafkaConfValues kc (KafkaProps tp)" "setAllKafkaConfValues kc (KafkaProps (M.insert \"auto.offset.reset\" \"latest\" tp))") "global-topic-setting-survives-empty-subscription-properties"
+  ]
+  where
+    c label change test = mutation "consumer-state" label consumer change test
+families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance or state")
 
 replace :: String -> String -> String -> String
 replace old new source = case [i | (i, rest) <- zip [0 ..] (tails source), old `isPrefixOf` rest] of

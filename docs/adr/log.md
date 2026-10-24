@@ -1,6 +1,8 @@
 # Bundle Update Log
 
 ## 2026-10-24
+* **updated**: Apply explicit-key topic configuration merging to consumers
+* **created**: Preserve member failures and partial success in consumer partition operations
 * **created**: Check native rebalance failures and scope cooperative error ownership
 * **created**: Scope every polled native message and surface header decoding failures.
 * **created**: Apply user-selected last-value-wins subscription property composition.

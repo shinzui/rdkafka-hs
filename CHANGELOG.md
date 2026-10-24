@@ -9,6 +9,11 @@ this project adheres to the [Haskell Package Versioning Policy](https://pvp.hask
 
 ### Fixed
 
+- Consumer construction preserves topic settings supplied globally and applies
+  explicit subscription values afterwards. Pause, resume, store, position and
+  committed-offset calls now report native per-partition errors after any
+  overall error, while preserving successful effects in mixed requests.
+
 - Rebalance callbacks now check native assignment and revocation failures,
   release cooperative error objects even if decoding fails, and report errors
   through the callback exception handler without emitting a success event.

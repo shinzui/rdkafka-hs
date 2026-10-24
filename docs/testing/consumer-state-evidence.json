@@ -1,0 +1,50 @@
+{
+  "status": "accepted M2 consumer-state checkpoint; EP-14 incomplete",
+  "fingerprint": "74ec9986830adf22345722247d511b7b13879c9e4d9babb1f45225765f054917",
+  "runs": {
+    "normal": {
+      "log": "/tmp/rdkafka-ep14-state-normal.log",
+      "sha256": "654fbde5fcc7bb9f14abc45bc177a32b834f79b68dd80a75f06d873138363691",
+      "passed": 26,
+      "seconds": 32.19
+    },
+    "instrumented-haskell": {
+      "log": "/tmp/rdkafka-ep14-state-hpc.log",
+      "sha256": "abd72e4449544d55611aacfd0bce8e7943805e2cd042868491b33c9b5473428e",
+      "passed": 26,
+      "seconds": 32.34
+    },
+    "instrumented-native": {
+      "log": "/tmp/rdkafka-ep14-state-asan.log",
+      "sha256": "81d5c9d70b66b5b53e3a000847341332af96e56109fdb734bb41fbac7656eefa",
+      "passed": 26,
+      "seconds": 31.92
+    }
+  },
+  "mutations": "dist-mutations/20261024T161830Z-state-32071-0/results.json",
+  "compiled_mutations_caught": 4,
+  "controls": 1,
+  "scope": [
+    "assignment replacement/unassignment and exact delivery",
+    "pause/resume and mixed member failures with valid member effects retained",
+    "local storage versus broker commits, exact next offsets, no automatic storage",
+    "position before consumption, valid unknown-position sentinel and actual native member error",
+    "empty requests",
+    "explicit subscription override and preservation of globally supplied topic settings",
+    "real run-owned regex subscription",
+    "twenty deprecated seeks per callback mode with exact record replay"
+  ],
+  "fixture_correction": {
+    "logs": [
+      "/tmp/rdkafka-ep14-state-baseline.log",
+      "/tmp/rdkafka-ep14-state-after.log"
+    ],
+    "note": "An unknown partition number may create local native state. Corrected pause/resume/store failure cases to use an absent topic; position uses native rejection of a 513-byte topic. Preserve the legitimate invalid-offset result for an ordinary unknown position in its own case. Initial failures based on the wrong native expectation are not accepted as defect evidence."
+  },
+  "native_library": "mori://confluentinc/librdkafka",
+  "native_version": "2.15.0",
+  "native_diagnostic_control": "docs/testing/callback-native-diagnostics.json",
+  "leak_instrumentation": false,
+  "required_checks": "/tmp/rdkafka-ep14-state-check.log",
+  "remaining": "The saved intermittent deprecated-seek failure remains unexplained. Further consumer, metadata and diagnostics contracts, full mapped coverage/inventory reconciliation and EP-15 environments remain open."
+}

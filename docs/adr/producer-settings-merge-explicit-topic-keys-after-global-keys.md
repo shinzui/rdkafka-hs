@@ -2,7 +2,7 @@
 type: Architecture Decision Record
 title: Producer settings merge explicit topic keys after global keys
 description: Validate explicit topic properties and merge them into the effective native producer configuration after global properties without replacing its default topic configuration.
-timestamp: 2026-10-24T08:17:05Z
+timestamp: 2026-10-24T16:19:06Z
 generated:
   by: codex-cli/gpt-6.1-sol
   at: "2026-10-24T08:17:05Z"
@@ -29,3 +29,7 @@ Keep the retained `TopicConf` field for public shape and inspection compatibilit
 [EP-9](../plans/9-honor-producer-settings-and-release-rejected-callbacks.md) verifies actual native-client configuration at the `produceva` boundary, timeout expiry through delivery reports, and byte-exact real-broker delivery under all exposed compression choices. Empty topic properties preserve global settings. A configuration dump of the retained topic object alone cannot establish this contract.
 
 This changes no runtime dependency pins, public property types or constructor signatures. Combined coverage and compatibility acceptance remain governed by [ADR-10](release-coverage-requires-behavior-and-ownership-evidence.md).
+
+## Consumer application
+
+EP-14 reproduces the same replacement defect in consumer construction: globally supplied `auto.offset.reset=earliest` was overwritten by an empty subscription configuration, so a new group missed existing records. Apply the same explicit-key merge to subscription properties after validating them as topic settings. Explicit subscription settings override matching global settings; unrelated global settings survive. Real consumers verify both cases in both callback poll modes. Within a subscription, later property values win as recorded in [ADR-17](subscription-properties-use-later-values.md).
