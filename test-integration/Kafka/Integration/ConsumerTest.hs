@@ -9,6 +9,7 @@ module Kafka.Integration.ConsumerTest
 where
 
 import Control.Concurrent.MVar (newEmptyMVar, putMVar, takeMVar)
+import Control.Exception (bracket, throwIO)
 import Control.Monad (forM_)
 import Data.Either (isRight)
 import Data.Map (fromList)
@@ -52,13 +53,13 @@ tests env =
                 NoMessageError err -> assertFailure ("no message: " <> show err)
           ],
       withConsumer env (consumerProps env <> groupId (makeGroupId env "async")) $
-        dependentTestGroup "Run consumer with async polling" AllSucceed . consumerChecks env,
+        dependentTestGroup "Run consumer with async polling" AllSucceed . consumerChecks env CallbackPollModeAsync,
       withConsumer env (consumerProps env <> groupId (makeGroupId env "sync") <> callbackPollMode CallbackPollModeSync) $
-        dependentTestGroup "Run consumer with sync polling" AllSucceed . consumerChecks env
+        dependentTestGroup "Run consumer with sync polling" AllSucceed . consumerChecks env CallbackPollModeSync
     ]
 
-consumerChecks :: TestEnv -> IO KafkaConsumer -> [TestTree]
-consumerChecks env getConsumer =
+consumerChecks :: TestEnv -> CallbackPollMode -> IO KafkaConsumer -> [TestTree]
+consumerChecks env mode getConsumer =
   [ check "should receive messages" $ \k -> do
       res <- receiveTestMessages env k 14 0
       length <$> res @?= Right 14
@@ -121,18 +122,18 @@ consumerChecks env getConsumer =
       res <- topicOffsetsForTime k (Timeout 2000) (Millis 1904057189508) testTopic
       assertBool (show res) (isRight res)
       fmap tpOffset <$> res @?= Right [PartitionOffsetEnd],
-    check "should seek and return no error" $ \k -> do
-      res <- seek k (Timeout 1000) [TopicPartition testTopic (PartitionId 0) (PartitionOffset 1)]
+    checkSeek "should seek and return no error" "offset" $ \seekTopic k -> do
+      res <- seek k (Timeout 1000) [TopicPartition seekTopic (PartitionId 0) (PartitionOffset 1)]
       res @?= Nothing
       msg <- pollMessage k (Timeout 1000)
-      crOffset <$> msg @?= Right (Offset 1),
-    check "should seek to the beginning" $ \k -> do
-      res <- seek k (Timeout 1000) [TopicPartition testTopic (PartitionId 0) PartitionOffsetBeginning]
+      fmap (\m -> (crTopic m, crPartition m, crOffset m, crValue m)) msg @?= Right (seekTopic, PartitionId 0, Offset 1, Just "one"),
+    checkSeek "should seek to the beginning" "beginning" $ \seekTopic k -> do
+      res <- seek k (Timeout 1000) [TopicPartition seekTopic (PartitionId 0) PartitionOffsetBeginning]
       res @?= Nothing
       msg <- pollMessage k (Timeout 1000)
-      crOffset <$> msg @?= Right (Offset 0),
-    check "should seek to the end" $ \k -> do
-      res <- seek k (Timeout 1000) [TopicPartition testTopic (PartitionId 0) PartitionOffsetEnd]
+      fmap (\m -> (crTopic m, crPartition m, crOffset m, crValue m)) msg @?= Right (seekTopic, PartitionId 0, Offset 0, Just "zero"),
+    checkSeek "should seek to the end" "end" $ \seekTopic k -> do
+      res <- seek k (Timeout 1000) [TopicPartition seekTopic (PartitionId 0) PartitionOffsetEnd]
       res @?= Nothing
       msg <- pollMessage k (Timeout 1000)
       let offset = crOffset <$> msg
@@ -141,17 +142,30 @@ consumerChecks env getConsumer =
         ( offset == Left (KafkaResponseError RdKafkaRespErrPartitionEof)
             || offset == Left (KafkaResponseError RdKafkaRespErrTimedOut)
         ),
-    check "should respect out-of-bound offsets (invalid offset)" $ \k -> do
-      res <- seek k (Timeout 2000) [TopicPartition testTopic (PartitionId 0) PartitionOffsetInvalid]
+    checkSeek "should respect out-of-bound offsets (invalid offset)" "invalid" $ \seekTopic k -> do
+      res <- seek k (Timeout 2000) [TopicPartition seekTopic (PartitionId 0) PartitionOffsetInvalid]
       res @?= Nothing
       msg <- pollMessage k (Timeout 1000)
-      crOffset <$> msg @?= Right (Offset 0),
-    check "should respect out-of-bound offsets (huge offset)" $ \k -> do
-      res <- seek k (Timeout 3000) [TopicPartition testTopic (PartitionId 0) (PartitionOffset 123456)]
+      fmap (\m -> (crTopic m, crPartition m, crOffset m, crValue m)) msg @?= Right (seekTopic, PartitionId 0, Offset 0, Just "zero"),
+    checkSeek "should respect out-of-bound offsets (huge offset)" "huge" $ \seekTopic k -> do
+      res <- seek k (Timeout 3000) [TopicPartition seekTopic (PartitionId 0) (PartitionOffset 123456)]
       res @?= Nothing
       msg <- pollMessage k (Timeout 2000)
-      crOffset <$> msg @?= Right (Offset 0)
+      fmap (\m -> (crTopic m, crPartition m, crOffset m, crValue m)) msg @?= Right (seekTopic, PartitionId 0, Offset 0, Just "zero")
   ]
   where
     testTopic = teTopic env
     check name f = testCase name (getConsumer >>= f)
+
+    -- A previous assignment query is a snapshot, not proof that a fetcher is
+    -- still active after unrelated blocking metadata operations. Each positive
+    -- seek begins immediately after this fresh grouped consumer reads record 0.
+    checkSeek name suffix action = testCase name $
+      withTopic env ("legacy-seek-" <> label <> "-" <> suffix) 1 $ \topic producer -> do
+        forM_ ["zero", "one", "two"] (produceTo producer topic 0)
+        let props = consumerProps env <> groupId (makeGroupId env ("legacy-seek-" <> label <> "-" <> suffix)) <> noAutoOffsetStore <> callbackPollMode mode
+        bracket (mkConsumerFor topic props) releaseConsumer $ \consumer -> do
+          first <- pollMessage consumer (Timeout 10000) >>= either throwIO pure
+          (crTopic first, crPartition first, crOffset first, crValue first) @?= (topic, PartitionId 0, Offset 0, Just "zero")
+          action topic consumer
+    label = if mode == CallbackPollModeSync then "sync" else "async"

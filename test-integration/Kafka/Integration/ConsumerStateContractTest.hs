@@ -56,7 +56,11 @@ tests env =
           scenario "deprecated-seek-reports-unassigned-state-and-recovers-after-assignment" $ \topic consumer -> do
             assign consumer [part topic 0 (PartitionOffset 0)] >>= (@?= Nothing)
             record consumer topic 0 0
+            observed <- assignment consumer
+            observed @?= Right (M.singleton topic [PartitionId 0])
             assign consumer [] >>= (@?= Nothing)
+            -- The earlier successful query does not establish seek's later
+            -- active-fetcher precondition; preserve the native State response.
             seek consumer (Timeout 2000) [part topic 0 (PartitionOffset 1)] >>= (@?= Just (KafkaResponseError RdKafkaRespErrState))
             assignment consumer >>= (@?= Right M.empty)
             assign consumer [part topic 0 (PartitionOffset 2)] >>= (@?= Nothing)

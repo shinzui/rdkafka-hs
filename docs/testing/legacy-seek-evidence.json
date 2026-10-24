@@ -1,0 +1,52 @@
+{
+  "status": "accepted active-fetcher fixture and error-propagation checkpoint; historical transition was not recorded",
+  "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
+  "runs": {
+    "normal": {
+      "log": "/tmp/rdkafka-ep14-legacy-fixtures-normal.log",
+      "sha256": "1488d6d69c6e2f897b3ff2577846eaf1ab6a0d1d947a5fa75f2798fcc0375575",
+      "passed": 54
+    },
+    "instrumented-haskell": {
+      "log": "/tmp/rdkafka-ep14-legacy-fixtures-hpc.log",
+      "sha256": "d5b7cb13f31913f5820f2905e79e9d0bcc8699552222b8eaec3a82c2d0defb91",
+      "passed": 54
+    },
+    "instrumented-native": {
+      "log": "/tmp/rdkafka-ep14-legacy-fixtures-asan.log",
+      "sha256": "2e4ea314d564e9484263e06f21fd22c19dc3c688ef23088cf43170227dc43fd8",
+      "passed": 54
+    }
+  },
+  "mutations": "dist-mutations/20261024T230850Z-legacy-seek-88557-0/results.json",
+  "compiled_mutations_caught": 2,
+  "controls": 1,
+  "inherited_positive_cases_retained": 10,
+  "historical_failure": {
+    "log": "dist-coverage/failures/ep8-sync-seek-state.log",
+    "sha256": "2c45980cc04be4e3579487dd66c991d48769255ac109ae257ff61581abf0cc2b",
+    "observed": "Sync consumer previously read fourteen records and reported assignment partition zero. Several blocking metadata/group/time calls intervened before seek returned State. The other four seek cases were skipped by the group dependency.",
+    "native_diagnosis": "At native release 2.15.0 rd_kafka_seek waits for the fetcher result. rd_kafka_toppar_seek returns State for a fetch state below OFFSET_QUERY, excluding STOPPING, which returns PrevInProgress. Thus the assignment snapshot did not establish the later active-fetcher precondition.",
+    "limit": "The saved log does not identify the event that stopped this fetcher. No rebalance, max-poll, broker event, GC defect or memory corruption is asserted as the historical cause. Green reruns are not a reconstruction."
+  },
+  "fixture_change": "All five inherited positive offset scenarios run in both modes on fresh run-owned topics and unique grouped consumers. Each confirms exact record zero immediately before seeking, then verifies exact next identity/offset/value or documented EOF/timeout. Unassignment/State/reassignment and repeated replay remain separate tests. State is not suppressed or retried into success.",
+  "native_source": {
+    "project": "mori://confluentinc/librdkafka",
+    "release": "2.15.0",
+    "commit": "9a94e11452cdeb0a844db44ee5dd01ccbe17d3ab",
+    "paths": [
+      "src/rdkafka.c:4727",
+      "src/rdkafka_partition.c:1950",
+      "src/rdkafka_partition.h:301"
+    ],
+    "source_artifact_uri_pending": true
+  },
+  "rejected_hypothesis": {
+    "log": "/tmp/rdkafka-ep14-stale-assignment.log",
+    "sha256": "1f400cce426bb905b24efc6fbb5dc71258bab1e474e9d1dad5affc01dd0626a2",
+    "description": "A deliberately short max-poll interval produced MAXPOLL and a stale assignment query, but seek still succeeded. This does not reproduce or explain the historical trigger."
+  },
+  "required_checks": "/tmp/rdkafka-ep14-legacy-fixtures-check.log",
+  "adr_checks": "/tmp/rdkafka-ep14-legacy-fixtures-adr.log",
+  "leak_instrumentation": false
+}

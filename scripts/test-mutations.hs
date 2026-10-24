@@ -262,6 +262,11 @@ families "buffer" =
   ]
   where
     b label change test = mutation "public-contract" label consumer change test
+families "legacy-seek" =
+  [ control "unchanged-control" integration "deprecated-seek",
+    mutation "consumer-state" "legacy-native-state-suppressed" consumer (section "    rdSeek kt topic" "    topicPair tp" (replace "pure (rdKafkaErrorToEither result)" "pure (Right ())")) "deprecated-seek-reports-unassigned-state-and-recovers-after-assignment",
+    mutation "consumer-state" "legacy-offset-incremented" consumer (section "    rdSeek kt topic" "    topicPair tp" (replace "(offsetToInt64 o)" "(offsetToInt64 o + 1)")) "deprecated-seek-exact-repeated-replay"
+  ]
 families "partition-lists" =
   control "unchanged-control" integration "partition-list-ownership"
     : [ mutation "partition-list-ownership" "pair-conversion-cleanup-deferred" consumerConversion (section "toNativeTopicPartitionList' tps =" "topicPartitionFromMessage ::" (replace "finalizeForeignPtr" "(const (pure ()))")) "pair conversion failure releases the partial list before GC",

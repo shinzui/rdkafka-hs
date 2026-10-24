@@ -1,6 +1,7 @@
 # Bundle Update Log
 
 ## 2026-10-24
+* **updated**: Record deprecated seek active-fetcher precondition and distinguish source diagnosis from unrecorded historical trigger
 * **updated**: Clarify ownership of partially converted consumer partition lists and release before GC
 * **updated**: Scope temporary sync queue wrappers and keep notification descriptors through client destruction.
 * **updated**: Sample assignment loss before native revocation can clear the flag.
