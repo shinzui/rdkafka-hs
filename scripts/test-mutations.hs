@@ -256,7 +256,12 @@ families "data" =
     (mutation "Public data contracts" "producer-debug-order-reversed" "src/Kafka/Producer/ProducerProperties.hs" (replace "kafkaDebugToText <$> d" "kafkaDebugToText <$> reverse d") "debug contexts preserve order duplicates and the empty-list identity") {suite = unit},
     mutation "metadata-contract" "group-member-byte-fields-swapped" "src/Kafka/Metadata.hs" (replace "gmiMetadata = pack mtd" "gmiMetadata = pack ass") "async group identity lifecycle and supported native states"
   ]
-families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata or data")
+families "config" =
+  [ control "unchanged-control" integration "config-strings",
+    mutation "config-strings" "c-string-key-guard-removed" "src/Kafka/Internal/Setup.hs" (replace "Text.any (== '\\0') key" "False") "producer topic rejects NUL key",
+    mutation "config-strings" "c-string-value-guard-removed" "src/Kafka/Internal/Setup.hs" (replace "Text.any (== '\\0') value" "False") "producer global rejects NUL value"
+  ]
+families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata, data or config")
 
 replace :: String -> String -> String -> String
 replace old new source = case [i | (i, rest) <- zip [0 ..] (tails source), old `isPrefixOf` rest] of

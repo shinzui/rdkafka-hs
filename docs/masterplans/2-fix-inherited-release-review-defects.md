@@ -141,6 +141,8 @@ EP-14 M1 is Complete: 65 unit and four focused native cases pass normally and in
 
 ## Surprises & Discoveries
 
+EP-14 configuration setters now reject embedded NUL instead of applying prefixes. Fifteen focused normal/Haskell/native-instrumented checks and two compiled mutations pass their acceptance; the twelve malformed baseline cases all reproduced acceptance. See [configuration evidence](../testing/config-string-evidence.json). [ADR-24](../adr/configuration-strings-reject-embedded-nul.md) preserves ordinary native validation and empty-value defaults. EP-14 remains In Progress.
+
 EP-14 data laws and mapped coverage now pass 78 unit and 518 integration cases, plus four actual nonthreaded runtime executions. Three compiled data mutations and two controls verify builder/field behavior. The inventory has 86 tested and 95 open rows after 57 additional representation, mapping, version and diagnostic contracts are reconciled. Twenty-two tooling controls pass. [Data evidence](../testing/public-data-evidence.json) records exact scope and coverage corrections. EP-14 M2/M3, the saved seek failure and EP-15 remain open.
 
 EP-14 metadata closes native return cancellation leaks and discarded topic/timestamp-member errors. Ten focused checks pass normally and with Haskell/native instrumentation; five compiled mutations fail their intended assertions. Group decoding handles native CompletingRebalance and returns unsupported-state errors. [Metadata evidence](../testing/metadata-evidence.json) records exact ownership, boundary and controlled-state scope. Full mapped coverage/inventory reconciliation is next; EP-14 remains In Progress.

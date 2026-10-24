@@ -1,0 +1,53 @@
+{
+  "status": "accepted scoped configuration boundary checkpoint; EP-14 incomplete",
+  "fingerprint": "000e3d963e8d19e51b91212653c94fe8c24026261240d28ef0b088ffce5823d9",
+  "runs": {
+    "normal": {
+      "log": "/tmp/rdkafka-ep14-config-normal.log",
+      "sha256": "db6c272664ef38ad6319622d498bd6c56c9bcbc1ea3813ac61ab057958da150d",
+      "passed": 15
+    },
+    "instrumented-haskell": {
+      "log": "/tmp/rdkafka-ep14-config-hpc.log",
+      "sha256": "255e5b8e4681146a67656c6eb82b1f8f397dd7aed10a046b78f1e452beab0142",
+      "passed": 15
+    },
+    "instrumented-native": {
+      "log": "/tmp/rdkafka-ep14-config-asan.log",
+      "sha256": "c82e05416a5cd2566f9edd5ebccf9d5e71dafda5771389bd99bbbe002aee8034",
+      "passed": 15
+    }
+  },
+  "mutations": "dist-mutations/20261024T184909Z-config-42371-0/results.json",
+  "compiled_mutations_caught": 2,
+  "controls": 1,
+  "baseline": {
+    "log": "/tmp/rdkafka-ep14-config-baseline.log",
+    "malformed_cases_accepted": 12,
+    "fixture_correction": "The initial empty client-id expectation was wrong: native librdkafka resets an empty value to its default. This thirteenth baseline failure is excluded from library defect evidence."
+  },
+  "discarded_mutation_runs": [
+    {
+      "path": "dist-mutations/20261024T184533Z-config-29163-0",
+      "reason": "Removing only topic-setter validation is redundant for producer construction because its global setter also validates the explicit topic map; this mutation survived and is not counted."
+    },
+    {
+      "path": "dist-mutations/20261024T184719Z-config-36024-0",
+      "reason": "Both compiled regressions failed as intended, but the final candidate fingerprint check rejected concurrent metadata test edits. Those edits were restored before the accepted stable-candidate rerun."
+    }
+  ],
+  "native_library": "mori://confluentinc/librdkafka",
+  "native_version": "2.15.0",
+  "native_diagnostic_control": "docs/testing/callback-native-diagnostics.json",
+  "leak_instrumentation": false,
+  "required_checks": {
+    "log": "/tmp/rdkafka-ep14-config-check.log",
+    "sha256": "ca090052dd4c05c2c6cdc120a2f57bf409582f3c653982a26a736374a2ec3c2d"
+  },
+  "scope": [
+    "Producer global/topic NUL keys and values",
+    "Consumer global/subscription NUL keys and values in both callback modes",
+    "Native empty client-id default, exact ordinary Unicode client-id and native unknown-key rejection"
+  ],
+  "remaining": "CFG inventory reconciliation awaits the next whole-candidate mapped run; metadata Unicode query/decoding regression, other public contracts, saved deprecated-seek failure and environment matrix remain open."
+}

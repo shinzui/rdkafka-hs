@@ -31,7 +31,7 @@ import Kafka.Internal.RdKafka (CCharBufPointer, RdKafkaConfResT (..), RdKafkaCon
 import Kafka.Types (KafkaError (..))
 
 import Control.Concurrent.MVar (MVar, newMVar)
-import Control.Exception (throw)
+import Control.Exception (throw, throwIO)
 import Data.IORef (IORef, newIORef, readIORef)
 import Data.Map (Map)
 import Data.Text (Text)
@@ -152,7 +152,8 @@ checkConfSetValue err charPtr = case err of
     throw $ KafkaUnknownConfigurationKey (Text.pack str)
 
 setKafkaConfValue :: KafkaConf -> Text -> Text -> IO ()
-setKafkaConfValue (KafkaConf confPtr _ _ _ _) key value =
+setKafkaConfValue (KafkaConf confPtr _ _ _ _) key value = do
+  validateConfigStrings key value
   allocaBytes nErrorBytes $ \charPtr -> do
     err <- rdKafkaConfSet confPtr (Text.unpack key) (Text.unpack value) charPtr (fromIntegral nErrorBytes)
     checkConfSetValue err charPtr
@@ -161,10 +162,19 @@ setAllKafkaConfValues :: KafkaConf -> KafkaProps -> IO ()
 setAllKafkaConfValues conf (KafkaProps props) = Map.foldMapWithKey (setKafkaConfValue conf) props -- forM_ props $ uncurry (setKafkaConfValue conf)
 
 setTopicConfValue :: TopicConf -> Text -> Text -> IO ()
-setTopicConfValue (TopicConf confPtr) key value =
+setTopicConfValue (TopicConf confPtr) key value = do
+  validateConfigStrings key value
   allocaBytes nErrorBytes $ \charPtr -> do
     err <- rdKafkaTopicConfSet confPtr (Text.unpack key) (Text.unpack value) charPtr (fromIntegral nErrorBytes)
     checkConfSetValue err charPtr
 
 setAllTopicConfValues :: TopicConf -> TopicProps -> IO ()
 setAllTopicConfValues conf (TopicProps props) = Map.foldMapWithKey (setTopicConfValue conf) props -- forM_ props $ uncurry (setTopicConfValue conf)
+
+-- Native setters borrow NUL-terminated strings; accepting embedded NULs would
+-- validate and apply only a prefix of the supplied property.
+validateConfigStrings :: Text -> Text -> IO ()
+validateConfigStrings key value
+  | Text.any (== '\0') key = throwIO (KafkaInvalidConfigurationValue "Configuration key contains NUL")
+  | Text.any (== '\0') value = throwIO (KafkaInvalidConfigurationValue "Configuration value contains NUL")
+  | otherwise = pure ()

@@ -13,6 +13,7 @@ import GHC.Conc (BlockReason (BlockedOnException), ThreadStatus (ThreadBlocked),
 import Kafka.CallbackTestSupport (runChildProbe)
 import Kafka.Consumer
 import Kafka.ConsumerStateSupport
+import Kafka.Integration.ConfigStringContractTest qualified as ConfigStringContractTest
 import Kafka.Integration.ConsumerStateContractTest qualified as ConsumerStateContractTest
 import Kafka.Integration.DiagnosticContractTest qualified as DiagnosticContractTest
 import Kafka.Integration.MetadataContractTest qualified as MetadataContractTest
@@ -131,7 +132,8 @@ tests testEnv =
       ConsumerStateContractTest.tests testEnv,
       DiagnosticContractTest.tests testEnv,
       RuntimeContractTest.tests testEnv,
-      MetadataContractTest.tests testEnv
+      MetadataContractTest.tests testEnv,
+      ConfigStringContractTest.tests testEnv
     ]
 
 assertBadSpecification :: (Show a) => [Either KafkaError a] -> IO ()
