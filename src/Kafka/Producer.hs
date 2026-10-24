@@ -71,7 +71,7 @@ module Kafka.Producer
   )
 where
 
-import Control.Exception (bracket)
+import Control.Exception (bracket, mask_, onException)
 import Control.Monad (forM_)
 import Control.Monad.IO.Class (MonadIO (liftIO))
 import Data.Bits ((.|.))
@@ -80,12 +80,14 @@ import Data.ByteString.Internal qualified as BSI
 import Data.Text (Text)
 import Data.Text qualified as Text
 import Foreign.C.String (withCString)
+import Foreign.C.Types (CInt)
 import Foreign.ForeignPtr (withForeignPtr)
+import Foreign.Marshal.Alloc (allocaBytes)
 import Foreign.Marshal.Utils (withMany)
 import Foreign.Ptr (Ptr, nullPtr, plusPtr)
-import Foreign.StablePtr (castStablePtrToPtr, newStablePtr)
+import Foreign.StablePtr (castStablePtrToPtr, freeStablePtr, newStablePtr)
 import Kafka.Internal.RdKafka (RdKafkaRespErrT (..), RdKafkaTypeT (..), RdKafkaVuT (..), newRdKafkaT, rdKafkaErrorCode, rdKafkaErrorDestroy, rdKafkaFlush, rdKafkaMessageProduceVa, rdKafkaPurge, rdKafkaPurgeFInflight, rdKafkaPurgeFNonBlocking, rdKafkaPurgeFQueue, rdKafkaSetLogLevel)
-import Kafka.Internal.Setup (Callback (..), Kafka (..), KafkaConf (..), KafkaProps (..), TopicProps (..), getRdKafka, kafkaConf, topicConf)
+import Kafka.Internal.Setup (Callback (..), Kafka (..), KafkaConf (..), KafkaProps (..), TopicProps (..), getRdKafka, kafkaConf, setAllKafkaConfValues, topicConf)
 import Kafka.Internal.Shared (kafkaErrorToMaybe, pollEvents, setSaslCredentials')
 import Kafka.Producer.Convert (copyMsgFlags, handleProduceErrT, producePartitionCInt)
 import Kafka.Producer.Types (KafkaProducer (..))
@@ -115,10 +117,17 @@ runProducer props f =
 
 -- | Creates a new kafka producer
 -- A newly created producer must be closed with 'closeProducer' function.
+-- Explicit topic properties override matching global properties; unrelated
+-- global properties are preserved. Invalid topic properties retain the
+-- existing configuration-exception convention.
 newProducer :: (MonadIO m) => ProducerProperties -> m (Either KafkaError KafkaProducer)
 newProducer pps = liftIO $ do
   kc@(KafkaConf kc' _ _ _) <- kafkaConf (KafkaProps $ (ppKafkaProps pps))
   tc <- topicConf (TopicProps $ (ppTopicProps pps))
+  -- librdkafka accepts topic properties on the global configuration. Merge
+  -- only explicit keys: replacing default_topic_conf would discard topic
+  -- properties already supplied through the global map.
+  setAllKafkaConfValues kc (KafkaProps (ppTopicProps pps))
 
   -- add default delivery report callback
   let Callback setDeliveryCallback = deliveryCallback (const mempty)
@@ -153,6 +162,10 @@ produceMessage kp m = produceMessage' kp m (pure . mempty) >>= adjustRes
 --
 --   The callback can be a long running process, as it is forked by the thread
 --   that handles the delivery reports.
+--
+-- Absent and empty keys/values remain distinct. Topic and header names
+-- containing NUL, and partition numbers outside the native C integer range,
+-- return an immediate 'KafkaBadSpecification' before enqueueing.
 produceMessage' ::
   (MonadIO m) =>
   KafkaProducer ->
@@ -160,8 +173,9 @@ produceMessage' ::
   (DeliveryReport -> IO ()) ->
   m (Either ImmediateError ())
 produceMessage' kp@(KafkaProducer (Kafka k) _ _) msg cb =
-  liftIO $
-    fireCallbacks >> produceIt
+  liftIO $ case recordError msg of
+    Just err -> pure (Left (ImmediateError err))
+    Nothing -> fireCallbacks >> produceIt
   where
     fireCallbacks =
       pollEvents kp . Just . Timeout $ 0
@@ -170,7 +184,7 @@ produceMessage' kp@(KafkaProducer (Kafka k) _ _) msg cb =
       withBS (prValue msg) $ \payloadPtr payloadLength ->
         withBS (prKey msg) $ \keyPtr keyLength ->
           withHeaders (prHeaders msg) $ \hdrs ->
-            withCString (Text.unpack . unTopicName . prTopic $ msg) $ \topicName -> do
+            withCString (Text.unpack . unTopicName . prTopic $ msg) $ \topicName -> mask_ $ do
               callbackPtr <- newStablePtr cb
               let opts =
                     [ Topic'RdKafkaVu topicName,
@@ -181,11 +195,18 @@ produceMessage' kp@(KafkaProducer (Kafka k) _ _) msg cb =
                       Opaque'RdKafkaVu (castStablePtrToPtr callbackPtr)
                     ]
 
-              code <- bracket (rdKafkaMessageProduceVa k (hdrs ++ opts)) rdKafkaErrorDestroy rdKafkaErrorCode
+              -- Once enqueue succeeds another poller can already have served
+              -- the report and freed this root. Only an immediate rejection
+              -- leaves ownership here; no cleanup may cover the success path.
+              code <-
+                bracket
+                  (rdKafkaMessageProduceVa k (hdrs ++ opts) `onException` freeStablePtr callbackPtr)
+                  rdKafkaErrorDestroy
+                  rdKafkaErrorCode
               res <- handleProduceErrT code
-              pure $ case res of
-                Just err -> Left . ImmediateError $ err
-                Nothing -> Right ()
+              case res of
+                Just err -> freeStablePtr callbackPtr >> pure (Left (ImmediateError err))
+                Nothing -> pure (Right ())
 
 -- | Closes the producer.
 -- Will wait until the outbound queue is drained before returning the control.
@@ -254,6 +275,17 @@ setSaslCredentials kp username password = liftIO $ setSaslCredentials' kp userna
 
 ------------------------------------------------------------------------------------
 
+recordError :: ProducerRecord -> Maybe KafkaError
+recordError record
+  | Text.any (== '\0') (unTopicName (prTopic record)) = invalid "topic name contains NUL"
+  | any (BS.elem 0 . fst) (headersToList (prHeaders record)) = invalid "header name contains NUL"
+  | SpecifiedPartition partition <- prPartition record,
+    toInteger partition < toInteger (minBound :: CInt) || toInteger partition > toInteger (maxBound :: CInt) =
+      invalid "partition id is outside the C int range"
+  | otherwise = Nothing
+  where
+    invalid = Just . KafkaBadSpecification
+
 withHeaders :: Headers -> ([RdKafkaVuT] -> IO a) -> IO a
 withHeaders hds = withMany allocHeader (headersToList hds)
   where
@@ -264,6 +296,10 @@ withHeaders hds = withMany allocHeader (headersToList hds)
 
 withBS :: Maybe BS.ByteString -> (Ptr a -> Int -> IO b) -> IO b
 withBS Nothing f = f nullPtr 0
+-- The empty ByteString can have a null backing pointer. Native Kafka uses
+-- null to mean an absent key/value, even with length zero, so keep Just empty
+-- distinct from Nothing with a non-null temporary pointer.
+withBS (Just bs) f | BS.null bs = allocaBytes 1 $ \p -> f p 0
 withBS (Just bs) f =
   let (d, o, l) = BSI.toForeignPtr bs
    in withForeignPtr d $ \p -> f (p `plusPtr` o) l

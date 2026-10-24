@@ -1,0 +1,305 @@
+{
+  "revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+  "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
+  "configuration": {
+    "ghc": "9.12.4",
+    "native": "(\"2.15.0\",34537727)",
+    "broker": [
+      {
+        "node_id": 0,
+        "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+      }
+    ],
+    "fixture": {
+      "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+      "RDKAFKA_TEST_ADMIN": null,
+      "RDKAFKA_TEST_RPK": null,
+      "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+    }
+  },
+  "normal": {
+    "unit_tests": 14,
+    "integration_tests": 236,
+    "integration_seconds": 105.26
+  },
+  "instrumented": {
+    "unit_tests": 14,
+    "integration_tests": 236,
+    "integration_seconds": 107.43
+  },
+  "focused_tests": [
+    "rdkafka-hs-integration.producer-regressions.explicit topic timeout expires an accepted message",
+    "rdkafka-hs-integration.producer-regressions.global timeout still expires an accepted message",
+    "rdkafka-hs-integration.producer-regressions.queue-full rejection releases callback capture without invoking it",
+    "rdkafka-hs-integration.producer-regressions.accepted callback retains its capture until a purged report completes",
+    "rdkafka-hs-integration.producer-regressions.throwing global callback preserves per-message delivery and releases capture",
+    "rdkafka-hs-integration.producer-regressions.throwing per-message callback reports exception and releases capture",
+    "rdkafka-hs-integration.producer-regressions.repeated queue-full rejections release every callback capture",
+    "rdkafka-hs-integration.producer-regressions.cancellation at a rejected enqueue releases capture before unmasking",
+    "rdkafka-hs-integration.producer-regressions.cancellation after native acceptance retains callback until its report",
+    "rdkafka-hs-integration.producer-regressions.another poller can deliver before successful enqueue returns",
+    "rdkafka-hs-integration.producer-regressions.running callback keeps its capture after the native root is released",
+    "rdkafka-hs-integration.producer-regressions.actual client configuration: defaults",
+    "rdkafka-hs-integration.producer-regressions.actual client configuration: global only",
+    "rdkafka-hs-integration.producer-regressions.actual client configuration: topic only",
+    "rdkafka-hs-integration.producer-regressions.actual client configuration: disjoint maps",
+    "rdkafka-hs-integration.producer-regressions.actual client configuration: explicit topic wins duplicate",
+    "rdkafka-hs-integration.producer-regressions.actual client configuration: last topic property wins",
+    "rdkafka-hs-integration.producer-regressions.actual client configuration: empty topic map preserves global",
+    "rdkafka-hs-integration.producer-regressions.actual client configuration: topic codec overrides global codec",
+    "rdkafka-hs-integration.producer-regressions.actual client configuration: global codec survives unrelated topic keys",
+    "rdkafka-hs-integration.producer-regressions.byte-exact round trip with NoCompression",
+    "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Gzip",
+    "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Snappy",
+    "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Lz4",
+    "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Zstd",
+    "rdkafka-hs-integration.producer-regressions.queued purge flags: none",
+    "rdkafka-hs-integration.producer-regressions.queued purge flags: queue",
+    "rdkafka-hs-integration.producer-regressions.queued purge flags: inflight",
+    "rdkafka-hs-integration.producer-regressions.queued purge flags: nonblocking",
+    "rdkafka-hs-integration.producer-regressions.queued purge flags: queue+inflight",
+    "rdkafka-hs-integration.producer-regressions.queued purge flags: queue+nonblocking",
+    "rdkafka-hs-integration.producer-regressions.queued purge flags: inflight+nonblocking",
+    "rdkafka-hs-integration.producer-regressions.queued purge flags: all",
+    "rdkafka-hs-integration.producer-regressions.in-flight purge flags: none",
+    "rdkafka-hs-integration.producer-regressions.in-flight purge flags: queue",
+    "rdkafka-hs-integration.producer-regressions.in-flight purge flags: inflight",
+    "rdkafka-hs-integration.producer-regressions.in-flight purge flags: nonblocking",
+    "rdkafka-hs-integration.producer-regressions.in-flight purge flags: queue+inflight",
+    "rdkafka-hs-integration.producer-regressions.in-flight purge flags: queue+nonblocking",
+    "rdkafka-hs-integration.producer-regressions.in-flight purge flags: inflight+nonblocking",
+    "rdkafka-hs-integration.producer-regressions.in-flight purge flags: all",
+    "rdkafka-hs-integration.producer-regressions.bounded flush timeout recovers when the delayed response arrives",
+    "rdkafka-hs-integration.producer-regressions.oversized rejection releases capture without a delivery report",
+    "rdkafka-hs-integration.producer-regressions.known invalid partition rejection releases capture",
+    "rdkafka-hs-integration.producer-regressions.empty queue supports repeated flush and close",
+    "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: NUL topic name",
+    "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: NUL header name",
+    "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: maximum unrepresentable partition",
+    "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: minimum unrepresentable partition",
+    "rdkafka-hs-integration.producer-regressions.configuration rejection: unknown global key",
+    "rdkafka-hs-integration.producer-regressions.configuration rejection: unknown topic key",
+    "rdkafka-hs-integration.producer-regressions.configuration rejection: invalid topic timeout",
+    "rdkafka-hs-integration.producer-regressions.configuration rejection: global-only key in topic map",
+    "rdkafka-hs-integration.producer-regressions.later delivery callback replaces the earlier callback"
+  ],
+  "tooling_controls": 17,
+  "mutation_evidence": "dist-producer-mutations/20261024T082803Z-xq8xlrma/results.json",
+  "mutation_archive_sha256": "9dfb0f81a3371c5dfd036bb74db4cb234f4fb3afc61243efc55f335e5d99bd22",
+  "mutations": [
+    {
+      "mutation": "unchanged-control",
+      "compiled": true,
+      "exit": 0,
+      "test": null,
+      "safety_probe": false,
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-producer-mutations/20261024T082803Z-xq8xlrma/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/producer-regressions/",
+        "+RTS",
+        "-N2",
+        "-RTS"
+      ],
+      "build_log": "dist-producer-mutations/20261024T082803Z-xq8xlrma/unchanged-control.build.log",
+      "test_log": "dist-producer-mutations/20261024T082803Z-xq8xlrma/unchanged-control.test.log"
+    },
+    {
+      "mutation": "topic-settings-dropped",
+      "compiled": true,
+      "exit": 1,
+      "test": "explicit topic timeout expires an accepted message",
+      "safety_probe": false,
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-producer-mutations/20261024T082803Z-xq8xlrma/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/producer-regressions/&&/explicit topic timeout expires an accepted message/",
+        "+RTS",
+        "-N2",
+        "-RTS"
+      ],
+      "build_log": "dist-producer-mutations/20261024T082803Z-xq8xlrma/topic-settings-dropped.build.log",
+      "test_log": "dist-producer-mutations/20261024T082803Z-xq8xlrma/topic-settings-dropped.test.log"
+    },
+    {
+      "mutation": "rejection-root-retained",
+      "compiled": true,
+      "exit": 1,
+      "test": "queue-full rejection releases callback capture without invoking it",
+      "safety_probe": false,
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-producer-mutations/20261024T082803Z-xq8xlrma/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/producer-regressions/&&/queue-full rejection releases callback capture without invoking it/",
+        "+RTS",
+        "-N2",
+        "-RTS"
+      ],
+      "build_log": "dist-producer-mutations/20261024T082803Z-xq8xlrma/rejection-root-retained.build.log",
+      "test_log": "dist-producer-mutations/20261024T082803Z-xq8xlrma/rejection-root-retained.test.log"
+    },
+    {
+      "mutation": "accepted-root-freed",
+      "compiled": true,
+      "exit": -6,
+      "test": "accepted callback retains its capture until a purged report completes",
+      "safety_probe": true,
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-producer-mutations/20261024T082803Z-xq8xlrma/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/producer-regressions/&&/accepted callback retains its capture until a purged report completes/",
+        "+RTS",
+        "-N2",
+        "-RTS"
+      ],
+      "build_log": "dist-producer-mutations/20261024T082803Z-xq8xlrma/accepted-root-freed.build.log",
+      "test_log": "dist-producer-mutations/20261024T082803Z-xq8xlrma/accepted-root-freed.test.log"
+    },
+    {
+      "mutation": "enqueue-mask-removed",
+      "compiled": true,
+      "exit": 1,
+      "test": "cancellation at a rejected enqueue releases capture before unmasking",
+      "safety_probe": false,
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-producer-mutations/20261024T082803Z-xq8xlrma/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/producer-regressions/&&/cancellation at a rejected enqueue releases capture before unmasking/",
+        "+RTS",
+        "-N2",
+        "-RTS"
+      ],
+      "build_log": "dist-producer-mutations/20261024T082803Z-xq8xlrma/enqueue-mask-removed.build.log",
+      "test_log": "dist-producer-mutations/20261024T082803Z-xq8xlrma/enqueue-mask-removed.test.log"
+    },
+    {
+      "mutation": "global-exception-skips-message",
+      "compiled": true,
+      "exit": 1,
+      "test": "throwing global callback preserves per-message delivery and releases capture",
+      "safety_probe": false,
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-producer-mutations/20261024T082803Z-xq8xlrma/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/producer-regressions/&&/throwing global callback preserves per-message delivery and releases capture/",
+        "+RTS",
+        "-N2",
+        "-RTS"
+      ],
+      "build_log": "dist-producer-mutations/20261024T082803Z-xq8xlrma/global-exception-skips-message.build.log",
+      "test_log": "dist-producer-mutations/20261024T082803Z-xq8xlrma/global-exception-skips-message.test.log"
+    },
+    {
+      "mutation": "delivery-root-retained",
+      "compiled": true,
+      "exit": 1,
+      "test": "accepted callback retains its capture until a purged report completes",
+      "safety_probe": false,
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-producer-mutations/20261024T082803Z-xq8xlrma/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/producer-regressions/&&/accepted callback retains its capture until a purged report completes/",
+        "+RTS",
+        "-N2",
+        "-RTS"
+      ],
+      "build_log": "dist-producer-mutations/20261024T082803Z-xq8xlrma/delivery-root-retained.build.log",
+      "test_log": "dist-producer-mutations/20261024T082803Z-xq8xlrma/delivery-root-retained.test.log"
+    },
+    {
+      "mutation": "empty-bytes-become-absent",
+      "compiled": true,
+      "exit": 1,
+      "test": "byte-exact round trip with NoCompression",
+      "safety_probe": false,
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-producer-mutations/20261024T082803Z-xq8xlrma/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/producer-regressions/&&/byte-exact round trip with NoCompression/",
+        "+RTS",
+        "-N2",
+        "-RTS"
+      ],
+      "build_log": "dist-producer-mutations/20261024T082803Z-xq8xlrma/empty-bytes-become-absent.build.log",
+      "test_log": "dist-producer-mutations/20261024T082803Z-xq8xlrma/empty-bytes-become-absent.test.log"
+    },
+    {
+      "mutation": "input-validation-dropped",
+      "compiled": true,
+      "exit": 1,
+      "test": "rejects before native enqueue: NUL topic name",
+      "safety_probe": false,
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-producer-mutations/20261024T082803Z-xq8xlrma/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/producer-regressions/&&/rejects before native enqueue: NUL topic name/",
+        "+RTS",
+        "-N2",
+        "-RTS"
+      ],
+      "build_log": "dist-producer-mutations/20261024T082803Z-xq8xlrma/input-validation-dropped.build.log",
+      "test_log": "dist-producer-mutations/20261024T082803Z-xq8xlrma/input-validation-dropped.test.log"
+    },
+    {
+      "mutation": "global-overrides-topic",
+      "compiled": true,
+      "exit": 1,
+      "test": "actual client configuration: explicit topic wins duplicate",
+      "safety_probe": false,
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-producer-mutations/20261024T082803Z-xq8xlrma/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/producer-regressions/&&/actual client configuration: explicit topic wins duplicate/",
+        "+RTS",
+        "-N2",
+        "-RTS"
+      ],
+      "build_log": "dist-producer-mutations/20261024T082803Z-xq8xlrma/global-overrides-topic.build.log",
+      "test_log": "dist-producer-mutations/20261024T082803Z-xq8xlrma/global-overrides-topic.test.log"
+    },
+    {
+      "mutation": "headers-dropped",
+      "compiled": true,
+      "exit": 1,
+      "test": "byte-exact round trip with NoCompression",
+      "safety_probe": false,
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-producer-mutations/20261024T082803Z-xq8xlrma/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/producer-regressions/&&/byte-exact round trip with NoCompression/",
+        "+RTS",
+        "-N2",
+        "-RTS"
+      ],
+      "build_log": "dist-producer-mutations/20261024T082803Z-xq8xlrma/headers-dropped.build.log",
+      "test_log": "dist-producer-mutations/20261024T082803Z-xq8xlrma/headers-dropped.test.log"
+    }
+  ],
+  "mutation_artifacts": {
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/results.json": "429dc1129c5838b8ab3e8c7d4a6ef30b94a0f4998294d23dd24ad37d103e423b",
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/unchanged-control.build.log": "c40fb5a392b98b375cabd8d5e392ed91091bd0f9716f38dc094015cd57e8b270",
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/unchanged-control.test.log": "7896dea91104756c854bc6aae8a7bacee0ea8c401ae61a00accd74cd389199d6",
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/topic-settings-dropped.build.log": "a19e397049982f2c60ec963dc26dd8dd49099192fb2dffdb9195cbd7b07ab85d",
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/topic-settings-dropped.test.log": "4ecce2ded91a8737e76e8ff42dfe0af34abc586f655f7a39d09024edb3eea74a",
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/rejection-root-retained.build.log": "f1b13bf113b9fc6f300dd25a8cdebfc58d4afa24017572315ef94e5bc2a448d3",
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/rejection-root-retained.test.log": "ee6e929f08bd19967f69437598739a87cfbd60843898e42954287fbf0983b1d9",
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/accepted-root-freed.build.log": "ee14b3de5aa62896bf3d1a1fd2005db9750018ce4c057832b8e7241ff92e2306",
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/accepted-root-freed.test.log": "066d0f450565a1655e07fdc48c26e9707ab3044f1e0c8607b7424c7218bfe727",
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/enqueue-mask-removed.build.log": "ca9cec1da4fc304b2b6fd2feb2cfe642dec6ae28e2727047c444711ec093169c",
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/enqueue-mask-removed.test.log": "9ab0b4734acdb50badada7c3929cdd0e46150ad4810b29ee6b3ab1bb0e2b437d",
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/global-exception-skips-message.build.log": "adc410b7dbac36be51ec5989e45f2cd6ed2e39fd6e678dce7bd9779ee48701d6",
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/global-exception-skips-message.test.log": "524eb2092f7d80a5d41d388e0ef7ff9a436240cae8766a69553aa885667c5baa",
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/delivery-root-retained.build.log": "a83ed524844d677332f32b3d53fc0e734778c1d7cd8be14c3872b60796417a73",
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/delivery-root-retained.test.log": "71a340ecaabb9659b9fbb90da3c0d934034a8c633da0e82b91e1bc76bcf43590",
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/empty-bytes-become-absent.build.log": "55d25f83bdac434832924341260d148f41518f7eefd0afb4ad0b103ec83a52d2",
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/empty-bytes-become-absent.test.log": "e60f1f10b4e1b138d450fda3c4fc1c2b656a5b91a1fc5391d1dafa45153c0b47",
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/input-validation-dropped.build.log": "763e4d00bb07c40d0ef29f5d2c4738f73906b559dac7a2cec035344feedc205a",
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/input-validation-dropped.test.log": "97351c71f64ed6c2d973739c369facab7b8f1e637778821b103608a784049750",
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/global-overrides-topic.build.log": "f1b13bf113b9fc6f300dd25a8cdebfc58d4afa24017572315ef94e5bc2a448d3",
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/global-overrides-topic.test.log": "47e52b3291ab9ac4dbc9f6c86af91fac365369b2b772ac9773dc8f019fade67a",
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/headers-dropped.build.log": "4d459b959658205863b242878b3fb91dbf969b4a73686c97bb031ba52e9edb0f",
+    "dist-producer-mutations/20261024T082803Z-xq8xlrma/headers-dropped.test.log": "305b18f24a97c16a884cc2dbf85353ad044958b5afb18d77854de66b89b3adf1"
+  },
+  "native_diagnostics": "Application ownership and callback weak-reference controls pass; EP-15 native heap/invalid-access diagnostics and compatibility tuples remain open.",
+  "status": "local producer behavior and ownership accepted; combined MasterPlan gates remain open"
+}

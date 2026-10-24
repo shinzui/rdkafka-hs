@@ -18,6 +18,20 @@ this project adheres to the [Haskell Package Versioning Policy](https://pvp.hask
   one idle poll. Malformed response topics cannot report success.
 - Topic administration rejects embedded NUL inputs and counts outside the C
   integer range, preventing inherited name truncation and numeric wrapping.
+- Producer topic settings now affect the actual producing client, fixing
+  inherited ignored `sendTimeout`, `topicCompression` and `extraTopicProps`
+  settings. Explicit topic values override matching global values while
+  preserving unrelated global settings.
+- Immediate produce rejection now releases the per-message callback root.
+  Enqueue ownership decisions are masked against cancellation, and accepted
+  callbacks remain available until their delivery report is served.
+- A throwing global delivery callback no longer skips the per-message callback
+  or unwinds through native frames. Its exception is reported on a separate
+  Haskell thread through the runtime's uncaught-exception policy; per-message
+  callbacks continue to run on their own unmasked threads.
+- Producer records preserve absent versus empty keys and values. Embedded NUL
+  topic/header names and partition integers outside the native C range return
+  immediate errors instead of being silently truncated or wrapped.
 
 ## [1.0.0.1] - 2026-10-23
 

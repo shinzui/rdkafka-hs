@@ -135,7 +135,9 @@ test-suite rdkafka-hs-integration
   type: exitcode-stdio-1.0
   main-is: Main.hs
   hs-source-dirs: test-integration
-  c-sources: test-integration/cbits/admin_ownership.c
+  c-sources:
+    test-integration/cbits/admin_ownership.c
+    test-integration/cbits/producer_ownership.c
 
   if os(linux)
     extra-libraries: dl
@@ -148,6 +150,7 @@ test-suite rdkafka-hs-integration
     base >=4.21 && <5,
     bytestring,
     containers,
+    directory,
     network,
     process,
     random,
@@ -176,11 +179,13 @@ test-suite rdkafka-hs-integration
     Kafka.Integration.LifecycleTest
     Kafka.Integration.ObserverTest
     Kafka.Integration.PerMessageCommitTest
+    Kafka.Integration.ProducerRegressionTest
     Kafka.Integration.QueueEventTest
     Kafka.Integration.ReadCommittedTest
     Kafka.Integration.StoreOffsetsTest
     Kafka.Integration.TopicConfigurationTest
     Kafka.Integration.TopicTest
+    Kafka.ProducerTestSupport
     Kafka.TestEnv
 
 test-suite rdkafka-hs-test

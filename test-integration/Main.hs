@@ -12,19 +12,26 @@ import Kafka.Integration.HeadersTest qualified as HeadersTest
 import Kafka.Integration.LifecycleTest qualified as LifecycleTest
 import Kafka.Integration.ObserverTest qualified as ObserverTest
 import Kafka.Integration.PerMessageCommitTest qualified as PerMessageCommitTest
+import Kafka.Integration.ProducerRegressionTest qualified as ProducerRegressionTest
 import Kafka.Integration.QueueEventTest qualified as QueueEventTest
 import Kafka.Integration.ReadCommittedTest qualified as ReadCommittedTest
 import Kafka.Integration.StoreOffsetsTest qualified as StoreOffsetsTest
 import Kafka.Integration.TopicConfigurationTest qualified as TopicConfigurationTest
 import Kafka.Integration.TopicTest qualified as TopicTest
 import Kafka.TestEnv (checkBrokerReachable, newTestEnv, resolveBrokers)
-import System.Environment (lookupEnv)
+import System.Environment (getArgs, lookupEnv)
 import System.Exit (die)
 import Test.Tasty (DependencyType (AllFinish), defaultMain, dependentTestGroup, localOption, mkTimeout, testGroup)
 import Test.Tasty.Runners (NumThreads (..))
 
 main :: IO ()
-main = do
+main =
+  getArgs >>= \case
+    ["--producer-callback-probe", mode] -> ProducerRegressionTest.runCallbackProbe mode
+    _ -> integrationMain
+
+integrationMain :: IO ()
+integrationMain = do
   brokers <- lookupEnv "RDKAFKA_TEST_BROKER" >>= either die pure . resolveBrokers
   env <- newTestEnv brokers
   checkBrokerReachable env >>= either (die . ("rdkafka-hs-integration: " <>)) pure
@@ -37,6 +44,7 @@ main = do
         ConfigurationTest.tests,
         LifecycleTest.tests env,
         TopicConfigurationTest.tests env,
+        ProducerRegressionTest.tests env,
         -- The groups share the run's topic and consumer group, so later groups
         -- depend on the records and offsets earlier ones leave behind.
         dependentTestGroup

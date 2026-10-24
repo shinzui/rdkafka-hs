@@ -122,6 +122,8 @@ suppressDisconnectLogs =
 
 -- | Any *topic* configuration options that are supported by /librdkafka/.
 -- The full list can be found <https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md#topic-configuration-properties here>
+-- Explicit topic properties override matching global properties when the
+-- producer is created; unrelated global properties remain effective.
 extraTopicProps :: Map Text Text -> ProducerProperties
 extraTopicProps m = mempty {ppTopicProps = m}
 

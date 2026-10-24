@@ -1,6 +1,6 @@
 {
-  "revision": "293f8cc74e233454cccc9448430ae8ffa4048314",
-  "fingerprint": "f0544d9f21671d2c2a21c9e5ec250df6ab1e839507204bfc2ba47a0f46e2e9ae",
+  "revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+  "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
   "configuration": {
     "ghc": "9.12.4",
     "native": "(\"2.15.0\",34537727)",
@@ -19,13 +19,13 @@
   },
   "normal": {
     "unit_tests": 14,
-    "integration_tests": 182,
-    "integration_seconds": 96.38
+    "integration_tests": 236,
+    "integration_seconds": 105.26
   },
   "instrumented": {
     "unit_tests": 14,
-    "integration_tests": 182,
-    "integration_seconds": 98.53
+    "integration_tests": 236,
+    "integration_seconds": 107.43
   },
   "focused_tests": [
     "rdkafka-hs-integration.topic-configuration.singleton configuration reaches the broker",
@@ -83,7 +83,9 @@
     "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
   ],
   "tooling_controls": 17,
-  "mutation_evidence": "dist-topic-mutations/20261024T073201Z-6vjusaca/results.json",
+  "mutation_evidence": "dist-topic-mutations/20261024T083604Z-my8qigbc/results.json",
+  "mutation_fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
+  "mutation_archive_sha256": "29836531a3df40a8db9ba70f2d0ed699242a9cc2b563b7e1ec59dc08f725d6f0",
   "mutations": [
     {
       "mutation": "unchanged-control",
@@ -92,7 +94,7 @@
       "pattern": "/topic-configuration/",
       "expected_failure": null,
       "command": [
-        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T073201Z-6vjusaca/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T083604Z-my8qigbc/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
         "-p",
         "/topic-configuration/",
         "+RTS",
@@ -100,8 +102,8 @@
         "-A256m",
         "-RTS"
       ],
-      "build_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/unchanged-control.build.log",
-      "test_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/unchanged-control.test.log"
+      "build_log": "dist-topic-mutations/20261024T083604Z-my8qigbc/unchanged-control.build.log",
+      "test_log": "dist-topic-mutations/20261024T083604Z-my8qigbc/unchanged-control.test.log"
     },
     {
       "mutation": "configuration-removed",
@@ -110,7 +112,7 @@
       "pattern": "/singleton/",
       "expected_failure": "singleton configuration reaches the broker",
       "command": [
-        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T073201Z-6vjusaca/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T083604Z-my8qigbc/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
         "-p",
         "/singleton/",
         "+RTS",
@@ -118,8 +120,8 @@
         "-A256m",
         "-RTS"
       ],
-      "build_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/configuration-removed.build.log",
-      "test_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/configuration-removed.test.log"
+      "build_log": "dist-topic-mutations/20261024T083604Z-my8qigbc/configuration-removed.build.log",
+      "test_log": "dist-topic-mutations/20261024T083604Z-my8qigbc/configuration-removed.test.log"
     },
     {
       "mutation": "old-acquisition-lifetime",
@@ -128,7 +130,7 @@
       "pattern": "/setter rejection releases allocated/",
       "expected_failure": "setter rejection releases allocated request before submission",
       "command": [
-        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T073201Z-6vjusaca/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T083604Z-my8qigbc/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
         "-p",
         "/setter rejection releases allocated/",
         "+RTS",
@@ -136,8 +138,8 @@
         "-A256m",
         "-RTS"
       ],
-      "build_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/old-acquisition-lifetime.build.log",
-      "test_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/old-acquisition-lifetime.test.log"
+      "build_log": "dist-topic-mutations/20261024T083604Z-my8qigbc/old-acquisition-lifetime.build.log",
+      "test_log": "dist-topic-mutations/20261024T083604Z-my8qigbc/old-acquisition-lifetime.test.log"
     },
     {
       "mutation": "queue-finalization-removed",
@@ -146,7 +148,7 @@
       "pattern": "/setter rejection releases allocated/",
       "expected_failure": "setter rejection releases allocated request before submission",
       "command": [
-        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T073201Z-6vjusaca/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T083604Z-my8qigbc/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
         "-p",
         "/setter rejection releases allocated/",
         "+RTS",
@@ -154,8 +156,8 @@
         "-A256m",
         "-RTS"
       ],
-      "build_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/queue-finalization-removed.build.log",
-      "test_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/queue-finalization-removed.test.log"
+      "build_log": "dist-topic-mutations/20261024T083604Z-my8qigbc/queue-finalization-removed.build.log",
+      "test_log": "dist-topic-mutations/20261024T083604Z-my8qigbc/queue-finalization-removed.test.log"
     },
     {
       "mutation": "options-finalization-removed",
@@ -164,7 +166,7 @@
       "pattern": "/setter rejection releases allocated/",
       "expected_failure": "setter rejection releases allocated request before submission",
       "command": [
-        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T073201Z-6vjusaca/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T083604Z-my8qigbc/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
         "-p",
         "/setter rejection releases allocated/",
         "+RTS",
@@ -172,8 +174,8 @@
         "-A256m",
         "-RTS"
       ],
-      "build_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/options-finalization-removed.build.log",
-      "test_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/options-finalization-removed.test.log"
+      "build_log": "dist-topic-mutations/20261024T083604Z-my8qigbc/options-finalization-removed.build.log",
+      "test_log": "dist-topic-mutations/20261024T083604Z-my8qigbc/options-finalization-removed.test.log"
     },
     {
       "mutation": "delete-request-finalization-removed",
@@ -182,7 +184,7 @@
       "pattern": "/missing topic deletion/",
       "expected_failure": "missing topic deletion preserves its error and releases the request",
       "command": [
-        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T073201Z-6vjusaca/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T083604Z-my8qigbc/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
         "-p",
         "/missing topic deletion/",
         "+RTS",
@@ -190,8 +192,8 @@
         "-A256m",
         "-RTS"
       ],
-      "build_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/delete-request-finalization-removed.build.log",
-      "test_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/delete-request-finalization-removed.test.log"
+      "build_log": "dist-topic-mutations/20261024T083604Z-my8qigbc/delete-request-finalization-removed.build.log",
+      "test_log": "dist-topic-mutations/20261024T083604Z-my8qigbc/delete-request-finalization-removed.test.log"
     },
     {
       "mutation": "event-finalization-removed",
@@ -200,7 +202,7 @@
       "pattern": "/broker-rejected values/",
       "expected_failure": "broker-rejected values release requests and response events repeatedly",
       "command": [
-        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T073201Z-6vjusaca/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T083604Z-my8qigbc/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
         "-p",
         "/broker-rejected values/",
         "+RTS",
@@ -208,8 +210,8 @@
         "-A256m",
         "-RTS"
       ],
-      "build_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/event-finalization-removed.build.log",
-      "test_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/event-finalization-removed.test.log"
+      "build_log": "dist-topic-mutations/20261024T083604Z-my8qigbc/event-finalization-removed.build.log",
+      "test_log": "dist-topic-mutations/20261024T083604Z-my8qigbc/event-finalization-removed.test.log"
     },
     {
       "mutation": "native-request-error-ignored",
@@ -218,7 +220,7 @@
       "pattern": "/unresponsive broker preserves/",
       "expected_failure": "unresponsive broker preserves the native timeout error",
       "command": [
-        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T073201Z-6vjusaca/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T083604Z-my8qigbc/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
         "-p",
         "/unresponsive broker preserves/",
         "+RTS",
@@ -226,8 +228,8 @@
         "-A256m",
         "-RTS"
       ],
-      "build_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/native-request-error-ignored.build.log",
-      "test_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/native-request-error-ignored.test.log"
+      "build_log": "dist-topic-mutations/20261024T083604Z-my8qigbc/native-request-error-ignored.build.log",
+      "test_log": "dist-topic-mutations/20261024T083604Z-my8qigbc/native-request-error-ignored.test.log"
     },
     {
       "mutation": "topic-identity-ignored",
@@ -236,7 +238,7 @@
       "pattern": "/wrong topic response/",
       "expected_failure": "wrong topic response cannot report success",
       "command": [
-        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T073201Z-6vjusaca/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-topic-mutations/20261024T083604Z-my8qigbc/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
         "-p",
         "/wrong topic response/",
         "+RTS",
@@ -244,19 +246,41 @@
         "-A256m",
         "-RTS"
       ],
-      "build_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/topic-identity-ignored.build.log",
-      "test_log": "dist-topic-mutations/20261024T073201Z-6vjusaca/topic-identity-ignored.test.log"
+      "build_log": "dist-topic-mutations/20261024T083604Z-my8qigbc/topic-identity-ignored.build.log",
+      "test_log": "dist-topic-mutations/20261024T083604Z-my8qigbc/topic-identity-ignored.test.log"
     }
   ],
-  "native_counter_scope": "application-owned NewTopic/DeleteTopic requests, queue references, options and events; native leak/invalid-access diagnostics remain assigned to EP-15",
-  "coverage_evidence": "dist-coverage/evidence.json",
-  "mutation_fingerprint": "470be3ccad19c06c1822393486da4d3420681f99914cea3938b7f11d15b734a5",
-  "status": "53 focused cases and eight mutations accepted; full current-candidate validation pending",
-  "latest_coverage_attempt": {
-    "fingerprint": "470be3ccad19c06c1822393486da4d3420681f99914cea3938b7f11d15b734a5",
-    "accepted": false,
-    "log": "dist-coverage/failures/ep8-sync-seek-state.log",
-    "sha256": "2c45980cc04be4e3579487dd66c991d48769255ac109ae257ff61581abf0cc2b",
-    "result": "Synchronous deprecated seek returned RdKafkaRespErrState; four dependent cases skipped. All 53 admin cases passed. Investigation remains open."
-  }
+  "mutation_artifacts": {
+    "dist-topic-mutations/20261024T083604Z-my8qigbc/results.json": "035a3732b8c898571e0294d9c2dc08f41f670ceadfb3f7bedd0ecab4c82e964c",
+    "dist-topic-mutations/20261024T083604Z-my8qigbc/unchanged-control.build.log": "c40fb5a392b98b375cabd8d5e392ed91091bd0f9716f38dc094015cd57e8b270",
+    "dist-topic-mutations/20261024T083604Z-my8qigbc/unchanged-control.test.log": "f0716eb56e0f752050a20d873798b0c58be55c5b24f6ac950c69190f0d248caa",
+    "dist-topic-mutations/20261024T083604Z-my8qigbc/configuration-removed.build.log": "33e519297f326f6ac96768a5bf0cbf86e1ae6f570c8627349c115ad4a4548fdc",
+    "dist-topic-mutations/20261024T083604Z-my8qigbc/configuration-removed.test.log": "f978708a010965bfde8c8ae37f2f6d05657b15700aa842619bb378474bb24e56",
+    "dist-topic-mutations/20261024T083604Z-my8qigbc/old-acquisition-lifetime.build.log": "1baf94972fa975a5aafac81b15475eab29e789b5db13e864859a97f645a2644a",
+    "dist-topic-mutations/20261024T083604Z-my8qigbc/old-acquisition-lifetime.test.log": "ed3c40a8468fc0c9b67c6763c0300babac80514e1cb4b422ce44a61df136f36f",
+    "dist-topic-mutations/20261024T083604Z-my8qigbc/queue-finalization-removed.build.log": "07e278cb121802346b7a6989b27a489a1567c654e14a1a4243a4d711776352fb",
+    "dist-topic-mutations/20261024T083604Z-my8qigbc/queue-finalization-removed.test.log": "f3273d52027f03ba00dadc90b47ae072ce47237f2e9645add235e7713e457c7f",
+    "dist-topic-mutations/20261024T083604Z-my8qigbc/options-finalization-removed.build.log": "07e278cb121802346b7a6989b27a489a1567c654e14a1a4243a4d711776352fb",
+    "dist-topic-mutations/20261024T083604Z-my8qigbc/options-finalization-removed.test.log": "5eb8150fa4fcf8a1ad4192c5d82f53192a6d9c3bb9369709a8e084a63d1ddd04",
+    "dist-topic-mutations/20261024T083604Z-my8qigbc/delete-request-finalization-removed.build.log": "07e278cb121802346b7a6989b27a489a1567c654e14a1a4243a4d711776352fb",
+    "dist-topic-mutations/20261024T083604Z-my8qigbc/delete-request-finalization-removed.test.log": "6ce08cdc4a03c6441964b8aecd09ff522150cf5125faccb189f136b3b502f3e3",
+    "dist-topic-mutations/20261024T083604Z-my8qigbc/event-finalization-removed.build.log": "07e278cb121802346b7a6989b27a489a1567c654e14a1a4243a4d711776352fb",
+    "dist-topic-mutations/20261024T083604Z-my8qigbc/event-finalization-removed.test.log": "3be341610e2b7dc7ba99bad65e760515951e360811da5f28f249170fe449acd5",
+    "dist-topic-mutations/20261024T083604Z-my8qigbc/native-request-error-ignored.build.log": "07e278cb121802346b7a6989b27a489a1567c654e14a1a4243a4d711776352fb",
+    "dist-topic-mutations/20261024T083604Z-my8qigbc/native-request-error-ignored.test.log": "80d069b6b2d46855549267578383f7010ed75c7aa4778963c9b8842c1c4c931a",
+    "dist-topic-mutations/20261024T083604Z-my8qigbc/topic-identity-ignored.build.log": "07e278cb121802346b7a6989b27a489a1567c654e14a1a4243a4d711776352fb",
+    "dist-topic-mutations/20261024T083604Z-my8qigbc/topic-identity-ignored.test.log": "e894adfac7f4a8ff0926d26c743959503a90c4c02c2f8444b99c3468c27c5937"
+  },
+  "known_cross_plan_failures": [
+    {
+      "fingerprint": "470be3ccad19c06c1822393486da4d3420681f99914cea3938b7f11d15b734a5",
+      "accepted": false,
+      "log": "dist-coverage/failures/ep8-sync-seek-state.log",
+      "sha256": "2c45980cc04be4e3579487dd66c991d48769255ac109ae257ff61581abf0cc2b",
+      "result": "Synchronous deprecated seek returned RdKafkaRespErrState; four dependent cases skipped. All 53 admin cases passed. Investigation remains open.",
+      "owner": 14,
+      "resolution": "Unresolved deprecated-seek failure remains open in API-Kafka-Consumer-seek; subsequent passing runs do not explain it."
+    }
+  ],
+  "status": "EP-8 local admin behavior and scoped ownership accepted; broader native diagnostics and compatibility remain open under EP-15"
 }

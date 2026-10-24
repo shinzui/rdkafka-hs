@@ -276,7 +276,7 @@ boundaryTests env =
       bracket (mkProducer env) releaseProducer $ \producer -> do
         suppliedPolicy <- lookupEnv "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY"
         policy <- case suppliedPolicy of
-          Just "ignore" -> pure "ignore"
+          Just "ignore" -> pure ("ignore" :: String)
           Just "reject" -> pure "reject"
           Nothing | teBrokers env == [BrokerAddress defaultBroker] -> pure "ignore"
           _ -> assertFailure "set RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY to the isolated broker fixture's ignore/reject policy"

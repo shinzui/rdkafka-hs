@@ -7,8 +7,8 @@ module Kafka.Producer.Callbacks
   )
 where
 
-import Control.Concurrent (forkIO)
-import Control.Exception (bracket)
+import Control.Concurrent (forkIOWithUnmask)
+import Control.Exception (SomeException, bracket, catch, mask, throwIO, try)
 import Control.Monad (void)
 import Data.Either (fromRight)
 import Foreign.C.Error (getErrno)
@@ -29,32 +29,47 @@ import Kafka.Types (KafkaError (..), TopicName (..))
 --   librdkafka from continuing on the thread that handles the delivery
 --   callbacks. For callbacks to individual messsages see
 --   'Kafka.Producer.produceMessage\''./
+--
+-- Exceptions from a global callback are reported through the runtime's
+-- uncaught-exception handler on a separate Haskell thread. They do not unwind
+-- through librdkafka or prevent the per-message callback from running. A
+-- per-message callback runs unmasked on its own thread and uses that same
+-- runtime exception policy.
 deliveryCallback :: (DeliveryReport -> IO ()) -> Callback
 deliveryCallback callback = Callback $ \kc -> rdKafkaConfSetDrMsgCb (getRdKafkaConf kc) realCb
   where
     realCb :: t -> Ptr RdKafkaMessageT -> IO ()
-    realCb _ mptr =
+    realCb _ mptr = containCallbackException $ mask $ \restore ->
       if mptr == nullPtr
-        then getErrno >>= (callback . NoMessageError . kafkaRespErr)
+        then getErrno >>= (restore . callback . NoMessageError . kafkaRespErr)
         else do
           s <- peek mptr
-          prodRec <- mkProdRec mptr
           let cbPtr = opaque'RdKafkaMessageT s
-          callbacks cbPtr $
-            if err'RdKafkaMessageT s /= RdKafkaRespErrNoError
-              then mkErrorReport s prodRec
-              else mkSuccessReport s prodRec
+              deliver messageCallback = do
+                prodRec <- mkProdRec mptr
+                let rep =
+                      if err'RdKafkaMessageT s /= RdKafkaRespErrNoError
+                        then mkErrorReport s prodRec
+                        else mkSuccessReport s prodRec
+                outcome <- try @SomeException (restore (callback rep))
+                -- Forking transfers the closure to a Haskell thread before
+                -- the StablePtr root is released, even if the global callback
+                -- threw. A long per-message callback never blocks native poll.
+                mapM_ (\msgCb -> void $ forkIOWithUnmask (\unmask -> unmask (msgCb rep))) messageCallback
+                either throwIO pure outcome
+          if cbPtr == nullPtr
+            then deliver Nothing
+            else bracket (pure $ castPtrToStablePtr cbPtr) freeStablePtr $ \stablePtr -> do
+              msgCb <- deRefStablePtr @(DeliveryReport -> IO ()) stablePtr
+              deliver (Just msgCb)
 
-    callbacks cbPtr rep = do
-      callback rep
-      if cbPtr == nullPtr
-        then
-          pure ()
-        else bracket (pure $ castPtrToStablePtr cbPtr) freeStablePtr $ \stablePtr -> do
-          msgCb <- deRefStablePtr @(DeliveryReport -> IO ()) stablePtr
-          -- Here we fork the callback since it might be a longer action and
-          -- blocking here would block librdkafka from continuing its execution
-          void . forkIO $ msgCb rep
+-- A Haskell exception cannot cross a foreign callback frame. Throwing on a
+-- fresh Haskell thread retains the ordinary uncaught-exception reporting
+-- policy without retaining the native message or its StablePtr.
+containCallbackException :: IO () -> IO ()
+containCallbackException action =
+  action `catch` \(exception :: SomeException) ->
+    void $ forkIOWithUnmask (\unmask -> unmask (throwIO exception))
 
 mkErrorReport :: RdKafkaMessageT -> ProducerRecord -> DeliveryReport
 mkErrorReport msg prodRec = DeliveryFailure prodRec (KafkaResponseError (err'RdKafkaMessageT msg))

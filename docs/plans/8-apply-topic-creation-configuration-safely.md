@@ -40,11 +40,11 @@ Fix F1: applications can create a topic with settings such as `cleanup.policy=co
 
 
 - [x] (2026-10-24) M1: The singleton `cleanup.policy=compact` regression fails before the repair with `Prelude.undefined` and passes after it (0.34 seconds), asserting exact topic/partition metadata and the broker's actual `compact` value through `rpk`.
-- [ ] M2: Empty settings, rejected settings, and interrupted/error construction paths preserve results and release owned handles.
+- [x] (2026-10-24) M2: Empty settings, rejected settings, and interrupted/error construction paths preserve results and release owned handles; observed native counters and post-allocation cancellation prove scoped release.
 
-- [ ] M3: Topic administration covers meaningful input boundaries, broker errors, and request/event lifetime paths with verified broker state.
+- [x] (2026-10-24) M3: Fifty-three topic-admin cases cover input boundaries, broker errors, request/event lifetimes and 20 overlapping requests. Eight compiled semantic mutations fail their intended regressions; unchanged archive control passes. Current normal and instrumented full suites pass 14 unit and 236 integration tests.
 
-Implementation in progress. EP-13 was accepted in `293f8cc`. Configuration now runs inside the acquired NewTopic request's bracket using its real pointer; admin queue/options and polled events have explicit finalization scopes, and the client is retained through the operation. Fifty-three focused cases now pass (15.34 seconds), including native allocation/release counters with a real retained-request positive control, observed post-allocation interruption, consumer sync/async and post-close administration, 20 overlapping requests, broker errors, response corruption, numeric/NUL boundaries and native timeout decoding. Eight semantic mutations now compile and fail their intended regressions; the unchanged control passes all 53 cases. Normal validation passes 14 unit and 182 integration tests, and `just check`, `cabal check`, and binding checks pass. A later full instrumented run fails in the inherited synchronous deprecated seek (`RdKafkaRespErrState`), skipping four dependent cases, while all 53 admin cases pass. That failure is preserved at `dist-coverage/failures/ep8-sync-seek-state.log`; current-candidate acceptance remains pending rather than replacing it with the earlier passing instrumented run. ADR-11 records the implemented scoped ownership and native deadline contract. The first regression is registered independently of the inherited ordered broker group so focused execution does not pull unrelated dependent cases.
+Complete. Configuration uses the acquired NewTopic pointer inside its bracket; queues/options/events and DeleteTopic references have explicit release scopes, while borrowed payload/configuration views retain their owners. The current candidate passes 53 focused cases, eight topic mutations, 17 tooling controls, full normal and instrumented suites (14 unit and 236 integration tests), Cabal checks, binding checks and Nix checks. The [evidence manifest](../testing/topic-admin-evidence.json) records fingerprint `3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca`, actual GHC/native/broker versions, commands, mutation logs and checksums. The saved intermittent deprecated-seek failure remains an explicit open EP-14 row, and the C-finalizer callback failure belongs to EP-11; neither is marked expected-failure or explained away by later green runs. EP-15 still owns Apache unknown-key policy, native heap diagnostics and compatibility tuples.
 
 
 ## Surprises & Discoveries
@@ -78,7 +78,7 @@ The isolated native-logging diagnostic also reproduced a C topic finalizer calli
 ## Outcomes & Retrospective
 
 
-Not implemented. Record accepted evidence, remaining limitations, and durable lessons here at completion; update relevant ADRs before marking Complete.
+F1 is repaired with exact broker configuration evidence and conditional native ownership on success, error and interruption. Numeric/NUL representation loss, dropped request errors, malformed response identity and the false one-second deadline were also repaired as existing-contract defects. [ADR-11](../adr/admin-requests-have-scoped-native-ownership-and-configured-deadlines.md) captures the lasting ownership/deadline decisions. Application-reference counters and semantic mutations establish local release boundaries; they do not replace EP-15 native diagnostics. The master gate remains open for other children and the explicitly retained cross-plan failures.
 
 
 ## Context and Orientation
@@ -134,7 +134,7 @@ Use the focused group (give any new group this exact name):
 just test-it '--test-options=-p /topic-configuration/'
 ```
 
-The broker inspection command is `container exec rdkafka-hs-rp-0 rpk topic describe <run-prefixed-topic> -c`; its `cleanup.policy` row must contain `compact`. Isolated non-container environments can set `RDKAFKA_TEST_RPK` to an rpk executable configured for their validated private broker. Native handle-release evidence remains pending. The focused group must fail on the original undefined expression and pass after the repair.
+The broker inspection command is `container exec rdkafka-hs-rp-0 rpk topic describe <run-prefixed-topic> -c`; its `cleanup.policy` row must contain `compact`. Isolated non-container environments can set `RDKAFKA_TEST_RPK` to an rpk executable configured for their validated private broker. Native handle-release evidence is recorded in the accepted manifest and mutation logs. The focused group must fail on the original undefined expression and pass after the repair.
 
 
 ## Validation and Acceptance

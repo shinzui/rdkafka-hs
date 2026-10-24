@@ -1,6 +1,8 @@
 # Bundle Update Log
 
 ## 2026-10-24
+* **Decision**: Accept conditional per-message callback ownership transfer and containment of delivery exceptions within Haskell threads.
+* **Decision**: Accept merging explicit producer topic settings after global settings with actual-client configuration and delivery evidence.
 * **Update**: ADR-11 records scoped admin ownership, borrowed result lifetimes, configured request deadlines and C-representation validation.
 * **Update**: Record accepted fixture and coverage infrastructure, including source mapping and explicit zero coverage for unlinked modules; repair/API/environment obligations remain open.
 * **Decision**: Require public-contract, native-ownership, and supported-environment evidence for release coverage; implementation is planned in MasterPlan 2.

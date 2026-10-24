@@ -2278,8 +2278,8 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "f0544d9f21671d2c2a21c9e5ec250df6ab1e839507204bfc2ba47a0f46e2e9ae",
-      "evidence_revision": "293f8cc74e233454cccc9448430ae8ffa4048314",
+      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
+      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2311,20 +2311,57 @@
       "expected": "Actual native client timeout/configuration reflects merged precedence; rejected config never silently succeeds",
       "modes": "all supported modes",
       "ownership": "Configuration allocated, copied/transferred exactly once; producer retains configured defaults",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs-integration.producer-regressions.explicit topic timeout expires an accepted message",
+        "rdkafka-hs-integration.producer-regressions.actual client configuration: defaults",
+        "rdkafka-hs-integration.producer-regressions.actual client configuration: global only",
+        "rdkafka-hs-integration.producer-regressions.actual client configuration: topic only",
+        "rdkafka-hs-integration.producer-regressions.actual client configuration: disjoint maps",
+        "rdkafka-hs-integration.producer-regressions.actual client configuration: explicit topic wins duplicate",
+        "rdkafka-hs-integration.producer-regressions.actual client configuration: last topic property wins",
+        "rdkafka-hs-integration.producer-regressions.actual client configuration: empty topic map preserves global",
+        "rdkafka-hs-integration.producer-regressions.actual client configuration: topic codec overrides global codec",
+        "rdkafka-hs-integration.producer-regressions.actual client configuration: global codec survives unrelated topic keys",
+        "rdkafka-hs-integration.producer-regressions.byte-exact round trip with NoCompression",
+        "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Gzip",
+        "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Snappy",
+        "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Lz4",
+        "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Zstd",
+        "rdkafka-hs-integration.producer-regressions.configuration rejection: unknown global key",
+        "rdkafka-hs-integration.producer-regressions.configuration rejection: unknown topic key",
+        "rdkafka-hs-integration.producer-regressions.configuration rejection: invalid topic timeout",
+        "rdkafka-hs-integration.producer-regressions.configuration rejection: global-only key in topic map"
+      ],
+      "status": "tested",
+      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
+      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "F3",
       "symbols": [
-        "Kafka.Consumer.seek",
         "Kafka.Consumer.seekPartitions"
       ],
       "owner": 10,
       "behavior": "Seek reports each failed partition while retaining valid partition behavior",
       "inputs": "valid, invalid and mixed partitions; empty list; timeout; beginning/end/stored/invalid/large offsets",
       "expected": "Failure is surfaced through existing return type; valid partition offset and next record agree",
-      "modes": "async and sync; deprecated seek and seekPartitions",
+      "modes": "async and sync callback modes; zero-timeout initiation and synchronous completion",
       "ownership": "Temporary native partition list released after call and error decode",
       "tests": [],
       "status": "unimplemented"
@@ -2341,8 +2378,68 @@
       "expected": "Immediate rejection never invokes callback and permits capture collection; accepted callback retained until exactly one matching report",
       "modes": "all supported modes",
       "ownership": "StablePtr allocated before enqueue; freed on rejection or after delivery callback; no double free",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs-integration.producer-regressions.explicit topic timeout expires an accepted message",
+        "rdkafka-hs-integration.producer-regressions.global timeout still expires an accepted message",
+        "rdkafka-hs-integration.producer-regressions.queue-full rejection releases callback capture without invoking it",
+        "rdkafka-hs-integration.producer-regressions.accepted callback retains its capture until a purged report completes",
+        "rdkafka-hs-integration.producer-regressions.throwing global callback preserves per-message delivery and releases capture",
+        "rdkafka-hs-integration.producer-regressions.throwing per-message callback reports exception and releases capture",
+        "rdkafka-hs-integration.producer-regressions.repeated queue-full rejections release every callback capture",
+        "rdkafka-hs-integration.producer-regressions.cancellation at a rejected enqueue releases capture before unmasking",
+        "rdkafka-hs-integration.producer-regressions.cancellation after native acceptance retains callback until its report",
+        "rdkafka-hs-integration.producer-regressions.another poller can deliver before successful enqueue returns",
+        "rdkafka-hs-integration.producer-regressions.running callback keeps its capture after the native root is released",
+        "rdkafka-hs-integration.producer-regressions.byte-exact round trip with NoCompression",
+        "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Gzip",
+        "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Snappy",
+        "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Lz4",
+        "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Zstd",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: none",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: queue",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: inflight",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: nonblocking",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: queue+inflight",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: queue+nonblocking",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: inflight+nonblocking",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: all",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: none",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: queue",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: inflight",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: nonblocking",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: queue+inflight",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: queue+nonblocking",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: inflight+nonblocking",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: all",
+        "rdkafka-hs-integration.producer-regressions.bounded flush timeout recovers when the delayed response arrives",
+        "rdkafka-hs-integration.producer-regressions.oversized rejection releases capture without a delivery report",
+        "rdkafka-hs-integration.producer-regressions.known invalid partition rejection releases capture",
+        "rdkafka-hs-integration.producer-regressions.empty queue supports repeated flush and close",
+        "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: NUL topic name",
+        "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: NUL header name",
+        "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: maximum unrepresentable partition",
+        "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: minimum unrepresentable partition",
+        "rdkafka-hs-integration.producer-regressions.later delivery callback replaces the earlier callback"
+      ],
+      "status": "tested",
+      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
+      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "F5",
@@ -3244,11 +3341,11 @@
       "symbols": [
         "Kafka.Consumer.rewindConsumer"
       ],
-      "owner": 14,
-      "behavior": "Rewind according to requested relative offset",
-      "inputs": "before/after consumption, boundaries and invalid assignment",
-      "expected": "Exact next offset and surfaced seek failure",
-      "modes": "all supported modes",
+      "owner": 10,
+      "behavior": "Rewind the current assignment to its last committed next offsets",
+      "inputs": "no assignment; missing/known committed offsets; lookup failure; assignment changes before seek; seek failure",
+      "expected": "No assignment is a no-op; failures propagate; successful replay begins at the exact committed next offset",
+      "modes": "async and sync callback modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
       "tests": [],
       "status": "unimplemented"
@@ -4064,8 +4161,8 @@
         "rdkafka-hs-integration.topic-configuration.deletion reports a missing response as a timeout"
       ],
       "status": "tested",
-      "fingerprint": "f0544d9f21671d2c2a21c9e5ec250df6ab1e839507204bfc2ba47a0f46e2e9ae",
-      "evidence_revision": "293f8cc74e233454cccc9448430ae8ffa4048314",
+      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
+      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4594,8 +4691,8 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "f0544d9f21671d2c2a21c9e5ec250df6ab1e839507204bfc2ba47a0f46e2e9ae",
-      "evidence_revision": "293f8cc74e233454cccc9448430ae8ffa4048314",
+      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
+      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4617,13 +4714,61 @@
       "id": "OWN-headers",
       "symbols": [],
       "owner": 9,
-      "behavior": "Header allocation and enqueue transfer",
-      "inputs": "success, injected failure, interruption, repeated calls and boundaries",
-      "expected": "Exact behavior or allocation balance with effective negative controls",
+      "behavior": "Header bytes remain live through enqueue and native copies preserve order and values",
+      "inputs": "duplicate/binary/empty headers on success, immediate rejection, observed cancellation before/after native acceptance, purge and report completion",
+      "expected": "Byte-exact ordered header reports and broker round trips; dropping headers fails a compiled semantic mutation; borrowed buffers never outlive their call scope",
       "modes": "all supported modes",
-      "ownership": "Headers released by native accepted message or by wrapper on immediate rejection",
-      "tests": [],
-      "status": "unimplemented"
+      "ownership": "withMany/ByteString/C-string scopes retain borrowed names and values through produceva; the wrapper owns no RdKafkaHeaders handle; native internal header allocation/release diagnostics remain separately owned by EP-15",
+      "tests": [
+        "rdkafka-hs-integration.producer-regressions.queue-full rejection releases callback capture without invoking it",
+        "rdkafka-hs-integration.producer-regressions.accepted callback retains its capture until a purged report completes",
+        "rdkafka-hs-integration.producer-regressions.repeated queue-full rejections release every callback capture",
+        "rdkafka-hs-integration.producer-regressions.cancellation at a rejected enqueue releases capture before unmasking",
+        "rdkafka-hs-integration.producer-regressions.cancellation after native acceptance retains callback until its report",
+        "rdkafka-hs-integration.producer-regressions.another poller can deliver before successful enqueue returns",
+        "rdkafka-hs-integration.producer-regressions.byte-exact round trip with NoCompression",
+        "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Gzip",
+        "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Snappy",
+        "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Lz4",
+        "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Zstd",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: none",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: queue",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: inflight",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: nonblocking",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: queue+inflight",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: queue+nonblocking",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: inflight+nonblocking",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: all",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: none",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: queue",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: inflight",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: nonblocking",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: queue+inflight",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: queue+nonblocking",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: inflight+nonblocking",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: all",
+        "rdkafka-hs-integration.producer-regressions.oversized rejection releases capture without a delivery report",
+        "rdkafka-hs-integration.producer-regressions.known invalid partition rejection releases capture"
+      ],
+      "status": "tested",
+      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
+      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "OWN-partition-list",
@@ -4758,8 +4903,8 @@
         "rdkafka-hs-integration.Fixture error controls.weak control retains while rooted and collects after release"
       ],
       "status": "tested",
-      "fingerprint": "f0544d9f21671d2c2a21c9e5ec250df6ab1e839507204bfc2ba47a0f46e2e9ae",
-      "evidence_revision": "293f8cc74e233454cccc9448430ae8ffa4048314",
+      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
+      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4804,8 +4949,8 @@
         "rdkafka-hs-integration.topic-configuration.maximum C replication count retains native validation"
       ],
       "status": "tested",
-      "fingerprint": "f0544d9f21671d2c2a21c9e5ec250df6ab1e839507204bfc2ba47a0f46e2e9ae",
-      "evidence_revision": "293f8cc74e233454cccc9448430ae8ffa4048314",
+      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
+      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4856,8 +5001,8 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "f0544d9f21671d2c2a21c9e5ec250df6ab1e839507204bfc2ba47a0f46e2e9ae",
-      "evidence_revision": "293f8cc74e233454cccc9448430ae8ffa4048314",
+      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
+      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4897,8 +5042,8 @@
         "rdkafka-hs-integration.topic-configuration.concurrent requests keep their own queues and responses"
       ],
       "status": "tested",
-      "fingerprint": "f0544d9f21671d2c2a21c9e5ec250df6ab1e839507204bfc2ba47a0f46e2e9ae",
-      "evidence_revision": "293f8cc74e233454cccc9448430ae8ffa4048314",
+      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
+      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4927,6 +5072,193 @@
       "ownership": "Configuration forwarding and native error resources retain EP-8 scopes",
       "tests": [],
       "status": "unimplemented"
+    },
+    {
+      "id": "ENV-producer-native-headers",
+      "symbols": [],
+      "owner": 15,
+      "behavior": "Native internal header allocations survive the required lifetime and are released on every message path",
+      "inputs": "success, immediate queue-full/oversize rejection, observed cancellation and queued/in-flight purge under native heap diagnostics",
+      "expected": "Leak/invalid-access diagnostic detects an intentional native cleanup mutation and finds no unexplained candidate allocation or access defects",
+      "modes": "required native diagnostic compatibility tuple",
+      "ownership": "librdkafka owns header objects created inside produceva; Haskell supplies scoped borrowed name/value buffers",
+      "tests": [],
+      "status": "unimplemented"
+    },
+    {
+      "id": "API-Kafka-Consumer-seek",
+      "symbols": [
+        "Kafka.Consumer.seek"
+      ],
+      "owner": 14,
+      "behavior": "Deprecated seek retains its documented replay and error behavior",
+      "inputs": "valid/invalid partitions and offset sentinels; synchronous/asynchronous callback modes; investigate saved intermittent synchronous State failure",
+      "expected": "Exact next-record offsets after successful seeks and exact native errors for unsupported state; saved failure must be explained rather than erased by successful reruns",
+      "modes": "async and sync callback modes",
+      "ownership": "Temporary managed topic handles and their native client remain alive through native seeking; callback-capable finalization belongs to EP-11",
+      "tests": [],
+      "status": "unimplemented"
+    },
+    {
+      "id": "PRODUCER-data-boundaries",
+      "symbols": [],
+      "owner": 9,
+      "behavior": "Producing preserves exact record bytes and rejects C representation loss",
+      "inputs": "absent/empty/binary keys and values; tombstones; repeated/empty/binary headers; all five codecs; specified/unassigned partitions; oversize and invalid names/numbers",
+      "expected": "Exact delivery and broker-consumed identities and offsets; immediate errors have no native enqueue or callback",
+      "modes": "normal optimized and instrumented primary tuple",
+      "ownership": "Borrowed record buffers live through enqueue; accepted messages retain native copies and their per-message root",
+      "tests": [
+        "rdkafka-hs-integration.producer-regressions.byte-exact round trip with NoCompression",
+        "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Gzip",
+        "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Snappy",
+        "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Lz4",
+        "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Zstd",
+        "rdkafka-hs-integration.producer-regressions.oversized rejection releases capture without a delivery report",
+        "rdkafka-hs-integration.producer-regressions.known invalid partition rejection releases capture",
+        "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: NUL topic name",
+        "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: NUL header name",
+        "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: maximum unrepresentable partition",
+        "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: minimum unrepresentable partition"
+      ],
+      "status": "tested",
+      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
+      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
+    },
+    {
+      "id": "PRODUCER-flush-purge-protocol",
+      "symbols": [],
+      "owner": 9,
+      "behavior": "Each purge flag selects only its outbound queue stage and bounded flush can recover",
+      "inputs": "all eight flag subsets with queued and observed in-flight messages; empty queue; timeout then delayed native protocol response",
+      "expected": "Exact one failure report per purged record; unselected stages remain pending; recovery yields exact success and offset; repeated flush/close is safe",
+      "modes": "normal optimized and instrumented primary tuple",
+      "ownership": "Per-message roots release after callback scheduling; native mock cluster and callback-free anchor have scoped destruction",
+      "tests": [
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: none",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: queue",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: inflight",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: nonblocking",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: queue+inflight",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: queue+nonblocking",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: inflight+nonblocking",
+        "rdkafka-hs-integration.producer-regressions.queued purge flags: all",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: none",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: queue",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: inflight",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: nonblocking",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: queue+inflight",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: queue+nonblocking",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: inflight+nonblocking",
+        "rdkafka-hs-integration.producer-regressions.in-flight purge flags: all",
+        "rdkafka-hs-integration.producer-regressions.bounded flush timeout recovers when the delayed response arrives",
+        "rdkafka-hs-integration.producer-regressions.empty queue supports repeated flush and close"
+      ],
+      "status": "tested",
+      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
+      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
+    },
+    {
+      "id": "PRODUCER-delivery-exceptions",
+      "symbols": [],
+      "owner": 9,
+      "behavior": "Delivery exceptions remain in Haskell while preserving per-message scheduling",
+      "inputs": "throwing global/per-message callbacks; running forked callback; callback replacement order",
+      "expected": "Isolated process succeeds, runtime handler receives expected exception, one exact per-message report completes, and capture collects afterward",
+      "modes": "normal optimized and instrumented primary tuple",
+      "ownership": "Delivery root is bracketed before global invocation; forked callback retains closure and runs unmasked",
+      "tests": [
+        "rdkafka-hs-integration.producer-regressions.throwing global callback preserves per-message delivery and releases capture",
+        "rdkafka-hs-integration.producer-regressions.throwing per-message callback reports exception and releases capture",
+        "rdkafka-hs-integration.producer-regressions.running callback keeps its capture after the native root is released",
+        "rdkafka-hs-integration.producer-regressions.later delivery callback replaces the earlier callback"
+      ],
+      "status": "tested",
+      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
+      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
+    },
+    {
+      "id": "PRODUCER-ownership-concurrency",
+      "symbols": [],
+      "owner": 9,
+      "behavior": "Enqueue ownership is conditional and safe against cancellation and concurrent polling",
+      "inputs": "native barrier before rejection and after real acceptance; killer blocked in throwTo; delivery before enqueue returns; running callback",
+      "expected": "Rejected capture collects and is never invoked; accepted capture remains until one report completes; unsafe transfer/mask mutations fail",
+      "modes": "normal optimized and instrumented primary tuple",
+      "ownership": "Masked caller owns root until immediate result; accepted root transfers to native delivery, then to forked Haskell closure",
+      "tests": [
+        "rdkafka-hs-integration.producer-regressions.cancellation at a rejected enqueue releases capture before unmasking",
+        "rdkafka-hs-integration.producer-regressions.cancellation after native acceptance retains callback until its report",
+        "rdkafka-hs-integration.producer-regressions.another poller can deliver before successful enqueue returns",
+        "rdkafka-hs-integration.producer-regressions.running callback keeps its capture after the native root is released"
+      ],
+      "status": "tested",
+      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
+      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     }
   ]
 }

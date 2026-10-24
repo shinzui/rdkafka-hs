@@ -17,6 +17,11 @@ provenance:
       at: 2026-10-24T04:58:24Z
       mode: "update"
       note: "Expand acceptance to close public-contract, failure-path, concurrency, ownership, and compatibility coverage gaps; add EP-13 prerequisite and coordinated evidence gates."
+    - model: "gpt-6.1-sol"
+      harness: "codex-cli"
+      at: 2026-10-24T07:53:34Z
+      mode: "implement"
+      note: "Begin producer setting and per-message callback regressions after accepted EP-13; retain EP-8 pending inherited seek investigation."
 ---
 
 # Honor producer settings and release rejected callbacks
@@ -34,12 +39,12 @@ Fix F2 and F4: producer timeout/compression/topic properties affect actual deliv
 ## Progress
 
 
-- [ ] M1: Effective producer settings honor topic properties while preserving global settings and defined precedence.
-- [ ] M2: Queue-full rejection releases captured callback state while successful/purged messages retain and release their callbacks correctly.
+- [x] (2026-10-24) M1: Effective native-client configuration and actual timeout/codec delivery honor explicit topic properties while preserving global settings and defined precedence; dropping settings or reversing native precedence fails compiled regressions.
+- [x] (2026-10-24) M2: Repeated queue-full rejection releases captures; accepted, expired and purged callbacks retain/release correctly, including observed cancellation/transfer races and isolated throwing callbacks.
 
 - [ ] M3: Producer data boundaries, configuration composition, delivery/purge outcomes, and controlled enqueue/callback races have exact behavioral assertions.
 
-Not started; this document records the implementation contract, not completed fixes.
+Implementation in progress. Fifty-four focused producer cases pass (7.73 seconds). The initial regressions fail before repair on the actual ignored timeout and retained queue-full callback capture; global timeout and accepted capture controls pass. The repair merges explicit topic keys into the effective native client, masks callback allocation/ownership transfer and frees immediate rejections. Delivery handling contains global exceptions, still schedules the per-message callback, and releases its root even when a global callback throws. Native barriers cover cancellation before and after acceptance, delivery before enqueue returns, and retention while a forked callback runs. Real-broker round trips cover nine absent/empty/binary key/value pairs under all five codecs. Queued and observed in-flight purge flag combinations pass; the latter use the native mock protocol fixture with delayed Produce responses. A full instrumented snapshot passes 14 unit and 236 integration tests with child probe coverage merged, and a normal full snapshot passes the same counts (105.92 seconds); newer test-only mutation/marker changes still require final evidence refresh. Strict ADR validation, Cabal checks and Nix checks pass. Ten compiled semantic mutations now fail their intended tests, and the unchanged archive control passes all 54 cases. Current normal and instrumented suites pass 14 unit and 236 integration tests on the same fingerprint; [producer evidence](../testing/producer-evidence.json) retains the commands and logs. M3 remains open for replayable generated producer-composition cases through EP-14's shared adapter. Its focused M1 integration milestone will run next before this child closes. EP-8 retains its saved inherited seek failure rather than claiming that later green snapshots explain it.
 
 
 ## Surprises & Discoveries
@@ -48,8 +53,16 @@ Not started; this document records the implementation contract, not completed fi
 At baseline, `sendTimeout (Timeout 1000)` against `127.0.0.1:1` leaves a message pending after a three-second flush, while `extraProp "message.timeout.ms" "1000"` expires it. Filling `queue.buffering.max.messages=1` and submitting a second message returns `RdKafkaRespErrQueueFull` but retains that second callback's captured IORef after major GC. F2 originated in retained commit `aa1c2c69` (2021), and F4 in `f81bec4` (2020).
 
 
+The boundary matrix exposed additional inherited data violations: empty ByteStrings can have a null backing pointer and were encoded as absent values, embedded NUL topic/header names were truncated, and oversized Haskell partition integers wrapped into native values. Empty bytes now receive a non-null temporary pointer; NUL names and values outside C integer representation return an immediate `KafkaBadSpecification`. The prior code accepted all four invalid-input probes.
+
+A throwing global delivery callback terminated an isolated process before the per-message callback ran. Exception handling now stays within Haskell threads, retaining synchronous global invocation and forked per-message execution. [ADR-13](../adr/delivery-callbacks-transfer-once-and-keep-exceptions-in-haskell.md) records the policy, including asynchronous exceptions during a global callback.
+
+The mask-removal mutation initially survived cancellation after accepted enqueue because `bracket` itself masks acquisition. The rejected-enqueue cancellation window must also be tested: interrupting before rejection cleanup can retain its root. Premature accepted-root release aborts GHC before buffered test output, so the safety probe records actual native enqueue acceptance before accepting an isolated abort as mutation evidence.
+
 ## Decision Log
 
+
+2026-10-24: Keep configuration precedence and callback ownership as separate durable decisions, [ADR-12](../adr/producer-settings-merge-explicit-topic-keys-after-global-keys.md) and [ADR-13](../adr/delivery-callbacks-transfer-once-and-keep-exceptions-in-haskell.md). Native mock protocol responses provide controlled in-flight purge windows; they do not substitute for real-broker codec/configuration tests or EP-15 authentication and native diagnostics.
 
 2026-10-24 revision: The user expanded acceptance to close coverage gaps. Add the complete behavioral/ownership matrix for this workstream, depend on EP-13's reliable fixtures, and require evidence per coverage-inventory row. Existing milestones remain required.
 
@@ -59,7 +72,7 @@ At baseline, `sendTimeout (Timeout 1000)` against `127.0.0.1:1` leaves a message
 ## Outcomes & Retrospective
 
 
-Not implemented. Record accepted evidence, remaining limitations, and durable lessons here at completion; update relevant ADRs before marking Complete.
+Local repairs and 54 focused cases are accepted with ten compiled mutation controls. Final child completion awaits the replayable generated composition cases shared with EP-14 and their refreshed normal/instrumented evidence. ADR-12 and ADR-13 record implemented precedence and callback policy. Native heap diagnostics and authentication/compatibility remain required under EP-15.
 
 
 ## Context and Orientation

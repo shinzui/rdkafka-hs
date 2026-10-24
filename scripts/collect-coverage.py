@@ -30,9 +30,12 @@ def collect():
     # touched; retain the old logs while replacing its machine evidence.
     for tix in (ROOT / BUILD).rglob("*.tix"):
         tix.unlink()
+    child_directory = ROOT / BUILD / "children"
+    child_directory.mkdir(exist_ok=True)
     log = OUTPUT / "test.log"
     with log.open("w") as stream:
-        subprocess.run(command, cwd=ROOT, stdout=stream, stderr=subprocess.STDOUT, check=True)
+        subprocess.run(command, cwd=ROOT, stdout=stream, stderr=subprocess.STDOUT, check=True,
+                       env=dict(os.environ, RDKAFKA_TEST_CHILD_HPC_DIR=str(child_directory)))
     if fingerprint() != before:
         raise ValueError("candidate changed during coverage execution; discard this run")
     cs = components(BUILD)
@@ -54,12 +57,18 @@ def collect():
     tixfiles = []
     tests = []
     artifacts = [log, zeros]
+    children = sorted(child_directory.glob("*.tix"))
+    for mode in ("global", "message"):
+        if len(list(child_directory.glob("producer-" + mode + "-*.tix"))) != 1:
+            raise ValueError("missing or ambiguous successful producer callback child coverage: " + mode)
+    artifacts.extend(children)
     for suite in SUITES:
         matches = list(cs["test:" + suite].rglob(suite + ".tix"))
         if len(matches) != 1 or not matches[0].stat().st_size:
             raise ValueError(f"missing or ambiguous TIX data for {suite}")
         expanded = OUTPUT / (suite + ".tix")
-        run("hpc", "sum", "--union", *include, "--output=" + str(expanded), str(matches[0]), str(zeros))
+        child_tix = list(map(str, children)) if suite == "rdkafka-hs-integration" else []
+        run("hpc", "sum", "--union", *include, "--output=" + str(expanded), str(matches[0]), str(zeros), *child_tix)
         tixfiles.append(expanded)
         artifacts.append(expanded)
         binary = cs["test:" + suite] / "build" / suite / suite
