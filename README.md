@@ -461,6 +461,16 @@ Design decisions are recorded in [docs/adr/](docs/adr/index.md).
 
 ## Integration tests
 
+The current repair candidate has been tested on macOS 26.7/arm64 with GHC 9.12.4,
+librdkafka 2.15.0 and private Redpanda 26.2.1. Its complete normal and Haskell
+coverage runs pass 78 unit and 708 integration cases, with four additional
+nonthreaded runtime checks. Clean source-package build/tests and the actual
+example also pass; see [primary validation](docs/testing/primary-validation-evidence.json).
+Linux/newer toolchain, distributed Apache Kafka, real authentication/TLS/ACL
+and comprehensive native leak qualification are tracked in the
+[follow-up plan](docs/masterplans/3-complete-deferred-coverage-and-compatibility-validation.md).
+Those environments are not claimed as tested by this candidate's broad bounds.
+
 The integration suite `rdkafka-hs-integration` needs a running Kafka broker and
 is disabled unless the manual `integration` flag is set, so `cabal build all`,
 `cabal test` and `nix build` never need one.

@@ -76,7 +76,7 @@ Keep all source, test, C fixtures, registration, mutations and documentation fro
 
 ## Progress
 
-Planning is complete; implementation has not started. The preserved current full checkpoint passes 786 registered cases normally and mapped plus four actual nonthreaded cases; its 192 unexplained handwritten ticks and 35 open historical inventory rows are transferred in `docs/testing/deferred-validation-snapshot.json`. Five child plans preserve the deferred scope. MasterPlan 2's primary candidate remains the baseline prerequisite. The comprehensive gate remains unavailable until every child has accepted source-bound evidence.
+Planning is complete; implementation has not started. The preserved current full checkpoint passes 786 registered cases normally and mapped plus four actual nonthreaded cases; its 192 unexplained handwritten ticks and 35 open historical inventory rows are transferred in `docs/testing/deferred-validation-snapshot.json`. Five child plans preserve the deferred scope. MasterPlan 2's primary candidate is now accepted; [primary evidence](../testing/primary-validation-evidence.json) satisfies the baseline prerequisite. The follow-up implementation remains Not Started. The comprehensive gate remains unavailable until every child has accepted source-bound evidence.
 
 ## Surprises & Discoveries
 

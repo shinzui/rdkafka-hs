@@ -72,7 +72,7 @@ Relevant decisions were read before drafting. [ADR-1](../adr/consumer-queue-and-
 | 12 | Release transaction error objects | [EP-12](../plans/12-release-transaction-error-objects.md) | EP-13 | None | Complete |
 | 13 | Make coverage evidence and test fixtures reliable | [EP-13](../plans/13-make-coverage-evidence-and-test-fixtures-reliable.md) | None | None | Complete |
 | 14 | Cover the public API and pure-data laws | [EP-14](../plans/14-cover-the-public-api-and-pure-data-laws.md) | EP-13 | EP-8, EP-9, EP-10, EP-11, EP-12 | Complete |
-| 15 | Validate the primary release candidate | [EP-15](../plans/15-validate-broker-failures-and-supported-environments.md) | EP-8, EP-9, EP-10, EP-11, EP-12, EP-13, EP-14 | None | In Progress |
+| 15 | Validate the primary release candidate | [EP-15](../plans/15-validate-broker-failures-and-supported-environments.md) | EP-8, EP-9, EP-10, EP-11, EP-12, EP-13, EP-14 | None | Complete |
 
 
 ## Dependency Graph
@@ -122,7 +122,7 @@ Build and test the emitted tarball from a fresh ignored extraction under the sam
 
 ## Progress
 
-Current scope, 2026-10-24: seven children are Complete, including EP-14 under the approved scope; EP-15 finishes the primary package/candidate gate. The complete source checkpoint passes 786 registered cases normally and mapped plus four nonthreaded cases. MasterPlan 3 and its EP-16 through EP-20 preserve comprehensive qualification and every started asset. Historical progress entries below describe earlier scopes/checkpoints and do not override ADR-27.
+Current scope, 2026-10-24: all eight children are Complete under the approved primary release scope. EP-15 accepts the clean package, example and final primary checks; see [primary evidence](../testing/primary-validation-evidence.json). The complete source checkpoint passes 786 registered cases normally and mapped plus four nonthreaded cases. MasterPlan 3 and its EP-16 through EP-20 preserve comprehensive qualification and every started asset. Historical progress entries below describe earlier scopes/checkpoints and do not override ADR-27.
 
 Deprecated seek now retains all ten inherited positive scenarios on fresh run-owned grouped consumers; each observes exact record zero immediately before the native seek. Fifty-four selected cases pass normally, mapped and native-instrumented (48.13/47.90/48.13 seconds); two compiled mutations catch suppressed State and changed offsets, and the control passes. [Seek evidence](../testing/legacy-seek-evidence.json) preserves the old failing log and native-source diagnosis: State reports an inactive fetcher, while an earlier assignment query is only a snapshot. The event that stopped the historical fetcher was not recorded; no exact trigger or successful reconstruction is claimed. A max-poll hypothesis probe did not reproduce State and is excluded. Existing explicit unassignment/State/reassignment and repeated replay checks remain. [ADR-20](../adr/consumer-partition-operations-report-member-errors.md) records the active-fetcher precondition. Whole-candidate reconciliation remains open.
 
@@ -218,4 +218,6 @@ Producer configuration requires merging rather than blindly installing an empty 
 ## Outcomes & Retrospective
 
 
-Not implemented. Fill in accepted outcomes and remaining limitations after the combined candidate gate, including durable ADR updates.
+All six original inherited defects and subsequent confirmed primary-contract defects are repaired and regression-tested. All 786 registered cases pass normally and mapped, with four actual nonthreaded supplements and 24 tooling controls. Clean source-package identity/build, all 78 unit cases, 31 representative integration checks and independent bounded example effects pass. Cabal/binding/documentation/Nix and primary inventory freshness checks pass. [Primary evidence](../testing/primary-validation-evidence.json) and the [compatibility matrix](../testing/compatibility-matrix.json) record exact versions and diagnostic limits.
+
+The user explicitly transferred exhaustive source/public-row closure, historical seek-trigger investigation and broader compatibility/security/native-leak qualification to comprehensive MasterPlan 3. Every implementation, test, mutation, partial audit and failed-run manifest is retained; no deferred obligation is claimed passed. ADR-27 records the split. This completes release preparation on the primary tuple, not publication, version selection, remote tagging or the broader intention. A separate release workflow must select the PVP version, regenerate the final distribution and handle any authorized publication.

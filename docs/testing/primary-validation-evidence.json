@@ -1,0 +1,149 @@
+{
+  "status": "passed primary release-preparation scope; publication is separate",
+  "scope_decision": "docs/adr/release-validation-has-explicit-primary-and-expanded-scopes.md",
+  "source_revision": "b740b725126bce2fbf8bf71c2e4da1cc1861e403",
+  "scope_plan_commit": "f9640d4",
+  "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
+  "environment": {
+    "os": "macOS 26.7",
+    "kernel": "Darwin 25.6.0",
+    "architecture": "arm64",
+    "ghc": "9.12.4",
+    "cabal": "3.16.1.0",
+    "native": "2.15.0",
+    "loaded_native": "(\"2.15.0\",34537727)",
+    "broker_versions": [
+      {
+        "node_id": 0,
+        "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+      }
+    ],
+    "broker": "127.0.0.1:39092"
+  },
+  "normal": {
+    "unit": 78,
+    "integration": 708,
+    "seconds": [
+      1.12,
+      330.23
+    ]
+  },
+  "mapped": {
+    "unit": 78,
+    "integration": 708,
+    "seconds": [
+      1.56,
+      324.56
+    ],
+    "evidence": "docs/testing/coverage-evidence.json",
+    "handwritten_native_wrapper_ticks": 2750
+  },
+  "actual_nonthreaded_passed": 4,
+  "tooling_controls_passed": 24,
+  "inventory": {
+    "valid": true,
+    "allow_open": true,
+    "rows": 181,
+    "tested": 146,
+    "deferred": 35
+  },
+  "source_distribution": {
+    "archive": "dist-primary-release/rdkafka-hs-1.0.0.1.tar.gz",
+    "archive_sha256": "51b5463ea79925d677999c8b113989003c41de26291f746409da3284c1c12524",
+    "extraction": "dist-primary-release/replay-9jlwx8sb/rdkafka-hs-1.0.0.1",
+    "compared_source_test_example_script_files": 103,
+    "all_bytes_match": true,
+    "project_config": "packages: .",
+    "unit_passed": 78,
+    "integration_ownership_runtime_passed": 23,
+    "integration_six_repair_passed": 8,
+    "loaded_native": "(\"2.15.0\",34537727)",
+    "example": "Four exact key/value/header/offset records and broker committed next offset 4 independently verified under a 30-second bound"
+  },
+  "selection_correction": "The first combined package command selected zero unit tests and only the 23 ownership/runtime integration cases. Its unit result is excluded. The accepted separate unfiltered unit command passes all 78, and the direct binary named repair selection passes all eight expected cases. No zero-test result is counted.",
+  "native_controls": {
+    "scope": "Retain accepted focused native runs and effective controls documented by repair/ownership manifests. Later documentation and seek fixture edits do not change their native ownership source scopes.",
+    "evidence": [
+      "docs/testing/callback-native-diagnostics.json",
+      "docs/testing/partition-list-evidence.json",
+      "docs/testing/final-boundaries-evidence.json",
+      "docs/testing/legacy-seek-evidence.json"
+    ],
+    "leak_detection": false,
+    "limit": "Darwin AddressSanitizer invalid-access, weak-reference and native-counter evidence is not comprehensive leak freedom."
+  },
+  "deferred_work": "docs/masterplans/3-complete-deferred-coverage-and-compatibility-validation.md",
+  "deferred_snapshot": "docs/testing/deferred-validation-snapshot.json",
+  "unclassified_handwritten_ticks_deferred": 192,
+  "artifacts": {
+    "normal-full": {
+      "log": "dist-primary-release/evidence/normal-full.log",
+      "sha256": "4430092b7158fa78459adb0bd96bac93198ac24cd9a553e096b936894dda54ae"
+    },
+    "mapped-full": {
+      "log": "dist-primary-release/evidence/mapped-full.log",
+      "sha256": "ddafabb793b3220670f9d9d2741cbd6e2001dd04851dae70eb8f7054549aa378"
+    },
+    "coverage-collection": {
+      "log": "dist-primary-release/evidence/coverage-collection.log",
+      "sha256": "ca37d689a706d9717506fbe43b41bb47ca8ecb9943a5e2a96b49ff82d47219d3"
+    },
+    "coverage-tools": {
+      "log": "dist-primary-release/evidence/coverage-tools.log",
+      "sha256": "6b0281b1ee7a1b66cf3cb95bf1dd118dac65c970c2dff8aa1e4ff3ec18bcf337"
+    },
+    "inventory": {
+      "log": "dist-primary-release/evidence/inventory.log",
+      "sha256": "6aaeb4a62ef5152f0f1adf20bb654b54b8fe12f057b757150972ebe61992fb7a"
+    },
+    "package-build": {
+      "log": "dist-primary-release/evidence/package-build.log",
+      "sha256": "17be004d39f5127ae9a26bda0247ac0456faf16d3ad4a247a8642a8a81f44749"
+    },
+    "package-unit": {
+      "log": "dist-primary-release/evidence/package-unit.log",
+      "sha256": "7422a52c5b41a017d2e831f2ab8dc8850faf83d6e3107f0b0e67a84b07b5b46b"
+    },
+    "package-ownership-runtime": {
+      "log": "dist-primary-release/evidence/package-ownership-runtime.log",
+      "sha256": "6f505b82f99181f0d1f3e60ef7a2df41b9560ae310807f2837f2698de92cce65"
+    },
+    "package-repairs": {
+      "log": "dist-primary-release/evidence/package-repairs.log",
+      "sha256": "fef5f3e584b01b07d7d9739287502b4e6b23368aceb29b681459bc3687b92a1c"
+    },
+    "package-example": {
+      "log": "dist-primary-release/evidence/package-example.log",
+      "sha256": "0ad5aead3404305296f7b6675214afe5c22f9fecfba30f1a5afc0ec8535f8830"
+    },
+    "cabal-check": {
+      "log": "dist-primary-release/evidence/cabal-check.log",
+      "sha256": "c6eb9fc26e6b12b67ab0b600e39a34f1e847f6a8f7e2fe07a3e2d4ab07591021"
+    },
+    "package-binding-nix-checks": {
+      "log": "dist-primary-release/evidence/package-binding-nix-checks.log",
+      "sha256": "37d6b9dbde43d9202abf141d7b8626e1001a4b034c7d394b2838cf8ab65aef28"
+    },
+    "plan-docs-check": {
+      "log": "dist-primary-release/evidence/plan-docs-check.log",
+      "sha256": "62644b6a564a5ae4e08acf494818d103474d0da76074f1a6abb2aaaca2cc020d"
+    },
+    "adr-check": {
+      "log": "dist-primary-release/evidence/adr-check.log",
+      "sha256": "4241ee2e8e9a28a010236e444eef70c3234656ac5f7cc1bf1f49d42f631dc119"
+    },
+    "final-documentation": {
+      "log": "dist-primary-release/evidence/final-documentation.log",
+      "sha256": "62644b6a564a5ae4e08acf494818d103474d0da76074f1a6abb2aaaca2cc020d"
+    },
+    "final-inventory": {
+      "log": "dist-primary-release/evidence/final-inventory.log",
+      "sha256": "986a981183b5e0669e31a34eb6f50f0df62b06f8499d4c6b33fe0aa7c4736909"
+    },
+    "final-format": {
+      "log": "dist-primary-release/evidence/final-format.log",
+      "sha256": "b1e28e55fcd53798aaf473dd1f86eef1641cd312466a0371ad7aa93732f96c61"
+    }
+  },
+  "publication_performed": false
+}

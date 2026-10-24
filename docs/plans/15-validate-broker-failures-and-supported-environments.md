@@ -28,10 +28,12 @@ Finish a release-ready candidate on the demonstrated primary environment, with c
 ## Progress
 
 - [x] M1: The exact primary compiler/native/broker/runtime tuple and complete normal/mapped suite are source-bound, with retained semantic/tooling/native controls and truthful diagnostic limits.
-- [ ] M2: A clean source distribution builds all enabled components and passes its unit suite, representative repair/ownership broker cases and bounded example verification.
-- [ ] M3: Required Cabal/binding/documentation/Nix checks and primary inventory freshness pass; evidence, tested claims and the separate release handoff agree.
+- [x] M2: A clean source distribution builds all enabled components and passes its unit suite, representative repair/ownership broker cases and bounded example verification.
+- [x] M3: Required Cabal/binding/documentation/Nix checks and primary inventory freshness pass; evidence, tested claims and the separate release handoff agree.
 
-In Progress. The frozen source fingerprint `060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e` passes all 78 unit and 708 integration cases normally and mapped, plus four actual nonthreaded runtime checks. Twenty-four tooling controls pass. The primary environment is macOS 26.7, Darwin 25.6.0/arm64, GHC 9.12.4, Cabal 3.16.1.0, loaded librdkafka 2.15.0 and private Redpanda v26.2.1. Package replay and final documentation/check reconciliation remain.
+Complete under the user-selected primary scope. The clean source package matches all 103 source/test/example/script files, builds the library/example/both test suites, passes all 78 unit cases plus 23 ownership/runtime and eight six-repair cases, and independently verifies the bounded actual example. Required Cabal/binding/documentation/Nix checks and the primary inventory check pass. See `docs/testing/primary-validation-evidence.json` and `docs/testing/compatibility-matrix.json`.
+
+The frozen source fingerprint `060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e` passes all 78 unit and 708 integration cases normally and mapped, plus four actual nonthreaded runtime checks. Twenty-four tooling controls pass. The primary environment is macOS 26.7, Darwin 25.6.0/arm64, GHC 9.12.4, Cabal 3.16.1.0, loaded librdkafka 2.15.0 and private Redpanda v26.2.1. Package replay and final checks are accepted.
 
 ## Surprises & Discoveries
 
@@ -47,7 +49,7 @@ The full report leaves 192 unclassified handwritten ticks and 35 historical open
 
 ## Outcomes & Retrospective
 
-Primary execution is established; clean package and final gate acceptance are pending. Completing this child prepares a separate release task and does not publish, choose a new package version, tag, push or mark the broader intention complete. Comprehensive qualification remains tracked under MasterPlan 3.
+Primary execution, clean package replay and the final primary gate are accepted. All original fixes/tests and the complete mapped evidence remain retained. Completing this child prepares a separate release task and does not publish, choose a new package version, tag, push or mark the broader intention complete. Comprehensive qualification remains tracked under MasterPlan 3.
 
 ## Context and Orientation
 

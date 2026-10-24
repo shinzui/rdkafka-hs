@@ -82,3 +82,5 @@ runner applies the same flags to the runtime family and omits `-N2`; other
 families retain their original threaded invocation. See
 [runtime evidence](runtime-evidence.json). Focused instrumented results do not
 replace final full-candidate mapped coverage.
+
+The accepted primary checkpoint passes 786 registered cases normally and mapped, plus four actual nonthreaded cases and 24 tooling controls. [Primary evidence](primary-validation-evidence.json) records clean package replay and the bounded actual example. The remaining 35 historical open rows and 192 unclassified handwritten ticks are preserved in [the source-bound deferred snapshot](deferred-validation-snapshot.json); the strict checker continues to reject comprehensive incompleteness.

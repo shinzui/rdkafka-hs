@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "scope": "Primary release preparation under ADR-27; comprehensive qualification belongs to MasterPlan 3",
+  "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
+  "primary": [
+    {
+      "os": "macOS 26.7",
+      "kernel": "Darwin 25.6.0",
+      "architecture": "arm64",
+      "ghc": "9.12.4",
+      "cabal": "3.16.1.0",
+      "native": "2.15.0",
+      "loaded_native": "(\"2.15.0\",34537727)",
+      "broker_versions": [
+        {
+          "node_id": 0,
+          "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+        }
+      ],
+      "broker": "127.0.0.1:39092",
+      "id": "darwin-arm64-ghc9124-native215-redpanda2621",
+      "status": "passed",
+      "evidence": "docs/testing/primary-validation-evidence.json"
+    }
+  ],
+  "deferred": [
+    {
+      "id": "linux-native-diagnostics",
+      "owner": 17,
+      "status": "deferred; not qualified"
+    },
+    {
+      "id": "newer-released-toolchain-native",
+      "owner": 17,
+      "status": "deferred; not qualified"
+    },
+    {
+      "id": "apache-distributed-failure-group-transaction",
+      "owner": 18,
+      "status": "deferred; not qualified"
+    },
+    {
+      "id": "sasl-tls-acl-credential-reconnect",
+      "owner": 19,
+      "status": "deferred; not qualified"
+    },
+    {
+      "id": "strict-complete-inventory-matrix-package-gate",
+      "owner": 20,
+      "status": "deferred; not qualified"
+    }
+  ],
+  "limits": [
+    "No new environment claim follows from broad dependency bounds.",
+    "No comprehensive native leak claim follows from Darwin ASan runs with leak detection disabled.",
+    "Plaintext setter checks do not prove real authentication or credential replacement at a broker."
+  ]
+}
