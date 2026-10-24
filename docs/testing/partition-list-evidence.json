@@ -1,0 +1,63 @@
+{
+  "status": "focused partition-list ownership checkpoint accepted; whole-candidate reconciliation remains open",
+  "fingerprint": "84013dc8aa34c81743fab5033ec37d5a6f132b4343a7d5fb9aa2bed5832a55d1",
+  "baseline": {
+    "log": "/tmp/rdkafka-ep14-partition-lists-baseline.log",
+    "passed": 15,
+    "failed": 4,
+    "expected_before_gc": [
+      1,
+      1,
+      0
+    ],
+    "actual_before_gc": [
+      1,
+      0,
+      1
+    ],
+    "probe_log": "/tmp/rdkafka-partition-ownership-baseline.log",
+    "scope": "Both managed converters leave a partially encoded list to GC after a real encoding IOException; the probe confirms later GC destroys it. This is deferred cleanup, not evidence of a permanent leak."
+  },
+  "runs": {
+    "normal": {
+      "log": "/tmp/rdkafka-ep14-partition-lists-normal.log",
+      "sha256": "c0b34cb446f31c2aee446abfbfca5e57695367902e309ac2af0326f18229c730",
+      "passed": 19
+    },
+    "instrumented-haskell": {
+      "log": "/tmp/rdkafka-ep14-partition-lists-hpc.log",
+      "sha256": "1f2b54ea8738680ce247cb2fd9d71dae2bf839d1debc182f1c6a0771836d1f8c",
+      "passed": 19
+    },
+    "instrumented-native": {
+      "log": "/tmp/rdkafka-ep14-partition-lists-asan.log",
+      "sha256": "bcd9e12609682c63cd35ec8095916ce7779b920454ef1454569921efcab46ea2",
+      "passed": 19
+    }
+  },
+  "mutations": "dist-mutations/20261024T230323Z-partition-lists-66957-0/results.json",
+  "compiled_mutations_caught": 4,
+  "controls": 1,
+  "scope": [
+    "Input and native-returned output ownership counted separately from native internal copies",
+    "Real latin1 encoding failure after an ASCII member preserves the IOException and releases the partial list before GC",
+    "Assignment/subscription success, repeated decoding and invalid UTF-8 decoder errors release owned outputs",
+    "Cancellation is pending at held input allocation and assignment return; native objects release once before returning ThreadKilled",
+    "Explicit retained-list control proves the observer detects allocation without release",
+    "No native pointer is retained after destruction; the observer unlocks before callback-capable native release"
+  ],
+  "native_version": "2.15.0",
+  "native_library": "mori://confluentinc/librdkafka",
+  "native_release_commit": "9a94e11452cdeb0a844db44ee5dd01ccbe17d3ab",
+  "dependency_api_check": {
+    "project": "mori://ghc/ghc",
+    "release_tag": "ghc-9.12.4-release",
+    "source_path": "libraries/base/src/GHC/IO/Encoding.hs",
+    "source_artifact_uri_pending": true,
+    "lookup": "Mori has no base package entry; upstream release source verifies get/set foreign encoding, latin1 and utf8 exports."
+  },
+  "required_checks": "/tmp/rdkafka-ep14-partition-lists-check.log",
+  "adr_checks": "/tmp/rdkafka-ep14-partition-lists-adr.log",
+  "leak_instrumentation": false,
+  "classification_reconciliation": "coverage-classification-remap.json"
+}

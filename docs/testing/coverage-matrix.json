@@ -11267,15 +11267,7 @@
       "status": "inapplicable",
       "rationale": "src/Kafka/Consumer/Convert.hs:62-66: private offsetSyncToInt has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },
-    "Kafka.Consumer.Convert:139:ExpBox False": {
-      "status": "inapplicable",
-      "rationale": "src/Kafka/Consumer/Convert.hs:138-150: private toNativeTopicPartitionListNoDispose has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
-    },
-    "Kafka.Consumer.Convert:144:ExpBox False": {
-      "status": "inapplicable",
-      "rationale": "src/Kafka/Consumer/Convert.hs:138-150: private toNativeTopicPartitionListNoDispose has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
-    },
-    "Kafka.Consumer.Convert:144:LocalBox [\"toNativeTopicPartitionListNoDispose\",\"to\"]": {
+    "Kafka.Consumer.Convert:138:ExpBox False": {
       "status": "inapplicable",
       "rationale": "src/Kafka/Consumer/Convert.hs:138-150: private toNativeTopicPartitionListNoDispose has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },
@@ -11283,23 +11275,11 @@
       "status": "inapplicable",
       "rationale": "src/Kafka/Consumer/Convert.hs:138-150: private toNativeTopicPartitionListNoDispose has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },
+    "Kafka.Consumer.Convert:143:LocalBox [\"toNativeTopicPartitionListNoDispose\",\"to\"]": {
+      "status": "inapplicable",
+      "rationale": "src/Kafka/Consumer/Convert.hs:138-150: private toNativeTopicPartitionListNoDispose has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
+    },
     "Kafka.Consumer.Convert:142:ExpBox False": {
-      "status": "inapplicable",
-      "rationale": "src/Kafka/Consumer/Convert.hs:138-150: private toNativeTopicPartitionListNoDispose has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
-    },
-    "Kafka.Consumer.Convert:145:ExpBox False": {
-      "status": "inapplicable",
-      "rationale": "src/Kafka/Consumer/Convert.hs:138-150: private toNativeTopicPartitionListNoDispose has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
-    },
-    "Kafka.Consumer.Convert:145:LocalBox [\"toNativeTopicPartitionListNoDispose\",\"tnS\"]": {
-      "status": "inapplicable",
-      "rationale": "src/Kafka/Consumer/Convert.hs:138-150: private toNativeTopicPartitionListNoDispose has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
-    },
-    "Kafka.Consumer.Convert:146:ExpBox False": {
-      "status": "inapplicable",
-      "rationale": "src/Kafka/Consumer/Convert.hs:138-150: private toNativeTopicPartitionListNoDispose has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
-    },
-    "Kafka.Consumer.Convert:147:ExpBox False": {
       "status": "inapplicable",
       "rationale": "src/Kafka/Consumer/Convert.hs:138-150: private toNativeTopicPartitionListNoDispose has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },
@@ -11307,7 +11287,19 @@
       "status": "inapplicable",
       "rationale": "src/Kafka/Consumer/Convert.hs:138-150: private toNativeTopicPartitionListNoDispose has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },
-    "Kafka.Consumer.Convert:149:ExpBox False": {
+    "Kafka.Consumer.Convert:144:ExpBox False": {
+      "status": "inapplicable",
+      "rationale": "src/Kafka/Consumer/Convert.hs:138-150: private toNativeTopicPartitionListNoDispose has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
+    },
+    "Kafka.Consumer.Convert:144:LocalBox [\"toNativeTopicPartitionListNoDispose\",\"tnS\"]": {
+      "status": "inapplicable",
+      "rationale": "src/Kafka/Consumer/Convert.hs:138-150: private toNativeTopicPartitionListNoDispose has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
+    },
+    "Kafka.Consumer.Convert:145:ExpBox False": {
+      "status": "inapplicable",
+      "rationale": "src/Kafka/Consumer/Convert.hs:138-150: private toNativeTopicPartitionListNoDispose has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
+    },
+    "Kafka.Consumer.Convert:146:ExpBox False": {
       "status": "inapplicable",
       "rationale": "src/Kafka/Consumer/Convert.hs:138-150: private toNativeTopicPartitionListNoDispose has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },
@@ -11315,87 +11307,95 @@
       "status": "inapplicable",
       "rationale": "src/Kafka/Consumer/Convert.hs:138-150: private toNativeTopicPartitionListNoDispose has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },
-    "Kafka.Consumer.Convert:150:ExpBox False": {
+    "Kafka.Consumer.Convert:148:ExpBox False": {
       "status": "inapplicable",
       "rationale": "src/Kafka/Consumer/Convert.hs:138-150: private toNativeTopicPartitionListNoDispose has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },
-    "Kafka.Consumer.Convert:138:ExpBox False": {
+    "Kafka.Consumer.Convert:139:ExpBox False": {
       "status": "inapplicable",
       "rationale": "src/Kafka/Consumer/Convert.hs:138-150: private toNativeTopicPartitionListNoDispose has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },
-    "Kafka.Consumer.Convert:138:TopLevelBox [\"toNativeTopicPartitionListNoDispose\"]": {
+    "Kafka.Consumer.Convert:149:ExpBox False": {
       "status": "inapplicable",
       "rationale": "src/Kafka/Consumer/Convert.hs:138-150: private toNativeTopicPartitionListNoDispose has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },
-    "Kafka.Internal.Shared:65:ExpBox False": {
+    "Kafka.Consumer.Convert:137:ExpBox False": {
       "status": "inapplicable",
-      "rationale": "src/Kafka/Internal/Shared.hs:64-68: private throwOnError has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
+      "rationale": "src/Kafka/Consumer/Convert.hs:138-150: private toNativeTopicPartitionListNoDispose has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },
-    "Kafka.Internal.Shared:66:ExpBox False": {
+    "Kafka.Consumer.Convert:137:TopLevelBox [\"toNativeTopicPartitionListNoDispose\"]": {
       "status": "inapplicable",
-      "rationale": "src/Kafka/Internal/Shared.hs:64-68: private throwOnError has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
+      "rationale": "src/Kafka/Consumer/Convert.hs:138-150: private toNativeTopicPartitionListNoDispose has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },
-    "Kafka.Internal.Shared:67:ExpBox False": {
-      "status": "inapplicable",
-      "rationale": "src/Kafka/Internal/Shared.hs:64-68: private throwOnError has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
-    },
-    "Kafka.Internal.Shared:67:ExpBox True": {
-      "status": "inapplicable",
-      "rationale": "src/Kafka/Internal/Shared.hs:64-68: private throwOnError has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
-    },
-    "Kafka.Internal.Shared:68:ExpBox False": {
-      "status": "inapplicable",
-      "rationale": "src/Kafka/Internal/Shared.hs:64-68: private throwOnError has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
-    },
-    "Kafka.Internal.Shared:68:ExpBox True": {
-      "status": "inapplicable",
-      "rationale": "src/Kafka/Internal/Shared.hs:64-68: private throwOnError has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
-    },
-    "Kafka.Internal.Shared:64:ExpBox False": {
-      "status": "inapplicable",
-      "rationale": "src/Kafka/Internal/Shared.hs:64-68: private throwOnError has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
-    },
-    "Kafka.Internal.Shared:64:TopLevelBox [\"throwOnError\"]": {
+    "Kafka.Internal.Shared:70:ExpBox False": {
       "status": "inapplicable",
       "rationale": "src/Kafka/Internal/Shared.hs:64-68: private throwOnError has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },
     "Kafka.Internal.Shared:71:ExpBox False": {
       "status": "inapplicable",
-      "rationale": "src/Kafka/Internal/Shared.hs:71-73: private hasError has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
+      "rationale": "src/Kafka/Internal/Shared.hs:64-68: private throwOnError has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
+    },
+    "Kafka.Internal.Shared:72:ExpBox False": {
+      "status": "inapplicable",
+      "rationale": "src/Kafka/Internal/Shared.hs:64-68: private throwOnError has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },
     "Kafka.Internal.Shared:72:ExpBox True": {
       "status": "inapplicable",
-      "rationale": "src/Kafka/Internal/Shared.hs:71-73: private hasError has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
+      "rationale": "src/Kafka/Internal/Shared.hs:64-68: private throwOnError has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
+    },
+    "Kafka.Internal.Shared:73:ExpBox False": {
+      "status": "inapplicable",
+      "rationale": "src/Kafka/Internal/Shared.hs:64-68: private throwOnError has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },
     "Kafka.Internal.Shared:73:ExpBox True": {
       "status": "inapplicable",
-      "rationale": "src/Kafka/Internal/Shared.hs:71-73: private hasError has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
+      "rationale": "src/Kafka/Internal/Shared.hs:64-68: private throwOnError has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },
-    "Kafka.Internal.Shared:71:TopLevelBox [\"hasError\"]": {
+    "Kafka.Internal.Shared:69:ExpBox False": {
+      "status": "inapplicable",
+      "rationale": "src/Kafka/Internal/Shared.hs:64-68: private throwOnError has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
+    },
+    "Kafka.Internal.Shared:69:TopLevelBox [\"throwOnError\"]": {
+      "status": "inapplicable",
+      "rationale": "src/Kafka/Internal/Shared.hs:64-68: private throwOnError has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
+    },
+    "Kafka.Internal.Shared:76:ExpBox False": {
       "status": "inapplicable",
       "rationale": "src/Kafka/Internal/Shared.hs:71-73: private hasError has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },
-    "Kafka.Internal.Shared:83:ExpBox False": {
+    "Kafka.Internal.Shared:77:ExpBox True": {
+      "status": "inapplicable",
+      "rationale": "src/Kafka/Internal/Shared.hs:71-73: private hasError has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
+    },
+    "Kafka.Internal.Shared:78:ExpBox True": {
+      "status": "inapplicable",
+      "rationale": "src/Kafka/Internal/Shared.hs:71-73: private hasError has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
+    },
+    "Kafka.Internal.Shared:76:TopLevelBox [\"hasError\"]": {
+      "status": "inapplicable",
+      "rationale": "src/Kafka/Internal/Shared.hs:71-73: private hasError has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
+    },
+    "Kafka.Internal.Shared:88:ExpBox False": {
       "status": "inapplicable",
       "rationale": "src/Kafka/Internal/Shared.hs:83-85: private kafkaErrorToEither has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },
-    "Kafka.Internal.Shared:84:ExpBox False": {
+    "Kafka.Internal.Shared:89:ExpBox False": {
       "status": "inapplicable",
       "rationale": "src/Kafka/Internal/Shared.hs:83-85: private kafkaErrorToEither has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },
-    "Kafka.Internal.Shared:84:ExpBox True": {
+    "Kafka.Internal.Shared:89:ExpBox True": {
       "status": "inapplicable",
       "rationale": "src/Kafka/Internal/Shared.hs:83-85: private kafkaErrorToEither has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },
-    "Kafka.Internal.Shared:85:ExpBox False": {
+    "Kafka.Internal.Shared:90:ExpBox False": {
       "status": "inapplicable",
       "rationale": "src/Kafka/Internal/Shared.hs:83-85: private kafkaErrorToEither has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },
-    "Kafka.Internal.Shared:85:ExpBox True": {
+    "Kafka.Internal.Shared:90:ExpBox True": {
       "status": "inapplicable",
       "rationale": "src/Kafka/Internal/Shared.hs:83-85: private kafkaErrorToEither has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },
-    "Kafka.Internal.Shared:83:TopLevelBox [\"kafkaErrorToEither\"]": {
+    "Kafka.Internal.Shared:88:TopLevelBox [\"kafkaErrorToEither\"]": {
       "status": "inapplicable",
       "rationale": "src/Kafka/Internal/Shared.hs:83-85: private kafkaErrorToEither has no src callers; exact-name searches find only its definition, signature, export/INLINE entries. The module is hidden under Cabal other-modules, and this function is not re-exported. No supported public path invokes this body. Reachable replacement helpers and native error paths remain measured."
     },

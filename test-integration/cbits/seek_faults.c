@@ -14,6 +14,7 @@ static int mode, entered, released, seek_calls, created, destroyed;
 static rd_kafka_error_t *owned_error;
 extern void rdkafka_hs_tx_error_destroyed(rd_kafka_error_t *error);
 extern void rdkafka_hs_state_error_destroyed(rd_kafka_error_t *error);
+extern void rdkafka_hs_test_lists_assignment(rd_kafka_topic_partition_list_t *list);
 
 #define REAL(name) __typeof__(&name) real = (__typeof__(&name))dlsym(RTLD_NEXT, #name); \
   if (!real) { fprintf(stderr, "seek seam: %s\n", dlerror()); abort(); }
@@ -66,7 +67,9 @@ rd_kafka_resp_err_t rd_kafka_assignment(rd_kafka_t *client, rd_kafka_topic_parti
   int current = mode;
   pthread_mutex_unlock(&lock);
   if (current == 12) { *parts = NULL; return RD_KAFKA_RESP_ERR__STATE; }
-  return real(client, parts);
+  rd_kafka_resp_err_t result = real(client, parts);
+  if (result == RD_KAFKA_RESP_ERR_NO_ERROR) rdkafka_hs_test_lists_assignment(*parts);
+  return result;
 }
 
 rd_kafka_error_t *rd_kafka_seek_partitions(rd_kafka_t *client, rd_kafka_topic_partition_list_t *parts, int timeout) {

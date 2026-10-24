@@ -9,6 +9,8 @@ this project adheres to the [Haskell Package Versioning Policy](https://pvp.hask
 
 ### Fixed
 
+- Consumer partition-list conversion releases partially filled native lists
+  immediately if encoding a later member throws.
 - Consumer and metadata inputs reject embedded NUL topic/group names and
   partition IDs outside the native C integer range with `KafkaBadSpecification`,
   preventing inherited truncation and wrapping from targeting another identity.

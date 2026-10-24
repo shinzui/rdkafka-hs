@@ -78,6 +78,15 @@ foreign pointer keeps a single deallocator with the same callback-safe concurren
 finalizer. `setConsumerQueueIOEvent` does nothing once polling is disabled, so a
 notification cannot be registered on a released queue.
 
+Managed input partition lists have a two-stage ownership handoff. The converter
+owns the list while adding and encoding members; `bracketOnError` finalizes a
+partial list if conversion throws. Only a successfully returned list transfers
+to the public operation's bracket. Relying on the outer bracket alone leaves
+failed acquisition cleanup deferred to GC. Assignment and subscription output
+lists remain owned through decoding and cancellation. Native-counted controls
+check release before GC, including a real foreign-encoding failure after an
+ASCII member, invalid output bytes, and held native return boundaries.
+
 ## Consequences
 
 Both callback modes need manual-assignment and teardown regression tests. EP-6

@@ -21,6 +21,7 @@ import Kafka.Integration.DiagnosticContractTest qualified as DiagnosticContractT
 import Kafka.Integration.FatalErrorTest qualified as FatalErrorTest
 import Kafka.Integration.InputBoundaryContractTest qualified as InputBoundaryContractTest
 import Kafka.Integration.MetadataContractTest qualified as MetadataContractTest
+import Kafka.Integration.PartitionListContractTest qualified as PartitionListContractTest
 import Kafka.Integration.QueueEventTest qualified as QueueEventTest
 import Kafka.Integration.RuntimeContractTest qualified as RuntimeContractTest
 import Kafka.MessageTestSupport
@@ -36,7 +37,8 @@ tests :: TestEnv -> TestTree
 tests testEnv =
   testGroup
     "public-contract"
-    [ testGroup "messages" $
+    [ PartitionListContractTest.tests testEnv,
+      testGroup "messages" $
         [ testCase "batch conversion releases every returned native message" $
             withRecords testEnv "batch-success" CallbackPollModeAsync $ \_ consumer -> withMessageFault 0 $ do
               records <- pollMessageBatch consumer (Timeout 1000) (BatchSize 3)

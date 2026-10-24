@@ -1,0 +1,188 @@
+{
+  "status": "source-coordinate reconciliation; current full coverage still required",
+  "baseline_revision": "d466235",
+  "method": "Only exact, unchanged source lines in difflib equal blocks retain classifications. Changed lines lose their old classification and require review. Historical audit manifests retain their original baseline coordinates.",
+  "preserved_keys": 334,
+  "moved": [
+    {
+      "before": "Kafka.Consumer.Convert:139:ExpBox False",
+      "after": "Kafka.Consumer.Convert:138:ExpBox False"
+    },
+    {
+      "before": "Kafka.Consumer.Convert:144:ExpBox False",
+      "after": "Kafka.Consumer.Convert:143:ExpBox False"
+    },
+    {
+      "before": "Kafka.Consumer.Convert:144:LocalBox [\"toNativeTopicPartitionListNoDispose\",\"to\"]",
+      "after": "Kafka.Consumer.Convert:143:LocalBox [\"toNativeTopicPartitionListNoDispose\",\"to\"]"
+    },
+    {
+      "before": "Kafka.Consumer.Convert:143:ExpBox False",
+      "after": "Kafka.Consumer.Convert:142:ExpBox False"
+    },
+    {
+      "before": "Kafka.Consumer.Convert:142:ExpBox False",
+      "after": "Kafka.Consumer.Convert:141:ExpBox False"
+    },
+    {
+      "before": "Kafka.Consumer.Convert:145:ExpBox False",
+      "after": "Kafka.Consumer.Convert:144:ExpBox False"
+    },
+    {
+      "before": "Kafka.Consumer.Convert:145:LocalBox [\"toNativeTopicPartitionListNoDispose\",\"tnS\"]",
+      "after": "Kafka.Consumer.Convert:144:LocalBox [\"toNativeTopicPartitionListNoDispose\",\"tnS\"]"
+    },
+    {
+      "before": "Kafka.Consumer.Convert:146:ExpBox False",
+      "after": "Kafka.Consumer.Convert:145:ExpBox False"
+    },
+    {
+      "before": "Kafka.Consumer.Convert:147:ExpBox False",
+      "after": "Kafka.Consumer.Convert:146:ExpBox False"
+    },
+    {
+      "before": "Kafka.Consumer.Convert:141:ExpBox False",
+      "after": "Kafka.Consumer.Convert:140:ExpBox False"
+    },
+    {
+      "before": "Kafka.Consumer.Convert:149:ExpBox False",
+      "after": "Kafka.Consumer.Convert:148:ExpBox False"
+    },
+    {
+      "before": "Kafka.Consumer.Convert:140:ExpBox False",
+      "after": "Kafka.Consumer.Convert:139:ExpBox False"
+    },
+    {
+      "before": "Kafka.Consumer.Convert:150:ExpBox False",
+      "after": "Kafka.Consumer.Convert:149:ExpBox False"
+    },
+    {
+      "before": "Kafka.Consumer.Convert:138:ExpBox False",
+      "after": "Kafka.Consumer.Convert:137:ExpBox False"
+    },
+    {
+      "before": "Kafka.Consumer.Convert:138:TopLevelBox [\"toNativeTopicPartitionListNoDispose\"]",
+      "after": "Kafka.Consumer.Convert:137:TopLevelBox [\"toNativeTopicPartitionListNoDispose\"]"
+    },
+    {
+      "before": "Kafka.Internal.Shared:65:ExpBox False",
+      "after": "Kafka.Internal.Shared:70:ExpBox False"
+    },
+    {
+      "before": "Kafka.Internal.Shared:66:ExpBox False",
+      "after": "Kafka.Internal.Shared:71:ExpBox False"
+    },
+    {
+      "before": "Kafka.Internal.Shared:67:ExpBox False",
+      "after": "Kafka.Internal.Shared:72:ExpBox False"
+    },
+    {
+      "before": "Kafka.Internal.Shared:67:ExpBox True",
+      "after": "Kafka.Internal.Shared:72:ExpBox True"
+    },
+    {
+      "before": "Kafka.Internal.Shared:68:ExpBox False",
+      "after": "Kafka.Internal.Shared:73:ExpBox False"
+    },
+    {
+      "before": "Kafka.Internal.Shared:68:ExpBox True",
+      "after": "Kafka.Internal.Shared:73:ExpBox True"
+    },
+    {
+      "before": "Kafka.Internal.Shared:64:ExpBox False",
+      "after": "Kafka.Internal.Shared:69:ExpBox False"
+    },
+    {
+      "before": "Kafka.Internal.Shared:64:TopLevelBox [\"throwOnError\"]",
+      "after": "Kafka.Internal.Shared:69:TopLevelBox [\"throwOnError\"]"
+    },
+    {
+      "before": "Kafka.Internal.Shared:71:ExpBox False",
+      "after": "Kafka.Internal.Shared:76:ExpBox False"
+    },
+    {
+      "before": "Kafka.Internal.Shared:72:ExpBox True",
+      "after": "Kafka.Internal.Shared:77:ExpBox True"
+    },
+    {
+      "before": "Kafka.Internal.Shared:73:ExpBox True",
+      "after": "Kafka.Internal.Shared:78:ExpBox True"
+    },
+    {
+      "before": "Kafka.Internal.Shared:71:TopLevelBox [\"hasError\"]",
+      "after": "Kafka.Internal.Shared:76:TopLevelBox [\"hasError\"]"
+    },
+    {
+      "before": "Kafka.Internal.Shared:83:ExpBox False",
+      "after": "Kafka.Internal.Shared:88:ExpBox False"
+    },
+    {
+      "before": "Kafka.Internal.Shared:84:ExpBox False",
+      "after": "Kafka.Internal.Shared:89:ExpBox False"
+    },
+    {
+      "before": "Kafka.Internal.Shared:84:ExpBox True",
+      "after": "Kafka.Internal.Shared:89:ExpBox True"
+    },
+    {
+      "before": "Kafka.Internal.Shared:85:ExpBox False",
+      "after": "Kafka.Internal.Shared:90:ExpBox False"
+    },
+    {
+      "before": "Kafka.Internal.Shared:85:ExpBox True",
+      "after": "Kafka.Internal.Shared:90:ExpBox True"
+    },
+    {
+      "before": "Kafka.Internal.Shared:83:TopLevelBox [\"kafkaErrorToEither\"]",
+      "after": "Kafka.Internal.Shared:88:TopLevelBox [\"kafkaErrorToEither\"]"
+    }
+  ],
+  "dropped": [],
+  "sources": {
+    "Kafka.Internal.CallbackOwner": {
+      "path": "src/Kafka/Internal/CallbackOwner.hs",
+      "before_sha256": "f2fc3e162b3a953838c39f6b428cb19dd94ebdccf58c8346b611016859dbd308",
+      "after_sha256": "f2fc3e162b3a953838c39f6b428cb19dd94ebdccf58c8346b611016859dbd308"
+    },
+    "Kafka.Internal.RdKafka": {
+      "path": "src/Kafka/Internal/RdKafka.chs",
+      "before_sha256": "95633699b8e19f1140bdb6154a2521ab6e27902b4fda4fc1f4a60dfa89b9a991",
+      "after_sha256": "95633699b8e19f1140bdb6154a2521ab6e27902b4fda4fc1f4a60dfa89b9a991"
+    },
+    "Kafka.Consumer.Convert": {
+      "path": "src/Kafka/Consumer/Convert.hs",
+      "before_sha256": "61ce0505eaa2aead929700fc60b31dcf27125c095a944f92874146c1a15091e1",
+      "after_sha256": "9bf267580d3ee008308585ee061e9364a1dbc6556090d78b5e5df0ef767b9115"
+    },
+    "Kafka.Internal.Shared": {
+      "path": "src/Kafka/Internal/Shared.hs",
+      "before_sha256": "da37bdff0d9cf6bd60109b63e563e4eec0d6a2c74b251df1d2e8244756c176a7",
+      "after_sha256": "80f31071820c2ead3f90f3ffd6b3275d16375fe4d11eaec01a3a617ee3cc6d7b"
+    },
+    "Kafka.Producer.Convert": {
+      "path": "src/Kafka/Producer/Convert.hs",
+      "before_sha256": "9ba868c4ea7d938ab857f2e92f1a033a633b8f7b834da58502d6fb9831f99483",
+      "after_sha256": "9ba868c4ea7d938ab857f2e92f1a033a633b8f7b834da58502d6fb9831f99483"
+    },
+    "Kafka.Consumer.Types": {
+      "path": "src/Kafka/Consumer/Types.hs",
+      "before_sha256": "e815e1744538de8e2bea589d138a887b2e4e254be89d0f0103dd7cdcc75ae7a9",
+      "after_sha256": "e815e1744538de8e2bea589d138a887b2e4e254be89d0f0103dd7cdcc75ae7a9"
+    },
+    "Kafka.Internal.Setup": {
+      "path": "src/Kafka/Internal/Setup.hs",
+      "before_sha256": "69ef4227adf311f7dee3ec283825d42c1e3a2561df6f66bab29d2abb8b446188",
+      "after_sha256": "69ef4227adf311f7dee3ec283825d42c1e3a2561df6f66bab29d2abb8b446188"
+    },
+    "Kafka.Metadata": {
+      "path": "src/Kafka/Metadata.hs",
+      "before_sha256": "fd84532b5f4c5588a07298f9f0bc3a0d9be3bfab3bb2664687b192a927e2bb00",
+      "after_sha256": "abcfd0962c104901916c4b4a456b4e99b9905ffd430b74b4e2244e5a2744512f"
+    },
+    "Kafka.Version": {
+      "path": "src/Kafka/Version.hs",
+      "before_sha256": "1731e25b9b2afade15f0018291d033d7b4527c6538b4153a337736d3ef3b07e5",
+      "after_sha256": "1731e25b9b2afade15f0018291d033d7b4527c6538b4153a337736d3ef3b07e5"
+    }
+  }
+}

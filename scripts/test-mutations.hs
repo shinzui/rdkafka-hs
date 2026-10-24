@@ -262,6 +262,13 @@ families "buffer" =
   ]
   where
     b label change test = mutation "public-contract" label consumer change test
+families "partition-lists" =
+  control "unchanged-control" integration "partition-list-ownership"
+    : [ mutation "partition-list-ownership" "pair-conversion-cleanup-deferred" consumerConversion (section "toNativeTopicPartitionList' tps =" "topicPartitionFromMessage ::" (replace "finalizeForeignPtr" "(const (pure ()))")) "pair conversion failure releases the partial list before GC",
+        mutation "partition-list-ownership" "offset-conversion-cleanup-deferred" consumerConversion (section "toNativeTopicPartitionList ps =" "toNativeTopicPartitionListNoDispose ::" (replace "finalizeForeignPtr" "(const (pure ()))")) "offset conversion failure releases the partial list before GC",
+        mutation "partition-list-ownership" "assignment-output-cleanup-deferred" consumer (section "assignment (KafkaConsumer" "-- | Returns current consumer's subscription" (replace "(mapM_ finalizeForeignPtr)" "(const (pure ()))")) "assignment outputs release after exact decoding",
+        mutation "partition-list-ownership" "subscription-output-cleanup-deferred" consumer (section "subscription (KafkaConsumer" "-- | Pauses specified partitions" (replace "(mapM_ finalizeForeignPtr)" "(const (pure ()))")) "subscription outputs release after exact decoding"
+      ]
 families "boundaries" =
   families "queue"
     <> [ control "unchanged-unit-control" unit "Public data contracts",

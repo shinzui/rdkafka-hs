@@ -21,7 +21,7 @@ module Kafka.Consumer.Convert
   )
 where
 
-import Control.Exception (bracket)
+import Control.Exception (bracket, bracketOnError)
 import Control.Monad (when, (>=>))
 import Data.Bifunctor (first)
 import Data.ByteString qualified as BS
@@ -30,7 +30,7 @@ import Data.Map.Strict (Map, fromListWith)
 import Data.Set qualified as S
 import Data.Text qualified as Text
 import Foreign.C.Error (getErrno)
-import Foreign.ForeignPtr (withForeignPtr)
+import Foreign.ForeignPtr (finalizeForeignPtr, withForeignPtr)
 import Foreign.Ptr (Ptr, nullPtr)
 import Foreign.Storable (Storable (..))
 import Kafka.Consumer.Types (ConsumerMessageError (..), ConsumerRecord (..), Offset (..), OffsetCommit (..), OffsetStoreSync (..), PartitionOffset (..), TopicPartition (..))
@@ -120,8 +120,7 @@ nativeTopicPartitionErrors list = withForeignPtr list $ \ptr -> do
     [0 .. cnt'RdKafkaTopicPartitionListT value - 1]
 
 toNativeTopicPartitionList :: [TopicPartition] -> IO RdKafkaTopicPartitionListTPtr
-toNativeTopicPartitionList ps = do
-  pl <- newRdKafkaTopicPartitionListT (length ps)
+toNativeTopicPartitionList ps = bracketOnError (newRdKafkaTopicPartitionListT (length ps)) finalizeForeignPtr $ \pl -> do
   mapM_
     ( \p -> do
         let TopicName tn = tpTopicName p
@@ -150,11 +149,11 @@ toNativeTopicPartitionListNoDispose ps = do
   return pl
 
 toNativeTopicPartitionList' :: [(TopicName, PartitionId)] -> IO RdKafkaTopicPartitionListTPtr
-toNativeTopicPartitionList' tps = do
+toNativeTopicPartitionList' tps =
   let utps = S.toList . S.fromList $ tps
-  pl <- newRdKafkaTopicPartitionListT (length utps)
-  mapM_ (\(TopicName t, PartitionId p) -> rdKafkaTopicPartitionListAdd pl (Text.unpack t) p) utps
-  return pl
+   in bracketOnError (newRdKafkaTopicPartitionListT (length utps)) finalizeForeignPtr $ \pl -> do
+        mapM_ (\(TopicName t, PartitionId p) -> rdKafkaTopicPartitionListAdd pl (Text.unpack t) p) utps
+        return pl
 
 topicPartitionFromMessage :: ConsumerRecord k v -> TopicPartition
 topicPartitionFromMessage m =
