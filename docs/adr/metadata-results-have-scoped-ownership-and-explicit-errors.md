@@ -2,7 +2,7 @@
 type: Architecture Decision Record
 title: Metadata results have scoped ownership and explicit errors
 description: Copy and release native metadata and group lists within one scope, preserve nested query errors, and return unsupported group states as errors.
-timestamp: 2026-10-24T18:53:15Z
+timestamp: 2026-10-24T19:28:45Z
 generated:
   by: codex-cli/gpt-6.1-sol
   at: "2026-10-24T16:44:52Z"
@@ -33,3 +33,9 @@ An unreachable bootstrap endpoint returns native `Transport` before a broker can
 ## Text identity
 
 Group queries use the same locale-aware native string encoding as configuration setters, and metadata fields use the matching text decoder. ASCII-only marshalling is inappropriate for Unicode group IDs, client IDs and member fields: it both queries a different byte sequence and changes decoded UTF-8 bytes into unrelated characters. Tests use actual Unicode groups/clients in both callback modes and distinct native-owned Unicode member strings, alongside independent binary metadata and assignment bytes. This preserves identity without changing the public result types.
+
+## Errors on supplied metadata
+
+Convenience helpers treat errors already present on public metadata values as authoritative. Watermark queries retain each partition error alongside successful partition results. Timestamp helpers return the first topic error, then the first partition error, before submitting a query that could replace or hide it. This applies equally to caller-provided metadata and freshly decoded native metadata. Group errors remain attached to their GroupInfo entity.
+
+A group query without an initial metadata snapshot waits for metadata until its deadline and returns native TimedOut. The topic metadata API can instead return Transport before connecting. These are distinct native contracts; preserve their actual error codes.

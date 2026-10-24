@@ -249,6 +249,16 @@ families "metadata" =
   ]
   where
     d label change test = mutation "metadata-contract" label "src/Kafka/Metadata.hs" change test
+families "metadata-partitions" =
+  [ control "unchanged-control" integration "metadata-contract",
+    d "watermark-partition-error-ignored" (replace "case pmError partition of" "case Nothing of") "provided metadata preserves partition failures in convenience helpers",
+    d "provided-timestamp-partition-error-ignored" (replace "case listToMaybe (mapMaybe pmError (tmPartitions t)) of" "case Nothing of") "provided metadata preserves partition failures in convenience helpers",
+    d "queried-timestamp-partition-error-ignored" (replace "mapMaybe tmError (kmTopics meta') <> concatMap (mapMaybe pmError . tmPartitions) (kmTopics meta')" "mapMaybe tmError (kmTopics meta')") "native metadata partition failures survive convenience helpers",
+    d "group-entity-error-suppressed" (replace "giError = kafkaErrorToMaybe $ KafkaResponseError (err'RdKafkaGroupInfoT gi)" "giError = Nothing") "async group identity lifecycle and supported native states",
+    mutation "metadata-contract" "group-wait-error-replaced" "src/Kafka/Internal/RdKafka.chs" (section "rdKafkaListGroups ::" "-------------------------------------------------------------------------------------------------" (replace "e -> return $ Left e" "e -> return $ Left RdKafkaRespErrTransport")) "group query timeout preserves initial metadata wait failure"
+  ]
+  where
+    d label change test = mutation "metadata-contract" label "src/Kafka/Metadata.hs" change test
 families "metadata-utf8" =
   [ control "unchanged-control" integration "metadata-contract",
     mutation "metadata-contract" "group-query-ascii-encoded" "src/Kafka/Internal/RdKafka.chs" (replace "Just strGrp -> withCString strGrp listGroups" "Just strGrp -> withCAString strGrp listGroups") "async group identity lifecycle and supported native states",
@@ -269,7 +279,7 @@ families "config" =
     mutation "config-strings" "c-string-key-guard-removed" "src/Kafka/Internal/Setup.hs" (replace "Text.any (== '\\0') key" "False") "producer topic rejects NUL key",
     mutation "config-strings" "c-string-value-guard-removed" "src/Kafka/Internal/Setup.hs" (replace "Text.any (== '\\0') value" "False") "producer global rejects NUL value"
   ]
-families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata, metadata-utf8, data or config")
+families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata, metadata-utf8, metadata-partitions, data or config")
 
 replace :: String -> String -> String -> String
 replace old new source = case [i | (i, rest) <- zip [0 ..] (tails source), old `isPrefixOf` rest] of

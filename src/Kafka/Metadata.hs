@@ -161,9 +161,11 @@ watermarkOffsets k timeout t = do
 watermarkOffsets' :: (MonadIO m, HasKafka k) => k -> Timeout -> TopicMetadata -> m [Either KafkaError WatermarkOffsets]
 watermarkOffsets' k timeout tm = case tmError tm of
   Just failure -> pure [Left failure]
-  Nothing ->
-    let pids = pmPartitionId <$> tmPartitions tm
-     in liftIO $ traverse (partitionWatermarkOffsets k timeout (tmTopicName tm)) pids
+  Nothing -> liftIO $ traverse query (tmPartitions tm)
+    where
+      query partition = case pmError partition of
+        Just failure -> pure (Left failure)
+        Nothing -> partitionWatermarkOffsets k timeout (tmTopicName tm) (pmPartitionId partition)
 
 -- | Query broker for low (oldest/beginning) and high (newest/end) offsets for a specific partition
 partitionWatermarkOffsets :: (MonadIO m, HasKafka k) => k -> Timeout -> TopicName -> PartitionId -> m (Either KafkaError WatermarkOffsets)
@@ -183,7 +185,7 @@ topicOffsetsForTime k timeout timestamp topic = do
   meta <- topicMetadata k timeout topic
   case meta of
     Left err -> return $ Left err
-    Right meta' -> case listToMaybe (mapMaybe tmError (kmTopics meta')) of
+    Right meta' -> case listToMaybe (mapMaybe tmError (kmTopics meta') <> concatMap (mapMaybe pmError . tmPartitions) (kmTopics meta')) of
       Just failure -> pure (Left failure)
       Nothing ->
         let tps = [(tmTopicName t, pmPartitionId p) | t <- kmTopics meta', p <- tmPartitions t]
@@ -197,9 +199,11 @@ topicOffsetsForTime k timeout timestamp topic = do
 offsetsForTime' :: (MonadIO m, HasKafka k) => k -> Timeout -> Millis -> TopicMetadata -> m (Either KafkaError [TopicPartition])
 offsetsForTime' k timeout timestamp t = case tmError t of
   Just failure -> pure (Left failure)
-  Nothing ->
-    let tps = [(tmTopicName t, pmPartitionId p) | p <- tmPartitions t]
-     in offsetsForTime k timeout timestamp tps
+  Nothing -> case listToMaybe (mapMaybe pmError (tmPartitions t)) of
+    Just failure -> pure (Left failure)
+    Nothing ->
+      let tps = [(tmTopicName t, pmPartitionId p) | p <- tmPartitions t]
+       in offsetsForTime k timeout timestamp tps
 
 -- | Look up the offsets for the given partitions by timestamp.
 --

@@ -1,0 +1,53 @@
+{
+  "status": "accepted independent metadata-partition checkpoint; EP-14 incomplete",
+  "fingerprint": "a8017f2849c2051e0f642ddfc1635f511c1a944e9f6169926fc4fae00a91ed42",
+  "workspace": "/tmp/rdkafka-hs-ep14-metadata-partitions",
+  "base_revision": "c857191",
+  "runs": {
+    "normal": {
+      "log": "/tmp/rdkafka-ep14-metadata-partitions-isolated-normal.log",
+      "sha256": "fd3eef20a0ee029f1a2dd1fddf08e49ffd00b6c8300d1eceae03461cf744d858",
+      "passed": 13
+    },
+    "instrumented-haskell": {
+      "log": "/tmp/rdkafka-ep14-metadata-partitions-isolated-hpc.log",
+      "sha256": "13bec8cfb0ed57bd4a51e59bcb8d73c78b6dc00f96e370c84de6dfbc817dd889",
+      "passed": 13
+    },
+    "instrumented-native": {
+      "log": "/tmp/rdkafka-ep14-metadata-partitions-asan.log",
+      "sha256": "75272e8b3fdbf092dd5b6126457bd9c55bc02f9dcdda54902b20d88d63ba8bb9",
+      "passed": 13
+    }
+  },
+  "mutations": "/tmp/rdkafka-hs-ep14-metadata-partitions/dist-mutations/20261024T192521Z-metadata-partitions-9975-0/results.json",
+  "compiled_mutations_caught": 5,
+  "controls": 1,
+  "baseline": {
+    "log": "/tmp/rdkafka-ep14-metadata-partitions-baseline.log",
+    "failed": 2,
+    "total": 13,
+    "scope": "Inherited metadata convenience implementation with new provided/native partition-error cases; the unrelated sync callback buffer experiment was present. Accepted isolated runs exclude that experiment."
+  },
+  "scope": [
+    "Per-partition watermark failures preserve healthy partition results",
+    "Timestamp convenience helpers preserve supplied and queried partition errors",
+    "Native group-level entity errors retain their GroupInfo field",
+    "Unavailable group queries preserve the initial metadata-wait TimedOut error"
+  ],
+  "native_library": "mori://confluentinc/librdkafka",
+  "native_version": "2.15.0",
+  "native_diagnostic_control": "docs/testing/callback-native-diagnostics.json",
+  "leak_instrumentation": false,
+  "required_checks": {
+    "log": "/tmp/rdkafka-ep14-metadata-partitions-check.log",
+    "sha256": "e74c81c03c759f6b8ea75ec23b7d88480f056c6299b03de2eb4432c2dc7cb934"
+  },
+  "discarded_runs": [
+    {
+      "log": "/tmp/rdkafka-ep14-metadata-partitions-mutations-final.log",
+      "reason": "A duplicate was started after misreading a concurrent shell-hook Git config lock warning as failure. The original run remained active and passed; the duplicate was terminated and is excluded."
+    }
+  ],
+  "remaining": "Whole-candidate inventory refresh, complete manual sync callback polling, other consumer contracts, saved deprecated-seek failure, handwritten misses and EP-15 environments remain open."
+}

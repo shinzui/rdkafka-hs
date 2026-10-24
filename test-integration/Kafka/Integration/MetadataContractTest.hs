@@ -53,6 +53,31 @@ tests env =
             created <- metadataStat 0
             destroyed <- metadataStat 1
             (created, destroyed) @?= (3, 3),
+      testCase "provided metadata preserves partition failures in convenience helpers" $
+        withTopic env "metadata-provided-errors" 2 $ \topic producer -> do
+          produceTo producer topic 0 "zero"
+          produceTo producer topic 1 "one"
+          actual <- topicMetadata producer (Timeout 5000) topic >>= either throwIO pure
+          case kmTopics actual of
+            [metadata] -> do
+              let failed = metadata {tmPartitions = [partition {pmError = if pmPartitionId partition == PartitionId 0 then Just partitionFailure else Nothing} | partition <- tmPartitions metadata]}
+              watermarkOffsets' producer (Timeout 5000) failed >>= (@?= [Left partitionFailure, Right (WatermarkOffsets topic (PartitionId 1) (Offset 0) (Offset 1))])
+              offsetsForTime' producer (Timeout 5000) (Millis 0) failed >>= (@?= Left partitionFailure)
+            other -> assertFailure (show other),
+      testCase "native metadata partition failures survive convenience helpers" $
+        withTopic env "metadata-native-errors" 2 $ \topic producer -> do
+          produceTo producer topic 0 "zero"
+          produceTo producer topic 1 "one"
+          withMetadataFault 3 $ do
+            metadata <- topicMetadata producer (Timeout 5000) topic >>= either throwIO pure
+            map (map pmError . tmPartitions) (kmTopics metadata) @?= [[Just partitionFailure, Nothing]]
+            watermarkOffsets producer (Timeout 5000) topic >>= (@?= [Left partitionFailure, Right (WatermarkOffsets topic (PartitionId 1) (Offset 0) (Offset 1))])
+            topicOffsetsForTime producer (Timeout 5000) (Millis 0) topic >>= (@?= Left partitionFailure)
+            mapM metadataStat [0, 1] >>= (@?= [3, 3]),
+      testCase "group query timeout preserves initial metadata wait failure" $
+        bracket (P.newProducer (P.brokersList ["127.0.0.1:1"] <> P.suppressDisconnectLogs) >>= either throwIO pure) releaseProducer $ \producer -> do
+          allConsumerGroupsInfo producer (Timeout 200) >>= (@?= Left (KafkaResponseError RdKafkaRespErrTimedOut))
+          consumerGroupInfo producer (Timeout 200) (makeGroupId env "unreachable-group") >>= (@?= Left (KafkaResponseError RdKafkaRespErrTimedOut)),
       testCase "missing topic errors survive convenience helpers" $
         withClient env "missing-topic" $ \consumer -> do
           let absent = TopicName (prefixedName env "metadata-absent")
@@ -131,6 +156,10 @@ tests env =
                    result <- consumerGroupInfo producer (Timeout 5000) group
                    result @?= Left (KafkaError "Unsupported Kafka consumer group state: FutureState")
                    mapM metadataStat [2, 3] >>= (@?= [1, 1])
+                 withMetadataFault 18 $ do
+                   described <- consumerGroupInfo producer (Timeout 5000) group >>= either throwIO pure
+                   map giError described @?= [Just (KafkaResponseError RdKafkaRespErrGroupAuthorizationFailed)]
+                   mapM metadataStat [2, 3] >>= (@?= [1, 1])
                  withMetadataFault 17 $ do
                    described <- consumerGroupInfo producer (Timeout 5000) group >>= either throwIO pure
                    map giMembers described @?= [[GroupMemberInfo (GroupMemberId "member-field-λ-配置") (ClientId "client-field-λ-配置") "host-field-λ-配置" (BS.pack [0, 1, 0, 255]) (BS.pack [255, 0, 2, 0, 3])]]
@@ -140,6 +169,9 @@ tests env =
                consumerGroupInfo producer (Timeout 5000) (makeGroupId env (Text.pack ("metadata-nonexistent-" <> label))) >>= (@?= Right [])
          | (label, mode) <- [("async", CallbackPollModeAsync), ("sync", CallbackPollModeSync)]
          ]
+
+partitionFailure :: KafkaError
+partitionFailure = KafkaResponseError RdKafkaRespErrTopicAuthorizationFailed
 
 unknownTopic :: KafkaError
 unknownTopic = KafkaResponseError RdKafkaRespErrUnknownTopicOrPart

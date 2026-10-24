@@ -1,6 +1,7 @@
 # Bundle Update Log
 
 ## 2026-10-24
+* **updated**: Preserve supplied and decoded partition errors in metadata helpers and distinguish native group query deadlines.
 * **updated**: Preserve Unicode group query and metadata field identities with matching native text marshalling.
 * **created**: Reject embedded NUL at shared configuration setters while preserving native empty-value semantics.
 * **created**: Scope native metadata results and preserve topic partition and group decoding errors

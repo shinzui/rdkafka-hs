@@ -141,6 +141,8 @@ EP-14 M1 is Complete: 65 unit and four focused native cases pass normally and in
 
 ## Surprises & Discoveries
 
+EP-14 metadata helpers now preserve provided/native partition errors. Thirteen isolated normal/Haskell/native-instrumented checks, five compiled mutations and required package checks pass; [partition evidence](../testing/metadata-partition-evidence.json) records the scope. Separately, sync callback-event polling demonstrably discards an application record. The user chose to preserve that API; its uncommitted buffer prototype still needs seek, assignment and pause interaction coverage. EP-14 remains In Progress.
+
 EP-14 Unicode metadata fixtures reproduce both a query encoder mismatch and changed decoded identities. Matching native text marshalling passes all ten focused normal/native-instrumented cases and catches three compiled mutations. [Unicode metadata evidence](../testing/metadata-unicode-evidence.json) records both failing baselines. The full mapped candidate passes 78 unit and 533 integration cases, plus four nonthreaded runtime checks and 22 tooling controls. The inventory has 125 tested and 56 open rows. Remaining metadata and consumer contracts stay open; EP-14 is In Progress and EP-15 is Not Started.
 
 EP-14 configuration setters now reject embedded NUL instead of applying prefixes. Fifteen focused normal/Haskell/native-instrumented checks and two compiled mutations pass their acceptance; the twelve malformed baseline cases all reproduced acceptance. See [configuration evidence](../testing/config-string-evidence.json). [ADR-24](../adr/configuration-strings-reject-embedded-nul.md) preserves ordinary native validation and empty-value defaults. EP-14 remains In Progress.

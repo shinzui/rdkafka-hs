@@ -44,7 +44,12 @@ rd_kafka_resp_err_t rd_kafka_metadata(rd_kafka_t *rk, int all_topics, rd_kafka_t
   rd_kafka_resp_err_t error = real(rk, all_topics, only_topic, result, timeout_ms);
   pthread_mutex_lock(&lock);
   if (enabled && error == RD_KAFKA_RESP_ERR_NO_ERROR) {
-    metadata = *result; stats[0]++; boundary(1);
+    metadata = *result; stats[0]++;
+    if (mode == 3) {
+      if (metadata->topic_cnt != 1 || metadata->topics[0].partition_cnt != 2) abort();
+      metadata->topics[0].partitions[0].err = RD_KAFKA_RESP_ERR_TOPIC_AUTHORIZATION_FAILED;
+    }
+    boundary(1);
   }
   pthread_mutex_unlock(&lock); return error;
 }
@@ -65,6 +70,10 @@ rd_kafka_resp_err_t rd_kafka_list_groups(rd_kafka_t *rk, const char *group,
       if (groups->group_cnt != 1) abort();
       struct rd_kafka_group_info *info = &groups->groups[0];
       free(info->state); info->state = strdup(states[mode - 10]);
+    }
+    if (mode == 18) {
+      if (groups->group_cnt != 1) abort();
+      groups->groups[0].err = RD_KAFKA_RESP_ERR_GROUP_AUTHORIZATION_FAILED;
     }
     if (mode == 17) {
       if (groups->group_cnt != 1 || groups->groups[0].member_cnt != 1) abort();
