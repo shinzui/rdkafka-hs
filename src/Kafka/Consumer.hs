@@ -108,7 +108,7 @@ import Data.Text (Text)
 import Data.Text qualified as Text
 import Foreign hiding (void)
 import Kafka.Consumer.Callbacks (forwardPartitionsToMessageQueue)
-import Kafka.Consumer.Convert (fromMessagePtr, fromMessagePtrAttributed, fromNativeTopicPartitionList'', nativeTopicPartitionErrors, offsetCommitToBool, offsetToInt64, toMap, toNativeTopicPartitionList, toNativeTopicPartitionList', topicPartitionFromMessageForCommit)
+import Kafka.Consumer.Convert (copyMessagePtr, fromMessagePtr, fromMessagePtrAttributed, fromNativeTopicPartitionList'', nativeTopicPartitionErrors, offsetCommitToBool, offsetToInt64, toMap, toNativeTopicPartitionList, toNativeTopicPartitionList', topicPartitionFromMessageForCommit, withPolledMessage)
 import Kafka.Consumer.Types (KafkaConsumer (..))
 import Kafka.Internal.RdKafka (RdKafkaQueueTPtr, RdKafkaRespErrT (..), RdKafkaTopicPartitionListTPtr, RdKafkaTypeT (..), newRdKafkaT, newRdKafkaTopicPartitionListT, newRdKafkaTopicT, rdKafkaAssign, rdKafkaAssignment, rdKafkaAssignmentLost, rdKafkaCommit, rdKafkaCommitted, rdKafkaConfSetDefaultTopicConf, rdKafkaConsumeBatchQueue, rdKafkaConsumeQueue, rdKafkaConsumerClose, rdKafkaConsumerClosed, rdKafkaConsumerPoll, rdKafkaErrorCode, rdKafkaErrorDestroy, rdKafkaFatalError, rdKafkaMessageDestroy, rdKafkaOffsetsStore, rdKafkaPausePartitions, rdKafkaPollSetConsumer, rdKafkaPosition, rdKafkaQueueDestroy, rdKafkaQueueGetConsumer, rdKafkaQueueIoEventEnable, rdKafkaQueueNew, rdKafkaResumePartitions, rdKafkaSeek, rdKafkaSeekPartitions, rdKafkaSetLogLevel, rdKafkaSubscribe, rdKafkaSubscription, rdKafkaTopicConfDup, rdKafkaTopicPartitionListAdd)
 import Kafka.Internal.Setup (Callback (..), CallbackPollStatus (..), ClientLifecycle (..), Kafka (..), KafkaConf (..), KafkaProps (..), TopicConf (..), TopicProps (..), getKafkaConf, getRdKafka, getRdMsgQueue, kafkaConf, topicConf)
@@ -241,8 +241,8 @@ pollMessage c@(KafkaConsumer _ (KafkaConf _ qr _ _ _)) (Timeout ms) =
       Nothing -> do
         mbq <- readIORef qr
         case mbq of
-          Nothing -> rdKafkaConsumerPoll (getRdKafka c) ms >>= fromMessagePtr
-          Just q -> rdKafkaConsumeQueue q ms >>= fromMessagePtr
+          Nothing -> fromMessagePtr (rdKafkaConsumerPoll (getRdKafka c) ms)
+          Just q -> fromMessagePtr (rdKafkaConsumeQueue q ms)
 
 -- | Like 'pollMessage', but an error comes with the topic, partition and offset
 -- librdkafka attached to the errored message, so an application can tell, for
@@ -264,20 +264,22 @@ pollMessageAttributed c@(KafkaConsumer _ (KafkaConf _ qr _ _ _)) (Timeout ms) =
       Nothing -> do
         mbq <- readIORef qr
         case mbq of
-          Nothing -> rdKafkaConsumerPoll (getRdKafka c) ms >>= fromMessagePtrAttributed
-          Just q -> rdKafkaConsumeQueue q ms >>= fromMessagePtrAttributed
+          Nothing -> fromMessagePtrAttributed (rdKafkaConsumerPoll (getRdKafka c) ms)
+          Just q -> fromMessagePtrAttributed (rdKafkaConsumeQueue q ms)
 
 -- | Polls up to 'BatchSize' messages.
--- Unlike 'pollMessage' this function does not return usual "timeout" errors.
--- An empty batch is returned when there are no messages available.
+-- A normal timeout returns an empty batch; native acquisition failures and
+-- per-record decoding failures remain errors. Zero size
+-- returns an empty batch; negative or unrepresentable sizes return a bad
+-- specification. Native acquisition and message decoding errors remain errors.
 --
 -- This API is not available when 'CallbackPollMode' is set to 'CallbackPollModeSync'.
 --
 -- As with 'pollMessage', if a fatal error has been raised on this client this
 -- returns a single-element batch
 -- @['Left' ('KafkaResponseError' 'RdKafkaRespErrFatal')]@ immediately and keeps
--- doing so on every subsequent call. Note that this is the one error this
--- function does return: an ordinary empty batch still means "no messages
+-- doing so on every subsequent call. This fatal path is distinct from an
+-- ordinary empty batch, which means "no messages
 -- available", but a fatal error means the consumer is permanently dead.
 pollMessageBatch ::
   (MonadIO m) =>
@@ -290,11 +292,22 @@ pollMessageBatch c@(KafkaConsumer _ (KafkaConf _ qr _ _ _)) (Timeout ms) (BatchS
     pollFatalError c >>= \case
       Just err -> pure [Left err]
       Nothing -> do
-        pollConsumerEvents c Nothing
         mbq <- readIORef qr
         case mbq of
           Nothing -> return [Left $ KafkaBadSpecification "Calling pollMessageBatch while CallbackPollMode is set to CallbackPollModeSync."]
-          Just q -> whileNoCallbackRunning c $ rdKafkaConsumeBatchQueue q ms b >>= traverse fromMessagePtr
+          Just q
+            | b < 0 || b > maxBound `div` sizeOf (nullPtr :: Ptr ()) ->
+                pure [Left (KafkaBadSpecification "Batch size must be nonnegative and fit a native pointer array.")]
+            | b == 0 -> pure []
+            | otherwise -> do
+                pollConsumerEvents c Nothing
+                whileNoCallbackRunning c $
+                  bracket (rdKafkaConsumeBatchQueue q ms b) releaseBatch $ \case
+                    Left code -> pure [Left (KafkaResponseError code)]
+                    Right messages -> traverse copyMessagePtr messages
+  where
+    releaseBatch (Left _) = pure ()
+    releaseBatch (Right messages) = mapM_ (\message -> withForeignPtr message rdKafkaMessageDestroy) messages
 
 -- | Whether the current assignment was lost involuntarily
 -- (@rd_kafka_assignment_lost@): the consumer was evicted from the group, for
@@ -796,11 +809,9 @@ withCallbackPollEnabled k f = do
 -- seen the message, and non-fatal consumer errors were never visible from here
 -- to begin with (librdkafka does not route them to @error_cb@).
 pollConsumerEvents' :: KafkaConsumer -> Maybe Timeout -> IO ()
-pollConsumerEvents' k timeout = do
+pollConsumerEvents' k timeout = withForeignPtr (getRdKafka k) $ \_ -> do
   let (Timeout tm) = fromMaybe (Timeout 0) timeout
-  msgPtr <- rdKafkaConsumerPoll (getRdKafka k) tm
-  withForeignPtr msgPtr $ \realPtr ->
-    unless (realPtr == nullPtr) (rdKafkaMessageDestroy realPtr)
+  withPolledMessage (rdKafkaConsumerPoll (getRdKafka k) tm) (const (pure ()))
 
 -- | The in-band error a poll must report because a fatal error has been raised
 -- on this client, or 'Nothing' when the client is healthy.

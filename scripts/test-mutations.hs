@@ -187,7 +187,22 @@ families "public" =
   ]
   where
     p label path change test = (mutation "Public properties" label path change test) {suite = unit, replay = True}
-families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction or public")
+families "messages" =
+  [ control "unchanged-control" integration "public-contract/&&/messages",
+    m "batch-release-removed" consumer (replace "releaseBatch (Right messages) = mapM_ (\\message -> withForeignPtr message rdKafkaMessageDestroy) messages" "releaseBatch (Right _) = pure ()") "batch decoder exception releases unprocessed messages",
+    m
+      "single-acquisition-unmasked"
+      consumerConversion
+      ( replace "withPolledMessage acquire = bracket acquire releaseMessage" "withPolledMessage acquire action = do\n  pointer <- acquire\n  action pointer `finally` releaseMessage pointer"
+          . replace "import Control.Exception (bracket)" "import Control.Exception (bracket, finally)"
+      )
+      "async single cancellation at native return releases its native message",
+    m "header-error-suppressed" consumerConversion (replace "readHeaders rptr >>= \\case" "(either (const (Right mempty)) Right <$> readHeaders rptr) >>= \\case") "batch native header errors remain errors while later records are released",
+    m "native-batch-failure-suppressed" consumer (replace "Left code -> pure [Left (KafkaResponseError code)]" "Left _ -> pure []") "signed native batch failure preserves its error and queued data"
+  ]
+  where
+    m = mutation "public-contract"
+families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public or messages")
 
 replace :: String -> String -> String -> String
 replace old new source = case [i | (i, rest) <- zip [0 ..] (tails source), old `isPrefixOf` rest] of

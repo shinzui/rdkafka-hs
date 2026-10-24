@@ -1,0 +1,54 @@
+{
+  "status": "accepted M2 message-ownership checkpoint; EP-14 incomplete",
+  "fingerprint": "098b3d4bfa91b77f9d9e43b50688a4bd682cb11dea3688f18572b2bb2c405bf2",
+  "runs": {
+    "normal": {
+      "log": "/tmp/rdkafka-ep14-message-final-normal.log",
+      "sha256": "8a9af745f3449e61678f7ab5fab9c546a0da0fa6dbef9310c4dfd2cd87c5dcd0",
+      "passed": 24,
+      "seconds": 16.53
+    },
+    "instrumented-haskell": {
+      "log": "/tmp/rdkafka-ep14-message-final-hpc.log",
+      "sha256": "811a826acba3d1dce7d9be9eb51400a034da991fdfa80325b64d523da8f5fbc5",
+      "passed": 24,
+      "seconds": 16.52
+    },
+    "instrumented-native": {
+      "log": "/tmp/rdkafka-ep14-message-asan.log",
+      "sha256": "314a839c5d9702f5895f7170e7b28f331a4d528f010a14e4f668c770bdade582",
+      "passed": 24,
+      "seconds": 16.4
+    }
+  },
+  "mutations": "dist-mutations/20261024T153417Z-messages-73150-0/results.json",
+  "compiled_mutations_caught": 4,
+  "controls": 1,
+  "baseline": {
+    "revision": "8334ad0",
+    "log": "/tmp/rdkafka-ep14-message-baseline-headers.log",
+    "failed": 10,
+    "total": 14,
+    "retained_native_messages": {
+      "batch_decoder_exception": 1,
+      "batch_native_return_cancellation": 3,
+      "batch_middle_cancellation": 1,
+      "async_single_native_return_cancellation": 1,
+      "sync_single_native_return_cancellation": 1
+    },
+    "other_failures": "Five native header error cases returned records with empty headers instead of the native error.",
+    "invalid_initial_fixture_log": "/tmp/rdkafka-ep14-message-baseline.log",
+    "fixture_note": "Initial human-readable labels contained spaces invalid in topic names. Corrected run-owned labels before accepting the baseline."
+  },
+  "native_counter_control": "The final message is deliberately retained: three acquired, two actually destroyed before fixture cleanup; duplicate destruction is counted separately and rejected.",
+  "native_library": "mori://confluentinc/librdkafka",
+  "native_version": "2.15.0",
+  "diagnostic_environment": {
+    "DYLD_LIBRARY_PATH": "/tmp/rdkafka-hs-ep11-asan-install/lib",
+    "DYLD_INSERT_LIBRARIES": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/21/lib/darwin/libclang_rt.asan_osx_dynamic.dylib",
+    "ASAN_OPTIONS": "detect_leaks=0:abort_on_error=1:symbolize=1"
+  },
+  "native_diagnostic_control": "docs/testing/callback-native-diagnostics.json",
+  "required_checks": "/tmp/rdkafka-ep14-message-check.log",
+  "remaining": "Other public APIs, cooperative rebalance errors, saved deprecated-seek failure, final full-candidate coverage/inventory and EP-15 environments remain open."
+}

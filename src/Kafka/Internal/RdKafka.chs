@@ -646,13 +646,18 @@ rdKafkaQueueGetPartition k t p = mask_ $ do
 
 {#fun rd_kafka_consume_batch_queue as rdKafkaConsumeBatchQueue'
   {`RdKafkaQueueTPtr', `Int', castPtr `Ptr (Ptr RdKafkaMessageT)', cIntConv `CSize'}
-  -> `CSize' cIntConv #}
+  -> `Int' cIntConv #}
 
-rdKafkaConsumeBatchQueue :: RdKafkaQueueTPtr -> Int -> Int -> IO [RdKafkaMessageTPtr]
+-- The caller masks acquisition and releases every returned member as one
+-- scope. These ForeignPtrs deliberately have no individual finalizers.
+rdKafkaConsumeBatchQueue :: RdKafkaQueueTPtr -> Int -> Int -> IO (Either RdKafkaRespErrT [RdKafkaMessageTPtr])
 rdKafkaConsumeBatchQueue qptr timeout batchSize = do
   allocaArray batchSize $ \pArr -> do
     rSize <- rdKafkaConsumeBatchQueue' qptr timeout pArr (fromIntegral batchSize)
-    peekArray (fromIntegral rSize) pArr >>= traverse newForeignPtr_
+    if rSize < 0 then do
+      (Errno errorNumber) <- getErrno
+      pure (Left (rdKafkaErrno2err (fromIntegral errorNumber)))
+    else Right <$> (peekArray rSize pArr >>= traverse newForeignPtr_)
 
 -------------------------------------------------------------------------------------------------
 ---- High-level KafkaConsumer

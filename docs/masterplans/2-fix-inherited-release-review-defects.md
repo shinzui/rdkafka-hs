@@ -141,6 +141,8 @@ EP-14 M1 is Complete: 65 unit and four focused native cases pass normally and in
 
 ## Surprises & Discoveries
 
+EP-14's message audit also reproduced cancellation leaks between single-message native return and conversion, plus silently discarded native header errors. The batch and single scopes now mask acquisition and release all owned messages, including callback-event polling. Twenty-four focused cases pass normally, with Haskell instrumentation and instrumented native code; four compiled mutations fail their intended tests. [Message evidence](../testing/message-ownership-evidence.json) records the 10/14 failing baseline and accepted scope. EP-14 M2/M3 and the remaining known defects are still open.
+
 EP-11's teardown audit identified a possible unowned remainder when batch message conversion is interrupted. EP-14 owns reproduction and full-batch cleanup under its existing polling/batch contract; its plan records the concrete source path. This remains an open obligation, independent of callback registration release.
 
 

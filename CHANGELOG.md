@@ -9,6 +9,13 @@ this project adheres to the [Haskell Package Versioning Policy](https://pvp.hask
 
 ### Fixed
 
+- Polling now scopes native message acquisition and destruction together.
+  Cancellation and conversion failures release every batch member, including
+  unprocessed messages. Callback-event polling also closes the acquisition gap.
+- Native header-read failures are surfaced as errors, with origin information
+  for attributed polling, instead of silently replacing headers with an empty
+  list. Batch size and signed native acquisition errors are checked safely.
+
 - Later subscription property values now override earlier values, matching
   consumer and producer property composition. Topic names still accumulate
   by set union.

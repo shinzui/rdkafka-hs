@@ -14,15 +14,16 @@ module Kafka.Consumer.Convert
     toMap,
     fromMessagePtr,
     fromMessagePtrAttributed,
+    copyMessagePtr,
+    withPolledMessage,
     offsetCommitToBool,
   )
 where
 
-import Control.Exception (finally)
-import Control.Monad ((>=>))
+import Control.Exception (bracket)
+import Control.Monad (when, (>=>))
 import Data.Bifunctor (first)
 import Data.ByteString qualified as BS
-import Data.Either (fromRight)
 import Data.Int (Int64)
 import Data.Map.Strict (Map, fromListWith)
 import Data.Set qualified as S
@@ -171,28 +172,37 @@ topicPartitionFromMessageForCommit m =
 toMap :: (Ord k) => [(k, v)] -> Map k [v]
 toMap kvs = fromListWith (++) [(k, [v]) | (k, v) <- kvs]
 
-fromMessagePtr :: RdKafkaMessageTPtr -> IO (Either KafkaError (ConsumerRecord (Maybe BS.ByteString) (Maybe BS.ByteString)))
-fromMessagePtr ptr = first cmeError <$> fromMessagePtrAttributed ptr
+-- | Acquire and copy one message within the same ownership scope. Masking
+-- acquisition closes the window between native return and installing cleanup.
+fromMessagePtr :: IO RdKafkaMessageTPtr -> IO (Either KafkaError (ConsumerRecord (Maybe BS.ByteString) (Maybe BS.ByteString)))
+fromMessagePtr acquire = first cmeError <$> fromMessagePtrAttributed acquire
 
--- | Convert a polled message and destroy it, exactly once even if conversion
--- throws. A null pointer (a poll timeout) yields the errno-derived error with
--- no origin; an errored message keeps the topic, partition and offset
--- librdkafka set on it.
-fromMessagePtrAttributed :: RdKafkaMessageTPtr -> IO (Either ConsumerMessageError (ConsumerRecord (Maybe BS.ByteString) (Maybe BS.ByteString)))
-fromMessagePtrAttributed ptr =
+fromMessagePtrAttributed :: IO RdKafkaMessageTPtr -> IO (Either ConsumerMessageError (ConsumerRecord (Maybe BS.ByteString) (Maybe BS.ByteString)))
+fromMessagePtrAttributed acquire = withPolledMessage acquire copyMessagePtrAttributed
+
+withPolledMessage :: IO RdKafkaMessageTPtr -> (RdKafkaMessageTPtr -> IO a) -> IO a
+withPolledMessage acquire = bracket acquire releaseMessage
+  where
+    releaseMessage pointer = withForeignPtr pointer $ \raw ->
+      when (raw /= nullPtr) (rdKafkaMessageDestroy raw)
+
+-- | Copy a borrowed batch member. The caller owns and releases the complete
+-- batch, including members not reached if a conversion is interrupted.
+copyMessagePtr :: RdKafkaMessageTPtr -> IO (Either KafkaError (ConsumerRecord (Maybe BS.ByteString) (Maybe BS.ByteString)))
+copyMessagePtr pointer = first cmeError <$> copyMessagePtrAttributed pointer
+
+copyMessagePtrAttributed :: RdKafkaMessageTPtr -> IO (Either ConsumerMessageError (ConsumerRecord (Maybe BS.ByteString) (Maybe BS.ByteString)))
+copyMessagePtrAttributed ptr =
   withForeignPtr ptr $ \realPtr ->
     if realPtr == nullPtr
       then (\err -> Left (ConsumerMessageError err Nothing Nothing Nothing)) . kafkaRespErr <$> getErrno
-      else
-        ( do
-            s <- peek realPtr
-            if err'RdKafkaMessageT s /= RdKafkaRespErrNoError
-              then Left <$> attributed s
-              else Right <$> mkRecord s realPtr
-        )
-          `finally` rdKafkaMessageDestroy realPtr
+      else do
+        message <- peek realPtr
+        if err'RdKafkaMessageT message /= RdKafkaRespErrNoError
+          then Left <$> attributed (err'RdKafkaMessageT message) message
+          else mkRecord message realPtr
   where
-    attributed msg = do
+    attributed code msg = do
       topic <-
         if topic'RdKafkaMessageT msg == nullPtr
           then pure Nothing
@@ -201,7 +211,7 @@ fromMessagePtrAttributed ptr =
           offset = offset'RdKafkaMessageT msg
       pure
         ConsumerMessageError
-          { cmeError = KafkaResponseError (err'RdKafkaMessageT msg),
+          { cmeError = KafkaResponseError code,
             cmeTopic = topic,
             cmePartition = if partition >= 0 then Just (PartitionId partition) else Nothing,
             cmeOffset = if offset >= 0 then Just (Offset offset) else Nothing
@@ -211,17 +221,20 @@ fromMessagePtrAttributed ptr =
       key <- readKey msg
       payload <- readPayload msg
       timestamp <- readTimestamp ptr
-      headers <- fromRight mempty <$> readHeaders rptr
-      return
-        ConsumerRecord
-          { crTopic = TopicName topic,
-            crPartition = PartitionId $ partition'RdKafkaMessageT msg,
-            crOffset = Offset $ offset'RdKafkaMessageT msg,
-            crTimestamp = timestamp,
-            crHeaders = headers,
-            crKey = key,
-            crValue = payload
-          }
+      readHeaders rptr >>= \case
+        Left code -> Left <$> attributed code msg
+        Right headers ->
+          pure $
+            Right
+              ConsumerRecord
+                { crTopic = TopicName topic,
+                  crPartition = PartitionId $ partition'RdKafkaMessageT msg,
+                  crOffset = Offset $ offset'RdKafkaMessageT msg,
+                  crTimestamp = timestamp,
+                  crHeaders = headers,
+                  crKey = key,
+                  crValue = payload
+                }
 
 offsetCommitToBool :: OffsetCommit -> Bool
 offsetCommitToBool OffsetCommit = False

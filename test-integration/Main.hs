@@ -16,6 +16,7 @@ import Kafka.Integration.ObserverTest qualified as ObserverTest
 import Kafka.Integration.PerMessageCommitTest qualified as PerMessageCommitTest
 import Kafka.Integration.ProducerPropertyTest qualified as ProducerPropertyTest
 import Kafka.Integration.ProducerRegressionTest qualified as ProducerRegressionTest
+import Kafka.Integration.PublicConsumerContractTest qualified as PublicConsumerContractTest
 import Kafka.Integration.QueueEventTest qualified as QueueEventTest
 import Kafka.Integration.ReadCommittedTest qualified as ReadCommittedTest
 import Kafka.Integration.SeekPartitionsTest qualified as SeekPartitionsTest
@@ -56,6 +57,7 @@ integrationMain = do
         ProducerRegressionTest.tests env,
         ProducerPropertyTest.tests,
         ConsumerPropertyTest.tests env,
+        PublicConsumerContractTest.tests env,
         SeekPartitionsTest.tests env,
         -- The groups share the run's topic and consumer group, so later groups
         -- depend on the records and offsets earlier ones leave behind.

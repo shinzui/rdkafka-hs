@@ -1,6 +1,7 @@
 # Bundle Update Log
 
 ## 2026-10-24
+* **created**: Scope every polled native message and surface header decoding failures.
 * **created**: Apply user-selected last-value-wins subscription property composition.
 * **created**: Scope transaction error decoding and temporary offset metadata ownership.
 * **updated**: Accept callback ownership evidence with semantic mutations and native diagnostic controls.

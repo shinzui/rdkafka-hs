@@ -142,6 +142,7 @@ test-suite rdkafka-hs-integration
   c-sources:
     test-integration/cbits/admin_ownership.c
     test-integration/cbits/callback_lifetime.c
+    test-integration/cbits/message_ownership.c
     test-integration/cbits/producer_ownership.c
     test-integration/cbits/seek_faults.c
     test-integration/cbits/transaction_ownership.c
@@ -192,6 +193,7 @@ test-suite rdkafka-hs-integration
     Kafka.Integration.PerMessageCommitTest
     Kafka.Integration.ProducerPropertyTest
     Kafka.Integration.ProducerRegressionTest
+    Kafka.Integration.PublicConsumerContractTest
     Kafka.Integration.QueueEventTest
     Kafka.Integration.ReadCommittedTest
     Kafka.Integration.SeekPartitionsTest
@@ -199,6 +201,7 @@ test-suite rdkafka-hs-integration
     Kafka.Integration.TopicConfigurationTest
     Kafka.Integration.TopicTest
     Kafka.Integration.TransactionErrorTest
+    Kafka.MessageTestSupport
     Kafka.ProducerTestSupport
     Kafka.PropertySupport
     Kafka.SeekTestSupport
