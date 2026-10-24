@@ -1,21 +1,26 @@
-module Kafka.Integration.CallbackLifetimeTest (tests, runInvalidAccessControl) where
+module Kafka.Integration.CallbackLifetimeTest (tests, runInvalidAccessControl, runThrowingProbe) where
 
-import Control.Concurrent (ThreadId, forkFinally, forkIOWithUnmask, killThread, threadDelay)
+import Control.Concurrent (ThreadId, forkFinally, forkIOWithUnmask, killThread, myThreadId, threadDelay)
 import Control.Concurrent.MVar (MVar, newEmptyMVar, putMVar, readMVar, tryPutMVar, tryReadMVar)
-import Control.Exception (AsyncException (ThreadKilled), SomeException, finally, fromException, throwIO, try)
+import Control.Exception (AsyncException (ThreadKilled), SomeException, bracket, finally, fromException, throwIO, try)
 import Control.Monad (void)
 import Data.IORef (IORef, atomicModifyIORef', mkWeakIORef, modifyIORef', newIORef, readIORef, writeIORef)
+import Data.List (isInfixOf)
 import Data.Map.Strict qualified as M
 import Data.Text qualified as Text
-import GHC.Conc (BlockReason (BlockedOnException, BlockedOnMVar), ThreadStatus (ThreadBlocked), threadStatus)
+import GHC.Conc (BlockReason (BlockedOnException, BlockedOnMVar), ThreadStatus (ThreadBlocked), getUncaughtExceptionHandler, setUncaughtExceptionHandler, threadStatus)
 import Kafka.CallbackLifetimeSupport
 import Kafka.CallbackTestSupport (assertRetained, awaitCollected)
 import Kafka.Consumer qualified as C
 import Kafka.Producer qualified as P
 import Kafka.TestEnv
-import System.Exit (die)
+import System.Directory (createDirectoryIfMissing)
+import System.Environment (getEnvironment, getExecutablePath, lookupEnv)
+import System.Exit (ExitCode (ExitSuccess), die)
 import System.IO (hFlush, stdout)
 import System.Mem.Weak (Weak)
+import System.Process (CreateProcess (env), proc, readCreateProcessWithExitCode)
+import System.Random (randomIO)
 import System.Timeout (timeout)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (assertBool, assertFailure, testCase, (@?=))
@@ -24,20 +29,24 @@ tests :: TestEnv -> TestTree
 tests env =
   testGroup
     "callback-lifetime"
-    ( [ testCase (label <> " error callback releases after destroy with retained wrapper") $ do
-          (consumer, capture) <- consumerProbe env mode label
-          awaitCollected capture
-          -- Keep the destroyed wrapper live through the collection assertion.
-          C.closeConsumer consumer >>= (@?= Nothing)
-      | (label, mode) <- [("async", C.CallbackPollModeAsync), ("sync", C.CallbackPollModeSync)]
+    ( [ testCase (label <> " throwing " <> kind <> " callback preserves native lifecycle") (throwingChild kind label)
+      | label <- ["async", "sync"],
+        kind <- ["error", "log", "stats", "rebalance", "commit"]
       ]
+        <> [ testCase (label <> " error callback releases after destroy with retained wrapper") $ do
+               (consumer, capture) <- consumerProbe env mode label (pure ())
+               awaitCollected capture
+               -- Keep the destroyed wrapper live through the collection assertion.
+               C.closeConsumer consumer >>= (@?= Nothing)
+           | (label, mode) <- [("async", C.CallbackPollModeAsync), ("sync", C.CallbackPollModeSync)]
+           ]
         <> [ testCase "producer delivery callback releases after native finalization" $
                withTopic env "callback-owner-producer" 1 $ \topic _ ->
                  producerProbe env topic >>= awaitCollected,
              testCase "noncaptured control is collectible" $ control >>= awaitCollected
            ]
         <> [ testCase (label <> " " <> kind <> " callback is live then releases") $ do
-               (consumer, weak) <- consumerKindProbe env mode label kind
+               (consumer, weak) <- consumerKindProbe env mode label kind (pure ())
                awaitCollected weak
                C.closeConsumer consumer >>= (@?= Nothing)
            | (label, mode) <- [("async", C.CallbackPollModeAsync), ("sync", C.CallbackPollModeSync)],
@@ -54,7 +63,7 @@ tests env =
         <> [ testCase (label <> " " <> kind <> " callback releases captured borrowed configuration") $
                withTopic env (Text.pack ("owner-" <> label <> "-" <> kind)) 1 $ \topic producer -> do
                  produceTo producer topic 0 "owner-record"
-                 (consumer, weak) <- consumerStateProbe env mode label kind topic
+                 (consumer, weak) <- consumerStateProbe env mode label kind topic (pure ())
                  awaitCollected weak
                  C.closeConsumer consumer >>= (@?= Nothing)
            | (label, mode) <- [("async", C.CallbackPollModeAsync), ("sync", C.CallbackPollModeSync)],
@@ -126,8 +135,8 @@ control :: IO (Weak (IORef Int))
 control = newIORef 0 >>= \value -> mkWeakIORef value (pure ())
 
 {-# NOINLINE consumerProbe #-}
-consumerProbe :: TestEnv -> C.CallbackPollMode -> String -> IO (C.KafkaConsumer, Weak (IORef Int))
-consumerProbe env mode label = do
+consumerProbe :: TestEnv -> C.CallbackPollMode -> String -> IO () -> IO (C.KafkaConsumer, Weak (IORef Int))
+consumerProbe env mode label after = do
   capture <- newIORef 0
   weak <- mkWeakIORef capture (pure ())
   called <- newEmptyMVar
@@ -137,7 +146,7 @@ consumerProbe env mode label = do
           <> C.groupId (makeGroupId env (Text.pack ("callback-owner-" <> label)))
           <> C.noAutoCommit
           <> C.callbackPollMode mode
-          <> C.setCallback (C.errorCallback (\_ _ -> atomicModifyIORef' capture (\n -> (n + 1, ())) >> void (tryPutMVar called ())))
+          <> C.setCallback (C.errorCallback (\_ _ -> atomicModifyIORef' capture (\n -> (n + 1, ())) >> void (tryPutMVar called ()) >> after))
       )
       >>= either (assertFailure . show) pure
   flip finally (C.destroyConsumer consumer) $ do
@@ -174,12 +183,12 @@ producerProbe env topic = do
   pure weak
 
 {-# NOINLINE consumerKindProbe #-}
-consumerKindProbe :: TestEnv -> C.CallbackPollMode -> String -> String -> IO (C.KafkaConsumer, Weak (IORef Int))
-consumerKindProbe env mode label kind = do
+consumerKindProbe :: TestEnv -> C.CallbackPollMode -> String -> String -> IO () -> IO (C.KafkaConsumer, Weak (IORef Int))
+consumerKindProbe env mode label kind after = do
   capture <- newIORef 0
   weak <- mkWeakIORef capture (pure ())
   called <- newEmptyMVar
-  let observed = atomicModifyIORef' capture (\n -> (n + 1, ())) >> void (tryPutMVar called ())
+  let observed = atomicModifyIORef' capture (\n -> (n + 1, ())) >> void (tryPutMVar called ()) >> after
       callback = if kind == "log" then C.logCallback (\_ _ _ -> observed) else C.statsCallback (const observed)
       extras = if kind == "log" then M.singleton "debug" "cgrp,topic" else M.singleton "statistics.interval.ms" "100"
   consumer <-
@@ -243,8 +252,8 @@ failedProducerProbe env = do
   pure weak
 
 {-# NOINLINE consumerStateProbe #-}
-consumerStateProbe :: TestEnv -> C.CallbackPollMode -> String -> String -> C.TopicName -> IO (C.KafkaConsumer, Weak (IORef (Maybe C.KafkaConsumer)))
-consumerStateProbe env mode label kind topic = do
+consumerStateProbe :: TestEnv -> C.CallbackPollMode -> String -> String -> C.TopicName -> IO () -> IO (C.KafkaConsumer, Weak (IORef (Maybe C.KafkaConsumer)))
+consumerStateProbe env mode label kind topic after = do
   capture <- newIORef Nothing
   weak <- mkWeakIORef capture (pure ())
   events <- newIORef []
@@ -256,10 +265,12 @@ consumerStateProbe env mode label kind topic = do
         case event of
           C.RebalanceAssign _ -> void (tryPutMVar called ())
           _ -> pure ()
+        after
       onCommit borrowed err partitions = do
         writeIORef capture (Just borrowed)
         void (tryPutMVar committed (err, partitions))
         void (tryPutMVar called ())
+        after
       callback = if kind == "rebalance" then C.rebalanceCallback onRebalance else C.offsetCommitCallback onCommit
       props =
         C.brokersList (teBrokers env)
@@ -556,3 +567,53 @@ cancelWhilePolling env mode label = do
     callbackStat 2 >>= (@?= 1)
     callbackStat 3 >>= (@?= 1)
     C.closeConsumer consumer >>= (@?= Nothing)
+
+-- Foreign-boundary failures and the process-wide exception handler are isolated.
+throwingChild :: String -> String -> IO ()
+throwingChild kind label = do
+  executable <- getExecutablePath
+  environment <- getEnvironment
+  directory <- maybe "dist-callback-probes" id <$> lookupEnv "RDKAFKA_TEST_CHILD_HPC_DIR"
+  createDirectoryIfMissing True directory
+  nonce <- randomIO :: IO Word
+  let output = directory <> "/lifetime-" <> kind <> "-" <> label <> "-" <> show nonce <> ".tix"
+      process =
+        (proc executable ["--lifetime-callback-probe", kind, label, "+RTS", "--read-tix-file=no", "-RTS"])
+          { env = Just (("HPCTIXFILE", output) : filter ((/= "HPCTIXFILE") . fst) environment)
+          }
+  result <- timeout 20000000 (readCreateProcessWithExitCode process "")
+  case result of
+    Just (ExitSuccess, _, _) -> pure ()
+    other -> assertFailure ("callback lifetime child failed: " <> show other)
+
+runThrowingProbe :: String -> String -> IO ()
+runThrowingProbe kind label = do
+  brokers <- lookupEnv "RDKAFKA_TEST_BROKER" >>= either die pure . resolveBrokers
+  testEnv <- newTestEnv brokers
+  reported <- newEmptyMVar
+  callbackThreads <- newIORef []
+  let marker = "lifetime-throw-" <> kind
+      after = do
+        callbackThread <- myThreadId
+        atomicModifyIORef' callbackThreads (\threads -> (callbackThread : threads, ()))
+        throwIO (userError marker)
+      mode = if label == "async" then C.CallbackPollModeAsync else C.CallbackPollModeSync
+  bracket getUncaughtExceptionHandler setUncaughtExceptionHandler $ \_ -> do
+    setUncaughtExceptionHandler $ \exception -> do
+      reportingThread <- myThreadId
+      void (tryPutMVar reported (show exception, reportingThread))
+    let finish :: (C.KafkaConsumer, Weak a) -> IO ()
+        finish (consumer, weak) = do
+          (exception, reportingThread) <- bounded (readMVar reported)
+          assertBool exception (marker `isInfixOf` exception)
+          nativeThreads <- readIORef callbackThreads
+          assertBool "exception reported on a separate Haskell thread" (reportingThread `notElem` nativeThreads)
+          awaitCollected weak
+          C.closeConsumer consumer >>= (@?= Nothing)
+    case kind of
+      "error" -> consumerProbe testEnv mode label after >>= finish
+      "log" -> consumerKindProbe testEnv mode label kind after >>= finish
+      "stats" -> consumerKindProbe testEnv mode label kind after >>= finish
+      _ -> withTopic testEnv (Text.pack ("throw-" <> label <> "-" <> kind)) 1 $ \topic producer -> do
+        produceTo producer topic 0 "owner-record"
+        consumerStateProbe testEnv mode label kind topic after >>= finish

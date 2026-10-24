@@ -2,10 +2,10 @@
 type: Architecture Decision Record
 title: Native clients own persistent Haskell callback bridges
 description: Transfer persistent callback registrations to a client-independent owner released after native shutdown, with scoped cleanup for failed construction and native child handles.
-timestamp: 2026-10-24T12:29:36Z
+timestamp: 2026-10-24T13:58:55Z
 generated:
   by: codex-cli/gpt-6.1-sol
-  at: "2026-10-24T12:29:36Z"
+  at: "2026-10-24T13:58:55Z"
 docId: ADR-15
 status: Accepted
 date: 2026-10-24
@@ -32,4 +32,4 @@ Exceptions from foreign callbacks are contained and reported through the runtime
 
 ## Consequences
 
-[EP-11](../plans/11-own-native-callbacks-through-client-teardown.md) records the implementation and remaining acceptance work. Its probes cover live callbacks, retained destroyed wrappers, configuration captures, replacement, construction failure, GC, concurrent teardown and cancellation at observed native stages. Native diagnostics, mutation evidence and final combined acceptance remain required before that child is Complete.
+[EP-11](../plans/11-own-native-callbacks-through-client-teardown.md) records accepted implementation evidence. Its probes cover live callbacks, retained destroyed wrappers, configuration captures, replacement, construction failure, GC, concurrent teardown and cancellation at observed native stages. All five semantic mutations fail their intended regressions; the full normal and instrumented suites pass. Native invalid-access acceptance uses a diagnostic negative control and records the actual loaded library/runtime, alongside the positive callback cases. [The ownership inventory](../testing/callback-ownership-inventory.json) records their scope. Native heap/leak and other supported environment evidence remains a separate EP-15 obligation.

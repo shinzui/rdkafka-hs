@@ -9,6 +9,11 @@ this project adheres to the [Haskell Package Versioning Policy](https://pvp.hask
 
 ### Fixed
 
+- Persistent callbacks now release their Haskell closures after native client
+  destruction, including failed construction and replaced registrations.
+  Shutdown retains callable bridges, concurrent destroy waits for completion,
+  and callback exceptions are reported on separate Haskell threads.
+
 - `seekPartitions` now returns native per-partition failures in request order
   after any overall error. Zero timeout preserves initiation-only semantics;
   synchronous calls no longer hide pending or failed members. Rewind propagates

@@ -31,6 +31,7 @@ main :: IO ()
 main =
   getArgs >>= \case
     ["--producer-callback-probe", mode] -> ProducerRegressionTest.runCallbackProbe mode
+    ["--lifetime-callback-probe", kind, label] -> CallbackLifetimeTest.runThrowingProbe kind label
     ["--callback-lifetime-native-control"] -> CallbackLifetimeTest.runInvalidAccessControl
     _ -> integrationMain
 

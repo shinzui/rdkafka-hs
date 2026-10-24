@@ -2278,8 +2278,8 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
-      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
+      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2345,8 +2345,8 @@
         "rdkafka-hs-integration.producer-properties.callback composition preserves order and identity"
       ],
       "status": "tested",
-      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
-      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
+      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2440,8 +2440,25 @@
         "rdkafka-hs-integration.seek-partitions.sync.native tail sentinel replays final two records"
       ],
       "status": "tested",
-      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
-      "evidence": "docs/testing/seek-evidence.json"
+      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+      "evidence": "docs/testing/seek-evidence.json",
+      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "F4",
@@ -2502,8 +2519,8 @@
         "rdkafka-hs-integration.producer-regressions.later delivery callback replaces the earlier callback"
       ],
       "status": "tested",
-      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
-      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
+      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2543,8 +2560,92 @@
       "expected": "Positive retention and post-release collection controls; exactly one deallocator; callbacks safe during native teardown",
       "modes": "producer and consumer; async/sync; explicit/GC teardown",
       "ownership": "FunPtr registrations owned separately from per-message StablePtrs; native destruction precedes registration release",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Callback owner.bridge allocation executes masked before ownership is recorded",
+        "rdkafka-hs.Callback owner.installed and replaced bridges release exactly once",
+        "rdkafka-hs.Callback owner.failed native install still owns its allocated bridge",
+        "rdkafka-hs.Callback owner.failed allocation has no release",
+        "rdkafka-hs.Callback owner.transfer preserves a callable bridge until client release",
+        "rdkafka-hs.Callback owner.transferred and released owners reject reuse before allocating",
+        "rdkafka-hs.Callback owner.release retry does not repeat completed releases",
+        "rdkafka-hs.Callback owner.concurrent releases join before returning",
+        "rdkafka-hs-integration.callback-lifetime.async throwing error callback preserves native lifecycle",
+        "rdkafka-hs-integration.callback-lifetime.async throwing log callback preserves native lifecycle",
+        "rdkafka-hs-integration.callback-lifetime.async throwing stats callback preserves native lifecycle",
+        "rdkafka-hs-integration.callback-lifetime.async throwing rebalance callback preserves native lifecycle",
+        "rdkafka-hs-integration.callback-lifetime.async throwing commit callback preserves native lifecycle",
+        "rdkafka-hs-integration.callback-lifetime.sync throwing error callback preserves native lifecycle",
+        "rdkafka-hs-integration.callback-lifetime.sync throwing log callback preserves native lifecycle",
+        "rdkafka-hs-integration.callback-lifetime.sync throwing stats callback preserves native lifecycle",
+        "rdkafka-hs-integration.callback-lifetime.sync throwing rebalance callback preserves native lifecycle",
+        "rdkafka-hs-integration.callback-lifetime.sync throwing commit callback preserves native lifecycle",
+        "rdkafka-hs-integration.callback-lifetime.async error callback releases after destroy with retained wrapper",
+        "rdkafka-hs-integration.callback-lifetime.sync error callback releases after destroy with retained wrapper",
+        "rdkafka-hs-integration.callback-lifetime.producer delivery callback releases after native finalization",
+        "rdkafka-hs-integration.callback-lifetime.noncaptured control is collectible",
+        "rdkafka-hs-integration.callback-lifetime.async log callback is live then releases",
+        "rdkafka-hs-integration.callback-lifetime.async stats callback is live then releases",
+        "rdkafka-hs-integration.callback-lifetime.sync log callback is live then releases",
+        "rdkafka-hs-integration.callback-lifetime.sync stats callback is live then releases",
+        "rdkafka-hs-integration.callback-lifetime.async construction failure releases callbacks: topic",
+        "rdkafka-hs-integration.callback-lifetime.async construction failure releases callbacks: native",
+        "rdkafka-hs-integration.callback-lifetime.sync construction failure releases callbacks: topic",
+        "rdkafka-hs-integration.callback-lifetime.sync construction failure releases callbacks: native",
+        "rdkafka-hs-integration.callback-lifetime.producer native construction failure releases callbacks",
+        "rdkafka-hs-integration.callback-lifetime.async rebalance callback releases captured borrowed configuration",
+        "rdkafka-hs-integration.callback-lifetime.async commit callback releases captured borrowed configuration",
+        "rdkafka-hs-integration.callback-lifetime.sync rebalance callback releases captured borrowed configuration",
+        "rdkafka-hs-integration.callback-lifetime.sync commit callback releases captured borrowed configuration",
+        "rdkafka-hs-integration.callback-lifetime.replaced producer delivery callbacks both release",
+        "rdkafka-hs-integration.callback-lifetime.async concurrent destruction joins at native entry",
+        "rdkafka-hs-integration.callback-lifetime.async concurrent destruction joins at native completion",
+        "rdkafka-hs-integration.callback-lifetime.async concurrent destruction joins at native shutdown callback",
+        "rdkafka-hs-integration.callback-lifetime.sync concurrent destruction joins at native entry",
+        "rdkafka-hs-integration.callback-lifetime.sync concurrent destruction joins at native completion",
+        "rdkafka-hs-integration.callback-lifetime.sync concurrent destruction joins at native shutdown callback",
+        "rdkafka-hs-integration.callback-lifetime.async cancellation at native entry preserves exactly-once teardown",
+        "rdkafka-hs-integration.callback-lifetime.async cancellation at native completion preserves exactly-once teardown",
+        "rdkafka-hs-integration.callback-lifetime.async cancellation at native shutdown callback preserves exactly-once teardown",
+        "rdkafka-hs-integration.callback-lifetime.sync cancellation at native entry preserves exactly-once teardown",
+        "rdkafka-hs-integration.callback-lifetime.sync cancellation at native completion preserves exactly-once teardown",
+        "rdkafka-hs-integration.callback-lifetime.sync cancellation at native shutdown callback preserves exactly-once teardown",
+        "rdkafka-hs-integration.callback-lifetime.async cancellation after poll stop and queue detachment preserves teardown",
+        "rdkafka-hs-integration.callback-lifetime.producer constructor cancellation at partial registration releases its owner",
+        "rdkafka-hs-integration.callback-lifetime.producer constructor cancellation at native acceptance releases its owner",
+        "rdkafka-hs-integration.callback-lifetime.consumer-async constructor cancellation at partial registration releases its owner",
+        "rdkafka-hs-integration.callback-lifetime.consumer-async constructor cancellation at native acceptance releases its owner",
+        "rdkafka-hs-integration.callback-lifetime.consumer-sync constructor cancellation at partial registration releases its owner",
+        "rdkafka-hs-integration.callback-lifetime.consumer-sync constructor cancellation at native acceptance releases its owner",
+        "rdkafka-hs-integration.callback-lifetime.async cancellation while waiting for active callback permits retry",
+        "rdkafka-hs-integration.callback-lifetime.sync cancellation while waiting for active callback permits retry",
+        "rdkafka-hs-integration.callback-lifetime.async closed consumer GC releases its registrations once",
+        "rdkafka-hs-integration.callback-lifetime.sync closed consumer GC releases its registrations once",
+        "rdkafka-hs-integration.callback-lifetime.producer error callback remains live through close and releases on GC",
+        "rdkafka-hs-integration.callback-lifetime.producer log callback remains live through close and releases on GC",
+        "rdkafka-hs-integration.callback-lifetime.producer stats callback remains live through close and releases on GC",
+        "rdkafka-hs-integration.callback-lifetime.failed native construction releases the caller-owned duplicate config"
+      ],
+      "status": "tested",
+      "native_diagnostics": "docs/testing/callback-native-diagnostics.json",
+      "mutations": "dist-mutations/20261024T135134Z-callback-6370-0/results.json",
+      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "F6",
@@ -3444,8 +3545,25 @@
         "rdkafka-hs-integration.seek-partitions.sync.rewind propagates assignment change after committed lookup"
       ],
       "status": "tested",
-      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
-      "evidence": "docs/testing/seek-evidence.json"
+      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+      "evidence": "docs/testing/seek-evidence.json",
+      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-runConsumer",
@@ -4258,8 +4376,8 @@
         "rdkafka-hs-integration.topic-configuration.deletion reports a missing response as a timeout"
       ],
       "status": "tested",
-      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
-      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
+      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4720,8 +4838,52 @@
       "expected": "Exact behavior or allocation balance with effective negative controls",
       "modes": "all supported modes",
       "ownership": "Configuration allocated -> native transfer or failure cleanup; callback registry freed only after native ownership ends",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Callback owner.bridge allocation executes masked before ownership is recorded",
+        "rdkafka-hs.Callback owner.installed and replaced bridges release exactly once",
+        "rdkafka-hs.Callback owner.failed native install still owns its allocated bridge",
+        "rdkafka-hs.Callback owner.failed allocation has no release",
+        "rdkafka-hs.Callback owner.transfer preserves a callable bridge until client release",
+        "rdkafka-hs.Callback owner.transferred and released owners reject reuse before allocating",
+        "rdkafka-hs.Callback owner.release retry does not repeat completed releases",
+        "rdkafka-hs.Callback owner.concurrent releases join before returning",
+        "rdkafka-hs-integration.callback-lifetime.async construction failure releases callbacks: topic",
+        "rdkafka-hs-integration.callback-lifetime.async construction failure releases callbacks: native",
+        "rdkafka-hs-integration.callback-lifetime.sync construction failure releases callbacks: topic",
+        "rdkafka-hs-integration.callback-lifetime.sync construction failure releases callbacks: native",
+        "rdkafka-hs-integration.callback-lifetime.producer native construction failure releases callbacks",
+        "rdkafka-hs-integration.callback-lifetime.replaced producer delivery callbacks both release",
+        "rdkafka-hs-integration.callback-lifetime.producer constructor cancellation at partial registration releases its owner",
+        "rdkafka-hs-integration.callback-lifetime.producer constructor cancellation at native acceptance releases its owner",
+        "rdkafka-hs-integration.callback-lifetime.consumer-async constructor cancellation at partial registration releases its owner",
+        "rdkafka-hs-integration.callback-lifetime.consumer-async constructor cancellation at native acceptance releases its owner",
+        "rdkafka-hs-integration.callback-lifetime.consumer-sync constructor cancellation at partial registration releases its owner",
+        "rdkafka-hs-integration.callback-lifetime.consumer-sync constructor cancellation at native acceptance releases its owner",
+        "rdkafka-hs-integration.callback-lifetime.async closed consumer GC releases its registrations once",
+        "rdkafka-hs-integration.callback-lifetime.sync closed consumer GC releases its registrations once",
+        "rdkafka-hs-integration.callback-lifetime.failed native construction releases the caller-owned duplicate config"
+      ],
+      "status": "tested",
+      "native_diagnostics": "docs/testing/callback-native-diagnostics.json",
+      "mutations": "dist-mutations/20261024T135134Z-callback-6370-0/results.json",
+      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "OWN-topic",
@@ -4788,8 +4950,8 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
-      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
+      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4848,8 +5010,8 @@
         "rdkafka-hs-integration.producer-regressions.known invalid partition rejection releases capture"
       ],
       "status": "tested",
-      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
-      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
+      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4888,8 +5050,72 @@
       "expected": "Exact behavior or allocation balance with effective negative controls",
       "modes": "all supported modes",
       "ownership": "Acquired queue references released once; destination routing preserved through assign/rebalance/close/destroy",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs-integration.callback-lifetime.async throwing rebalance callback preserves native lifecycle",
+        "rdkafka-hs-integration.callback-lifetime.sync throwing rebalance callback preserves native lifecycle",
+        "rdkafka-hs-integration.callback-lifetime.async error callback releases after destroy with retained wrapper",
+        "rdkafka-hs-integration.callback-lifetime.sync error callback releases after destroy with retained wrapper",
+        "rdkafka-hs-integration.callback-lifetime.async rebalance callback releases captured borrowed configuration",
+        "rdkafka-hs-integration.callback-lifetime.sync rebalance callback releases captured borrowed configuration",
+        "rdkafka-hs-integration.callback-lifetime.async concurrent destruction joins at native entry",
+        "rdkafka-hs-integration.callback-lifetime.async concurrent destruction joins at native completion",
+        "rdkafka-hs-integration.callback-lifetime.async concurrent destruction joins at native shutdown callback",
+        "rdkafka-hs-integration.callback-lifetime.sync concurrent destruction joins at native entry",
+        "rdkafka-hs-integration.callback-lifetime.sync concurrent destruction joins at native completion",
+        "rdkafka-hs-integration.callback-lifetime.sync concurrent destruction joins at native shutdown callback",
+        "rdkafka-hs-integration.callback-lifetime.async cancellation at native entry preserves exactly-once teardown",
+        "rdkafka-hs-integration.callback-lifetime.async cancellation at native completion preserves exactly-once teardown",
+        "rdkafka-hs-integration.callback-lifetime.async cancellation at native shutdown callback preserves exactly-once teardown",
+        "rdkafka-hs-integration.callback-lifetime.sync cancellation at native entry preserves exactly-once teardown",
+        "rdkafka-hs-integration.callback-lifetime.sync cancellation at native completion preserves exactly-once teardown",
+        "rdkafka-hs-integration.callback-lifetime.sync cancellation at native shutdown callback preserves exactly-once teardown",
+        "rdkafka-hs-integration.callback-lifetime.async cancellation after poll stop and queue detachment preserves teardown",
+        "rdkafka-hs-integration.callback-lifetime.producer constructor cancellation at partial registration releases its owner",
+        "rdkafka-hs-integration.callback-lifetime.producer constructor cancellation at native acceptance releases its owner",
+        "rdkafka-hs-integration.callback-lifetime.consumer-async constructor cancellation at partial registration releases its owner",
+        "rdkafka-hs-integration.callback-lifetime.consumer-async constructor cancellation at native acceptance releases its owner",
+        "rdkafka-hs-integration.callback-lifetime.consumer-sync constructor cancellation at partial registration releases its owner",
+        "rdkafka-hs-integration.callback-lifetime.consumer-sync constructor cancellation at native acceptance releases its owner",
+        "rdkafka-hs-integration.callback-lifetime.async cancellation while waiting for active callback permits retry",
+        "rdkafka-hs-integration.callback-lifetime.sync cancellation while waiting for active callback permits retry",
+        "rdkafka-hs-integration.broker.queue event.async.wakes an idle consumer and stays quiet once disabled",
+        "rdkafka-hs-integration.broker.queue event.async.finds records queued before it was enabled, then rearms",
+        "rdkafka-hs-integration.broker.queue event.async.one wake-up covers several records, then rearms",
+        "rdkafka-hs-integration.broker.queue event.sync.wakes an idle consumer and stays quiet once disabled",
+        "rdkafka-hs-integration.broker.queue event.sync.finds records queued before it was enabled, then rearms",
+        "rdkafka-hs-integration.broker.queue event.sync.one wake-up covers several records, then rearms",
+        "rdkafka-hs-integration.broker.destroy.async.closes broker connections within one second",
+        "rdkafka-hs-integration.broker.destroy.async.is safe to repeat",
+        "rdkafka-hs-integration.broker.destroy.async.concurrent destroys both return after cleanup",
+        "rdkafka-hs-integration.broker.destroy.async.completes after an interrupted destroy",
+        "rdkafka-hs-integration.broker.destroy.async.close then destroy, destroy then close",
+        "rdkafka-hs-integration.broker.destroy.sync.closes broker connections within one second",
+        "rdkafka-hs-integration.broker.destroy.sync.is safe to repeat",
+        "rdkafka-hs-integration.broker.destroy.sync.concurrent destroys both return after cleanup",
+        "rdkafka-hs-integration.broker.destroy.sync.completes after an interrupted destroy",
+        "rdkafka-hs-integration.broker.destroy.sync.close then destroy, destroy then close"
+      ],
+      "status": "tested",
+      "native_diagnostics": "docs/testing/callback-native-diagnostics.json",
+      "mutations": "dist-mutations/20261024T135134Z-callback-6370-0/results.json",
+      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "OWN-tx-group-metadata",
@@ -5000,8 +5226,8 @@
         "rdkafka-hs-integration.Fixture error controls.weak control retains while rooted and collects after release"
       ],
       "status": "tested",
-      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
-      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
+      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5046,8 +5272,8 @@
         "rdkafka-hs-integration.topic-configuration.maximum C replication count retains native validation"
       ],
       "status": "tested",
-      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
-      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
+      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5098,8 +5324,8 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
-      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
+      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5139,8 +5365,8 @@
         "rdkafka-hs-integration.topic-configuration.concurrent requests keep their own queues and responses"
       ],
       "status": "tested",
-      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
-      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
+      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5219,8 +5445,8 @@
         "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: minimum unrepresentable partition"
       ],
       "status": "tested",
-      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
-      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
+      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5268,8 +5494,8 @@
         "rdkafka-hs-integration.producer-regressions.empty queue supports repeated flush and close"
       ],
       "status": "tested",
-      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
-      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
+      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5306,8 +5532,8 @@
         "rdkafka-hs-integration.producer-regressions.later delivery callback replaces the earlier callback"
       ],
       "status": "tested",
-      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
-      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
+      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5342,8 +5568,8 @@
         "rdkafka-hs-integration.producer-regressions.native error decoding failure releases rejected callback capture"
       ],
       "status": "tested",
-      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
-      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
+      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5381,8 +5607,8 @@
         "rdkafka-hs-integration.producer-properties.callback composition preserves order and identity"
       ],
       "status": "tested",
-      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
-      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
+      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5412,5 +5638,57 @@
       "tests": [],
       "status": "unimplemented"
     }
-  ]
+  ],
+  "miss_classifications": {
+    "Kafka.Internal.CallbackOwner:77:ExpBox False": {
+      "status": "inapplicable",
+      "rationale": "This tick is the ignored unit value in pure () on the exhausted pointer list. The branch and drain execute, but no caller demands this value. Live native callbacks, post-destroy weak collection, exactly-once counted frees and the removed-release mutation verify the cleanup effects.",
+      "evidence": "test/Kafka/Internal/CallbackOwnerSpec.hs; docs/testing/callback-ownership-inventory.json"
+    },
+    "Kafka.Internal.CallbackOwner:71:ExpBox False": {
+      "status": "inapplicable",
+      "rationale": "These expression ticks are the lazy Released and current result values passed to pure, not the predicate or drain actions. Production stores the phase and no subsequent public operation inspects a released owner. Counted unit tests force the same source state through reuse/retry checks; native barriers and semantic mutations verify that release completes before publication.",
+      "evidence": "test/Kafka/Internal/CallbackOwnerSpec.hs; docs/testing/callback-ownership-inventory.json"
+    },
+    "Kafka.Internal.CallbackOwner:57:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "Only successful native construction attaches the fresh private owner, once, after the Building check while masked. No exposed route can attach the owner again. The counted test-local copy of the identical source explicitly exercises double transfer rejection.",
+      "evidence": "test/Kafka/Internal/CallbackOwnerSpec.hs; docs/testing/callback-ownership-inventory.json"
+    },
+    "Kafka.Internal.CallbackOwner:57:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "Only successful native construction attaches the fresh private owner, once, after the Building check while masked. No exposed route can attach the owner again. The counted test-local copy of the identical source explicitly exercises double transfer rejection.",
+      "evidence": "test/Kafka/Internal/CallbackOwnerSpec.hs; docs/testing/callback-ownership-inventory.json"
+    },
+    "Kafka.Internal.CallbackOwner:51:ExpBox False": {
+      "status": "inapplicable",
+      "rationale": "This tick is the lazy unit value in pure (). The Building check executes on every native construction; its ignored unit result need not be evaluated. Constructors and counted bridge tests establish the executed check and subsequent transfer.",
+      "evidence": "test/Kafka/Internal/CallbackOwnerSpec.hs; docs/testing/callback-ownership-inventory.json"
+    },
+    "Kafka.Internal.CallbackOwner:52:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "An exposed constructor creates a new private configuration; no public route constructs another native client from an attached/released internal configuration. The identical source is also compiled in the counted unit suite, where transferred and released owners reject reuse before allocation.",
+      "evidence": "test/Kafka/Internal/CallbackOwnerSpec.hs; docs/testing/callback-ownership-inventory.json"
+    },
+    "Kafka.Internal.CallbackOwner:52:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "An exposed constructor creates a new private configuration; no public route constructs another native client from an attached/released internal configuration. The identical source is also compiled in the counted unit suite, where transferred and released owners reject reuse before allocation.",
+      "evidence": "test/Kafka/Internal/CallbackOwnerSpec.hs; docs/testing/callback-ownership-inventory.json"
+    },
+    "Kafka.Internal.CallbackOwner:44:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "Public constructors own a fresh configuration privately through callback installation and transfer. No public operation concurrently releases or attaches its owner between the Building check and registration. The hidden registry guard rejects internal misuse; test-local tests compile the identical source and verify reuse rejection.",
+      "evidence": "test/Kafka/Internal/CallbackOwnerSpec.hs; docs/testing/callback-ownership-inventory.json"
+    },
+    "Kafka.Internal.CallbackOwner:44:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "Public constructors own a fresh configuration privately through callback installation and transfer. No public operation concurrently releases or attaches its owner between the Building check and registration. The hidden registry guard rejects internal misuse; test-local tests compile the identical source and verify reuse rejection.",
+      "evidence": "test/Kafka/Internal/CallbackOwnerSpec.hs; docs/testing/callback-ownership-inventory.json"
+    },
+    "Kafka.Internal.CallbackOwner:46:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "The only registration exception cleanup is guarded by the phase check at line 44. Fresh constructor-private ownership and masked installation exclude a phase change there through public routes; no user code runs in the registry update. Ordinary installation/allocation failure cleanup is exercised separately by counted real bridge tests.",
+      "evidence": "test/Kafka/Internal/CallbackOwnerSpec.hs; docs/testing/callback-ownership-inventory.json"
+    }
+  }
 }

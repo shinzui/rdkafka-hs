@@ -1,0 +1,54 @@
+{
+  "status": "accepted native invalid-access diagnostic",
+  "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+  "source_project": "mori://confluentinc/librdkafka",
+  "native_tag": "v2.15.0",
+  "native_revision": "9a94e11452cdeb0a844db44ee5dd01ccbe17d3ab",
+  "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin",
+  "flags": "-O1 -g -fsanitize=address -fno-omit-frame-pointer",
+  "build_log": "/tmp/rdkafka-ep11-asan-apple-build-sdk.log",
+  "runtime": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/21/lib/darwin/libclang_rt.asan_osx_dynamic.dylib",
+  "runtime_sha256": "fe1e17021123184ac0380808606a7cce00ad657158d2d4f62916970df1e8eaef",
+  "native_library": "/tmp/rdkafka-hs-ep11-asan-install/lib/librdkafka.1.dylib",
+  "native_library_sha256": "2fa8b4e5d5e623550305022c6dc881674ccf0c0fb43183e532c27d9faaa6e51f",
+  "binary_sha256": "c235beb64b611128bce213b103b7527a12fc0d9c808924c6c0a6debcc9e5b26a",
+  "environment": {
+    "DYLD_LIBRARY_PATH": "/tmp/rdkafka-hs-ep11-asan-install/lib",
+    "DYLD_INSERT_LIBRARIES": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/21/lib/darwin/libclang_rt.asan_osx_dynamic.dylib",
+    "ASAN_OPTIONS": "detect_leaks=0:abort_on_error=1:symbolize=1",
+    "DYLD_PRINT_LIBRARIES": "1"
+  },
+  "cases": [
+    {
+      "kind": "negative",
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "--callback-lifetime-native-control"
+      ],
+      "exit": -6,
+      "log": "/tmp/rdkafka-ep11-final-asan-negative.log",
+      "log_sha256": "e46a5b479df34eae4333afaa6ed91f1479e5390e86fb27ea5fbdab30c396606e"
+    },
+    {
+      "kind": "positive",
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/callback-lifetime/",
+        "+RTS",
+        "-N2",
+        "-RTS"
+      ],
+      "exit": 0,
+      "log": "/tmp/rdkafka-ep11-final-asan-positive.log",
+      "log_sha256": "084fb6e990ed6e670e8db2e97b078ba971235c5de72904ae4ed6f97863a313e6"
+    }
+  ],
+  "scope": "55 callback lifetime cases, including all publicly installable persistent kinds, real shutdown callbacks, failed construction, GC, replacement, concurrent destruction, observed cancellation and throwing callbacks in both consumer modes. The explicit negative control frees a native configuration then calls its getter; the diagnostic reports the read in native code. Leak diagnosis and other compatibility tuples remain EP-15 obligations.",
+  "discarded_attempts": [
+    "/tmp/rdkafka-ep11-asan-control-attempt.log",
+    "/tmp/rdkafka-ep11-asan-startup.sample",
+    "/tmp/rdkafka-ep11-asan-apple-runtime.log"
+  ],
+  "runtime_note": "The Nix LLVM runtime stalled during pre-main initialization on macOS 26.7. Rebuilding with matching Apple clang/runtime and the actual Xcode SDK passed the same native control and positive group. No package pins changed."
+}

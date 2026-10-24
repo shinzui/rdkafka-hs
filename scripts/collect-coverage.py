@@ -63,6 +63,10 @@ def collect():
     for mode in ("global", "message"):
         if len(list(child_directory.glob("producer-" + mode + "-*.tix"))) != 1:
             raise ValueError("missing or ambiguous successful producer callback child coverage: " + mode)
+    for kind in ("error", "log", "stats", "rebalance", "commit"):
+        for mode in ("async", "sync"):
+            if len(list(child_directory.glob("lifetime-" + kind + "-" + mode + "-*.tix"))) != 1:
+                raise ValueError("missing or ambiguous callback lifetime child coverage: " + kind + "/" + mode)
     artifacts.extend(children)
     for suite in SUITES:
         matches = list(cs["test:" + suite].rglob(suite + ".tix"))
