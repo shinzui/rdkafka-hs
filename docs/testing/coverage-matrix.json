@@ -2278,8 +2278,8 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
-      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2320,6 +2320,9 @@
         "rdkafka-hs-integration.producer-regressions.actual client configuration: explicit topic wins duplicate",
         "rdkafka-hs-integration.producer-regressions.actual client configuration: last topic property wins",
         "rdkafka-hs-integration.producer-regressions.actual client configuration: empty topic map preserves global",
+        "rdkafka-hs-integration.producer-regressions.actual client configuration: zero topic timeout is infinite",
+        "rdkafka-hs-integration.producer-regressions.actual client configuration: maximum native topic timeout",
+        "rdkafka-hs-integration.producer-regressions.actual client configuration: explicit topic wins native timeout alias",
         "rdkafka-hs-integration.producer-regressions.actual client configuration: topic codec overrides global codec",
         "rdkafka-hs-integration.producer-regressions.actual client configuration: global codec survives unrelated topic keys",
         "rdkafka-hs-integration.producer-regressions.byte-exact round trip with NoCompression",
@@ -2330,11 +2333,20 @@
         "rdkafka-hs-integration.producer-regressions.configuration rejection: unknown global key",
         "rdkafka-hs-integration.producer-regressions.configuration rejection: unknown topic key",
         "rdkafka-hs-integration.producer-regressions.configuration rejection: invalid topic timeout",
-        "rdkafka-hs-integration.producer-regressions.configuration rejection: global-only key in topic map"
+        "rdkafka-hs-integration.producer-regressions.configuration rejection: excessive topic timeout",
+        "rdkafka-hs-integration.producer-regressions.configuration rejection: global-only key in topic map",
+        "rdkafka-hs.Producer properties generated.program follows last-write semantics",
+        "rdkafka-hs.Producer properties generated.configuration has left and right identity",
+        "rdkafka-hs.Producer properties generated.configuration composition is associative",
+        "rdkafka-hs.Producer properties generated.composition appends writes in order",
+        "rdkafka-hs.Producer properties generated.unrelated keys survive a conflicting write",
+        "rdkafka-hs.Producer properties generated.last explicit log level wins",
+        "rdkafka-hs.Producer properties generated.fixed empty duplicate and binary text values",
+        "rdkafka-hs-integration.producer-properties.callback composition preserves order and identity"
       ],
       "status": "tested",
-      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
-      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2390,6 +2402,9 @@
         "rdkafka-hs-integration.producer-regressions.cancellation after native acceptance retains callback until its report",
         "rdkafka-hs-integration.producer-regressions.another poller can deliver before successful enqueue returns",
         "rdkafka-hs-integration.producer-regressions.running callback keeps its capture after the native root is released",
+        "rdkafka-hs-integration.producer-regressions.native error decoding failure releases rejected callback capture",
+        "rdkafka-hs-integration.producer-regressions.non-null native success-code error rejects and releases capture",
+        "rdkafka-hs-integration.producer-regressions.unknown native error code is preserved instead of reading errno",
         "rdkafka-hs-integration.producer-regressions.byte-exact round trip with NoCompression",
         "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Gzip",
         "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Snappy",
@@ -2422,8 +2437,8 @@
         "rdkafka-hs-integration.producer-regressions.later delivery callback replaces the earlier callback"
       ],
       "status": "tested",
-      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
-      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4161,8 +4176,8 @@
         "rdkafka-hs-integration.topic-configuration.deletion reports a missing response as a timeout"
       ],
       "status": "tested",
-      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
-      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4691,8 +4706,8 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
-      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4751,8 +4766,8 @@
         "rdkafka-hs-integration.producer-regressions.known invalid partition rejection releases capture"
       ],
       "status": "tested",
-      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
-      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4903,8 +4918,8 @@
         "rdkafka-hs-integration.Fixture error controls.weak control retains while rooted and collects after release"
       ],
       "status": "tested",
-      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
-      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4949,8 +4964,8 @@
         "rdkafka-hs-integration.topic-configuration.maximum C replication count retains native validation"
       ],
       "status": "tested",
-      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
-      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5001,8 +5016,8 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
-      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5042,8 +5057,8 @@
         "rdkafka-hs-integration.topic-configuration.concurrent requests keep their own queues and responses"
       ],
       "status": "tested",
-      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
-      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5122,8 +5137,8 @@
         "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: minimum unrepresentable partition"
       ],
       "status": "tested",
-      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
-      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5171,8 +5186,8 @@
         "rdkafka-hs-integration.producer-regressions.empty queue supports repeated flush and close"
       ],
       "status": "tested",
-      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
-      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5203,11 +5218,14 @@
         "rdkafka-hs-integration.producer-regressions.throwing global callback preserves per-message delivery and releases capture",
         "rdkafka-hs-integration.producer-regressions.throwing per-message callback reports exception and releases capture",
         "rdkafka-hs-integration.producer-regressions.running callback keeps its capture after the native root is released",
+        "rdkafka-hs-integration.producer-regressions.native error decoding failure releases rejected callback capture",
+        "rdkafka-hs-integration.producer-regressions.non-null native success-code error rejects and releases capture",
+        "rdkafka-hs-integration.producer-regressions.unknown native error code is preserved instead of reading errno",
         "rdkafka-hs-integration.producer-regressions.later delivery callback replaces the earlier callback"
       ],
       "status": "tested",
-      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
-      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5238,11 +5256,12 @@
         "rdkafka-hs-integration.producer-regressions.cancellation at a rejected enqueue releases capture before unmasking",
         "rdkafka-hs-integration.producer-regressions.cancellation after native acceptance retains callback until its report",
         "rdkafka-hs-integration.producer-regressions.another poller can deliver before successful enqueue returns",
-        "rdkafka-hs-integration.producer-regressions.running callback keeps its capture after the native root is released"
+        "rdkafka-hs-integration.producer-regressions.running callback keeps its capture after the native root is released",
+        "rdkafka-hs-integration.producer-regressions.native error decoding failure releases rejected callback capture"
       ],
       "status": "tested",
-      "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
-      "evidence_revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
+      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5259,6 +5278,57 @@
           "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
         }
       }
+    },
+    {
+      "id": "PROPERTY-producer-composition",
+      "symbols": [],
+      "owner": 14,
+      "behavior": "Producer maps and log levels follow monoid/last-write laws, while callback composition is observed through native delivery",
+      "inputs": "generated empty/conflicting/disjoint programs, binary/empty text, log levels, callback partitions and association/identity; fixed edge examples",
+      "expected": "Independent write model and exact callback order agree; four reversed-bias mutations shrink and replay their failure tokens",
+      "modes": "broker-free pure tests and native callback observations; normal and instrumented primary tuple",
+      "ownership": "Generated native clients purge and flush before release; persistent registration lifetime remains EP-11",
+      "tests": [
+        "rdkafka-hs.Producer properties generated.program follows last-write semantics",
+        "rdkafka-hs.Producer properties generated.configuration has left and right identity",
+        "rdkafka-hs.Producer properties generated.configuration composition is associative",
+        "rdkafka-hs.Producer properties generated.composition appends writes in order",
+        "rdkafka-hs.Producer properties generated.unrelated keys survive a conflicting write",
+        "rdkafka-hs.Producer properties generated.last explicit log level wins",
+        "rdkafka-hs.Producer properties generated.fixed empty duplicate and binary text values",
+        "rdkafka-hs-integration.producer-properties.callback composition preserves order and identity"
+      ],
+      "status": "tested",
+      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
+    },
+    {
+      "id": "CFG-C-string-boundaries",
+      "symbols": [],
+      "owner": 14,
+      "behavior": "Shared producer/consumer configuration validation rejects C-string representation loss",
+      "inputs": "empty and ordinary keys/values, embedded NUL in a known-name prefix or value, producer and consumer construction",
+      "expected": "Exact ordinary settings and typed constructor rejection for malformed C-string inputs; no silent truncation",
+      "modes": "public constructor/property entry points",
+      "ownership": "Rejected construction releases configuration resources; persistent callback registration cleanup belongs to EP-11",
+      "tests": [],
+      "status": "unimplemented"
     }
   ]
 }

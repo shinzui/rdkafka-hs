@@ -1,6 +1,6 @@
 {
-  "revision": "fc5892da7ba6305db2c198d7c4d6bbe889bf1285",
-  "fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
+  "revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
+  "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
   "configuration": {
     "ghc": "9.12.4",
     "native": "(\"2.15.0\",34537727)",
@@ -18,14 +18,14 @@
     }
   },
   "normal": {
-    "unit_tests": 14,
-    "integration_tests": 236,
-    "integration_seconds": 105.26
+    "unit_tests": 21,
+    "integration_tests": 244,
+    "integration_seconds": 108.03
   },
   "instrumented": {
-    "unit_tests": 14,
-    "integration_tests": 236,
-    "integration_seconds": 107.43
+    "unit_tests": 21,
+    "integration_tests": 244,
+    "integration_seconds": 105.84
   },
   "focused_tests": [
     "rdkafka-hs-integration.topic-configuration.singleton configuration reaches the broker",
@@ -82,7 +82,7 @@
     "rdkafka-hs-integration.topic-configuration.overflowing native timeout configuration returns an error",
     "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
   ],
-  "tooling_controls": 17,
+  "tooling_controls": 18,
   "mutation_evidence": "dist-topic-mutations/20261024T083604Z-my8qigbc/results.json",
   "mutation_fingerprint": "3d85bfdffc9e562df964f231c47daf7e20f45f1939c0a4b36a0d40a5eab774ca",
   "mutation_archive_sha256": "29836531a3df40a8db9ba70f2d0ed699242a9cc2b563b7e1ec59dc08f725d6f0",
@@ -282,5 +282,14 @@
       "resolution": "Unresolved deprecated-seek failure remains open in API-Kafka-Consumer-seek; subsequent passing runs do not explain it."
     }
   ],
-  "status": "EP-8 local admin behavior and scoped ownership accepted; broader native diagnostics and compatibility remain open under EP-15"
+  "status": "EP-8 local admin behavior and scoped ownership accepted; broader native diagnostics and compatibility remain open under EP-15",
+  "unchanged_mutation_subject_sources": {
+    "src/Kafka/Topic.hs": "932bbd96cc0b28baf18843e4679acc0ea7f09fdefb74a3e4a3a28c9940b6a53c",
+    "src/Kafka/Internal/RdKafka.chs": "a60896eedd0943c73d3962c5337a4223b8ab4c431e4a22e4a9cd59fbfa0afad0",
+    "test-integration/Kafka/AdminTestSupport.hs": "446cceaf01c8684ef19ce8afa062ca9f4c71d9100e64f846bc63b9987ffc15fe",
+    "test-integration/Kafka/Integration/TopicConfigurationTest.hs": "cb5d3b4b660bb813a69ce073e225879a008eb51e37a59b892af6c5d84c28c5ab",
+    "test-integration/Kafka/FaultTestSupport.hs": "a30011b3c337602b0ee1b9f5a32b12369e26988fb25b6953ea83c2f3f20137b0",
+    "test-integration/cbits/admin_ownership.c": "f515c199ba09cecca282da2dd5a4177864c788114c91be3d96551a57bd4987f5"
+  },
+  "mutation_scope": "The accepted topic mutation archive retains identical admin implementation and fault/counter sources; current full suites rerun its 53 admin cases after independent producer/property changes."
 }

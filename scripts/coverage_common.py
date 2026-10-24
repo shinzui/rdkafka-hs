@@ -17,7 +17,7 @@ def fingerprint():
     # Evidence-only documentation is deliberately excluded. Include untracked
     # test/source additions; git diff alone cannot identify a dirty candidate.
     files = set()
-    for directory in ("src", "test", "test-integration", "scripts", "nix"):
+    for directory in ("src", "test", "test-integration", "test-support", "scripts", "nix"):
         files.update(p for p in (ROOT / directory).rglob("*") if p.is_file() and "__pycache__" not in p.parts)
     files.update(ROOT / name for name in ("rdkafka-hs.cabal", "cabal.project", "cabal.project.local", "cabal.project.freeze", ".envrc", ".envrc.local", "flake.nix", "flake.lock", "flake.module.nix", "justfile"))
     digest = hashlib.sha256()

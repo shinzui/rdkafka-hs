@@ -28,6 +28,18 @@ preprocessor = load("preprocessor", "coverage-preprocess.py")
 
 
 class GateControls(unittest.TestCase):
+    def test_shared_property_source_changes_candidate_identity(self):
+        with tempfile.TemporaryDirectory(prefix="rdkafka-shared-source-control-") as directory:
+            root = Path(directory)
+            support = root / "test-support" / "Kafka"
+            support.mkdir(parents=True)
+            source = support / "PropertySupport.hs"
+            source.write_text("module Kafka.PropertySupport where\nvalue = 1\n")
+            with patch.object(common, "ROOT", root):
+                first = common.fingerprint()
+                source.write_text("module Kafka.PropertySupport where\nvalue = 2\n")
+                self.assertNotEqual(common.fingerprint(), first)
+
     def setUp(self):
         self.matrix = json.loads((checker.ROOT / "docs/testing/coverage-matrix.json").read_text())
         self.exports = self.matrix["exports"]

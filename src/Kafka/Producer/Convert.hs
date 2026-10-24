@@ -35,7 +35,6 @@ handleProduceErr _ = return $ Just KafkaInvalidReturnValue
 {-# INLINE handleProduceErr #-}
 
 handleProduceErrT :: RdKafkaRespErrT -> IO (Maybe KafkaError)
-handleProduceErrT RdKafkaRespErrUnknown = Just . kafkaRespErr <$> getErrno
 handleProduceErrT RdKafkaRespErrNoError = return Nothing
 handleProduceErrT e = return $ Just (KafkaResponseError e)
 {-# INLINE handleProduceErrT #-}

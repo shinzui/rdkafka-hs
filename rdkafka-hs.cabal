@@ -134,7 +134,10 @@ test-suite rdkafka-hs-integration
   import: common-options
   type: exitcode-stdio-1.0
   main-is: Main.hs
-  hs-source-dirs: test-integration
+  hs-source-dirs:
+    test-integration
+    test-support
+
   c-sources:
     test-integration/cbits/admin_ownership.c
     test-integration/cbits/producer_ownership.c
@@ -157,6 +160,7 @@ test-suite rdkafka-hs-integration
     rdkafka-hs,
     tasty ^>=1.5,
     tasty-hunit ^>=0.10,
+    tasty-quickcheck ^>=0.11.1,
     text,
     unix,
 
@@ -179,6 +183,7 @@ test-suite rdkafka-hs-integration
     Kafka.Integration.LifecycleTest
     Kafka.Integration.ObserverTest
     Kafka.Integration.PerMessageCommitTest
+    Kafka.Integration.ProducerPropertyTest
     Kafka.Integration.ProducerRegressionTest
     Kafka.Integration.QueueEventTest
     Kafka.Integration.ReadCommittedTest
@@ -186,13 +191,17 @@ test-suite rdkafka-hs-integration
     Kafka.Integration.TopicConfigurationTest
     Kafka.Integration.TopicTest
     Kafka.ProducerTestSupport
+    Kafka.PropertySupport
     Kafka.TestEnv
 
 test-suite rdkafka-hs-test
   import: common-options
   type: exitcode-stdio-1.0
   main-is: Main.hs
-  hs-source-dirs: test
+  hs-source-dirs:
+    test
+    test-support
+
   ghc-options:
     -threaded
     -rtsopts
@@ -201,13 +210,17 @@ test-suite rdkafka-hs-test
   build-depends:
     base >=4.21 && <5,
     bifunctors,
+    containers,
     rdkafka-hs,
     tasty ^>=1.5,
     tasty-hunit ^>=0.10,
+    tasty-quickcheck ^>=0.11.1,
     text,
 
   other-modules:
     Kafka.Consumer.ConsumerPropertiesSpec
     Kafka.Consumer.ConsumerRecordMapSpec
     Kafka.Consumer.ConsumerRecordTraverseSpec
+    Kafka.Producer.ProducerPropertiesSpec
+    Kafka.PropertySupport
     Kafka.VersionTest

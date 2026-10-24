@@ -1,6 +1,7 @@
 # Bundle Update Log
 
 ## 2026-10-24
+* **Clarification**: Decide enqueue ownership from the nullable native error pointer and free rejected roots before decoding; preserve native error-object codes.
 * **Decision**: Accept conditional per-message callback ownership transfer and containment of delivery exceptions within Haskell threads.
 * **Decision**: Accept merging explicit producer topic settings after global settings with actual-client configuration and delivery evidence.
 * **Update**: ADR-11 records scoped admin ownership, borrowed result lifetimes, configured request deadlines and C-representation validation.

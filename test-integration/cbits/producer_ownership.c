@@ -2,6 +2,7 @@
  * pause at the enqueue ownership boundary. Ordinary calls go to librdkafka. */
 #define _GNU_SOURCE
 #include <dlfcn.h>
+#include <errno.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -87,6 +88,18 @@ rd_kafka_error_t *rd_kafka_produceva(rd_kafka_t *client, const rd_kafka_vu_t *va
     while (!producer_released) pthread_cond_wait(&producer_resume, &producer_lock);
     pthread_mutex_unlock(&producer_lock);
     return rd_kafka_error_new(RD_KAFKA_RESP_ERR__QUEUE_FULL, "%s", "controlled enqueue rejection");
+  }
+  if (enabled && mode >= 3 && mode <= 5) {
+    /* These calls reject before native transfer. Exercise a decoder failure,
+     * a contradictory non-null success-code object, and a valid UNKNOWN code
+     * with an unrelated errno. No message or delivery report is created. */
+    rd_kafka_resp_err_t code = mode == 3 ? (rd_kafka_resp_err_t)32767
+      : mode == 4 ? RD_KAFKA_RESP_ERR_NO_ERROR : RD_KAFKA_RESP_ERR_UNKNOWN;
+    producer_entered = 1;
+    pthread_mutex_unlock(&producer_lock);
+    rd_kafka_error_t *error = rd_kafka_error_new(code, "%s", "controlled native error object");
+    if (mode == 5) errno = EINVAL;
+    return error;
   }
   pthread_mutex_unlock(&producer_lock);
   rd_kafka_error_t *result = real(client, values, count);

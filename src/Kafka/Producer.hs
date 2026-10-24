@@ -198,15 +198,17 @@ produceMessage' kp@(KafkaProducer (Kafka k) _ _) msg cb =
               -- Once enqueue succeeds another poller can already have served
               -- the report and freed this root. Only an immediate rejection
               -- leaves ownership here; no cleanup may cover the success path.
-              code <-
-                bracket
-                  (rdKafkaMessageProduceVa k (hdrs ++ opts) `onException` freeStablePtr callbackPtr)
-                  rdKafkaErrorDestroy
-                  rdKafkaErrorCode
-              res <- handleProduceErrT code
-              case res of
-                Just err -> freeStablePtr callbackPtr >> pure (Left (ImmediateError err))
-                Nothing -> pure (Right ())
+              nativeError <- rdKafkaMessageProduceVa k (hdrs ++ opts) `onException` freeStablePtr callbackPtr
+              if nativeError == nullPtr
+                then pure (Right ())
+                else bracket (pure nativeError) rdKafkaErrorDestroy $ \native -> do
+                  -- A non-null error object means rejection. Release before
+                  -- decoding it, so even a conversion exception cannot retain
+                  -- the callback. Only NULL transfers ownership to delivery.
+                  freeStablePtr callbackPtr
+                  code <- rdKafkaErrorCode native
+                  res <- handleProduceErrT code
+                  pure $ Left (ImmediateError (maybe KafkaInvalidReturnValue id res))
 
 -- | Closes the producer.
 -- Will wait until the outbound queue is drained before returning the control.

@@ -29,6 +29,9 @@ this project adheres to the [Haskell Package Versioning Policy](https://pvp.hask
   or unwinds through native frames. Its exception is reported on a separate
   Haskell thread through the runtime's uncaught-exception policy; per-message
   callbacks continue to run on their own unmasked threads.
+- Producer error objects retain their native code, including `UNKNOWN`, instead
+  of being incorrectly remapped through system `errno`. Rejected callback roots
+  are released before error decoding, including decoding exceptions.
 - Producer records preserve absent versus empty keys and values. Embedded NUL
   topic/header names and partition integers outside the native C range return
   immediate errors instead of being silently truncated or wrapped.

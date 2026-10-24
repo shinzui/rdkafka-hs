@@ -39,3 +39,16 @@ The native mock protocol fixture delays Produce responses and records received P
 Throwing delivery callbacks run in isolated child processes so foreign-boundary failures and uncaught-exception handlers cannot corrupt the parent suite. Coverage collection gives each child a unique TIX path, requires successful global and per-message probe coverage, and merges those ticks into the integration report. Normal runs retain optional child artifacts under ignored `dist-callback-probes/`.
 
 Run `python3 scripts/test-producer-mutations.py` to compile an isolated archive, pass its complete producer control, and reject semantic mutations of settings, callback release/transfer, masking, exception handling, empty-byte representation, input validation and headers. A premature-free safety mutation may abort GHC; it counts only when a native marker proves enqueue succeeded before the isolated process aborted. Source-bound logs and archive checksums stay under ignored `dist-producer-mutations/`.
+
+Generated properties use the released adapter [mori://UnkindPartition/tasty/packages/tasty-quickcheck](mori://UnkindPartition/tasty/packages/tasty-quickcheck), selected at `^>=0.11.1` after checking Hackage and its upstream release tag. Shared generators live in `test-support/Kafka/PropertySupport.hs`, which is included in candidate fingerprints. Pure producer laws use an independent last-write model; callback composition is observed through actual delivery reports. Both suites print replay tokens and retain the adapter's case-count and replay options.
+
+Run a seeded thousand-case check with:
+
+```bash
+cabal test rdkafka-hs-test --test-show-details=direct \
+  --test-options='--quickcheck-tests=1000 --quickcheck-replay=20261024'
+cabal test rdkafka-hs-integration -f integration --test-show-details=direct \
+  --test-options='-p /producer-properties/ --quickcheck-tests=1000 --quickcheck-replay=20261024'
+```
+
+For an exact failure replay, pass the entire printed `--quickcheck-replay` value as one argument to the binary from `cabal list-bin`. A token includes both generator state and size. `python3 scripts/test-property-mutations.py` builds a disposable archive, catches reversed global/topic/log-level/callback precedence, preserves minimized counterexamples, and reruns each printed token. Its archive, controls, failure and replay logs stay under ignored `dist-property-mutations/`. The property evidence manifest records resolved test dependency versions as well as source identity; replay uses the recorded toolchain and dependencies.

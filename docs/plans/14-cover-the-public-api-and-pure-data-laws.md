@@ -11,6 +11,12 @@ provenance:
     model: "gpt-6-astra"
     harness: "codex-cli"
     at: 2026-10-24T04:50:25Z
+  revisions:
+    - model: "gpt-6.1-sol"
+      harness: "codex-cli"
+      at: 2026-10-24T08:48:23Z
+      mode: "implement"
+      note: "Integrate the shared property adapter and generated producer composition milestone before closing EP-9; retain all other public-contract work as open."
 ---
 
 # Cover the public API and pure-data laws
@@ -32,7 +38,9 @@ Close the supported public-API gaps that remain beyond the six repair findings. 
 - [ ] M2: Consumer, metadata, diagnostics, and deprecated public entry points have exact positive/negative contract tests.
 - [ ] M3: All public-contract rows owned by this child pass normal and instrumented runs and survive deliberate fault/mutation checks.
 
-Not started. The checks described below are deliverables to implement, not existing evidence.
+In Progress. The scheduled M1 producer-composition integration milestone is accepted, allowing EP-9 to complete. Shared generators and replay support live in `test-support/Kafka/PropertySupport.hs`; candidate identity includes that directory and an added tooling control detects its modification. Six pure laws plus a fixed edge case and a native callback-composition property pass. Four semantic bias/order mutations compile, shrink to small counterexamples and reproduce with the printed replay tokens. Seeded stress passes 1,000 cases for each pure law and 1,000 native callback programs.
+
+The current complete suites pass 21 unit and 244 integration tests in normal and instrumented builds, plus 18 tooling controls and Nix/Cabal/ADR/binding checks. See [property evidence](../testing/producer-properties-evidence.json). Remaining consumer/subscription/header/record/version/conversion laws, public API state/error/diagnostic coverage, the saved deprecated-seek failure and all remaining M2/M3 requirements stay open. Resume them after EP-10 through EP-12 under the master schedule.
 
 
 ## Surprises & Discoveries
@@ -41,8 +49,14 @@ Not started. The checks described below are deliverables to implement, not exist
 The original unit suite covers four consumer-property examples, seven record mapping/traversal examples, and three version examples. There are no generated property suites. The metadata integration scenario often checks only Right/length, and deprecated seek is covered more thoroughly than its replacement. Current producer and consumer Type modules expose constructors, so the inventory must use actual exports rather than Haddock prose saying a constructor is hidden.
 
 
+The local dependency corpus has unreleased adapter 0.12 metadata. The current Hackage preferred registry and upstream `quickcheck-0.11.1` tag identify release 0.11.1; the released source was inspected at commit `f838314360d1c8f20f2919b376a5d2672aedc893`. Hackage revision 7 permits QuickCheck below 2.20. The executed Cabal plan resolves adapter 0.11.1, QuickCheck 2.19.0.0 and Tasty 1.5.5; runtime pins and existing Tasty bounds are unchanged.
+
+The global-bias mutation shrinks to `[Global "shared" "", Global "shared" "a"]`; the callback-order mutation reduces to two distinguishable callbacks. The full replay tokens and outputs are retained in the property manifest. Functions are observed through native delivery rather than compared for equality.
+
 ## Decision Log
 
+
+2026-10-24: Use test-only `^>=0.11.1` for [mori://UnkindPartition/tasty/packages/tasty-quickcheck](mori://UnkindPartition/tasty/packages/tasty-quickcheck), verified against the [preferred package registry](https://hackage-content.haskell.org/package/tasty-quickcheck/preferred.json), [current revised package description](https://hackage-content.haskell.org/package/tasty-quickcheck-0.11.1/tasty-quickcheck.cabal) and upstream release tag. Keep the shared adapter/producer milestone separate from the rest of M1 and the full child's acceptance.
 
 2026-10-24: Test declared behavior with independent models and real state observations. Re-exports and deprecated functions remain obligations unless formally removed; generated repetitions of the same happy path do not close missing error branches. A newly found bug in an existing supported contract remains a repair obligation, not an expected-failure exemption.
 

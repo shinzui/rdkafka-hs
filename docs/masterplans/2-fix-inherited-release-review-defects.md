@@ -66,12 +66,12 @@ Relevant decisions were read before drafting. [ADR-1](../adr/consumer-queue-and-
 | # | Title | Path | Hard Deps | Soft Deps | Status |
 |---|---|---|---|---|---|
 | 8 | Apply topic creation configuration safely | [EP-8](../plans/8-apply-topic-creation-configuration-safely.md) | EP-13 | None | Complete |
-| 9 | Honor producer settings and release rejected callbacks | [EP-9](../plans/9-honor-producer-settings-and-release-rejected-callbacks.md) | EP-13 | None | In Progress |
+| 9 | Honor producer settings and release rejected callbacks | [EP-9](../plans/9-honor-producer-settings-and-release-rejected-callbacks.md) | EP-13 | None | Complete |
 | 10 | Report per-partition seek failures | [EP-10](../plans/10-report-per-partition-seek-failures.md) | EP-13 | None | Not Started |
 | 11 | Own native callbacks through client teardown | [EP-11](../plans/11-own-native-callbacks-through-client-teardown.md) | EP-13 | EP-9 | Not Started |
 | 12 | Release transaction error objects | [EP-12](../plans/12-release-transaction-error-objects.md) | EP-13 | None | Not Started |
 | 13 | Make coverage evidence and test fixtures reliable | [EP-13](../plans/13-make-coverage-evidence-and-test-fixtures-reliable.md) | None | None | Complete |
-| 14 | Cover the public API and pure-data laws | [EP-14](../plans/14-cover-the-public-api-and-pure-data-laws.md) | EP-13 | EP-8, EP-9, EP-10, EP-11, EP-12 | Not Started |
+| 14 | Cover the public API and pure-data laws | [EP-14](../plans/14-cover-the-public-api-and-pure-data-laws.md) | EP-13 | EP-8, EP-9, EP-10, EP-11, EP-12 | In Progress |
 | 15 | Validate broker failures and supported environments | [EP-15](../plans/15-validate-broker-failures-and-supported-environments.md) | EP-8, EP-9, EP-10, EP-11, EP-12, EP-13, EP-14 | None | Not Started |
 
 
@@ -126,9 +126,9 @@ Build and unit-test the emitted tarball from a fresh temporary extraction under 
 
 EP-13 is Complete. Its accepted baseline passes 14 unit and 129 integration tests in normal and instrumented builds, plus 15 tooling controls. The compiler-derived inventory contains 174 distinct exports and 169 contract/resource/environment rows; 168 remain open. All 22 library modules appear in measured reports, including explicit zero coverage for unlinked functions. The final coverage gate correctly rejects open rows and 3,004 unexplained hand-written misses. See [EP-13](../plans/13-make-coverage-evidence-and-test-fixtures-reliable.md) and its [evidence manifest](../testing/coverage-evidence.json).
 
-EP-8 is Complete with 53 focused admin cases and eight compiled semantic mutations on the current candidate. EP-9 has accepted its local producer repair: 54 focused cases, ten compiled mutations, actual configuration/codec effects, conditional callback lifetime, observed enqueue cancellation and delivery races, isolated exception policy, data boundaries and queued/in-flight purge flags. Its generated-composition requirement remains open, so EP-9 is In Progress. Current normal and instrumented suites pass 14 unit and 236 integration tests, with child probe coverage merged; 17 tooling controls, strict ADR/Cabal/binding checks and Nix checks pass. The inventory now has 179 rows: 14 tested and 165 explicitly open. See the [current coverage manifest](../testing/coverage-evidence.json).
+EP-8 and EP-9 are Complete. Admin evidence covers 53 focused cases and eight compiled semantic mutations; its unchanged owned source scope remains verified after independent producer changes. Producer evidence covers 61 focused cases, thirteen compiled mutations, effective configuration, error-object ownership/code propagation, byte boundaries, exceptions, observed races and queued/in-flight purge flags. EP-14's shared adapter/producer-composition milestone adds generated and replayable laws with four compiled/shrunk/replayed bias/order mutations. The rest of EP-14 is In Progress.
 
-Execute EP-14's shared property-adapter/producer-composition M1 integration milestone next, then finish EP-9 and resume EP-10, EP-11, EP-12, and the remaining EP-14 work. This switches only an explicit milestone sequence; EP-13 remains the complete hard prerequisite, and whole-child statuses stay In Progress until their acceptance passes. EP-15 still waits for every earlier child. The saved intermittent deprecated-seek failure is an open EP-14 obligation; the native C-finalizer callback crash belongs to EP-11. Green reruns do not close either discovery.
+Current normal and instrumented suites pass 21 unit and 244 integration tests (108.03/105.84 seconds), with child probe coverage merged; 18 tooling controls and strict ADR/Cabal/binding/Nix checks pass. The inventory has 181 rows: 15 tested and 166 explicitly open. See the [current coverage manifest](../testing/coverage-evidence.json). Resume EP-10, EP-11 and EP-12, then the remaining EP-14 work; EP-15 still waits for all earlier children. The saved intermittent deprecated-seek failure remains an open EP-14 obligation, and the native C-finalizer callback crash belongs to EP-11. Green reruns do not close either discovery.
 
 - [ ] Combined candidate closes all supported contract and critical ownership rows, six original regressions, generated-data properties, normal/coverage builds, source-distribution validation, broker-failure tests, and the required compatibility matrix.
 

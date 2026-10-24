@@ -1,0 +1,232 @@
+{
+  "revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
+  "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+  "configuration": {
+    "ghc": "9.12.4",
+    "native": "(\"2.15.0\",34537727)",
+    "broker": [
+      {
+        "node_id": 0,
+        "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+      }
+    ],
+    "fixture": {
+      "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+      "RDKAFKA_TEST_ADMIN": null,
+      "RDKAFKA_TEST_RPK": null,
+      "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+    }
+  },
+  "resolved_test_dependencies": {
+    "QuickCheck": "2.19.0.0",
+    "tasty": "1.5.5",
+    "tasty-quickcheck": "0.11.1"
+  },
+  "selected_adapter": {
+    "package": "mori://UnkindPartition/tasty/packages/tasty-quickcheck",
+    "bounds": "^>=0.11.1",
+    "hackage_revision": 7,
+    "upstream_tag": "quickcheck-0.11.1",
+    "upstream_commit": "f838314360d1c8f20f2919b376a5d2672aedc893"
+  },
+  "tests": [
+    "rdkafka-hs.Producer properties generated.program follows last-write semantics",
+    "rdkafka-hs.Producer properties generated.configuration has left and right identity",
+    "rdkafka-hs.Producer properties generated.configuration composition is associative",
+    "rdkafka-hs.Producer properties generated.composition appends writes in order",
+    "rdkafka-hs.Producer properties generated.unrelated keys survive a conflicting write",
+    "rdkafka-hs.Producer properties generated.last explicit log level wins",
+    "rdkafka-hs.Producer properties generated.fixed empty duplicate and binary text values",
+    "rdkafka-hs-integration.producer-properties.callback composition preserves order and identity"
+  ],
+  "normal": {
+    "unit_tests": 21,
+    "integration_tests": 244,
+    "integration_seconds": 108.03
+  },
+  "instrumented": {
+    "unit_tests": 21,
+    "integration_tests": 244,
+    "integration_seconds": 105.84
+  },
+  "stress": {
+    "seed": 20261024,
+    "pure_properties": 6,
+    "cases_per_pure_property": 1000,
+    "native_callback_cases": 1000
+  },
+  "mutation_evidence": "dist-property-mutations/20261024T103255Z-t4e5jvw8/results.json",
+  "mutation_archive_sha256": "d8ca382bf9f07a2f7fb7259035b82a901c627665dd0392720c13049897e9f166",
+  "mutations": [
+    {
+      "mutation": "pure-control",
+      "compiled": true,
+      "exit": 0,
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-property-mutations/20261024T103255Z-t4e5jvw8/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-test/build/rdkafka-hs-test/rdkafka-hs-test",
+        "-p",
+        "/Producer properties generated/",
+        "--quickcheck-replay=20261024",
+        "--quickcheck-tests=1000",
+        "+RTS",
+        "-N2",
+        "-RTS"
+      ],
+      "build_log": "dist-property-mutations/20261024T103255Z-t4e5jvw8/pure-control.build.log",
+      "test_log": "dist-property-mutations/20261024T103255Z-t4e5jvw8/pure-control.test.log",
+      "replay_token": null,
+      "replay_command": null
+    },
+    {
+      "mutation": "callback-control",
+      "compiled": true,
+      "exit": 0,
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-property-mutations/20261024T103255Z-t4e5jvw8/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/producer-properties/",
+        "--quickcheck-replay=20261024",
+        "--quickcheck-tests=1000",
+        "+RTS",
+        "-N2",
+        "-RTS"
+      ],
+      "build_log": "dist-property-mutations/20261024T103255Z-t4e5jvw8/callback-control.build.log",
+      "test_log": "dist-property-mutations/20261024T103255Z-t4e5jvw8/callback-control.test.log",
+      "replay_token": null,
+      "replay_command": null
+    },
+    {
+      "mutation": "global-bias-reversed",
+      "compiled": true,
+      "exit": 1,
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-property-mutations/20261024T103255Z-t4e5jvw8/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-test/build/rdkafka-hs-test/rdkafka-hs-test",
+        "-p",
+        "/program follows last-write semantics/",
+        "--quickcheck-replay=20261024",
+        "--quickcheck-tests=1000",
+        "+RTS",
+        "-N2",
+        "-RTS"
+      ],
+      "build_log": "dist-property-mutations/20261024T103255Z-t4e5jvw8/global-bias-reversed.build.log",
+      "test_log": "dist-property-mutations/20261024T103255Z-t4e5jvw8/global-bias-reversed.test.log",
+      "replay_token": "(SMGen 7603286587113926598 6750786074473487893,17)",
+      "replay_command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-property-mutations/20261024T103255Z-t4e5jvw8/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-test/build/rdkafka-hs-test/rdkafka-hs-test",
+        "-p",
+        "/program follows last-write semantics/",
+        "--quickcheck-replay=(SMGen 7603286587113926598 6750786074473487893,17)",
+        "--quickcheck-tests=1000",
+        "+RTS",
+        "-N2",
+        "-RTS"
+      ]
+    },
+    {
+      "mutation": "topic-bias-reversed",
+      "compiled": true,
+      "exit": 1,
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-property-mutations/20261024T103255Z-t4e5jvw8/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-test/build/rdkafka-hs-test/rdkafka-hs-test",
+        "-p",
+        "/program follows last-write semantics/",
+        "--quickcheck-replay=20261024",
+        "--quickcheck-tests=1000",
+        "+RTS",
+        "-N2",
+        "-RTS"
+      ],
+      "build_log": "dist-property-mutations/20261024T103255Z-t4e5jvw8/topic-bias-reversed.build.log",
+      "test_log": "dist-property-mutations/20261024T103255Z-t4e5jvw8/topic-bias-reversed.test.log",
+      "replay_token": "(SMGen 16220535950959846018 13032396016077086513,13)",
+      "replay_command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-property-mutations/20261024T103255Z-t4e5jvw8/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-test/build/rdkafka-hs-test/rdkafka-hs-test",
+        "-p",
+        "/program follows last-write semantics/",
+        "--quickcheck-replay=(SMGen 16220535950959846018 13032396016077086513,13)",
+        "--quickcheck-tests=1000",
+        "+RTS",
+        "-N2",
+        "-RTS"
+      ]
+    },
+    {
+      "mutation": "log-level-bias-reversed",
+      "compiled": true,
+      "exit": 1,
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-property-mutations/20261024T103255Z-t4e5jvw8/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-test/build/rdkafka-hs-test/rdkafka-hs-test",
+        "-p",
+        "/program follows last-write semantics/",
+        "--quickcheck-replay=20261024",
+        "--quickcheck-tests=1000",
+        "+RTS",
+        "-N2",
+        "-RTS"
+      ],
+      "build_log": "dist-property-mutations/20261024T103255Z-t4e5jvw8/log-level-bias-reversed.build.log",
+      "test_log": "dist-property-mutations/20261024T103255Z-t4e5jvw8/log-level-bias-reversed.test.log",
+      "replay_token": "(SMGen 876416796774277236 1544764139296909573,5)",
+      "replay_command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-property-mutations/20261024T103255Z-t4e5jvw8/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-test/build/rdkafka-hs-test/rdkafka-hs-test",
+        "-p",
+        "/program follows last-write semantics/",
+        "--quickcheck-replay=(SMGen 876416796774277236 1544764139296909573,5)",
+        "--quickcheck-tests=1000",
+        "+RTS",
+        "-N2",
+        "-RTS"
+      ]
+    },
+    {
+      "mutation": "callback-order-reversed",
+      "compiled": true,
+      "exit": 1,
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-property-mutations/20261024T103255Z-t4e5jvw8/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/producer-properties/",
+        "--quickcheck-replay=20261024",
+        "--quickcheck-tests=1000",
+        "+RTS",
+        "-N2",
+        "-RTS"
+      ],
+      "build_log": "dist-property-mutations/20261024T103255Z-t4e5jvw8/callback-order-reversed.build.log",
+      "test_log": "dist-property-mutations/20261024T103255Z-t4e5jvw8/callback-order-reversed.test.log",
+      "replay_token": "(SMGen 13262595567567848789 8761751867160652105,2)",
+      "replay_command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-property-mutations/20261024T103255Z-t4e5jvw8/source/rdkafka-hs-1.0.0.1/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/producer-properties/",
+        "--quickcheck-replay=(SMGen 13262595567567848789 8761751867160652105,2)",
+        "--quickcheck-tests=1000",
+        "+RTS",
+        "-N2",
+        "-RTS"
+      ]
+    }
+  ],
+  "mutation_artifacts": {
+    "dist-property-mutations/20261024T103255Z-t4e5jvw8/results.json": "8f50a3050edee8a85ac219742ca21fa84b0d1dd4cc18dc7b8358815daa3d31e1",
+    "dist-property-mutations/20261024T103255Z-t4e5jvw8/pure-control.build.log": "63cabfbc3f5b462c98b2d07c1ab3ddde0e8d85a1154967011ba72e73f5f67729",
+    "dist-property-mutations/20261024T103255Z-t4e5jvw8/pure-control.test.log": "b4fa898f5eb0e246df167d311ecbd59688659b9b31f4d5ecd1271ad4eb8514d0",
+    "dist-property-mutations/20261024T103255Z-t4e5jvw8/callback-control.build.log": "5b44994c521b2096e4e747679f8e98af18e4050d843f22f4a1616b6edabe612f",
+    "dist-property-mutations/20261024T103255Z-t4e5jvw8/callback-control.test.log": "6af1832ce30c9d62eab494769793612a572378c489146dc822a3cee00ce57e3f",
+    "dist-property-mutations/20261024T103255Z-t4e5jvw8/global-bias-reversed.build.log": "d88685c2906f8edfed803ac8e4483968e9c32b9149331f09924665f2ec661c0e",
+    "dist-property-mutations/20261024T103255Z-t4e5jvw8/global-bias-reversed.test.log": "cf780ec944d019230f9ef866cedaa6fc182186aac75217f4353c8f2def9f9f05",
+    "dist-property-mutations/20261024T103255Z-t4e5jvw8/global-bias-reversed.replay.log": "02634a23fc2b0034c2c229004c6e46aff8455b526f7ec6655153336b593cd05f",
+    "dist-property-mutations/20261024T103255Z-t4e5jvw8/topic-bias-reversed.build.log": "d88685c2906f8edfed803ac8e4483968e9c32b9149331f09924665f2ec661c0e",
+    "dist-property-mutations/20261024T103255Z-t4e5jvw8/topic-bias-reversed.test.log": "8a467a77136751225f2505198b6e5d24676cb4280fc903c6b2eccc616fcaffa6",
+    "dist-property-mutations/20261024T103255Z-t4e5jvw8/topic-bias-reversed.replay.log": "72f81d6044bfbff465a331ae7b7ec0c364f241237e778b0391a68a8a18028b69",
+    "dist-property-mutations/20261024T103255Z-t4e5jvw8/log-level-bias-reversed.build.log": "d88685c2906f8edfed803ac8e4483968e9c32b9149331f09924665f2ec661c0e",
+    "dist-property-mutations/20261024T103255Z-t4e5jvw8/log-level-bias-reversed.test.log": "92970c4d15fdddbdd47f65ea062b0e378585b34f394c31f21471ef1c4103c867",
+    "dist-property-mutations/20261024T103255Z-t4e5jvw8/log-level-bias-reversed.replay.log": "63216342d6e19387a84cfbe9fe34fdbbb9165a65977439b2f2169f5b9d890be7",
+    "dist-property-mutations/20261024T103255Z-t4e5jvw8/callback-order-reversed.build.log": "2eef00e7196ac2ca384b4797882201dfe9b8b3e24be4eba8be116f8bc5894202",
+    "dist-property-mutations/20261024T103255Z-t4e5jvw8/callback-order-reversed.test.log": "1c8f19964beb3e3575da40b77e2d251881f6a19bcefe986ab49fe435e742e522",
+    "dist-property-mutations/20261024T103255Z-t4e5jvw8/callback-order-reversed.replay.log": "c0a83178ddafb780168ee388bec29b831c659a5544c2b236340ff1cc830beb38"
+  },
+  "status": "producer-composition integration milestone accepted; EP-14 remaining laws and public API coverage stay open"
+}

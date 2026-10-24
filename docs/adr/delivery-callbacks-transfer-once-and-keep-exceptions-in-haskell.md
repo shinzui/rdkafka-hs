@@ -2,7 +2,7 @@
 type: Architecture Decision Record
 title: Delivery callbacks transfer once and keep exceptions in Haskell
 description: Mask the enqueue ownership decision, release rejected callback roots immediately, and contain delivery callback exceptions within Haskell threads while preserving per-message delivery.
-timestamp: 2026-10-24T08:17:05Z
+timestamp: 2026-10-24T10:30:16Z
 generated:
   by: codex-cli/gpt-6.1-sol
   at: "2026-10-24T08:17:05Z"
@@ -20,7 +20,7 @@ An immediate enqueue rejection produces no delivery report. The inherited produc
 
 ## Decision
 
-Mask asynchronous exceptions from per-message callback allocation through the native enqueue ownership decision. Immediate rejection leaves the root owned by the caller, which frees it exactly once. Successful enqueue transfers ownership to delivery handling; the caller must never free that root, including when cancellation is pending or another poller has already delivered the report.
+Mask asynchronous exceptions from per-message callback allocation through the native enqueue ownership decision. Immediate rejection leaves the root owned by the caller, which frees it exactly once. The native API transfers ownership only when its returned error pointer is NULL. A non-null error object means rejection: free the root before decoding its error code and bracket destruction of that object. A conversion exception therefore cannot retain the rejected root. A contradictory non-null success-code object returns `KafkaInvalidReturnValue`. Preserve native error-object codes, including `UNKNOWN`; these are already translated error codes and must not be replaced by system `errno`. The caller must never free an accepted root, including when cancellation is pending or another poller has already delivered the report.
 
 Delivery handling brackets the root before decoding the report or invoking user callbacks. It resolves the Haskell closure, invokes the global callback on the polling thread, and forks the per-message callback before releasing the native root. The forked Haskell thread then retains the closure for its own lifetime. It runs unmasked so ordinary Haskell cancellation and exception behavior remain available.
 

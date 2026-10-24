@@ -1,14 +1,15 @@
 module Kafka.Integration.ProducerRegressionTest (tests, runCallbackProbe) where
 
-import Control.Concurrent (forkFinally, killThread, threadDelay)
+import Control.Concurrent (forkFinally, killThread, runInBoundThread, threadDelay)
 import Control.Concurrent.MVar (MVar, newEmptyMVar, putMVar, readMVar, takeMVar, tryPutMVar, tryReadMVar)
-import Control.Exception (AsyncException (ThreadKilled), MaskingState (Unmasked), bracket, finally, fromException, getMaskingState, throwIO, try)
+import Control.Exception (AsyncException (ThreadKilled), MaskingState (Unmasked), SomeException, bracket, finally, fromException, getMaskingState, throwIO, try)
 import Control.Monad (forM_, replicateM, void)
 import Data.ByteString qualified as BS
 import Data.IORef (IORef, atomicModifyIORef', mkWeakIORef, newIORef, readIORef)
 import Data.List (isInfixOf)
 import Data.Map qualified as Map
 import Data.Text qualified as Text
+import Foreign.C.Types (CInt)
 import GHC.Conc (BlockReason (BlockedOnException), ThreadStatus (ThreadBlocked), getUncaughtExceptionHandler, setUncaughtExceptionHandler, threadStatus)
 import Kafka.CallbackTestSupport (assertRetained, awaitCollected)
 import Kafka.Consumer qualified as C
@@ -149,7 +150,38 @@ tests env =
               flushProducerTimeout producer (Timeout 0) >>= (@?= Nothing)
               pure (weak, ())
             takeWithin done
+            awaitCollected weak,
+        testCase "native error decoding failure releases rejected callback capture" $
+          withProducer mempty $ \producer -> withProducerTracking 3 $ do
+            calls <- newIORef 0
+            ready <- newEmptyMVar
+            reports <- newEmptyMVar
+            outcome <- try @SomeException (enqueueObservedCapture producer record calls ready reports)
+            case outcome of
+              Left exception -> assertBool (show exception) ("32767" `isInfixOf` show exception)
+              Right result -> assertFailure ("undecodable native error returned " <> show result)
+            weak <- takeWithin ready
+            nativeProducerProperty 1 >>= (@?= Just "60000")
             awaitCollected weak
+            flushProducerTimeout producer (Timeout 0) >>= (@?= Nothing)
+            readIORef calls >>= (@?= 0),
+        testCase "non-null native success-code error rejects and releases capture" $
+          withProducer mempty $ \producer -> withProducerTracking 4 $ do
+            calls <- newIORef 0
+            (result, weak) <- enqueueCapture producer record calls Nothing
+            result @?= Left (ImmediateError KafkaInvalidReturnValue)
+            awaitCollected weak
+            flushProducerTimeout producer (Timeout 0) >>= (@?= Nothing)
+            readIORef calls >>= (@?= 0),
+        testCase "unknown native error code is preserved instead of reading errno" $
+          runInBoundThread $
+            withProducer mempty $ \producer -> withProducerTracking 5 $ do
+              calls <- newIORef 0
+              (result, weak) <- enqueueCapture producer record calls Nothing
+              result @?= Left (ImmediateError (KafkaResponseError RdKafkaRespErrUnknown))
+              awaitCollected weak
+              flushProducerTimeout producer (Timeout 0) >>= (@?= Nothing)
+              readIORef calls >>= (@?= 0)
       ]
       <> [ testCase ("actual client configuration: " <> label) $
              withProducerRaw props $ \producer -> withProducerTracking 0 $ do
@@ -164,6 +196,9 @@ tests env =
                ("explicit topic wins duplicate", extraProp "message.timeout.ms" "60000" <> sendTimeout (Timeout 1500), "1500", []),
                ("last topic property wins", sendTimeout (Timeout 1600) <> sendTimeout (Timeout 1700), "1700", []),
                ("empty topic map preserves global", extraProp "message.timeout.ms" "1800" <> mempty, "1800", []),
+               ("zero topic timeout is infinite", sendTimeout (Timeout 0), "0", []),
+               ("maximum native topic timeout", sendTimeout (Timeout (fromIntegral (maxBound :: CInt))), show (maxBound :: CInt), []),
+               ("explicit topic wins native timeout alias", extraProp "delivery.timeout.ms" "60000" <> sendTimeout (Timeout 2000), "2000", []),
                ("topic codec overrides global codec", compression Gzip <> topicCompression Lz4, "300000", [(2, "lz4")]),
                ("global codec survives unrelated topic keys", compression Gzip <> sendTimeout (Timeout 1900), "1900", [(2, "gzip")])
              ]
@@ -285,6 +320,7 @@ tests env =
              [ ("unknown global key", extraProp "not.a.producer.setting" "value", "not.a.producer.setting", True),
                ("unknown topic key", extraTopicProps (Map.singleton "not.a.topic.setting" "value"), "not.a.topic.setting", True),
                ("invalid topic timeout", sendTimeout (Timeout (-1)), "message.timeout.ms", False),
+               ("excessive topic timeout", sendTimeout (Timeout maxBound), "message.timeout.ms", False),
                ("global-only key in topic map", extraTopicProps (Map.singleton "queue.buffering.max.messages" "1"), "queue.buffering.max.messages", True)
              ]
          ]
