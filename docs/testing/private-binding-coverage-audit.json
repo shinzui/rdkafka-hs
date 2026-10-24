@@ -1,0 +1,62 @@
+{
+  "status": "partial source-backed M3 audit; no public contract is waived",
+  "baseline_revision": "c8317f0",
+  "baseline_manifest": "docs/testing/coverage-evidence.json",
+  "baseline_fingerprint": "acc3974e02bc5dfc6d23b9291a865133b52f8019dcae4783219e8763029a82de",
+  "private_module": "src/Kafka/Internal/RdKafka.chs",
+  "classified_ticks": 211,
+  "classification_keys": 58,
+  "declarations": [
+    {
+      "name": "rdKafkaMsgFlagFree",
+      "start": 84,
+      "end": 85
+    },
+    {
+      "name": "copyRdKafkaTopicPartitionList",
+      "start": 343,
+      "end": 346
+    },
+    {
+      "name": "rdKafkaConfSetConsumeCb",
+      "start": 394,
+      "end": 397
+    },
+    {
+      "name": "rdKafkaConfSetThrottleCb",
+      "start": 439,
+      "end": 442
+    },
+    {
+      "name": "rdKafkaConfSetSocketCb",
+      "start": 486,
+      "end": 489
+    },
+    {
+      "name": "rdKafkaTopicConfSetPartitionerCb",
+      "start": 516,
+      "end": 520
+    },
+    {
+      "name": "pollRdKafkaConsumer",
+      "start": 689,
+      "end": 695
+    },
+    {
+      "name": "rdKafkaConsumeStart",
+      "start": 1022,
+      "end": 1027
+    },
+    {
+      "name": "rdKafkaConsumeStop",
+      "start": 1041,
+      "end": 1046
+    },
+    {
+      "name": "newRdKafkaNewTopic",
+      "start": 1369,
+      "end": 1376
+    }
+  ],
+  "proof": "rg of the exact names across all src Haskell/c2hs files finds only their declarations, definitions and same-helper internal setter calls. Cabal lists the module under other-modules. Only these declaration bodies are classified; shared utilities with reachable native failure paths remain open."
+}

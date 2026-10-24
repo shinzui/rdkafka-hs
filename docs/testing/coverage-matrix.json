@@ -10550,6 +10550,296 @@
       "status": "unreachable",
       "rationale": "These private Storable write methods are not called by any public path. Native APIs allocate/populate messages, partition lists and metadata/group results; the library reads them and uses native list setters. The only aggregate Haskell write path is the distinct outbound RdKafkaVuT array. Explicit unsupported metadata poke methods are likewise outside the public API.",
       "evidence": "src/Kafka/Internal/RdKafka.chs; src/Kafka/Consumer/Convert.hs; src/Kafka/Metadata.hs; src/Kafka/Producer.hs; rdkafka-hs.cabal (private other-modules)"
+    },
+    "Kafka.Internal.RdKafka:691:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "pollRdKafkaConsumer is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:692:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "pollRdKafkaConsumer is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:693:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "pollRdKafkaConsumer is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:694:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "pollRdKafkaConsumer is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:695:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "pollRdKafkaConsumer is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:690:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "pollRdKafkaConsumer is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:690:TopLevelBox [\"pollRdKafkaConsumer\"]": {
+      "status": "unreachable",
+      "rationale": "pollRdKafkaConsumer is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:518:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "rdKafkaTopicConfSetPartitionerCb is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:519:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "rdKafkaTopicConfSetPartitionerCb is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:520:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "rdKafkaTopicConfSetPartitionerCb is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:517:TopLevelBox [\"rdKafkaTopicConfSetPartitionerCb\"]": {
+      "status": "unreachable",
+      "rationale": "rdKafkaTopicConfSetPartitionerCb is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:488:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConfSetSocketCb is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:489:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConfSetSocketCb is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:487:TopLevelBox [\"rdKafkaConfSetSocketCb\"]": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConfSetSocketCb is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:441:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConfSetThrottleCb is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:442:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConfSetThrottleCb is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:440:TopLevelBox [\"rdKafkaConfSetThrottleCb\"]": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConfSetThrottleCb is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:396:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConfSetConsumeCb is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:397:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConfSetConsumeCb is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:395:TopLevelBox [\"rdKafkaConfSetConsumeCb\"]": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConfSetConsumeCb is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:343:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "copyRdKafkaTopicPartitionList is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:344:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "copyRdKafkaTopicPartitionList is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:345:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "copyRdKafkaTopicPartitionList is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:346:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "copyRdKafkaTopicPartitionList is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:344:TopLevelBox [\"copyRdKafkaTopicPartitionList\"]": {
+      "status": "unreachable",
+      "rationale": "copyRdKafkaTopicPartitionList is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1024:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConsumeStart is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1025:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConsumeStart is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1026:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConsumeStart is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1026:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConsumeStart is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1027:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConsumeStart is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1027:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConsumeStart is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1023:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConsumeStart is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1023:TopLevelBox [\"rdKafkaConsumeStart\"]": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConsumeStart is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1043:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConsumeStop is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1044:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConsumeStop is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1045:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConsumeStop is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1045:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConsumeStop is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1046:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConsumeStop is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1046:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConsumeStop is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1042:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConsumeStop is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1042:TopLevelBox [\"rdKafkaConsumeStop\"]": {
+      "status": "unreachable",
+      "rationale": "rdKafkaConsumeStop is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1371:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "newRdKafkaNewTopic is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1372:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "newRdKafkaNewTopic is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1373:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "newRdKafkaNewTopic is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1374:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "newRdKafkaNewTopic is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1374:BinBox CondBinBox True": {
+      "status": "unreachable",
+      "rationale": "newRdKafkaNewTopic is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1374:BinBox CondBinBox False": {
+      "status": "unreachable",
+      "rationale": "newRdKafkaNewTopic is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1375:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "newRdKafkaNewTopic is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1375:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "newRdKafkaNewTopic is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1376:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "newRdKafkaNewTopic is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1376:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "newRdKafkaNewTopic is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1370:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "newRdKafkaNewTopic is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:1370:TopLevelBox [\"newRdKafkaNewTopic\"]": {
+      "status": "unreachable",
+      "rationale": "newRdKafkaNewTopic is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:85:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "rdKafkaMsgFlagFree is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:85:TopLevelBox [\"rdKafkaMsgFlagFree\"]": {
+      "status": "unreachable",
+      "rationale": "rdKafkaMsgFlagFree is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:84:ExpBox False": {
+      "status": "unreachable",
+      "rationale": "rdKafkaMsgFlagFree is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:84:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "rdKafkaMsgFlagFree is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
+    },
+    "Kafka.Internal.RdKafka:85:ExpBox True": {
+      "status": "unreachable",
+      "rationale": "rdKafkaMsgFlagFree is an unused helper in the private Kafka.Internal.RdKafka module. Its name occurs only in its declaration/definition and internal setter call, with no caller under src. The module is not exposed by Cabal. Public producers/consumers/admin use the distinct active implementations; none invokes this legacy or unexposed capability.",
+      "evidence": "src/Kafka/Internal/RdKafka.chs; rdkafka-hs.cabal; docs/testing/private-binding-coverage-audit.json"
     }
   }
 }

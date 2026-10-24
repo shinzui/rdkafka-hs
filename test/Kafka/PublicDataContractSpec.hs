@@ -187,10 +187,10 @@ tests =
                       (T.topicName request, T.unPartitionCount (T.topicPartitionCount request), T.unReplicationFactor (T.topicReplicationFactor request), T.topicConfig request) QC.=== (topic, partition, partition, M.singleton (Text.unpack name) (Text.unpack name))
                     ],
           QC.testProperty "metadata structures retain identities states members and binary data" $
-            QC.forAll ((,,,,) <$> text <*> signed <*> signed64 <*> bytes <*> bytes) $ \(name, n, offset, binary, assignment) ->
+            QC.forAll ((,,,,,) <$> text <*> signed <*> signed <*> signed64 <*> bytes <*> bytes) $ \(name, n, port, offset, binary, assignment) ->
               let topic = K.TopicName name
                   brokerId = K.BrokerId n
-                  broker = D.BrokerMetadata brokerId name n
+                  broker = D.BrokerMetadata brokerId name port
                   partition = D.PartitionMetadata (K.PartitionId n) Nothing brokerId [brokerId] [brokerId]
                   topicInfo = D.TopicMetadata topic [partition] Nothing
                   metadata = D.KafkaMetadata [broker] [topicInfo] brokerId
@@ -205,7 +205,7 @@ tests =
                       generic metadata,
                       generic watermark,
                       generic member,
-                      (D.bmBrokerId broker, D.bmBrokerHost broker, D.bmBrokerPort broker) QC.=== (brokerId, name, n),
+                      (D.bmBrokerId broker, D.bmBrokerHost broker, D.bmBrokerPort broker) QC.=== (brokerId, name, port),
                       (D.kmBrokers metadata, D.kmTopics metadata, D.kmOrigBroker metadata) QC.=== ([broker], [topicInfo], brokerId),
                       (D.gmiMemberId member, D.gmiClientId member, D.gmiClientHost member, D.gmiMetadata member, D.gmiAssignment member) QC.=== (D.GroupMemberId name, K.ClientId name, name, binary, assignment),
                       QC.conjoin (map (generic . group) states),

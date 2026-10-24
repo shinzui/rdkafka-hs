@@ -49,6 +49,19 @@ rd_kafka_resp_err_t rd_kafka_metadata(rd_kafka_t *rk, int all_topics, rd_kafka_t
       if (metadata->topic_cnt != 1 || metadata->topics[0].partition_cnt != 2) abort();
       metadata->topics[0].partitions[0].err = RD_KAFKA_RESP_ERR_TOPIC_AUTHORIZATION_FAILED;
     }
+    if (mode == 19) {
+      struct rd_kafka_metadata *frame = (struct rd_kafka_metadata *)(void *)metadata;
+      if (frame->broker_cnt != 1 || frame->topic_cnt != 1 || frame->topics[0].partition_cnt != 1 || strlen(frame->brokers[0].host) < 2) abort();
+      frame->brokers[0].id = 7; frame->brokers[0].port = 19092;
+      strcpy(frame->brokers[0].host, "λ");
+      frame->orig_broker_id = 19;
+      frame->topics[0].err = RD_KAFKA_RESP_ERR_UNKNOWN_TOPIC_OR_PART;
+      struct rd_kafka_metadata_partition *partition = &frame->topics[0].partitions[0];
+      if (partition->replica_cnt != 1 || partition->isr_cnt != 1) abort();
+      partition->id = 42; partition->leader = 11;
+      partition->err = RD_KAFKA_RESP_ERR_TOPIC_AUTHORIZATION_FAILED;
+      partition->replicas[0] = 13; partition->isrs[0] = 17;
+    }
     boundary(1);
   }
   pthread_mutex_unlock(&lock); return error;

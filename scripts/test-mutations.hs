@@ -262,6 +262,14 @@ families "buffer" =
   ]
   where
     b label change test = mutation "public-contract" label consumer change test
+families "metadata-fields" =
+  [ control "unchanged-control" integration "metadata-contract",
+    d "broker-port-decoded-as-id" (replace "bmBrokerPort = port'RdKafkaMetadataBrokerT bm" "bmBrokerPort = id'RdKafkaMetadataBrokerT bm") "distinct native metadata fields retain exact identities and errors",
+    d "replicas-decoded-as-isr" (replace "pmReplicas = BrokerId . fromIntegral <$> reps" "pmReplicas = BrokerId . fromIntegral <$> isrs") "distinct native metadata fields retain exact identities and errors",
+    d "protocol-decoded-as-type" (replace "pr <- peekCText $ protocol'RdKafkaGroupInfoT gi" "pr <- peekCText $ protocolType'RdKafkaGroupInfoT gi") "async group identity lifecycle and supported native states"
+  ]
+  where
+    d label change test = mutation "metadata-contract" label "src/Kafka/Metadata.hs" change test
 families "metadata-partitions" =
   [ control "unchanged-control" integration "metadata-contract",
     d "watermark-partition-error-ignored" (replace "case pmError partition of" "case Nothing of") "provided metadata preserves partition failures in convenience helpers",
@@ -292,7 +300,7 @@ families "config" =
     mutation "config-strings" "c-string-key-guard-removed" "src/Kafka/Internal/Setup.hs" (replace "Text.any (== '\\0') key" "False") "producer topic rejects NUL key",
     mutation "config-strings" "c-string-value-guard-removed" "src/Kafka/Internal/Setup.hs" (replace "Text.any (== '\\0') value" "False") "producer global rejects NUL value"
   ]
-families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata, metadata-utf8, metadata-partitions, buffer, data or config")
+families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata, metadata-utf8, metadata-partitions, metadata-fields, buffer, data or config")
 
 replace :: String -> String -> String -> String
 replace old new source = case [i | (i, rest) <- zip [0 ..] (tails source), old `isPrefixOf` rest] of

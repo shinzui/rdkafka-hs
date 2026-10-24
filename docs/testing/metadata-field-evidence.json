@@ -1,0 +1,47 @@
+{
+  "status": "accepted metadata-field sensitivity checkpoint; EP-14 incomplete",
+  "fingerprint": "2a9a48c90e661d890c111fcccd8a86b4b6baa20d8449749bdd5f2aa089e5285d",
+  "runs": {
+    "normal": {
+      "log": "/tmp/rdkafka-ep14-metadata-fields-normal-focused.log",
+      "sha256": "3119d02db770aba99e05149784687208b7a0aafec6994e96babf4c3950be6d3e",
+      "passed": 14
+    },
+    "instrumented-haskell": {
+      "log": "/tmp/rdkafka-ep14-metadata-fields-hpc.log",
+      "sha256": "a419b8fee6aa16d7d1549b518d77cce02257bb2f1641bb24914cff5883ce9dab",
+      "passed": 14
+    },
+    "instrumented-native": {
+      "log": "/tmp/rdkafka-ep14-metadata-fields-asan.log",
+      "sha256": "50ede3672dd87fe7cd648d0de463628b4f79735bd271fb98093bfce9f88bead9",
+      "passed": 14
+    },
+    "generated-unit": {
+      "log": "/tmp/rdkafka-ep14-metadata-fields-normal.log",
+      "passed": 1,
+      "cases": 1000,
+      "seed": 20261024,
+      "additional_integration_with_dependencies": 55
+    }
+  },
+  "mutations": "dist-mutations/20261024T202539Z-metadata-fields-95023-0/results.json",
+  "compiled_mutations_caught": 3,
+  "controls": 1,
+  "scope": [
+    "Independent broker id/port/Unicode host/origin fields",
+    "Distinct leader/replica/ISR/partition fields and topic/partition errors",
+    "Explicit range assignor and exact group protocol",
+    "Generated broker port varies independently from broker id"
+  ],
+  "native_frame": "Modify scalars, array elements and a bounded shorter host string in an actual native-owned metadata result. The existing native destructor releases the result exactly once; no test-side ownership substitution. The controlled frame verifies decoding, not real broker topology.",
+  "native_library": "mori://confluentinc/librdkafka",
+  "native_version": "2.15.0",
+  "native_diagnostic_control": "docs/testing/callback-native-diagnostics.json",
+  "leak_instrumentation": false,
+  "required_checks": {
+    "log": "/tmp/rdkafka-ep14-metadata-fields-check.log",
+    "sha256": "7d786b08192df44348ac2c6644ce6f1fceaaf8db4a9108ea9be0f2901264edca"
+  },
+  "remaining": "Whole-candidate inventory refresh and remaining EP-14 contracts/coverage, historical deprecated-seek diagnosis and EP-15 environments remain open."
+}

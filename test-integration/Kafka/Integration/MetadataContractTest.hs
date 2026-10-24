@@ -53,6 +53,12 @@ tests env =
             created <- metadataStat 0
             destroyed <- metadataStat 1
             (created, destroyed) @?= (3, 3),
+      testCase "distinct native metadata fields retain exact identities and errors" $
+        withTopic env "metadata-distinct-fields" 1 $ \topic producer ->
+          withMetadataFault 19 $ do
+            result <- topicMetadata producer (Timeout 5000) topic
+            result @?= Right (KafkaMetadata [BrokerMetadata (BrokerId 7) "λ" 19092] [TopicMetadata topic [PartitionMetadata (PartitionId 42) (Just partitionFailure) (BrokerId 11) [BrokerId 13] [BrokerId 17]] (Just unknownTopic)] (BrokerId 19))
+            mapM metadataStat [0, 1] >>= (@?= [1, 1]),
       testCase "provided metadata preserves partition failures in convenience helpers" $
         withTopic env "metadata-provided-errors" 2 $ \topic producer -> do
           produceTo producer topic 0 "zero"
@@ -132,7 +138,7 @@ tests env =
              withTopic env (Text.pack ("metadata-group-" <> label)) 1 $ \topic producer -> do
                produceTo producer topic 0 "group-record"
                let group = makeGroupId env (Text.pack ("metadata-group-λ-配置-" <> label))
-                   props = brokersList (teBrokers env) <> groupId group <> clientId (ClientId (Text.pack ("metadata-client-λ-配置-" <> label))) <> noAutoCommit <> callbackPollMode mode
+                   props = brokersList (teBrokers env) <> groupId group <> clientId (ClientId (Text.pack ("metadata-client-λ-配置-" <> label))) <> noAutoCommit <> callbackPollMode mode <> extraProp "partition.assignment.strategy" "range"
                bracket (newConsumer props (topics [topic] <> offsetReset Earliest) >>= either throwIO pure) releaseConsumer $ \consumer -> do
                  message <- pollMessage consumer (Timeout 10000) >>= either throwIO pure
                  crValue message @?= Just "group-record"
@@ -142,7 +148,7 @@ tests env =
                    case described of
                      [info] -> do
                        map gmiClientId (giMembers info) @?= [ClientId (Text.pack ("metadata-client-λ-配置-" <> label))]
-                       assertBool (show info) (not (Text.null (let GroupProtocol protocol = giProtocol info in protocol)))
+                       giProtocol info @?= GroupProtocol "range"
                      other -> assertFailure (show other)
                    allGroups <- allConsumerGroupsInfo producer (Timeout 5000) >>= either throwIO pure
                    filter ((== group) . giGroup) allGroups @?= described
