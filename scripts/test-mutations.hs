@@ -153,7 +153,27 @@ families "callback" =
         native
         (finalizer (replace "                  {# call rd_kafka_destroy_flags #} realPtr 0x8" "                  releaseCallbackOwner owner\n                  {# call rd_kafka_destroy_flags #} realPtr 0x8" . replace "                  releaseCallbackOwner owner\n" ""))
         "async concurrent destruction joins at native entry"
-families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek or callback")
+families "transaction" =
+  control "unchanged-control" integration "transaction-errors"
+    : [ t "init-error-retained" transaction (omit "initTransactions p" "\n-- | Begins") (immediate "init"),
+        t "begin-error-retained" transaction (omit "beginTransaction p" "\n-- | Commits") (immediate "begin"),
+        t "abort-error-retained" transaction (omit "abortTransaction p" "\n-- | Commits the message") (immediate "abort"),
+        t "commit-error-retained" transaction (omit "commitTransaction p" "\n-- | Aborts") (immediate "commit"),
+        t "offset-error-retained" transaction (omit "commitOffsetMessageTransaction p" "\n-- -- | Commit offsets") (immediate "offset"),
+        t "fatal-flag-inverted" transaction (replace "txErrorFatal = fatal" "txErrorFatal = not fatal") (flags "commit"),
+        t "retry-flag-inverted" transaction (replace "txErrorRetriable = retriable" "txErrorRetriable = not retriable") (flags "commit"),
+        t "abort-flag-inverted" transaction (replace "txErrorTxnReqAbort = reqAbort" "txErrorTxnReqAbort = not reqAbort") (flags "offset"),
+        t "group-metadata-retained" native (replace "rdKafkaConsumerGroupMetadataDestroy $" "(const (pure ())) $") (immediate "offset"),
+        t "wrong-source-offset" consumerConversion (replace "moff + 1" "moff") "async commit publishes output and source next offset atomically; abort publishes neither"
+      ]
+  where
+    transaction = "src/Kafka/Transaction.hs"
+    native = "src/Kafka/Internal/RdKafka.chs"
+    t = mutation "transaction-errors"
+    omit start end = section start end (replace "rdKafkaErrorDestroy" "(const (pure ()))")
+    immediate operation = operation <> " without transactional ID preserves native code and destroys error"
+    flags operation = operation <> " copies native flag combination 7 before destruction"
+families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback or transaction")
 
 replace :: String -> String -> String -> String
 replace old new source = case [i | (i, rest) <- zip [0 ..] (tails source), old `isPrefixOf` rest] of

@@ -2278,8 +2278,8 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
-      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2345,8 +2345,8 @@
         "rdkafka-hs-integration.producer-properties.callback composition preserves order and identity"
       ],
       "status": "tested",
-      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
-      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2440,9 +2440,9 @@
         "rdkafka-hs-integration.seek-partitions.sync.native tail sentinel replays final two records"
       ],
       "status": "tested",
-      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
       "evidence": "docs/testing/seek-evidence.json",
-      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2519,8 +2519,8 @@
         "rdkafka-hs-integration.producer-regressions.later delivery callback replaces the earlier callback"
       ],
       "status": "tested",
-      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
-      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2628,8 +2628,8 @@
       "status": "tested",
       "native_diagnostics": "docs/testing/callback-native-diagnostics.json",
       "mutations": "dist-mutations/20261024T135134Z-callback-6370-0/results.json",
-      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
-      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2660,8 +2660,50 @@
       "expected": "Existing TxError structure preserved; allocation/release balance with positive native leak control",
       "modes": "all supported modes",
       "ownership": "Call-scoped rd_kafka_error_t allocated by native API, copied into Haskell, destroyed exactly once",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs-integration.transaction-errors.transaction-error-leak-probe releases 300 immediate native errors",
+        "rdkafka-hs-integration.transaction-errors.native allocation control detects the inherited three-error leak",
+        "rdkafka-hs-integration.transaction-errors.initialization timeout destroys its native error on each retry",
+        "rdkafka-hs-integration.transaction-errors.zero-timeout initialization resumes successfully against the broker",
+        "rdkafka-hs-integration.transaction-errors.transaction state errors preserve empty commit and abort recovery",
+        "rdkafka-hs-integration.transaction-errors.duplicate transactional IDs report a real fatal fencing error",
+        "rdkafka-hs-integration.transaction-errors.broker-rejected delivery requires abort and permits a successful new transaction",
+        "rdkafka-hs-integration.transaction-errors.init without transactional ID preserves native code and destroys error",
+        "rdkafka-hs-integration.transaction-errors.begin without transactional ID preserves native code and destroys error",
+        "rdkafka-hs-integration.transaction-errors.abort without transactional ID preserves native code and destroys error",
+        "rdkafka-hs-integration.transaction-errors.init NULL return remains success",
+        "rdkafka-hs-integration.transaction-errors.begin NULL return remains success",
+        "rdkafka-hs-integration.transaction-errors.abort NULL return remains success",
+        "rdkafka-hs-integration.transaction-errors.init invalid native code still destroys acquired error",
+        "rdkafka-hs-integration.transaction-errors.begin invalid native code still destroys acquired error",
+        "rdkafka-hs-integration.transaction-errors.abort invalid native code still destroys acquired error",
+        "rdkafka-hs-integration.transaction-errors.init cancellation at decoder stage 20 releases once",
+        "rdkafka-hs-integration.transaction-errors.begin cancellation at decoder stage 20 releases once",
+        "rdkafka-hs-integration.transaction-errors.abort cancellation at decoder stage 20 releases once",
+        "rdkafka-hs-integration.transaction-errors.async commit publishes output and source next offset atomically; abort publishes neither",
+        "rdkafka-hs-integration.transaction-errors.sync commit publishes output and source next offset atomically; abort publishes neither"
+      ],
+      "status": "tested",
+      "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
+      "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-ConsumerProperties-CallbackPollMode",
@@ -3545,9 +3587,9 @@
         "rdkafka-hs-integration.seek-partitions.sync.rewind propagates assignment change after committed lookup"
       ],
       "status": "tested",
-      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
       "evidence": "docs/testing/seek-evidence.json",
-      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4376,8 +4418,8 @@
         "rdkafka-hs-integration.topic-configuration.deletion reports a missing response as a timeout"
       ],
       "status": "tested",
-      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
-      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4406,8 +4448,48 @@
       "expected": "Exact Haskell error and native predicate flags; no dangling error pointer",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs-integration.transaction-errors.transaction state errors preserve empty commit and abort recovery",
+        "rdkafka-hs-integration.transaction-errors.duplicate transactional IDs report a real fatal fencing error",
+        "rdkafka-hs-integration.transaction-errors.broker-rejected delivery requires abort and permits a successful new transaction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 0 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 1 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 2 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 3 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 4 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 5 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 6 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 7 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 0 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 1 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 2 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 3 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 4 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 5 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 6 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 7 before destruction"
+      ],
+      "status": "tested",
+      "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
+      "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Transaction-commitOffsetMessageTransaction",
@@ -4420,8 +4502,46 @@
       "expected": "Group offset advances to record offset + 1 only on successful transaction commit",
       "modes": "all supported modes",
       "ownership": "Call-scoped transaction error and temporary group metadata/partition list released on every exit",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs-integration.transaction-errors.offset without transactional ID preserves native code and destroys error",
+        "rdkafka-hs-integration.transaction-errors.offset NULL return remains success",
+        "rdkafka-hs-integration.transaction-errors.offset invalid native code still destroys acquired error",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 0 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 1 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 2 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 3 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 4 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 5 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 6 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 7 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset cancellation at decoder stage 20 releases once",
+        "rdkafka-hs-integration.transaction-errors.offset cancellation at decoder stage 21 releases once",
+        "rdkafka-hs-integration.transaction-errors.offset cancellation at decoder stage 22 releases once",
+        "rdkafka-hs-integration.transaction-errors.offset cancellation at decoder stage 23 releases once",
+        "rdkafka-hs-integration.transaction-errors.async commit publishes output and source next offset atomically; abort publishes neither",
+        "rdkafka-hs-integration.transaction-errors.sync commit publishes output and source next offset atomically; abort publishes neither"
+      ],
+      "status": "tested",
+      "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
+      "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Transaction-commitTransaction",
@@ -4434,8 +4554,49 @@
       "expected": "Committed records visible only after success; exact TxError classification",
       "modes": "all supported modes",
       "ownership": "Call-scoped transaction error and temporary group metadata/partition list released on every exit",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs-integration.transaction-errors.zero-timeout initialization resumes successfully against the broker",
+        "rdkafka-hs-integration.transaction-errors.transaction state errors preserve empty commit and abort recovery",
+        "rdkafka-hs-integration.transaction-errors.duplicate transactional IDs report a real fatal fencing error",
+        "rdkafka-hs-integration.transaction-errors.commit without transactional ID preserves native code and destroys error",
+        "rdkafka-hs-integration.transaction-errors.commit NULL return remains success",
+        "rdkafka-hs-integration.transaction-errors.commit invalid native code still destroys acquired error",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 0 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 1 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 2 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 3 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 4 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 5 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 6 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 7 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit cancellation at decoder stage 20 releases once",
+        "rdkafka-hs-integration.transaction-errors.commit cancellation at decoder stage 21 releases once",
+        "rdkafka-hs-integration.transaction-errors.commit cancellation at decoder stage 22 releases once",
+        "rdkafka-hs-integration.transaction-errors.commit cancellation at decoder stage 23 releases once",
+        "rdkafka-hs-integration.transaction-errors.async commit publishes output and source next offset atomically; abort publishes neither",
+        "rdkafka-hs-integration.transaction-errors.sync commit publishes output and source next offset atomically; abort publishes neither"
+      ],
+      "status": "tested",
+      "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
+      "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Transaction-getKafkaError",
@@ -4448,8 +4609,48 @@
       "expected": "Exact Haskell error and native predicate flags; no dangling error pointer",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs-integration.transaction-errors.transaction state errors preserve empty commit and abort recovery",
+        "rdkafka-hs-integration.transaction-errors.duplicate transactional IDs report a real fatal fencing error",
+        "rdkafka-hs-integration.transaction-errors.broker-rejected delivery requires abort and permits a successful new transaction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 0 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 1 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 2 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 3 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 4 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 5 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 6 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 7 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 0 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 1 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 2 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 3 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 4 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 5 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 6 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 7 before destruction"
+      ],
+      "status": "tested",
+      "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
+      "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Transaction-kafkaErrorIsFatal",
@@ -4462,8 +4663,48 @@
       "expected": "Exact Haskell error and native predicate flags; no dangling error pointer",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs-integration.transaction-errors.transaction state errors preserve empty commit and abort recovery",
+        "rdkafka-hs-integration.transaction-errors.duplicate transactional IDs report a real fatal fencing error",
+        "rdkafka-hs-integration.transaction-errors.broker-rejected delivery requires abort and permits a successful new transaction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 0 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 1 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 2 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 3 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 4 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 5 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 6 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 7 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 0 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 1 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 2 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 3 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 4 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 5 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 6 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 7 before destruction"
+      ],
+      "status": "tested",
+      "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
+      "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Transaction-kafkaErrorIsRetriable",
@@ -4476,8 +4717,48 @@
       "expected": "Exact Haskell error and native predicate flags; no dangling error pointer",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs-integration.transaction-errors.transaction state errors preserve empty commit and abort recovery",
+        "rdkafka-hs-integration.transaction-errors.duplicate transactional IDs report a real fatal fencing error",
+        "rdkafka-hs-integration.transaction-errors.broker-rejected delivery requires abort and permits a successful new transaction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 0 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 1 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 2 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 3 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 4 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 5 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 6 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 7 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 0 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 1 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 2 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 3 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 4 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 5 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 6 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 7 before destruction"
+      ],
+      "status": "tested",
+      "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
+      "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Transaction-kafkaErrorTxnRequiresAbort",
@@ -4490,8 +4771,48 @@
       "expected": "Exact Haskell error and native predicate flags; no dangling error pointer",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs-integration.transaction-errors.transaction state errors preserve empty commit and abort recovery",
+        "rdkafka-hs-integration.transaction-errors.duplicate transactional IDs report a real fatal fencing error",
+        "rdkafka-hs-integration.transaction-errors.broker-rejected delivery requires abort and permits a successful new transaction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 0 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 1 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 2 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 3 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 4 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 5 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 6 before destruction",
+        "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 7 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 0 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 1 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 2 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 3 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 4 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 5 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 6 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 7 before destruction"
+      ],
+      "status": "tested",
+      "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
+      "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Types-BatchSize",
@@ -4866,8 +5187,8 @@
       "status": "tested",
       "native_diagnostics": "docs/testing/callback-native-diagnostics.json",
       "mutations": "dist-mutations/20261024T135134Z-callback-6370-0/results.json",
-      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
-      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4950,8 +5271,8 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
-      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5010,8 +5331,8 @@
         "rdkafka-hs-integration.producer-regressions.known invalid partition rejection releases capture"
       ],
       "status": "tested",
-      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
-      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5098,8 +5419,8 @@
       "status": "tested",
       "native_diagnostics": "docs/testing/callback-native-diagnostics.json",
       "mutations": "dist-mutations/20261024T135134Z-callback-6370-0/results.json",
-      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
-      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5126,8 +5447,44 @@
       "expected": "Exact behavior or allocation balance with effective negative controls",
       "modes": "all supported modes",
       "ownership": "Group metadata released on success and native error before result escapes",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs-integration.transaction-errors.offset without transactional ID preserves native code and destroys error",
+        "rdkafka-hs-integration.transaction-errors.offset NULL return remains success",
+        "rdkafka-hs-integration.transaction-errors.offset invalid native code still destroys acquired error",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 0 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 1 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 2 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 3 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 4 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 5 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 6 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 7 before destruction",
+        "rdkafka-hs-integration.transaction-errors.offset cancellation at decoder stage 20 releases once",
+        "rdkafka-hs-integration.transaction-errors.offset cancellation at decoder stage 21 releases once",
+        "rdkafka-hs-integration.transaction-errors.offset cancellation at decoder stage 22 releases once",
+        "rdkafka-hs-integration.transaction-errors.offset cancellation at decoder stage 23 releases once"
+      ],
+      "status": "tested",
+      "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
+      "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "ENV-primary",
@@ -5226,8 +5583,8 @@
         "rdkafka-hs-integration.Fixture error controls.weak control retains while rooted and collects after release"
       ],
       "status": "tested",
-      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
-      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5272,8 +5629,8 @@
         "rdkafka-hs-integration.topic-configuration.maximum C replication count retains native validation"
       ],
       "status": "tested",
-      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
-      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5324,8 +5681,8 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
-      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5365,8 +5722,8 @@
         "rdkafka-hs-integration.topic-configuration.concurrent requests keep their own queues and responses"
       ],
       "status": "tested",
-      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
-      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5445,8 +5802,8 @@
         "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: minimum unrepresentable partition"
       ],
       "status": "tested",
-      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
-      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5494,8 +5851,8 @@
         "rdkafka-hs-integration.producer-regressions.empty queue supports repeated flush and close"
       ],
       "status": "tested",
-      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
-      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5532,8 +5889,8 @@
         "rdkafka-hs-integration.producer-regressions.later delivery callback replaces the earlier callback"
       ],
       "status": "tested",
-      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
-      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5568,8 +5925,8 @@
         "rdkafka-hs-integration.producer-regressions.native error decoding failure releases rejected callback capture"
       ],
       "status": "tested",
-      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
-      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5607,8 +5964,8 @@
         "rdkafka-hs-integration.producer-properties.callback composition preserves order and identity"
       ],
       "status": "tested",
-      "fingerprint": "b77c65366fab1dd8d2316d972086e89ca4dfc41ef52bc5987c5b0534ec80f9e9",
-      "evidence_revision": "58d073af13df8f9298afe0208510ee0353a38ba3",
+      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",

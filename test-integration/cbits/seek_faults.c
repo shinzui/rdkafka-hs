@@ -12,6 +12,7 @@ static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t resume = PTHREAD_COND_INITIALIZER;
 static int mode, entered, released, seek_calls, created, destroyed;
 static rd_kafka_error_t *owned_error;
+extern void rdkafka_hs_tx_error_destroyed(rd_kafka_error_t *error);
 
 #define REAL(name) __typeof__(&name) real = (__typeof__(&name))dlsym(RTLD_NEXT, #name); \
   if (!real) { fprintf(stderr, "seek seam: %s\n", dlerror()); abort(); }
@@ -94,6 +95,7 @@ rd_kafka_error_t *rd_kafka_seek_partitions(rd_kafka_t *client, rd_kafka_topic_pa
 
 void rd_kafka_error_destroy(rd_kafka_error_t *error) {
   REAL(rd_kafka_error_destroy);
+  rdkafka_hs_tx_error_destroyed(error);
   pthread_mutex_lock(&lock);
   if (error && error == owned_error) { destroyed++; owned_error = NULL; }
   pthread_mutex_unlock(&lock);

@@ -144,6 +144,7 @@ test-suite rdkafka-hs-integration
     test-integration/cbits/callback_lifetime.c
     test-integration/cbits/producer_ownership.c
     test-integration/cbits/seek_faults.c
+    test-integration/cbits/transaction_ownership.c
 
   if os(linux)
     extra-libraries: dl
@@ -196,10 +197,12 @@ test-suite rdkafka-hs-integration
     Kafka.Integration.StoreOffsetsTest
     Kafka.Integration.TopicConfigurationTest
     Kafka.Integration.TopicTest
+    Kafka.Integration.TransactionErrorTest
     Kafka.ProducerTestSupport
     Kafka.PropertySupport
     Kafka.SeekTestSupport
     Kafka.TestEnv
+    Kafka.TransactionTestSupport
 
 test-suite rdkafka-hs-test
   import: common-options

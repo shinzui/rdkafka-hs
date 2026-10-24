@@ -9,6 +9,11 @@ this project adheres to the [Haskell Package Versioning Policy](https://pvp.hask
 
 ### Fixed
 
+- Transaction operations now destroy native error objects after copying their
+  results and recovery flags, including decoding failures and cancellation.
+  Sending transactional source offsets also scopes native group metadata and
+  its temporary partition list.
+
 - Persistent callbacks now release their Haskell closures after native client
   destruction, including failed construction and replaced registrations.
   Shutdown retains callable bridges, concurrent destroy waits for completion,

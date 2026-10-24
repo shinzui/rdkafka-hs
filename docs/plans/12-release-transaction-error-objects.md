@@ -17,6 +17,11 @@ provenance:
       at: 2026-10-24T04:58:24Z
       mode: "update"
       note: "Expand acceptance to close public-contract, failure-path, concurrency, ownership, and compatibility coverage gaps; add EP-13 prerequisite and coordinated evidence gates."
+    - model: "gpt-6.1-sol"
+      harness: "codex-cli"
+      at: 2026-10-24T14:00:03Z
+      mode: "implement"
+      note: "Bracket transaction error decoding and add allocation-specific failure and real transaction atomicity evidence."
 ---
 
 # Release transaction error objects
@@ -34,15 +39,20 @@ Fix F6: failed or retried transaction initialization, begin, and abort operation
 ## Progress
 
 
-- [ ] M1: Init, begin, and abort preserve results while bracketing every returned native error object.
-- [ ] M2: Repeated error paths have allocation-specific leak evidence and successful commit/abort cycles pass broker tests.
+- [x] M1: Init, begin, and abort preserve results while bracketing every returned native error object.
+- [x] M2: Repeated error paths have allocation-specific leak evidence and successful commit/abort cycles pass broker tests.
 
-- [ ] M3: Commit/abort visibility, transactional source offsets, recovery flags, and exceptional error decoding have end-to-end evidence.
+- [x] M3: Commit/abort visibility, transactional source offsets, recovery flags, and exceptional error decoding have end-to-end evidence.
 
-Not started; this document records the implementation contract, not completed fixes.
+Complete (2026-10-24). All five public operations bracket acquisition, complete decoding and native error destruction, including exceptions and observed cancellation. The 51 focused cases pass (12.08 seconds). Counters balance 300 immediate native errors and detect three intentionally retained objects in the inherited-sequence control. All eight actual native flag combinations pass through commit/send-offset conversion. Real broker tests verify initialization timeout/resume, state errors, fatal fencing, rejected-delivery abort recovery, and commit/abort output/source-offset atomicity in both callback modes.
 
+Full normal and instrumented suites both pass 29 unit and 426 integration tests (162.15/165.96 seconds). Ten semantic mutations fail their intended compiled regressions, including omitted destruction, wrong next offset, inverted flags and missing group-metadata release; the unchanged 51-case control passes. All 51 cases also pass with the instrumented native library. Nineteen tooling controls and Cabal/binding/documentation/Nix checks pass. All nine EP-12 inventory rows are tested. [Acceptance evidence](../testing/transaction-evidence.json), [native diagnostics](../testing/transaction-native-diagnostics.json), and [current coverage](../testing/coverage-evidence.json) preserve exact candidate identity and artifact locations.
 
 ## Surprises & Discoveries
+
+The first atomicity fixture queried stable committed offsets while its transaction was open. Both modes timed out because the broker waits for transaction resolution. Query the baseline before the transaction and verify the unchanged offset after abort; after successful commit verify next offsets 1 and 2. The corrected cases pass in both modes. The failed fixture log remains `/tmp/rdkafka-ep12-open-transaction-offset-query.log`.
+
+The native diagnostic build exports its own private error flag setters. Fixtures invoke those setters on native allocated objects; they never copy the opaque error layout. Real fencing produces a fatal FENCED error, and topic-level rejection of an oversized delivery produces MSG_SIZE_TOO_LARGE with abort-required set; abort permits the next transaction to commit successfully.
 
 
 Retained commit `c58bc85` (September 2022) introduced the three wrappers that extract an error code and discard its pointer without destruction. `rdKafkaErrorTPtr` is a raw Ptr, not a ForeignPtr with a finalizer. The review confirmed the leak by source inspection; native allocation evidence remains a required implementation deliverable.
@@ -59,7 +69,9 @@ Retained commit `c58bc85` (September 2022) introduced the three wrappers that ex
 ## Outcomes & Retrospective
 
 
-Not implemented. Record accepted evidence, remaining limitations, and durable lessons here at completion; update relevant ADRs before marking Complete.
+The inherited init/begin/abort leak is fixed without changing public error codes or retry policy. Commit/send-offset conversion now releases on exceptional exits as well as ordinary returns, and its temporary native metadata/list ownership is scoped. A real transaction commits the processed source record's next offset together with output; abort leaves that source offset uncommitted and hides output from read-committed consumers. [ADR-16](../adr/transaction-errors-are-decoded-within-native-ownership.md) records the durable ownership rule.
+
+Native allocation counters distinguish returned transaction objects from client/runtime allocations. A deliberate leak control, exact native flags, real failures and deterministic cancellation provide complementary evidence. Native heap validation and supported-environment tuples remain explicit EP-15 obligations. One attempted normal run collided with the coverage command's preliminary build in the shared default build directory; the corrected sequential prerequisite/full normal run passed. Preserve `/tmp/rdkafka-ep12-normal.log` as the tooling failure and use the final normal log for acceptance.
 
 
 ## Context and Orientation

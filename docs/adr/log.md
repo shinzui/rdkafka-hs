@@ -1,6 +1,7 @@
 # Bundle Update Log
 
 ## 2026-10-24
+* **created**: Scope transaction error decoding and temporary offset metadata ownership.
 * **updated**: Accept callback ownership evidence with semantic mutations and native diagnostic controls.
 * **updated**: Link callback owner ordering and scoped native child cleanup.
 * **created**: Record persistent callback ownership and native shutdown ordering.

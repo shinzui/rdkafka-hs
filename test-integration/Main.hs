@@ -21,6 +21,7 @@ import Kafka.Integration.SeekPartitionsTest qualified as SeekPartitionsTest
 import Kafka.Integration.StoreOffsetsTest qualified as StoreOffsetsTest
 import Kafka.Integration.TopicConfigurationTest qualified as TopicConfigurationTest
 import Kafka.Integration.TopicTest qualified as TopicTest
+import Kafka.Integration.TransactionErrorTest qualified as TransactionErrorTest
 import Kafka.TestEnv (checkBrokerReachable, newTestEnv, resolveBrokers)
 import System.Environment (getArgs, lookupEnv)
 import System.Exit (die)
@@ -48,6 +49,7 @@ integrationMain = do
       [ FixtureSupportTest.tests,
         ConfigurationTest.tests,
         CallbackLifetimeTest.tests env,
+        TransactionErrorTest.tests env,
         LifecycleTest.tests env,
         TopicConfigurationTest.tests env,
         ProducerRegressionTest.tests env,

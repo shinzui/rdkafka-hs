@@ -28,7 +28,7 @@ import Data.ByteString qualified as BS
 import Text.Read (readMaybe)
 import Data.Text (Text)
 import Data.Text qualified as Text
-import Control.Exception (finally, mask_)
+import Control.Exception (bracket, finally, mask_)
 import Kafka.Internal.CallbackOwner (CallbackOwner, installCallback, checkCallbackOwner, attachCallbackOwner, releaseCallbackOwner, containCallbackException, containCallbackResult)
 import Control.Monad (liftM)
 import Data.Int (Int32, Int64)
@@ -1297,12 +1297,9 @@ rdKafkaMessageProduceVa kafkaPtr vts = withArrayLen vts $ \i arrPtr -> do
     {`RdKafkaTPtr', `RdKafkaTopicPartitionListTPtr', `Int'} -> `RdKafkaErrorTPtr' #}
 
 rdKafkaSendOffsetsToTransaction :: RdKafkaTPtr -> RdKafkaTPtr -> RdKafkaTopicPartitionListTPtr -> Int -> IO RdKafkaErrorTPtr
-rdKafkaSendOffsetsToTransaction p c topicPartition timeOut = do
-    metaData <- rdKafkaConsumerGroupMetadata c
-    errPtr   <- rdKafkaSendOffsetsToTransaction' p topicPartition metaData timeOut
-    -- NOTE:need to destroy the metadata otherwise leaking memory
-    rdKafkaConsumerGroupMetadataDestroy metaData
-    pure errPtr
+rdKafkaSendOffsetsToTransaction p c topicPartition timeOut =
+    bracket (rdKafkaConsumerGroupMetadata c) rdKafkaConsumerGroupMetadataDestroy $ \metaData ->
+        rdKafkaSendOffsetsToTransaction' p topicPartition metaData timeOut
 
 {#fun rd_kafka_error_is_fatal as rdKafkaErrorIsFatal'
     {`RdKafkaErrorTPtr'} -> `CInt' #}
