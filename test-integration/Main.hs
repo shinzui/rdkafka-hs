@@ -12,6 +12,7 @@ import Kafka.Integration.DestroyTest qualified as DestroyTest
 import Kafka.Integration.FatalErrorTest qualified as FatalErrorTest
 import Kafka.Integration.HeadersTest qualified as HeadersTest
 import Kafka.Integration.LifecycleTest qualified as LifecycleTest
+import Kafka.Integration.MetadataContractTest qualified as MetadataContractTest
 import Kafka.Integration.ObserverTest qualified as ObserverTest
 import Kafka.Integration.PerMessageCommitTest qualified as PerMessageCommitTest
 import Kafka.Integration.ProducerPropertyTest qualified as ProducerPropertyTest
@@ -36,6 +37,7 @@ main =
     ["--producer-callback-probe", mode] -> ProducerRegressionTest.runCallbackProbe mode
     ["--lifetime-callback-probe", kind, label] -> CallbackLifetimeTest.runThrowingProbe kind label
     ["--rebalance-error-probe", protocol, operation, poll, failure] -> PublicConsumerContractTest.runRebalanceProbe protocol operation poll failure
+    ["--metadata-cancellation-probe", kind] -> MetadataContractTest.runCancellationProbe kind
     ["--callback-lifetime-native-control"] -> CallbackLifetimeTest.runInvalidAccessControl
     _ -> integrationMain
 

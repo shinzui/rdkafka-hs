@@ -1,6 +1,7 @@
 # Bundle Update Log
 
 ## 2026-10-24
+* **created**: Scope native metadata results and preserve topic partition and group decoding errors
 * **created**: Require threaded runtime for async consumers and verify synchronous fallback choice
 * **created**: Scope diagnostic streams and native dump arrays while preserving caller handles
 * **updated**: Apply explicit-key topic configuration merging to consumers

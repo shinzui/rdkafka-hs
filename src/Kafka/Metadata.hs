@@ -32,15 +32,16 @@ module Kafka.Metadata
   )
 where
 
-import Control.Arrow (left)
 import Control.Exception (bracket)
 import Control.Monad.IO.Class (MonadIO (liftIO))
 import Data.Bifunctor (bimap)
 import Data.ByteString (ByteString, pack)
+import Data.List (find)
+import Data.Maybe (listToMaybe, mapMaybe)
 import Data.Text (Text)
-import Foreign (Storable (peek), finalizeForeignPtr, peekArray, withForeignPtr)
+import Foreign (ForeignPtr, Storable (peek), finalizeForeignPtr, peekArray, withForeignPtr)
 import GHC.Generics (Generic)
-import Kafka.Consumer.Convert (fromNativeTopicPartitionList'', toNativeTopicPartitionList)
+import Kafka.Consumer.Convert (fromNativeTopicPartitionList'', nativeTopicPartitionErrors, toNativeTopicPartitionList)
 import Kafka.Consumer.Types (ConsumerGroupId (..), Offset (..), PartitionOffset (..), TopicPartition (..))
 import Kafka.Internal.RdKafka (RdKafkaGroupInfoT (..), RdKafkaGroupListT (..), RdKafkaGroupListTPtr, RdKafkaGroupMemberInfoT (..), RdKafkaMetadataBrokerT (..), RdKafkaMetadataPartitionT (..), RdKafkaMetadataT (..), RdKafkaMetadataTPtr, RdKafkaMetadataTopicT (..), RdKafkaRespErrT (..), RdKafkaTPtr, destroyUnmanagedRdKafkaTopic, newUnmanagedRdKafkaTopicT, peekCAText, rdKafkaListGroups, rdKafkaMetadata, rdKafkaOffsetsForTimes, rdKafkaQueryWatermarkOffsets)
 import Kafka.Internal.Setup (HasKafka (..), Kafka (..))
@@ -131,9 +132,9 @@ data GroupInfo = GroupInfo
 
 -- | Returns metadata for all topics in the cluster
 allTopicsMetadata :: (MonadIO m, HasKafka k) => k -> Timeout -> m (Either KafkaError KafkaMetadata)
-allTopicsMetadata k (Timeout timeout) = liftIO $ do
-  meta <- rdKafkaMetadata (getKafkaPtr k) True Nothing timeout
-  traverse fromKafkaMetadataPtr (left KafkaResponseError meta)
+allTopicsMetadata k (Timeout timeout) =
+  liftIO $
+    withNativeResult k (rdKafkaMetadata (getKafkaPtr k) True Nothing timeout) (fmap Right . fromKafkaMetadataPtr)
 
 -- | Returns metadata only for specified topic
 topicMetadata :: (MonadIO m, HasKafka k) => k -> Timeout -> TopicName -> m (Either KafkaError KafkaMetadata)
@@ -141,8 +142,7 @@ topicMetadata k (Timeout timeout) (TopicName tn) = liftIO $ withForeignPtr (getK
   bracket mkTopic clTopic $ \mbt -> case mbt of
     Left err -> return (Left $ KafkaError (Text.pack err))
     Right t -> do
-      meta <- rdKafkaMetadata (getKafkaPtr k) False (Just t) timeout
-      traverse fromKafkaMetadataPtr (left KafkaResponseError meta)
+      withNativeResult k (rdKafkaMetadata (getKafkaPtr k) False (Just t) timeout) (fmap Right . fromKafkaMetadataPtr)
   where
     mkTopic = newUnmanagedRdKafkaTopicT (getKafkaPtr k) (Text.unpack tn) Nothing
     clTopic = either (return . const ()) destroyUnmanagedRdKafkaTopic
@@ -159,9 +159,11 @@ watermarkOffsets k timeout t = do
 
 -- | Query broker for low (oldest/beginning) and high (newest/end) offsets for a given topic.
 watermarkOffsets' :: (MonadIO m, HasKafka k) => k -> Timeout -> TopicMetadata -> m [Either KafkaError WatermarkOffsets]
-watermarkOffsets' k timeout tm =
-  let pids = pmPartitionId <$> tmPartitions tm
-   in liftIO $ traverse (partitionWatermarkOffsets k timeout (tmTopicName tm)) pids
+watermarkOffsets' k timeout tm = case tmError tm of
+  Just failure -> pure [Left failure]
+  Nothing ->
+    let pids = pmPartitionId <$> tmPartitions tm
+     in liftIO $ traverse (partitionWatermarkOffsets k timeout (tmTopicName tm)) pids
 
 -- | Query broker for low (oldest/beginning) and high (newest/end) offsets for a specific partition
 partitionWatermarkOffsets :: (MonadIO m, HasKafka k) => k -> Timeout -> TopicName -> PartitionId -> m (Either KafkaError WatermarkOffsets)
@@ -181,9 +183,11 @@ topicOffsetsForTime k timeout timestamp topic = do
   meta <- topicMetadata k timeout topic
   case meta of
     Left err -> return $ Left err
-    Right meta' ->
-      let tps = [(tmTopicName t, pmPartitionId p) | t <- kmTopics meta', p <- tmPartitions t]
-       in offsetsForTime k timeout timestamp tps
+    Right meta' -> case listToMaybe (mapMaybe tmError (kmTopics meta')) of
+      Just failure -> pure (Left failure)
+      Nothing ->
+        let tps = [(tmTopicName t, pmPartitionId p) | t <- kmTopics meta', p <- tmPartitions t]
+         in offsetsForTime k timeout timestamp tps
 
 -- | Look up the offsets for the given metadata by timestamp.
 --
@@ -191,9 +195,11 @@ topicOffsetsForTime k timeout timestamp topic = do
 -- timestamp is greater than or equal to the given timestamp in the
 -- corresponding partition.
 offsetsForTime' :: (MonadIO m, HasKafka k) => k -> Timeout -> Millis -> TopicMetadata -> m (Either KafkaError [TopicPartition])
-offsetsForTime' k timeout timestamp t =
-  let tps = [(tmTopicName t, pmPartitionId p) | p <- tmPartitions t]
-   in offsetsForTime k timeout timestamp tps
+offsetsForTime' k timeout timestamp t = case tmError t of
+  Just failure -> pure (Left failure)
+  Nothing ->
+    let tps = [(tmTopicName t, pmPartitionId p) | p <- tmPartitions t]
+     in offsetsForTime k timeout timestamp tps
 
 -- | Look up the offsets for the given partitions by timestamp.
 --
@@ -204,38 +210,51 @@ offsetsForTime :: (MonadIO m, HasKafka k) => k -> Timeout -> Millis -> [(TopicNa
 offsetsForTime k (Timeout timeout) (Millis t) tps = liftIO $ withForeignPtr (getKafkaPtr k) $ \_ -> bracket (toNativeTopicPartitionList (mkTopicPartition <$> uniqueTps)) finalizeForeignPtr $ \ntps -> do
   res <- rdKafkaOffsetsForTimes (getKafkaPtr k) ntps timeout
   case res of
-    RdKafkaRespErrNoError -> Right <$> fromNativeTopicPartitionList'' ntps
+    RdKafkaRespErrNoError -> do
+      errors <- nativeTopicPartitionErrors ntps
+      case find (/= RdKafkaRespErrNoError) errors of
+        Just failure -> pure (Left (KafkaResponseError failure))
+        Nothing -> Right <$> fromNativeTopicPartitionList'' ntps
     err -> return $ Left (KafkaResponseError err)
   where
     uniqueTps = S.toList . S.fromList $ tps
     -- rd_kafka_offsets_for_times reuses `offset` to specify timestamp :(
     mkTopicPartition (tn, p) = TopicPartition tn p (PartitionOffset t)
 
--- | List and describe all consumer groups in cluster.
+-- | List and describe all consumer groups in cluster. Unsupported native
+-- group-state names return a descriptive error.
 allConsumerGroupsInfo :: (MonadIO m, HasKafka k) => k -> Timeout -> m (Either KafkaError [GroupInfo])
-allConsumerGroupsInfo k (Timeout t) = liftIO $ do
-  res <- rdKafkaListGroups (getKafkaPtr k) Nothing t
-  traverse fromGroupInfoListPtr (left KafkaResponseError res)
+allConsumerGroupsInfo k (Timeout t) =
+  liftIO $
+    withNativeResult k (rdKafkaListGroups (getKafkaPtr k) Nothing t) fromGroupInfoListPtr
 
--- | Describe a given consumer group.
+-- | Describe a given consumer group. Unsupported native group-state names
+-- return a descriptive error; a missing group returns an empty list.
 consumerGroupInfo :: (MonadIO m, HasKafka k) => k -> Timeout -> ConsumerGroupId -> m (Either KafkaError [GroupInfo])
-consumerGroupInfo k (Timeout timeout) (ConsumerGroupId gn) = liftIO $ do
-  res <- rdKafkaListGroups (getKafkaPtr k) (Just (Text.unpack gn)) timeout
-  traverse fromGroupInfoListPtr (left KafkaResponseError res)
+consumerGroupInfo k (Timeout timeout) (ConsumerGroupId gn) =
+  liftIO $
+    withNativeResult k (rdKafkaListGroups (getKafkaPtr k) (Just (Text.unpack gn)) timeout) fromGroupInfoListPtr
 
 -------------------------------------------------------------------------------
 getKafkaPtr :: (HasKafka k) => k -> RdKafkaTPtr
 getKafkaPtr k = let (Kafka k') = getKafka k in k'
 {-# INLINE getKafkaPtr #-}
 
-fromGroupInfoListPtr :: RdKafkaGroupListTPtr -> IO [GroupInfo]
+-- Retain the client until its complete result has been copied and destroyed.
+-- Mask acquisition through ForeignPtr registration, including native return.
+withNativeResult :: (HasKafka k) => k -> IO (Either RdKafkaRespErrT (ForeignPtr a)) -> (ForeignPtr a -> IO (Either KafkaError b)) -> IO (Either KafkaError b)
+withNativeResult client acquire decode = withForeignPtr (getKafkaPtr client) $ \_ ->
+  bracket acquire (either (const (pure ())) finalizeForeignPtr) $
+    either (pure . Left . KafkaResponseError) decode
+
+fromGroupInfoListPtr :: RdKafkaGroupListTPtr -> IO (Either KafkaError [GroupInfo])
 fromGroupInfoListPtr ptr =
   withForeignPtr ptr $ \realPtr -> do
     gl <- peek realPtr
     pgis <- peekArray (groupCnt'RdKafkaGroupListT gl) (groups'RdKafkaGroupListT gl)
-    traverse fromGroupInfoPtr pgis
+    sequence <$> traverse fromGroupInfoPtr pgis
 
-fromGroupInfoPtr :: RdKafkaGroupInfoT -> IO GroupInfo
+fromGroupInfoPtr :: RdKafkaGroupInfoT -> IO (Either KafkaError GroupInfo)
 fromGroupInfoPtr gi = do
   -- bmd <- peek (broker'RdKafkaGroupInfoT gi) -- >>= fromBrokerMetadataPtr
   -- xxx <- fromBrokerMetadataPtr bmd
@@ -245,16 +264,18 @@ fromGroupInfoPtr gi = do
   pr <- peekCAText $ protocol'RdKafkaGroupInfoT gi
   mbs <- peekArray (memberCnt'RdKafkaGroupInfoT gi) (members'RdKafkaGroupInfoT gi)
   mbl <- mapM fromGroupMemberInfoPtr mbs
-  return
-    GroupInfo
-      { -- giBroker = bmd
-        giGroup = ConsumerGroupId cid,
-        giError = kafkaErrorToMaybe $ KafkaResponseError (err'RdKafkaGroupInfoT gi),
-        giState = groupStateFromKafkaString stt,
-        giProtocolType = GroupProtocolType prt,
-        giProtocol = GroupProtocol pr,
-        giMembers = mbl
-      }
+  pure $ do
+    state <- groupStateFromKafkaString stt
+    pure
+      GroupInfo
+        { -- giBroker = bmd
+          giGroup = ConsumerGroupId cid,
+          giError = kafkaErrorToMaybe $ KafkaResponseError (err'RdKafkaGroupInfoT gi),
+          giState = state,
+          giProtocolType = GroupProtocolType prt,
+          giProtocol = GroupProtocol pr,
+          giMembers = mbl
+        }
 
 fromGroupMemberInfoPtr :: RdKafkaGroupMemberInfoT -> IO GroupMemberInfo
 fromGroupMemberInfoPtr mi = do
@@ -322,11 +343,12 @@ fromKafkaMetadataPtr ptr =
           kmOrigBroker = BrokerId $ fromIntegral (origBrokerId'RdKafkaMetadataT km)
         }
 
-groupStateFromKafkaString :: Text -> GroupState
+groupStateFromKafkaString :: Text -> Either KafkaError GroupState
 groupStateFromKafkaString s = case s of
-  "PreparingRebalance" -> GroupPreparingRebalance
-  "AwaitingSync" -> GroupAwaitingSync
-  "Stable" -> GroupStable
-  "Dead" -> GroupDead
-  "Empty" -> GroupEmpty
-  _ -> error $ "Unknown group state: " <> Text.unpack s
+  "PreparingRebalance" -> Right GroupPreparingRebalance
+  "CompletingRebalance" -> Right GroupAwaitingSync
+  "AwaitingSync" -> Right GroupAwaitingSync
+  "Stable" -> Right GroupStable
+  "Dead" -> Right GroupDead
+  "Empty" -> Right GroupEmpty
+  _ -> Left (KafkaError ("Unsupported Kafka consumer group state: " <> s))

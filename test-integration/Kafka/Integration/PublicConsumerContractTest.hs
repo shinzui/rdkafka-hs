@@ -15,6 +15,7 @@ import Kafka.Consumer
 import Kafka.ConsumerStateSupport
 import Kafka.Integration.ConsumerStateContractTest qualified as ConsumerStateContractTest
 import Kafka.Integration.DiagnosticContractTest qualified as DiagnosticContractTest
+import Kafka.Integration.MetadataContractTest qualified as MetadataContractTest
 import Kafka.Integration.RuntimeContractTest qualified as RuntimeContractTest
 import Kafka.MessageTestSupport
 import Kafka.Producer qualified as P
@@ -129,7 +130,8 @@ tests testEnv =
       rebalanceErrorTests testEnv,
       ConsumerStateContractTest.tests testEnv,
       DiagnosticContractTest.tests testEnv,
-      RuntimeContractTest.tests testEnv
+      RuntimeContractTest.tests testEnv,
+      MetadataContractTest.tests testEnv
     ]
 
 assertBadSpecification :: (Show a) => [Either KafkaError a] -> IO ()

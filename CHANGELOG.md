@@ -9,6 +9,11 @@ this project adheres to the [Haskell Package Versioning Policy](https://pvp.hask
 
 ### Fixed
 
+- Metadata and group queries now scope native result ownership through copying,
+  including cancellation at acquisition. Convenience queries preserve missing
+  topic errors, and timestamp lookups report partition errors. Group decoding
+  recognizes `CompletingRebalance` and returns errors for unsupported states.
+
 - Async consumer construction now returns a clear `KafkaBadSpecification`
   without a threaded runtime, instead of accepting a consumer whose callback
   loop never starts. Link with `-threaded` or choose `CallbackPollModeSync`.

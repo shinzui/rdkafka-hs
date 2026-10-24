@@ -232,7 +232,24 @@ families "runtime" =
   [ control "nonthreaded-control" integration "runtime-contract",
     mutation "runtime-contract" "async-runtime-guard-removed" consumer (replace "&& not rtsSupportsBoundThreads" "&& False") "RTS capability is observed by async construction"
   ]
-families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics or runtime")
+families "metadata" =
+  [ control "unchanged-control" integration "metadata-contract",
+    d
+      "metadata-acquisition-unmasked"
+      ( replace
+          "bracket acquire (either (const (pure ())) finalizeForeignPtr) $\n    either (pure . Left . KafkaResponseError) decode"
+          "do\n    result <- acquire\n    either (pure . Left . KafkaResponseError) decode result `finally` either (const (pure ())) finalizeForeignPtr result"
+          . replace "import Control.Exception (bracket)" "import Control.Exception (bracket, finally)"
+      )
+      "metadata native acquisition cancellation releases its result",
+    d "metadata-topic-error-suppressed" (replace "watermarkOffsets' k timeout tm = case tmError tm of" "watermarkOffsets' k timeout tm = case Nothing of") "missing topic errors survive convenience helpers",
+    d "timestamp-member-error-suppressed" (replace "case find (/= RdKafkaRespErrNoError) errors of" "case Nothing of") "mixed timestamp request preserves native partition failure",
+    d "future-group-state-throws" (replace "_ -> Left (KafkaError (\"Unsupported Kafka consumer group state: \" <> s))" "_ -> error (\"Unsupported Kafka consumer group state: \" <> Text.unpack s)") "sync group identity lifecycle and supported native states",
+    d "completing-rebalance-state-wrong" (replace "\"CompletingRebalance\" -> Right GroupAwaitingSync" "\"CompletingRebalance\" -> Right GroupStable") "sync group identity lifecycle and supported native states"
+  ]
+  where
+    d label change test = mutation "metadata-contract" label "src/Kafka/Metadata.hs" change test
+families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime or metadata")
 
 replace :: String -> String -> String -> String
 replace old new source = case [i | (i, rest) <- zip [0 ..] (tails source), old `isPrefixOf` rest] of

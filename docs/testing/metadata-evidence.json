@@ -1,0 +1,58 @@
+{
+  "status": "accepted M2 metadata checkpoint; EP-14 incomplete",
+  "fingerprint": "45f359cd7b2b9c20d8a0c81ffe8f139dd405a2b6805b1b2151dd3eba60bc5862",
+  "runs": {
+    "normal": {
+      "log": "/tmp/rdkafka-ep14-metadata-normal.log",
+      "sha256": "f0889937e841788a06596e0bcf1a59e57375aabaf7edb73839de9a5d913d65a4",
+      "passed": 10,
+      "seconds": 11.01
+    },
+    "instrumented-haskell": {
+      "log": "/tmp/rdkafka-ep14-metadata-hpc-final.log",
+      "sha256": "22a8bc77266712e109f07ad22ad7eff7f404e03c6bf2d17349f8792a3b18eaed",
+      "passed": 10,
+      "seconds": 11.11
+    },
+    "instrumented-native": {
+      "log": "/tmp/rdkafka-ep14-metadata-asan.log",
+      "sha256": "9d57cbc7c145f5dca84dbb081b65a3aebc76a2984be021070729574cd0784917",
+      "passed": 10,
+      "seconds": 11.14
+    }
+  },
+  "mutations": "dist-mutations/20261024T164556Z-metadata-78004-0/results.json",
+  "compiled_mutations_caught": 5,
+  "controls": 1,
+  "baseline": {
+    "revision": "9b76605",
+    "log": "/tmp/rdkafka-ep14-metadata-baseline.log",
+    "observed": [
+      "metadata and group acquisition cancellation each retain one native result",
+      "normal result destruction waits for garbage collection",
+      "missing topic convenience query returns an empty success list",
+      "mixed timestamp query discards member failure"
+    ],
+    "fixture_correction": "The initial unreachable-broker assertion expected TimedOut; source and observation show Transport before a broker connection exists. This expectation failure is excluded from defect evidence."
+  },
+  "discarded_builds": {
+    "mutation": "dist-mutations/20261024T164500Z-metadata-75772-0",
+    "haskell_coverage": "/tmp/rdkafka-ep14-metadata-hpc.log",
+    "reason": "A test indentation error failed compilation; fixed before the accepted builds. No build failure counts as a caught mutation."
+  },
+  "scope": [
+    "exact topic/partition identity, leaders, replicas and watermarks",
+    "before/at/after timestamp queries and duplicate/empty partition requests",
+    "missing-topic and timestamp-query member errors",
+    "real stable and empty groups, exact client identity and all/specific group consistency",
+    "native-owned controlled group strings including CompletingRebalance and FutureState",
+    "isolated native-return cancellation and native retained-result counter control"
+  ],
+  "native_ownership": "Explicitly finalize native metadata and group results after copying while retaining the client. Cancellation children avoid competing with managed ForeignPtr finalizers; baseline pre-owner failures terminate with the detected outstanding allocation. Native-only retained control frees its own result after assertion.",
+  "native_library": "mori://confluentinc/librdkafka",
+  "native_version": "2.15.0",
+  "native_diagnostic_control": "docs/testing/callback-native-diagnostics.json",
+  "leak_instrumentation": false,
+  "required_checks": "/tmp/rdkafka-ep14-metadata-check.log",
+  "remaining": "Remaining public contracts and input boundaries, saved deprecated-seek diagnosis, full mapped coverage reconciliation and EP-15 environments remain open."
+}

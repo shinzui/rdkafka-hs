@@ -68,6 +68,9 @@ def collect():
             if len(list(child_directory.glob("lifetime-" + kind + "-" + mode + "-*.tix"))) != 1:
                 raise ValueError("missing or ambiguous callback lifetime child coverage: " + kind + "/" + mode)
     artifacts.extend(children)
+    for kind in ("metadata", "groups"):
+        if len(list(child_directory.glob("metadata-" + kind + "-*.tix"))) != 1:
+            raise ValueError("missing or ambiguous metadata cancellation child coverage: " + kind)
     for protocol in ("cooperative", "eager"):
         for operation in ("assign", "revoke"):
             for mode in ("async", "sync"):
