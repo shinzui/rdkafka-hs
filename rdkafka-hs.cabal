@@ -182,6 +182,7 @@ test-suite rdkafka-hs-integration
     Kafka.Integration.BatchTest
     Kafka.Integration.CallbackLifetimeTest
     Kafka.Integration.ConfigurationTest
+    Kafka.Integration.ConsumerPropertyTest
     Kafka.Integration.ConsumerTest
     Kafka.Integration.DestroyTest
     Kafka.Integration.FatalErrorTest
@@ -222,6 +223,7 @@ test-suite rdkafka-hs-test
   build-depends:
     base >=4.21 && <5,
     bifunctors,
+    bytestring,
     containers,
     rdkafka-hs,
     tasty ^>=1.5,
@@ -237,4 +239,5 @@ test-suite rdkafka-hs-test
     Kafka.Internal.CallbackOwnerSpec
     Kafka.Producer.ProducerPropertiesSpec
     Kafka.PropertySupport
+    Kafka.PublicPropertiesSpec
     Kafka.VersionTest

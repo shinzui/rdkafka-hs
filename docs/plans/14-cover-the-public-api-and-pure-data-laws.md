@@ -34,14 +34,13 @@ Close the supported public-API gaps that remain beyond the six repair findings. 
 ## Progress
 
 
-- [ ] M1: Generated-data properties verify public composition, conversion, record, header, and version laws with replayable failures.
+- [x] M1: Generated-data properties verify public composition, conversion, record, header, and version laws with replayable failures.
 - [ ] M2: Consumer, metadata, diagnostics, and deprecated public entry points have exact positive/negative contract tests.
 - [ ] M3: All public-contract rows owned by this child pass normal and instrumented runs and survive deliberate fault/mutation checks.
 
-In Progress. The scheduled M1 producer-composition integration milestone is accepted, allowing EP-9 to complete. Shared generators and replay support live in `test-support/Kafka/PropertySupport.hs`; candidate identity includes that directory and an added tooling control detects its modification. Six pure laws plus a fixed edge case and a native callback-composition property pass. Four semantic bias/order mutations compile, shrink to small counterexamples and reproduce with the printed replay tokens. Seeded stress passes 1,000 cases for each pure law and 1,000 native callback programs.
+In Progress; M1 is Complete. The earlier producer-composition integration remains accepted. The remaining data laws add 31 generated pure properties and five fixed cases for consumer maps/log levels/poll modes, subscription topic/property composition, ordered binary headers, record functor/bifunctor/fold/traversal laws and deprecated adapters, scalar representations, enum mappings and full version-byte decoding. Two generated native properties observe consumer registration order and actual next-offset fields, including the signed 64-bit boundary; two broker cases verify subscription precedence in both callback modes.
 
-The current complete suites pass 21 unit and 244 integration tests in normal and instrumented builds, plus 18 tooling controls and Nix/Cabal/ADR/binding checks. See [property evidence](../testing/producer-properties-evidence.json). Remaining consumer/subscription/header/record/version/conversion laws, public API state/error/diagnostic coverage, the saved deprecated-seek failure and all remaining M2/M3 requirements stay open. Resume them after EP-10 through EP-12 under the master schedule.
-
+Normal and focused instrumented runs pass all 65 unit and four native cases, with 1,000 cases per generated property and seed 20261024. Eight compiled semantic mutations fail, shrink and replay their full generator-state tokens; both controls pass. Nix/package/binding/documentation checks pass. [Public property evidence](../testing/public-properties-evidence.json) records exact scope and artifacts; [producer property evidence](../testing/producer-properties-evidence.json) retains the earlier milestone. The latest full repair baseline is EP-12's 29 unit and 426 integration cases; final global coverage/inventory will be recollected after M2. Public API state/error/diagnostic coverage, the known batch and cooperative-rebalance ownership gaps, the saved deprecated-seek failure and all M2/M3 requirements remain open.
 
 ## Surprises & Discoveries
 
@@ -59,6 +58,8 @@ The global-bias mutation shrinks to `[Global "shared" "", Global "shared" "a"]`;
 
 ## Decision Log
 
+2026-10-24: The generated subscription model exposed inherited earlier-value precedence. Asked whether to preserve it or match the other property types; the user explicitly chose “Make later subscription values win.” Change the subscription map union, retain topic-set union, and record the observable change in the changelog and ADR-17. The baseline property shrinks to `[Reset Earliest, Reset Latest]`; real async/sync consumers verify the final earliest policy reads existing data.
+
 
 2026-10-24: Use test-only `^>=0.11.1` for [mori://UnkindPartition/tasty/packages/tasty-quickcheck](mori://UnkindPartition/tasty/packages/tasty-quickcheck), verified against the [preferred package registry](https://hackage-content.haskell.org/package/tasty-quickcheck/preferred.json), [current revised package description](https://hackage-content.haskell.org/package/tasty-quickcheck-0.11.1/tasty-quickcheck.cabal) and upstream release tag. Keep the shared adapter/producer milestone separate from the rest of M1 and the full child's acceptance.
 
@@ -68,7 +69,7 @@ The global-bias mutation shrinks to `[Global "shared" "", Global "shared" "a"]`;
 ## Outcomes & Retrospective
 
 
-Not implemented. Record observed results and durable lessons at completion; update relevant ADRs and the parent registry.
+M1 is accepted with independent generated models, native observations and replayed semantic controls. The subscription precedence change is explicitly user-selected and recorded in [ADR-17](../adr/subscription-properties-use-later-values.md). A native offset observer checks the actual converted signed field and scoped error/metadata ownership; real broker cases separately verify transactional effects under EP-12. Remaining M2/M3 implementation and whole-child acceptance are open.
 
 
 ## Context and Orientation

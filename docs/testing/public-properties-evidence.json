@@ -1,0 +1,87 @@
+{
+  "status": "M1 accepted; EP-14 remains in progress",
+  "fingerprint": "a7a1729efeadb0f9262ae5248898367d977708db484ccd9e1a0d2f9bc1cd9a7d",
+  "pure_generated_properties_added": 31,
+  "pure_fixed_cases_added": 5,
+  "native_generated_properties_added": 2,
+  "native_fixed_cases_added": 2,
+  "cases_per_generated_property": 1000,
+  "seed": 20261024,
+  "runs": {
+    "unit": {
+      "log": "/tmp/rdkafka-ep14-m1-unit.log",
+      "test_count": 65,
+      "sha256": "c330de31bd8e5a056b52aa24e2c510dfb1ac2bc9b6fe97801c4e5d336766f1fe"
+    },
+    "native": {
+      "log": "/tmp/rdkafka-ep14-m1-native.log",
+      "test_count": 4,
+      "sha256": "8afe2d981440d9adfe7a85b3181476879ff7352a70e74003c3ed0e0bd25c0c6c"
+    },
+    "instrumented-unit": {
+      "log": "/tmp/rdkafka-ep14-m1-instrumented-unit.log",
+      "test_count": 65,
+      "sha256": "1dfe166bb35da18bcadf5332bc05d1c69836e13dc3faad4ab57645ac7826338b"
+    },
+    "instrumented-native": {
+      "log": "/tmp/rdkafka-ep14-m1-instrumented-native.log",
+      "test_count": 4,
+      "sha256": "962738c7754efdd5d608ce96303c9e578552d06208c41b2b728bb271101bcddd"
+    }
+  },
+  "mutation_report": "dist-mutations/20261024T144754Z-public-1339-0/results.json",
+  "compiled_mutations_caught": 8,
+  "controls": 2,
+  "shrunk_and_replayed": [
+    {
+      "mutation": "consumer-bias-reversed",
+      "token": "(SMGen 7603286587113926598 6750786074473487893,17)",
+      "log": "dist-mutations/20261024T144754Z-public-1339-0/consumer-bias-reversed.replay.log"
+    },
+    {
+      "mutation": "consumer-poll-mode-bias-reversed",
+      "token": "(SMGen 1259825427043897998 10285425458784129881,10)",
+      "log": "dist-mutations/20261024T144754Z-public-1339-0/consumer-poll-mode-bias-reversed.replay.log"
+    },
+    {
+      "mutation": "subscription-bias-reversed",
+      "token": "(SMGen 1259825427043897998 10285425458784129881,10)",
+      "log": "dist-mutations/20261024T144754Z-public-1339-0/subscription-bias-reversed.replay.log"
+    },
+    {
+      "mutation": "header-order-reversed",
+      "token": "(SMGen 1898965826930799901 8987761867696480937,3)",
+      "log": "dist-mutations/20261024T144754Z-public-1339-0/header-order-reversed.replay.log"
+    },
+    {
+      "mutation": "record-map-loses-headers",
+      "token": "(SMGen 13262595567567848789 8761751867160652105,2)",
+      "log": "dist-mutations/20261024T144754Z-public-1339-0/record-map-loses-headers.replay.log"
+    },
+    {
+      "mutation": "version-minor-shifted",
+      "token": "(SMGen 13262595567567848789 8761751867160652105,2)",
+      "log": "dist-mutations/20261024T144754Z-public-1339-0/version-minor-shifted.replay.log"
+    },
+    {
+      "mutation": "consumer-callback-order-reversed",
+      "token": "(SMGen 396203672453433329 7631371620466699889,1)",
+      "log": "dist-mutations/20261024T144754Z-public-1339-0/consumer-callback-order-reversed.replay.log"
+    },
+    {
+      "mutation": "generated-source-offset-not-advanced",
+      "token": "(SMGen 16269197159708892605 15933398308838956321,0)",
+      "log": "dist-mutations/20261024T144754Z-public-1339-0/generated-source-offset-not-advanced.replay.log"
+    }
+  ],
+  "inherited_subscription_failure": {
+    "log": "/tmp/rdkafka-ep14-subscription-before.log",
+    "minimal_counterexample": "[Reset Earliest, Reset Latest]",
+    "replay": "(SMGen 1259825427043897998 10285425458784129881,10)",
+    "resolution": "User explicitly chose later values; corrected map union and both native consumer modes read preexisting data with the final earliest policy."
+  },
+  "native_offset_domain": "Nonnegative consumed offsets whose next position fits signed 64-bit storage, including maxBound - 1; the native observer checks the actual partition-list field, native error release and group-metadata release.",
+  "callback_fixture": "Real constructor log callbacks avoid a connection-failure delay per generated program; the earlier stress timeout remains /tmp/rdkafka-ep14-consumer-properties.log.",
+  "required_checks": "/tmp/rdkafka-ep14-m1-check.log",
+  "remaining": "M2 public API/diagnostic/state coverage and the known batch/cooperative-rebalance/deprecated-seek defects; M3 global coverage/inventory reconciliation. These focused HPC runs do not replace final full-candidate coverage collection."
+}

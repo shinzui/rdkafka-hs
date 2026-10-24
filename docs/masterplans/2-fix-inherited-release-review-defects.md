@@ -137,6 +137,8 @@ EP-11 is Complete: 55 native callback cases, eight counted registry cases, five 
 
 EP-12 is Complete: 51 transaction cases, ten compiled mutations/one control, native allocation counts and instrumented native execution close all nine transaction rows. Full normal/instrumented suites now pass 29 unit and 426 integration tests (162.15/165.96 seconds). Counters detect the inherited three-error leak and balance 300 immediate errors; real fencing, abort recovery and source/output atomicity pass. See [transaction evidence](../testing/transaction-evidence.json). Continue EP-14, then EP-15 and the combined release-readiness gate.
 
+EP-14 M1 is Complete: 65 unit and four focused native cases pass normally and instrumented, with 1,000 cases per generated property; eight new compiled mutations shrink and replay. The user chose later subscription values over the inherited earlier-value precedence, now verified by an independent model and real consumers in both modes. See [public property evidence](../testing/public-properties-evidence.json). EP-14 as a whole remains In Progress while M2/M3 and its known defects are open.
+
 ## Surprises & Discoveries
 
 EP-11's teardown audit identified a possible unowned remainder when batch message conversion is interrupted. EP-14 owns reproduction and full-batch cleanup under its existing polling/batch contract; its plan records the concrete source path. This remains an open obligation, independent of callback registration release.

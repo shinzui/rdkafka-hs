@@ -173,7 +173,21 @@ families "transaction" =
     omit start end = section start end (replace "rdKafkaErrorDestroy" "(const (pure ()))")
     immediate operation = operation <> " without transactional ID preserves native code and destroys error"
     flags operation = operation <> " copies native flag combination 7 before destruction"
-families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback or transaction")
+families "public" =
+  [ control "unit-control" unit "Public properties",
+    (control "native-control" integration "consumer-properties") {replay = True},
+    p "consumer-bias-reversed" "src/Kafka/Consumer/ConsumerProperties.hs" (replace "M.union m2 m1" "M.union m1 m2") "consumer program follows independent last-write model",
+    p "consumer-poll-mode-bias-reversed" "src/Kafka/Consumer/ConsumerProperties.hs" (replace "(cup2 `mplus` cup1)" "(cup1 `mplus` cup2)") "consumer program follows independent last-write model",
+    p "subscription-bias-reversed" "src/Kafka/Consumer/Subscription.hs" (replace "M.union m2 m1" "M.union m1 m2") "subscription follows last-write properties and topic union",
+    p "header-order-reversed" "src/Kafka/Types.hs" (replace "headersToList = unHeaders" "headersToList = reverse . unHeaders") "header list round-trip preserves duplicates and binary bytes",
+    p "record-map-loses-headers" "src/Kafka/Consumer/Types.hs" (replace "  fmap = second" "  fmap f = (\\r -> r {crHeaders = mempty}) . second f") "record functor identity",
+    p "version-minor-shifted" "src/Kafka/Version.hs" (replace "versionMinor = (n `shiftR` 16)" "versionMinor = (n `shiftR` 8)") "version bytes decode independently of prerelease byte",
+    (mutation "consumer-properties" "consumer-callback-order-reversed" "src/Kafka/Consumer/ConsumerProperties.hs" (replace "(cb1 `mplus` cb2)" "(cb2 `mplus` cb1)") "consumer callback composition preserves registration order and identity") {replay = True},
+    (mutation "consumer-properties" "generated-source-offset-not-advanced" consumerConversion (replace "moff + 1" "moff") "generated source offsets reach native code as the representable next position") {replay = True}
+  ]
+  where
+    p label path change test = (mutation "Public properties" label path change test) {suite = unit, replay = True}
+families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction or public")
 
 replace :: String -> String -> String -> String
 replace old new source = case [i | (i, rest) <- zip [0 ..] (tails source), old `isPrefixOf` rest] of

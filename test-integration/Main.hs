@@ -6,6 +6,7 @@ import Kafka.Integration.AttributedErrorTest qualified as AttributedErrorTest
 import Kafka.Integration.BatchTest qualified as BatchTest
 import Kafka.Integration.CallbackLifetimeTest qualified as CallbackLifetimeTest
 import Kafka.Integration.ConfigurationTest qualified as ConfigurationTest
+import Kafka.Integration.ConsumerPropertyTest qualified as ConsumerPropertyTest
 import Kafka.Integration.ConsumerTest qualified as ConsumerTest
 import Kafka.Integration.DestroyTest qualified as DestroyTest
 import Kafka.Integration.FatalErrorTest qualified as FatalErrorTest
@@ -54,6 +55,7 @@ integrationMain = do
         TopicConfigurationTest.tests env,
         ProducerRegressionTest.tests env,
         ProducerPropertyTest.tests,
+        ConsumerPropertyTest.tests env,
         SeekPartitionsTest.tests env,
         -- The groups share the run's topic and consumer group, so later groups
         -- depend on the records and offsets earlier ones leave behind.

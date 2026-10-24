@@ -40,10 +40,12 @@ data Subscription = Subscription (Set TopicName) (Map Text Text)
 instance Sem.Semigroup Subscription where
   (Subscription ts1 m1) <> (Subscription ts2 m2) =
     let ts' = Set.union ts1 ts2
-        ps' = M.union m1 m2
+        ps' = M.union m2 m1
      in Subscription ts' ps'
   {-# INLINE (<>) #-}
 
+-- | Topic names accumulate; later property values override earlier ones,
+-- matching consumer and producer property composition.
 instance Monoid Subscription where
   mempty = Subscription Set.empty M.empty
   {-# INLINE mempty #-}

@@ -9,6 +9,10 @@ this project adheres to the [Haskell Package Versioning Policy](https://pvp.hask
 
 ### Fixed
 
+- Later subscription property values now override earlier values, matching
+  consumer and producer property composition. Topic names still accumulate
+  by set union.
+
 - Transaction operations now destroy native error objects after copying their
   results and recovery flags, including decoding failures and cancellation.
   Sending transactional source offsets also scopes native group metadata and
