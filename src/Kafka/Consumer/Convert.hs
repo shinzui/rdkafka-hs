@@ -3,6 +3,7 @@ module Kafka.Consumer.Convert
     offsetToInt64,
     int64ToOffset,
     fromNativeTopicPartitionList'',
+    nativeTopicPartitionErrors,
     fromNativeTopicPartitionList',
     fromNativeTopicPartitionList,
     toNativeTopicPartitionList,
@@ -106,6 +107,15 @@ fromNativeTopicPartitionList pl =
             tpPartition = PartitionId $ partition'RdKafkaTopicPartitionT p,
             tpOffset = int64ToOffset $ offset'RdKafkaTopicPartitionT p
           }
+
+-- | Read member errors in native/input order while retaining the owning list.
+-- This deliberately leaves the generic public TopicPartition conversion alone.
+nativeTopicPartitionErrors :: RdKafkaTopicPartitionListTPtr -> IO [RdKafkaRespErrT]
+nativeTopicPartitionErrors list = withForeignPtr list $ \ptr -> do
+  value <- peek ptr
+  mapM
+    (fmap err'RdKafkaTopicPartitionT . peekElemOff (elems'RdKafkaTopicPartitionListT value))
+    [0 .. cnt'RdKafkaTopicPartitionListT value - 1]
 
 toNativeTopicPartitionList :: [TopicPartition] -> IO RdKafkaTopicPartitionListTPtr
 toNativeTopicPartitionList ps = do

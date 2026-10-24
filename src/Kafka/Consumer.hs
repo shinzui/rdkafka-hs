@@ -97,6 +97,7 @@ import Data.Bifunctor (bimap, first)
 import Data.ByteString qualified as BS
 import Data.ByteString.Unsafe (unsafeUseAsCStringLen)
 import Data.IORef (IORef, atomicModifyIORef', readIORef, writeIORef)
+import Data.List (find)
 import Data.Map qualified as M hiding (foldr, map)
 import Data.Maybe (fromMaybe, isJust)
 import Data.Set (Set)
@@ -105,7 +106,7 @@ import Data.Text (Text)
 import Data.Text qualified as Text
 import Foreign hiding (void)
 import Kafka.Consumer.Callbacks (forwardPartitionsToMessageQueue)
-import Kafka.Consumer.Convert (fromMessagePtr, fromMessagePtrAttributed, fromNativeTopicPartitionList'', offsetCommitToBool, offsetToInt64, toMap, toNativeTopicPartitionList, toNativeTopicPartitionList', topicPartitionFromMessageForCommit)
+import Kafka.Consumer.Convert (fromMessagePtr, fromMessagePtrAttributed, fromNativeTopicPartitionList'', nativeTopicPartitionErrors, offsetCommitToBool, offsetToInt64, toMap, toNativeTopicPartitionList, toNativeTopicPartitionList', topicPartitionFromMessageForCommit)
 import Kafka.Consumer.Types (KafkaConsumer (..))
 import Kafka.Internal.RdKafka (RdKafkaQueueTPtr, RdKafkaRespErrT (..), RdKafkaTopicPartitionListTPtr, RdKafkaTypeT (..), newRdKafkaT, newRdKafkaTopicPartitionListT, newRdKafkaTopicT, rdKafkaAssign, rdKafkaAssignment, rdKafkaAssignmentLost, rdKafkaCommit, rdKafkaCommitted, rdKafkaConfSetDefaultTopicConf, rdKafkaConsumeBatchQueue, rdKafkaConsumeQueue, rdKafkaConsumerClose, rdKafkaConsumerClosed, rdKafkaConsumerPoll, rdKafkaErrorCode, rdKafkaErrorDestroy, rdKafkaFatalError, rdKafkaMessageDestroy, rdKafkaOffsetsStore, rdKafkaPausePartitions, rdKafkaPollSetConsumer, rdKafkaPosition, rdKafkaQueueDestroy, rdKafkaQueueGetConsumer, rdKafkaQueueIoEventEnable, rdKafkaQueueNew, rdKafkaResumePartitions, rdKafkaSeek, rdKafkaSeekPartitions, rdKafkaSetLogLevel, rdKafkaSubscribe, rdKafkaSubscription, rdKafkaTopicConfDup, rdKafkaTopicPartitionListAdd)
 import Kafka.Internal.Setup (Callback (..), CallbackPollStatus (..), ClientLifecycle (..), Kafka (..), KafkaConf (..), KafkaProps (..), TopicConf (..), TopicProps (..), getKafkaConf, getRdKafka, getRdMsgQueue, kafkaConf, topicConf)
@@ -536,13 +537,28 @@ seek (KafkaConsumer (Kafka k) _) (Timeout timeout) tps =
       nt <- newRdKafkaTopicT k (Text.unpack tn) Nothing
       return $ bimap KafkaError (,tpPartition tp,tpOffset tp) (first Text.pack nt)
 
--- | Seek consumer for partitions in partitions to the per-partition
---    offset in the offset field of partitions.
+-- | Seek already assigned partitions to their requested offsets. A nonzero
+-- timeout waits for the fetcher update and discards prefetched records from the
+-- old position. The overall native error takes precedence; otherwise the first
+-- failed partition in input order is returned. Successful members of a mixed
+-- request are not rolled back when another member fails.
+--
+-- A zero timeout initiates the operation without waiting for completion. Pending
+-- member markers are ignored only in that case; immediate errors are returned.
+-- 'PartitionOffsetStored' is not supported by native seek (use 'rewindConsumer').
 seekPartitions :: (MonadIO m) => KafkaConsumer -> [TopicPartition] -> Timeout -> m (Maybe KafkaError)
 seekPartitions (KafkaConsumer (Kafka k) _) ps (Timeout timeout) = liftIO $ do
   tps <- toNativeTopicPartitionList ps
   err <- bracket (rdKafkaSeekPartitions k tps timeout) rdKafkaErrorDestroy rdKafkaErrorCode
-  pure $ either Just (const Nothing) $ rdKafkaErrorToEither err
+  case rdKafkaErrorToEither err of
+    Left failure -> pure (Just failure)
+    Right () -> do
+      errors <- nativeTopicPartitionErrors tps
+      pure $ KafkaResponseError <$> find substantive errors
+  where
+    substantive code =
+      code /= RdKafkaRespErrNoError
+        && (timeout /= 0 || code /= RdKafkaRespErrInProgress)
 
 -- | Retrieve committed offsets for topics+partitions.
 committed :: (MonadIO m) => KafkaConsumer -> Timeout -> [(TopicName, PartitionId)] -> m (Either KafkaError [TopicPartition])
@@ -646,8 +662,14 @@ destroyConsumer (KafkaConsumer (Kafka k) (KafkaConf _ qr statusVar lifecycle)) =
 releaseMessageQueue :: IORef (Maybe RdKafkaQueueTPtr) -> IO ()
 releaseMessageQueue qr = atomicModifyIORef' qr (Nothing,) >>= mapM_ rdKafkaQueueDestroy
 
--- | Rewind consumer's consume position to the last committed offsets for the current assignment.
--- NOTE: follows https://github.com/edenhill/librdkafka/blob/master/examples/transactions.c#L166
+-- | Rewind the current assignment to the committed next offsets, or beginning
+-- when no offset is committed. Assignment, lookup and seek failures propagate.
+-- Lookup and seek are separate operations: callers must serialize assignment
+-- changes when a stable assignment is required. Successful seek members are
+-- not rolled back if another member fails.
+--
+-- Follows @mori://confluentinc/librdkafka@, project-relative
+-- @librdkafka/examples/transactions.c@ (source artifact URI pending).
 rewindConsumer ::
   (MonadIO m) =>
   KafkaConsumer ->

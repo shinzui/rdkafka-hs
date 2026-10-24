@@ -67,7 +67,7 @@ Relevant decisions were read before drafting. [ADR-1](../adr/consumer-queue-and-
 |---|---|---|---|---|---|
 | 8 | Apply topic creation configuration safely | [EP-8](../plans/8-apply-topic-creation-configuration-safely.md) | EP-13 | None | Complete |
 | 9 | Honor producer settings and release rejected callbacks | [EP-9](../plans/9-honor-producer-settings-and-release-rejected-callbacks.md) | EP-13 | None | Complete |
-| 10 | Report per-partition seek failures | [EP-10](../plans/10-report-per-partition-seek-failures.md) | EP-13 | None | Not Started |
+| 10 | Report per-partition seek failures | [EP-10](../plans/10-report-per-partition-seek-failures.md) | EP-13 | None | Complete |
 | 11 | Own native callbacks through client teardown | [EP-11](../plans/11-own-native-callbacks-through-client-teardown.md) | EP-13 | EP-9 | Not Started |
 | 12 | Release transaction error objects | [EP-12](../plans/12-release-transaction-error-objects.md) | EP-13 | None | Not Started |
 | 13 | Make coverage evidence and test fixtures reliable | [EP-13](../plans/13-make-coverage-evidence-and-test-fixtures-reliable.md) | None | None | Complete |
@@ -128,7 +128,7 @@ EP-13 is Complete. Its accepted baseline passes 14 unit and 129 integration test
 
 EP-8 and EP-9 are Complete. Admin evidence covers 53 focused cases and eight compiled semantic mutations; its unchanged owned source scope remains verified after independent producer changes. Producer evidence covers 61 focused cases, thirteen compiled mutations, effective configuration, error-object ownership/code propagation, byte boundaries, exceptions, observed races and queued/in-flight purge flags. EP-14's shared adapter/producer-composition milestone adds generated and replayable laws with four compiled/shrunk/replayed bias/order mutations. The rest of EP-14 is In Progress.
 
-Current normal and instrumented suites pass 21 unit and 244 integration tests (108.03/105.84 seconds), with child probe coverage merged; 18 tooling controls and strict ADR/Cabal/binding/Nix checks pass. The inventory has 181 rows: 15 tested and 166 explicitly open. See the [current coverage manifest](../testing/coverage-evidence.json). Resume EP-10, EP-11 and EP-12, then the remaining EP-14 work; EP-15 still waits for all earlier children. The saved intermittent deprecated-seek failure remains an open EP-14 obligation, and the native C-finalizer callback crash belongs to EP-11. Green reruns do not close either discovery.
+EP-10 is Complete: 76 focused seek/rewind cases and seven compiled mutations verify ordered member failures, partial success, initiation-only zero timeout, offset/log boundaries and assignment changes during rewind. Current normal and instrumented suites pass 21 unit and 320 integration tests (156.82/149.39 seconds), with child probe coverage merged; 18 tooling controls and strict ADR/Cabal/binding/Nix checks pass. The inventory has 181 rows: 17 tested and 164 explicitly open. See the [current coverage manifest](../testing/coverage-evidence.json). Resume EP-11 and EP-12, then the remaining EP-14 work; EP-15 still waits for all earlier children. The saved intermittent deprecated-seek failure remains an open EP-14 obligation, and the native C-finalizer callback crash belongs to EP-11. Green reruns do not close either discovery.
 
 - [ ] Combined candidate closes all supported contract and critical ownership rows, six original regressions, generated-data properties, normal/coverage builds, source-distribution validation, broker-failure tests, and the required compatibility matrix.
 

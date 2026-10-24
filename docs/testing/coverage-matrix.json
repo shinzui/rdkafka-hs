@@ -2278,7 +2278,7 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
       "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -2345,7 +2345,7 @@
         "rdkafka-hs-integration.producer-properties.callback composition preserves order and identity"
       ],
       "status": "tested",
-      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
       "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -2374,9 +2374,74 @@
       "inputs": "valid, invalid and mixed partitions; empty list; timeout; beginning/end/stored/invalid/large offsets",
       "expected": "Failure is surfaced through existing return type; valid partition offset and next record agree",
       "modes": "async and sync callback modes; zero-timeout initiation and synchronous completion",
-      "ownership": "Temporary native partition list released after call and error decode",
-      "tests": [],
-      "status": "unimplemented"
+      "ownership": "One native list ForeignPtr retains elements through call and error inspection; overall error object is destroyed once, including decoder exceptions",
+      "tests": [
+        "rdkafka-hs-integration.seek-partitions.async.unassigned member reports native error",
+        "rdkafka-hs-integration.seek-partitions.async.empty list preserves top-level invalid argument",
+        "rdkafka-hs-integration.seek-partitions.async.zero-timeout unassigned failure is immediate",
+        "rdkafka-hs-integration.seek-partitions.async.empty zero-timeout preserves top-level error",
+        "rdkafka-hs-integration.seek-partitions.async.top-level error precedes member error and is destroyed",
+        "rdkafka-hs-integration.seek-partitions.async.first substantive error follows input order",
+        "rdkafka-hs-integration.seek-partitions.async.reversed input selects the other substantive error",
+        "rdkafka-hs-integration.seek-partitions.async.zero-timeout skips pending but reports later failure",
+        "rdkafka-hs-integration.seek-partitions.async.nonzero-timeout preserves residual pending",
+        "rdkafka-hs-integration.seek-partitions.async.zero-timeout all pending promises initiation only",
+        "rdkafka-hs-integration.seek-partitions.async.nonzero-timeout all pending is not success",
+        "rdkafka-hs-integration.seek-partitions.async.top-level decoder exception still destroys error object",
+        "rdkafka-hs-integration.seek-partitions.async.single seek replays exact record",
+        "rdkafka-hs-integration.seek-partitions.async.multiple successful seeks replay both partitions",
+        "rdkafka-hs-integration.seek-partitions.async.mixed seek reports failure without rolling back success",
+        "rdkafka-hs-integration.seek-partitions.async.mixed errors follow actual request order",
+        "rdkafka-hs-integration.seek-partitions.async.zero-timeout valid seek is followed by synchronous replay",
+        "rdkafka-hs-integration.seek-partitions.async.zero-timeout mixed request keeps immediate unknown error",
+        "rdkafka-hs-integration.seek-partitions.async.zero-timeout logical offsets promise initiation only",
+        "rdkafka-hs-integration.seek-partitions.async.infinite native timeout completes a valid seek",
+        "rdkafka-hs-integration.seek-partitions.async.duplicate entries preserve residual native pending error",
+        "rdkafka-hs-integration.seek-partitions.async.unassigned existing partition returns state error",
+        "rdkafka-hs-integration.seek-partitions.async.unknown topic reports member error",
+        "rdkafka-hs-integration.seek-partitions.async.stored sentinel is rejected without altering position",
+        "rdkafka-hs-integration.seek-partitions.async.end and exact high watermark produce no record",
+        "rdkafka-hs-integration.seek-partitions.async.seek before retained log range resets to actual low watermark",
+        "rdkafka-hs-integration.seek-partitions.async.beginning sentinel replays offset zero",
+        "rdkafka-hs-integration.seek-partitions.async.absolute low watermark replays offset zero",
+        "rdkafka-hs-integration.seek-partitions.async.invalid sentinel uses configured earliest reset",
+        "rdkafka-hs-integration.seek-partitions.async.above high watermark uses configured earliest reset",
+        "rdkafka-hs-integration.seek-partitions.async.native tail sentinel replays final two records",
+        "rdkafka-hs-integration.seek-partitions.sync.unassigned member reports native error",
+        "rdkafka-hs-integration.seek-partitions.sync.empty list preserves top-level invalid argument",
+        "rdkafka-hs-integration.seek-partitions.sync.zero-timeout unassigned failure is immediate",
+        "rdkafka-hs-integration.seek-partitions.sync.empty zero-timeout preserves top-level error",
+        "rdkafka-hs-integration.seek-partitions.sync.top-level error precedes member error and is destroyed",
+        "rdkafka-hs-integration.seek-partitions.sync.first substantive error follows input order",
+        "rdkafka-hs-integration.seek-partitions.sync.reversed input selects the other substantive error",
+        "rdkafka-hs-integration.seek-partitions.sync.zero-timeout skips pending but reports later failure",
+        "rdkafka-hs-integration.seek-partitions.sync.nonzero-timeout preserves residual pending",
+        "rdkafka-hs-integration.seek-partitions.sync.zero-timeout all pending promises initiation only",
+        "rdkafka-hs-integration.seek-partitions.sync.nonzero-timeout all pending is not success",
+        "rdkafka-hs-integration.seek-partitions.sync.top-level decoder exception still destroys error object",
+        "rdkafka-hs-integration.seek-partitions.sync.single seek replays exact record",
+        "rdkafka-hs-integration.seek-partitions.sync.multiple successful seeks replay both partitions",
+        "rdkafka-hs-integration.seek-partitions.sync.mixed seek reports failure without rolling back success",
+        "rdkafka-hs-integration.seek-partitions.sync.mixed errors follow actual request order",
+        "rdkafka-hs-integration.seek-partitions.sync.zero-timeout valid seek is followed by synchronous replay",
+        "rdkafka-hs-integration.seek-partitions.sync.zero-timeout mixed request keeps immediate unknown error",
+        "rdkafka-hs-integration.seek-partitions.sync.zero-timeout logical offsets promise initiation only",
+        "rdkafka-hs-integration.seek-partitions.sync.infinite native timeout completes a valid seek",
+        "rdkafka-hs-integration.seek-partitions.sync.duplicate entries preserve residual native pending error",
+        "rdkafka-hs-integration.seek-partitions.sync.unassigned existing partition returns state error",
+        "rdkafka-hs-integration.seek-partitions.sync.unknown topic reports member error",
+        "rdkafka-hs-integration.seek-partitions.sync.stored sentinel is rejected without altering position",
+        "rdkafka-hs-integration.seek-partitions.sync.end and exact high watermark produce no record",
+        "rdkafka-hs-integration.seek-partitions.sync.seek before retained log range resets to actual low watermark",
+        "rdkafka-hs-integration.seek-partitions.sync.beginning sentinel replays offset zero",
+        "rdkafka-hs-integration.seek-partitions.sync.absolute low watermark replays offset zero",
+        "rdkafka-hs-integration.seek-partitions.sync.invalid sentinel uses configured earliest reset",
+        "rdkafka-hs-integration.seek-partitions.sync.above high watermark uses configured earliest reset",
+        "rdkafka-hs-integration.seek-partitions.sync.native tail sentinel replays final two records"
+      ],
+      "status": "tested",
+      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
+      "evidence": "docs/testing/seek-evidence.json"
     },
     {
       "id": "F4",
@@ -2437,7 +2502,7 @@
         "rdkafka-hs-integration.producer-regressions.later delivery callback replaces the earlier callback"
       ],
       "status": "tested",
-      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
       "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -3361,9 +3426,26 @@
       "inputs": "no assignment; missing/known committed offsets; lookup failure; assignment changes before seek; seek failure",
       "expected": "No assignment is a no-op; failures propagate; successful replay begins at the exact committed next offset",
       "modes": "async and sync callback modes",
-      "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "ownership": "One native list ForeignPtr retains elements through call and error inspection; overall error object is destroyed once, including decoder exceptions",
+      "tests": [
+        "rdkafka-hs-integration.seek-partitions.async.rewind without assignment does not seek",
+        "rdkafka-hs-integration.seek-partitions.async.rewind assignment failure prevents seek",
+        "rdkafka-hs-integration.seek-partitions.async.rewind without committed offset starts at beginning",
+        "rdkafka-hs-integration.seek-partitions.async.rewind uses committed next offset exactly",
+        "rdkafka-hs-integration.seek-partitions.async.rewind message commit resumes after committed message",
+        "rdkafka-hs-integration.seek-partitions.async.rewind lookup failure prevents seek",
+        "rdkafka-hs-integration.seek-partitions.async.rewind propagates assignment change after committed lookup",
+        "rdkafka-hs-integration.seek-partitions.sync.rewind without assignment does not seek",
+        "rdkafka-hs-integration.seek-partitions.sync.rewind assignment failure prevents seek",
+        "rdkafka-hs-integration.seek-partitions.sync.rewind without committed offset starts at beginning",
+        "rdkafka-hs-integration.seek-partitions.sync.rewind uses committed next offset exactly",
+        "rdkafka-hs-integration.seek-partitions.sync.rewind message commit resumes after committed message",
+        "rdkafka-hs-integration.seek-partitions.sync.rewind lookup failure prevents seek",
+        "rdkafka-hs-integration.seek-partitions.sync.rewind propagates assignment change after committed lookup"
+      ],
+      "status": "tested",
+      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
+      "evidence": "docs/testing/seek-evidence.json"
     },
     {
       "id": "API-Kafka-Consumer-runConsumer",
@@ -4176,7 +4258,7 @@
         "rdkafka-hs-integration.topic-configuration.deletion reports a missing response as a timeout"
       ],
       "status": "tested",
-      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
       "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4706,7 +4788,7 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
       "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4766,7 +4848,7 @@
         "rdkafka-hs-integration.producer-regressions.known invalid partition rejection releases capture"
       ],
       "status": "tested",
-      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
       "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4918,7 +5000,7 @@
         "rdkafka-hs-integration.Fixture error controls.weak control retains while rooted and collects after release"
       ],
       "status": "tested",
-      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
       "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -4964,7 +5046,7 @@
         "rdkafka-hs-integration.topic-configuration.maximum C replication count retains native validation"
       ],
       "status": "tested",
-      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
       "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -5016,7 +5098,7 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
       "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -5057,7 +5139,7 @@
         "rdkafka-hs-integration.topic-configuration.concurrent requests keep their own queues and responses"
       ],
       "status": "tested",
-      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
       "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -5137,7 +5219,7 @@
         "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: minimum unrepresentable partition"
       ],
       "status": "tested",
-      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
       "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -5186,7 +5268,7 @@
         "rdkafka-hs-integration.producer-regressions.empty queue supports repeated flush and close"
       ],
       "status": "tested",
-      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
       "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -5224,7 +5306,7 @@
         "rdkafka-hs-integration.producer-regressions.later delivery callback replaces the earlier callback"
       ],
       "status": "tested",
-      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
       "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -5260,7 +5342,7 @@
         "rdkafka-hs-integration.producer-regressions.native error decoding failure releases rejected callback capture"
       ],
       "status": "tested",
-      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
       "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",
@@ -5299,7 +5381,7 @@
         "rdkafka-hs-integration.producer-properties.callback composition preserves order and identity"
       ],
       "status": "tested",
-      "fingerprint": "603e828f9aca4c20cfe867950e50ed5c106ff74de7db07124e960db07890cd9a",
+      "fingerprint": "e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14",
       "evidence_revision": "8396f7b60ae762068970eb7d802e1bb1f514c07e",
       "evidence_configuration": {
         "ghc": "9.12.4",

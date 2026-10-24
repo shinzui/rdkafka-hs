@@ -17,6 +17,11 @@ provenance:
       at: 2026-10-24T04:58:24Z
       mode: "update"
       note: "Expand acceptance to close public-contract, failure-path, concurrency, ownership, and compatibility coverage gaps; add EP-13 prerequisite and coordinated evidence gates."
+    - model: "gpt-6.1-sol"
+      harness: "codex-cli"
+      at: 2026-10-24T10:48:54Z
+      mode: "implement"
+      note: "Implement native partition error reporting and seek/rewind boundary regressions after accepted fixture milestone."
 ---
 
 # Report per-partition seek failures
@@ -34,12 +39,14 @@ Fix F3: synchronous `seekPartitions` returns an error when any requested partiti
 ## Progress
 
 
-- [ ] M1: Synchronous seeks return native per-partition errors, including mixed success/failure requests.
-- [ ] M2: Valid replay, zero-timeout initiation, top-level failures, and rewind behavior retain their documented contracts in both poll modes.
+- [x] M1: Synchronous seeks return native per-partition errors, including mixed success/failure requests.
+- [x] M2: Valid replay, zero-timeout initiation, top-level failures, and rewind behavior retain their documented contracts in both poll modes.
 
-- [ ] M3: Seek and rewind boundaries, partial success, offset sentinels, and assignment changes are verified in both callback modes.
+- [x] M3: Seek and rewind boundaries, partial success, offset sentinels, and assignment changes are verified in both callback modes.
 
-Not started; this document records the implementation contract, not completed fixes.
+Complete. The original false success reproduced in both callback modes (2/4 initial tests failed). Seventy-six focused cases verify ordered member failures, overall precedence, initiation-only pending semantics, duplicate entries, exact replay and rewind boundaries. Seven compiled semantic mutations fail their intended tests; the unchanged control passes.
+
+The final candidate `e0efdb19089bfda33df08ddbc34c1a98a57c7a16430ce167addf2a2ff3c3fa14` passes 21 unit and 320 integration tests in normal (156.82 seconds) and instrumented (149.39 seconds) builds, 18 tooling controls, Nix checks, package checks and strict validation of 14 ADRs. See [seek evidence](../testing/seek-evidence.json). Public exports and types remain unchanged. The saved deprecated-seek failure remains EP-14; callback finalization remains EP-11.
 
 
 ## Surprises & Discoveries
@@ -47,8 +54,14 @@ Not started; this document records the implementation contract, not completed fi
 
 The review called `seekPartitions` on a new assigned-only consumer with no assignment, requesting topic `never-assigned`, partition 42, and a one-second timeout. The result was `Nothing`, although no seek could occur. The behavior is inherited from retained commit `8d24891` (September 2022).
 
+The supported native implementation treats a known but inactive partition differently from a wholly unknown topic: a synchronous seek returns `STATE` for the former, `UNKNOWN_PARTITION` for the latter. A zero-timeout seek can report the unknown-topic error immediately, but not a later native-thread rejection such as `STORED`. The first expanded fixture assumed both were unknown; six of 70 tests correctly rejected that assumption. The corrected suite distinguishes actual native phases. The three relevant seek/list functions in the Mori checkout at `122fc0c98562d086c3618bf376862632ae0808e1` are byte-identical to upstream release tag `v2.15.0` (`9a94e11452cdeb0a844db44ee5dd01ccbe17d3ab`); source locations belong to `mori://confluentinc/librdkafka` as named below.
+
+Native duplicate requests receive replies through a first-match lookup, leaving a later duplicate marked `IN_PROGRESS`. Keep that residual error visible for nonzero timeouts rather than silently deduplicating the public input. Retained-log tests trim only the run-owned partition, verify broker low/high watermarks `(2,4)`, and prove reset to offset 2.
+
 
 ## Decision Log
+
+2026-10-24 implementation: Read member errors in a narrow internal helper while retaining the list. Keep generic conversions and public types unchanged. [ADR-14](../adr/seek-reports-ordered-member-errors-and-preserves-initiation-semantics.md) records overall precedence, request ordering, partial success and initiation-only semantics.
 
 
 2026-10-24 revision: The user expanded acceptance to close coverage gaps. Add the complete behavioral/ownership matrix for this workstream, depend on EP-13's reliable fixtures, and require evidence per coverage-inventory row. Existing milestones remain required.
@@ -59,7 +72,7 @@ The review called `seekPartitions` on a new assigned-only consumer with no assig
 ## Outcomes & Retrospective
 
 
-Not implemented. Record accepted evidence, remaining limitations, and durable lessons here at completion; update relevant ADRs before marking Complete.
+F3 is repaired without a public type change. A native overall success no longer conceals member errors, zero timeout retains asynchronous initiation, and mixed failures do not imply rollback. Rewind resumes from the exact committed next offset and reports a real assignment change after lookup. Both owned inventory rows are tested. [ADR-14](../adr/seek-reports-ordered-member-errors-and-preserves-initiation-semantics.md) distills the durable result contract; transient fixture assumptions and before-fix failures remain documented above. Compatibility, native heap diagnostics and unrelated open contracts still block master completion.
 
 
 ## Context and Orientation

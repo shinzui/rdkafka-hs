@@ -9,6 +9,11 @@ this project adheres to the [Haskell Package Versioning Policy](https://pvp.hask
 
 ### Fixed
 
+- `seekPartitions` now returns native per-partition failures in request order
+  after any overall error. Zero timeout preserves initiation-only semantics;
+  synchronous calls no longer hide pending or failed members. Rewind propagates
+  seek failures, and mixed requests may partially succeed.
+
 - Topic creation now applies nonempty configuration maps using the allocated
   request, fixing an inherited `Prelude.undefined` crash. Topic administration
   releases requests, options, application queue references and response events
