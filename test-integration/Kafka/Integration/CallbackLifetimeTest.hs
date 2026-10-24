@@ -1,4 +1,4 @@
-module Kafka.Integration.CallbackLifetimeTest (tests) where
+module Kafka.Integration.CallbackLifetimeTest (tests, runInvalidAccessControl) where
 
 import Control.Concurrent (ThreadId, forkFinally, forkIOWithUnmask, killThread, threadDelay)
 import Control.Concurrent.MVar (MVar, newEmptyMVar, putMVar, readMVar, tryPutMVar, tryReadMVar)
@@ -13,6 +13,8 @@ import Kafka.CallbackTestSupport (assertRetained, awaitCollected)
 import Kafka.Consumer qualified as C
 import Kafka.Producer qualified as P
 import Kafka.TestEnv
+import System.Exit (die)
+import System.IO (hFlush, stdout)
 import System.Mem.Weak (Weak)
 import System.Timeout (timeout)
 import Test.Tasty (TestTree, testGroup)
@@ -333,7 +335,15 @@ destroyStage env mode label fault = do
   (consumer, weak, logged) <- trackedConsumer env mode (label <> show fault)
   first <- newEmptyMVar
   void $ forkFinally (C.destroyConsumer consumer) (putMVar first)
-  flip finally (releaseCallbackStage >> bounded (readMVar first) >>= either throwIO pure) $ do
+  let awaitFinished =
+        callbackStat 3 >>= \count ->
+          if count == 1 then pure () else threadDelay 1000 >> awaitFinished
+      finish = do
+        releaseCallbackStage
+        bounded (readMVar first) >>= either throwIO pure
+        bounded awaitFinished
+        awaitCollected weak
+  flip finally finish $ do
     awaitCallbackStage
     callbackStat 1 >>= (@?= 1)
     callbackStat 2 >>= (@?= 1)
@@ -397,6 +407,13 @@ cancelDestroyStage env mode label fault = do
 forkUnmaskedFinally :: IO a -> (Either SomeException a -> IO ()) -> IO ThreadId
 forkUnmaskedFinally action completed = forkIOWithUnmask $ \unmask ->
   try @SomeException (unmask action) >>= completed
+
+runInvalidAccessControl :: IO ()
+runInvalidAccessControl = do
+  putStrLn "native diagnostic negative control: reading a freed configuration"
+  hFlush stdout
+  _ <- invalidAccessControl
+  die "Native invalid-access control returned without a sanitizer diagnosis"
 
 {-# NOINLINE cancelledConstructor #-}
 cancelledConstructor :: TestEnv -> String -> Int -> IO (Weak (IORef Int))

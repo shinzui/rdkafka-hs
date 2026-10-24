@@ -47,6 +47,8 @@ Fix F5: creating and discarding clients no longer permanently retains Haskell ca
 
 In Progress. M1 is accepted: corrected `mkWeakIORef` probes fail collection in 3/4 cases on an isolated archive of `7299b19` and pass 4/4 with the owner prototype. The representative delivery/error setters transfer bridges to the client finalizer; retained destroyed wrappers no longer retain those captures. The existing lifecycle/destroy/producer integration selection passes 170 cases (87.18 seconds). All ten wrapper allocation sites now use the owner. The current focused suite passes 45 integration cases and eight counted registry cases (29 total unit tests). Native diagnostics, semantic mutations, throwing-callback checks and combined normal/instrumented acceptance remain open; this is an implementation checkpoint, not whole-child acceptance.
 
+2026-10-24 checkpoint: normal and instrumented suites both pass 29 unit and 365 integration cases. Five compiled callback mutations and two controls pass their sensitivity checks; all 32 earlier mutations and five controls retain identical selected test counts under the consolidated Haskell runner, including four minimized property replays. [Parity evidence](../testing/mutation-runner-parity.json) preserves the historical reports and documents a metadata-only fingerprint ordering correction. Native invalid-access diagnostics and throwing-callback acceptance remain open.
+
 
 ## Surprises & Discoveries
 
@@ -67,6 +69,8 @@ At baseline an error callback captures an IORef; after `destroyConsumer` and maj
 
 
 ## Decision Log
+
+2026-10-24: Following the user's instruction to minimize permanent test scripts, consolidate the four mutation runners into one Haskell Cabal script invoked through `just test-mutations`. Keep ordinary test execution in the existing Cabal suites. Python remains acceptable for temporary task work.
 
 
 2026-10-24 revision: The user expanded acceptance to close coverage gaps. Add the complete behavioral/ownership matrix for this workstream, depend on EP-13's reliable fixtures, and require evidence per coverage-inventory row. Existing milestones remain required.

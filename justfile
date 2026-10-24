@@ -52,6 +52,12 @@ test-it *ARGS:
     redpanda-local-up
     cabal test rdkafka-hs-integration -f integration --test-show-details=direct "$@"
 
+# Prove a repair family's regressions reject compiled semantic mutations.
+[group("build")]
+[positional-arguments]
+test-mutations FAMILY:
+    cabal run scripts/test-mutations.hs -- "$1"
+
 # Build the example executable.
 [group("build")]
 build-examples:

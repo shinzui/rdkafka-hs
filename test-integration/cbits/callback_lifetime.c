@@ -56,6 +56,15 @@ int rdkafka_hs_test_callbacks_stat(int index) {
   return value;
 }
 
+/* Explicit diagnostic negative control, never called by ordinary tests. An
+ * instrumented native library must diagnose the read in conf_get. */
+int rdkafka_hs_test_callbacks_invalid_access(void) {
+  rd_kafka_conf_t *conf = rd_kafka_conf_new();
+  rd_kafka_conf_destroy(conf);
+  size_t size = 0;
+  return (int)rd_kafka_conf_get(conf, "client.id", NULL, &size);
+}
+
 static void forward_log(const rd_kafka_t *rk, int level, const char *facility, const char *message) {
   pthread_mutex_lock(&lock);
   log_callback callback = user_log;
@@ -141,6 +150,11 @@ void rd_kafka_destroy_flags(rd_kafka_t *rk, int flags) {
   int tracking = enabled && rk == client;
   if (tracking) {
     counters[2]++;
+    const char *probe = getenv("RDKAFKA_TEST_CALLBACK_SAFETY_PROBE");
+    if (probe) {
+      fprintf(stderr, "callback safety probe: native destructor entered (%s)\n", probe);
+      fflush(stderr);
+    }
     if (mode == 3) boundary();
   }
   pthread_mutex_unlock(&lock);

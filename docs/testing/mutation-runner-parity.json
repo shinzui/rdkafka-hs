@@ -1,0 +1,351 @@
+{
+  "status": "parity verified",
+  "runner": "scripts/test-mutations.hs",
+  "command": "just test-mutations FAMILY",
+  "canonical_fingerprint_after_metadata_fix": "957b73f96a1425f194da48f7c8494ebfbf19bc1cc1b782f6390fd0d53feeb0d3",
+  "subject_sha256": "6832af5c393f891b55e7b61fbfdd26bc76e72c0efcba22bd4e2f02346c70849f",
+  "subject_scope": "All files under src, test, test-integration and test-support, plus rdkafka-hs.cabal. Byte-identical to all five replacement archives. The runner supplies an isolated cabal.project with packages: .",
+  "fingerprint_note": "Historical replacement reports retain their original whole-path lexicographic fingerprint. The runner now uses path-component ordering, matching coverage_common.py. Only the runner metadata ordering changed after these runs; compiled subjects and selected tests are byte-identical. Historical reports were not rewritten.",
+  "original_mutations": 32,
+  "original_controls": 5,
+  "families": [
+    {
+      "family": "topic",
+      "before": "dist-topic-mutations/20261024T083604Z-my8qigbc/results.json",
+      "after": "dist-mutations/20261024T132141Z-topic-55379-0/results.json",
+      "archive_sha256": "49d3997d9713d7028bddb02db1cb4392f3d36329076b3c2c2dbbf2dbba770d33",
+      "reported_fingerprint": "546598429e120bed081ebb4a58f1ae49dff3fded278119dc1d08deaecc77e9d5",
+      "results": [
+        {
+          "mutation": "unchanged-control",
+          "selected_tests_before": 53,
+          "selected_tests_after": 53,
+          "exit_after": 0,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T132141Z-topic-55379-0/unchanged-control.test.log"
+        },
+        {
+          "mutation": "configuration-removed",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T132141Z-topic-55379-0/configuration-removed.test.log"
+        },
+        {
+          "mutation": "old-acquisition-lifetime",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T132141Z-topic-55379-0/old-acquisition-lifetime.test.log"
+        },
+        {
+          "mutation": "queue-finalization-removed",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T132141Z-topic-55379-0/queue-finalization-removed.test.log"
+        },
+        {
+          "mutation": "options-finalization-removed",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T132141Z-topic-55379-0/options-finalization-removed.test.log"
+        },
+        {
+          "mutation": "delete-request-finalization-removed",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T132141Z-topic-55379-0/delete-request-finalization-removed.test.log"
+        },
+        {
+          "mutation": "event-finalization-removed",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T132141Z-topic-55379-0/event-finalization-removed.test.log"
+        },
+        {
+          "mutation": "native-request-error-ignored",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T132141Z-topic-55379-0/native-request-error-ignored.test.log"
+        },
+        {
+          "mutation": "topic-identity-ignored",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T132141Z-topic-55379-0/topic-identity-ignored.test.log"
+        }
+      ]
+    },
+    {
+      "family": "producer",
+      "before": "dist-producer-mutations/20261024T103255Z-mjr6tn_0/results.json",
+      "after": "dist-mutations/20261024T131819Z-producer-48964-0/results.json",
+      "archive_sha256": "49d3997d9713d7028bddb02db1cb4392f3d36329076b3c2c2dbbf2dbba770d33",
+      "reported_fingerprint": "546598429e120bed081ebb4a58f1ae49dff3fded278119dc1d08deaecc77e9d5",
+      "results": [
+        {
+          "mutation": "unchanged-control",
+          "selected_tests_before": 61,
+          "selected_tests_after": 61,
+          "exit_after": 0,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131819Z-producer-48964-0/unchanged-control.test.log"
+        },
+        {
+          "mutation": "topic-settings-dropped",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131819Z-producer-48964-0/topic-settings-dropped.test.log"
+        },
+        {
+          "mutation": "rejection-root-retained",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131819Z-producer-48964-0/rejection-root-retained.test.log"
+        },
+        {
+          "mutation": "accepted-root-freed",
+          "selected_tests_before": null,
+          "selected_tests_after": null,
+          "exit_after": -6,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131819Z-producer-48964-0/accepted-root-freed.test.log"
+        },
+        {
+          "mutation": "enqueue-mask-removed",
+          "selected_tests_before": null,
+          "selected_tests_after": null,
+          "exit_after": -6,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131819Z-producer-48964-0/enqueue-mask-removed.test.log"
+        },
+        {
+          "mutation": "global-exception-skips-message",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131819Z-producer-48964-0/global-exception-skips-message.test.log"
+        },
+        {
+          "mutation": "delivery-root-retained",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131819Z-producer-48964-0/delivery-root-retained.test.log"
+        },
+        {
+          "mutation": "empty-bytes-become-absent",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131819Z-producer-48964-0/empty-bytes-become-absent.test.log"
+        },
+        {
+          "mutation": "input-validation-dropped",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131819Z-producer-48964-0/input-validation-dropped.test.log"
+        },
+        {
+          "mutation": "global-overrides-topic",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131819Z-producer-48964-0/global-overrides-topic.test.log"
+        },
+        {
+          "mutation": "headers-dropped",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131819Z-producer-48964-0/headers-dropped.test.log"
+        },
+        {
+          "mutation": "rejection-release-after-decoding",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131819Z-producer-48964-0/rejection-release-after-decoding.test.log"
+        },
+        {
+          "mutation": "nonnull-success-code-accepted",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131819Z-producer-48964-0/nonnull-success-code-accepted.test.log"
+        },
+        {
+          "mutation": "unknown-error-replaced-by-errno",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131819Z-producer-48964-0/unknown-error-replaced-by-errno.test.log"
+        }
+      ]
+    },
+    {
+      "family": "property",
+      "before": "dist-property-mutations/20261024T103255Z-t4e5jvw8/results.json",
+      "after": "dist-mutations/20261024T131346Z-property-39846-0/results.json",
+      "archive_sha256": "49d3997d9713d7028bddb02db1cb4392f3d36329076b3c2c2dbbf2dbba770d33",
+      "reported_fingerprint": "546598429e120bed081ebb4a58f1ae49dff3fded278119dc1d08deaecc77e9d5",
+      "results": [
+        {
+          "mutation": "pure-control",
+          "selected_tests_before": 7,
+          "selected_tests_after": 7,
+          "exit_after": 0,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131346Z-property-39846-0/pure-control.test.log"
+        },
+        {
+          "mutation": "callback-control",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 0,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131346Z-property-39846-0/callback-control.test.log"
+        },
+        {
+          "mutation": "global-bias-reversed",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": "(SMGen 7603286587113926598 6750786074473487893,17)",
+          "test_log": "dist-mutations/20261024T131346Z-property-39846-0/global-bias-reversed.test.log"
+        },
+        {
+          "mutation": "topic-bias-reversed",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": "(SMGen 16220535950959846018 13032396016077086513,13)",
+          "test_log": "dist-mutations/20261024T131346Z-property-39846-0/topic-bias-reversed.test.log"
+        },
+        {
+          "mutation": "log-level-bias-reversed",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": "(SMGen 876416796774277236 1544764139296909573,5)",
+          "test_log": "dist-mutations/20261024T131346Z-property-39846-0/log-level-bias-reversed.test.log"
+        },
+        {
+          "mutation": "callback-order-reversed",
+          "selected_tests_before": 1,
+          "selected_tests_after": 1,
+          "exit_after": 1,
+          "replay_token": "(SMGen 13262595567567848789 8761751867160652105,2)",
+          "test_log": "dist-mutations/20261024T131346Z-property-39846-0/callback-order-reversed.test.log"
+        }
+      ]
+    },
+    {
+      "family": "seek",
+      "before": "dist-seek-mutations/20261024T105811Z-z8yr14j7/results.json",
+      "after": "dist-mutations/20261024T131515Z-seek-41713-0/results.json",
+      "archive_sha256": "49d3997d9713d7028bddb02db1cb4392f3d36329076b3c2c2dbbf2dbba770d33",
+      "reported_fingerprint": "546598429e120bed081ebb4a58f1ae49dff3fded278119dc1d08deaecc77e9d5",
+      "results": [
+        {
+          "mutation": "unchanged-control",
+          "selected_tests_before": 76,
+          "selected_tests_after": 76,
+          "exit_after": 0,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131515Z-seek-41713-0/unchanged-control.test.log"
+        },
+        {
+          "mutation": "member-errors-dropped",
+          "selected_tests_before": 2,
+          "selected_tests_after": 2,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131515Z-seek-41713-0/member-errors-dropped.test.log"
+        },
+        {
+          "mutation": "error-order-reversed",
+          "selected_tests_before": 2,
+          "selected_tests_after": 2,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131515Z-seek-41713-0/error-order-reversed.test.log"
+        },
+        {
+          "mutation": "pending-always-normalized",
+          "selected_tests_before": 2,
+          "selected_tests_after": 2,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131515Z-seek-41713-0/pending-always-normalized.test.log"
+        },
+        {
+          "mutation": "pending-never-normalized",
+          "selected_tests_before": 2,
+          "selected_tests_after": 2,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131515Z-seek-41713-0/pending-never-normalized.test.log"
+        },
+        {
+          "mutation": "message-commit-forgets-next-offset",
+          "selected_tests_before": 2,
+          "selected_tests_after": 2,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131515Z-seek-41713-0/message-commit-forgets-next-offset.test.log"
+        },
+        {
+          "mutation": "rewind-decrements-committed-offset",
+          "selected_tests_before": 2,
+          "selected_tests_after": 2,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131515Z-seek-41713-0/rewind-decrements-committed-offset.test.log"
+        },
+        {
+          "mutation": "rewind-discards-seek-error",
+          "selected_tests_before": 2,
+          "selected_tests_after": 2,
+          "exit_after": 1,
+          "replay_token": null,
+          "test_log": "dist-mutations/20261024T131515Z-seek-41713-0/rewind-discards-seek-error.test.log"
+        }
+      ]
+    }
+  ],
+  "new_callback_coverage": {
+    "mutations": 5,
+    "controls": 2,
+    "report": "dist-mutations/20261024T131006Z-callback-29820-0/results.json",
+    "archive_sha256": "49d3997d9713d7028bddb02db1cb4392f3d36329076b3c2c2dbbf2dbba770d33"
+  }
+}

@@ -1,4 +1,4 @@
-module Kafka.CallbackLifetimeSupport (withCallbackTracking, awaitCallbackStage, releaseCallbackStage, callbackStat) where
+module Kafka.CallbackLifetimeSupport (withCallbackTracking, awaitCallbackStage, releaseCallbackStage, callbackStat, invalidAccessControl) where
 
 import Control.Concurrent (threadDelay)
 import Control.Exception (bracket_)
@@ -13,6 +13,8 @@ foreign import ccall unsafe "rdkafka_hs_test_callbacks_end" end :: IO ()
 foreign import ccall unsafe "rdkafka_hs_test_callbacks_release" releaseCallbackStage :: IO ()
 
 foreign import ccall unsafe "rdkafka_hs_test_callbacks_stat" stat :: CInt -> IO CInt
+
+foreign import ccall safe "rdkafka_hs_test_callbacks_invalid_access" invalidAccessControl :: IO CInt
 
 withCallbackTracking :: Int -> IO a -> IO a
 withCallbackTracking mode = bracket_ (begin (fromIntegral mode)) end
