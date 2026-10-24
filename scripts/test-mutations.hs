@@ -249,7 +249,14 @@ families "metadata" =
   ]
   where
     d label change test = mutation "metadata-contract" label "src/Kafka/Metadata.hs" change test
-families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime or metadata")
+families "data" =
+  [ control "unchanged-unit-control" unit "Public data contracts",
+    control "unchanged-native-control" integration "metadata-contract",
+    (mutation "Public data contracts" "consumer-builder-key-wrong" "src/Kafka/Consumer/ConsumerProperties.hs" (replace "extraProp \"queued.max.messages.kbytes\"" "extraProp \"queued.max.messages.bytes\"") "consumer builders preserve exact settings and leave other fields unset") {suite = unit},
+    (mutation "Public data contracts" "producer-debug-order-reversed" "src/Kafka/Producer/ProducerProperties.hs" (replace "kafkaDebugToText <$> d" "kafkaDebugToText <$> reverse d") "debug contexts preserve order duplicates and the empty-list identity") {suite = unit},
+    mutation "metadata-contract" "group-member-byte-fields-swapped" "src/Kafka/Metadata.hs" (replace "gmiMetadata = pack mtd" "gmiMetadata = pack ass") "async group identity lifecycle and supported native states"
+  ]
+families other = error ("Unknown family: " <> other <> "; choose topic, producer, property, seek, callback, transaction, public, messages, rebalance, state, diagnostics, runtime, metadata or data")
 
 replace :: String -> String -> String -> String
 replace old new source = case [i | (i, rest) <- zip [0 ..] (tails source), old `isPrefixOf` rest] of

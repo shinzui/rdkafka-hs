@@ -28,6 +28,14 @@ preprocessor = load("preprocessor", "coverage-preprocess.py")
 
 
 class GateControls(unittest.TestCase):
+    def test_only_compiler_deriving_declarations_are_generated(self):
+        for line in ("  deriving stock (Eq, Show)", "deriving newtype (Num)", "deriving stock instance Eq Native"):
+            self.assertTrue(common.compiler_generated_declaration(line))
+        for line in ("instance Show Native where", "show native = nativeName native", "  nativeField :: Int", "-- deriving is mentioned in this comment"):
+            self.assertFalse(common.compiler_generated_declaration(line))
+        with self.assertRaisesRegex(ValueError, "mixed deriving/code"):
+            common.compiler_generated_declaration("deriving stock Eq; manual = undefined")
+
     def test_shared_property_source_changes_candidate_identity(self):
         with tempfile.TemporaryDirectory(prefix="rdkafka-shared-source-control-") as directory:
             root = Path(directory)
@@ -62,8 +70,9 @@ class GateControls(unittest.TestCase):
             row["status"] = "unimplemented"
             row["tests"] = []
             row.pop("fingerprint", None)
-        self.evidence = dict(fingerprint="candidate", tests=["suite.case"], suites=["rdkafka-hs-test", "rdkafka-hs-integration"],
+        self.evidence = dict(fingerprint="candidate", tests=["suite.case", "suite.runtime-contract.case"], suites=["rdkafka-hs-test", "rdkafka-hs-integration"],
                              artifacts={"README.md": hashlib.sha256((checker.ROOT / "README.md").read_bytes()).hexdigest()},
+                             supplemental_runs=[dict(kind="nonthreaded-runtime", rts_way="rts_v", tests=["suite.runtime-contract.case"], passed=1, tix="README.md")],
                              measured_native_wrapper_ticks=1, misses=[])
         self.identity = patch.object(checker, "fingerprint", return_value="candidate")
         self.identity.start()
@@ -74,6 +83,14 @@ class GateControls(unittest.TestCase):
 
     def test_owned_open_inventory_is_valid_for_development(self):
         self.assertEqual(self.errors(), [])
+
+    def test_runtime_supplement_is_required(self):
+        self.evidence.pop("supplemental_runs")
+        self.assertIn("missing nonthreaded runtime coverage", self.errors())
+
+    def test_threaded_run_cannot_substitute_for_nonthreaded_coverage(self):
+        self.evidence["supplemental_runs"][0]["rts_way"] = "rts_thr"
+        self.assertIn("runtime supplement is not nonthreaded", self.errors())
 
     def test_final_gate_rejects_open_rows(self):
         self.assertTrue(any("open (EP-" in e for e in self.errors(False)))

@@ -10,7 +10,7 @@ import sys
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
-from coverage_common import library_hpc_includes, ROOT, components, fingerprint, run
+from coverage_common import compiler_generated_declaration, library_hpc_includes, ROOT, components, fingerprint, run
 
 SUITES = ("rdkafka-hs-test", "rdkafka-hs-integration")
 BUILD = "dist-coverage"
@@ -21,11 +21,55 @@ def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def runtime_coverage():
+    build = BUILD + "-nonthreaded"
+    build_log = OUTPUT / "nonthreaded-build.log"
+    command = ["cabal", "build", "rdkafka-hs-integration", "-f", "integration", "--enable-coverage", "--builddir=" + build,
+               "--ghc-options=-fforce-recomp -F -pgmF scripts/coverage-preprocess.py -single-threaded -with-rtsopts=-T"]
+    with build_log.open("w") as stream:
+        subprocess.run(command, cwd=ROOT, stdout=stream, stderr=subprocess.STDOUT, check=True)
+    component = components(build)["test:rdkafka-hs-integration"]
+    binary = component / "build/rdkafka-hs-integration/rdkafka-hs-integration"
+    info = subprocess.check_output([str(binary), "+RTS", "--info"], cwd=ROOT, text=True)
+    way = re.search(r'\("RTS way", "([^"]+)"\)', info)
+    if way is None or "thr" in way[1]:
+        raise ValueError("runtime supplement did not link a nonthreaded executable")
+    info_log = OUTPUT / "nonthreaded-rts.txt"
+    info_log.write_text(info)
+    tix = OUTPUT / "nonthreaded-runtime.tix"
+    tix.unlink(missing_ok=True)
+    environment = dict(os.environ, HPCTIXFILE=str(tix))
+    options = ["-p", "/runtime-contract/", "+RTS", "--read-tix-file=no", "-RTS"]
+    names = subprocess.check_output([str(binary), "--list-tests", *options], cwd=ROOT, text=True,
+                                    env=dict(environment, HPCTIXFILE=str(OUTPUT / "nonthreaded-list.tix"))).splitlines()
+    log = OUTPUT / "nonthreaded-runtime.log"
+    with log.open("w") as stream:
+        subprocess.run([str(binary), *options], cwd=ROOT, stdout=stream, stderr=subprocess.STDOUT, check=True, env=environment)
+    counts = re.findall(r"All (\d+) tests passed", log.read_text())
+    if not names or counts != [str(len(names))] or not tix.is_file():
+        raise ValueError("missing complete nonthreaded runtime test coverage")
+    # The alternative RTS branch is in Consumer.hs. Generated c2hs output has
+    # different MIX hashes between these builds, so never combine its indices
+    # across builds. Retain the full raw artifact, and let hpc verify that the
+    # ordinary Consumer module is identical when it is merged below.
+    consumer_tix = OUTPUT / "nonthreaded-consumer.tix"
+    mixfiles = (components(BUILD)["lib"] / "build").rglob("Kafka.Consumer.mix")
+    includes = library_hpc_includes([path for path in mixfiles if "vanilla" in path.parts])
+    if len(includes) != 1:
+        raise ValueError("missing unambiguous Consumer library MIX")
+    run("hpc", "sum", "--union", *includes, "--output=" + str(consumer_tix), str(tix))
+    evidence = dict(kind="nonthreaded-runtime", rts_way=way[1], tests=names, passed=len(names),
+                    command=[str(binary), *options], build_command=command, merged_modules=["Kafka.Consumer"],
+                    raw_tix=str(tix.relative_to(ROOT)), tix=str(consumer_tix.relative_to(ROOT)))
+    return evidence, [build_log, info_log, log, tix, consumer_tix]
+
+
 def collect():
     OUTPUT.mkdir(parents=True, exist_ok=True)
     before = fingerprint()
     command = ["cabal", "test", *SUITES, "-f", "integration", "--enable-coverage", "--builddir=" + BUILD,
-               "--ghc-options=-fforce-recomp -F -pgmF scripts/coverage-preprocess.py", "--test-show-details=direct"]
+               "--ghc-options=-fforce-recomp -F -pgmF scripts/coverage-preprocess.py", "--test-show-details=direct",
+               "--test-options=--quickcheck-tests=1000 --quickcheck-replay=20261024"]
     # A previous run must never contribute ticks. Only this build directory is
     # touched; retain the old logs while replacing its machine evidence.
     for tix in (ROOT / BUILD).rglob("*.tix"):
@@ -36,6 +80,7 @@ def collect():
     with log.open("w") as stream:
         subprocess.run(command, cwd=ROOT, stdout=stream, stderr=subprocess.STDOUT, check=True,
                        env=dict(os.environ, RDKAFKA_TEST_CHILD_HPC_DIR=str(child_directory)))
+    runtime, runtime_artifacts = runtime_coverage()
     if fingerprint() != before:
         raise ValueError("candidate changed during coverage execution; discard this run")
     cs = components(BUILD)
@@ -58,7 +103,7 @@ def collect():
     run("runghc", "-package=hpc", "scripts/coverage-zero.hs", str(zeros), *zero_args)
     tixfiles = []
     tests = []
-    artifacts = [log, zeros]
+    artifacts = [log, zeros, *runtime_artifacts]
     children = sorted(child_directory.glob("*.tix"))
     for mode in ("global", "message"):
         if len(list(child_directory.glob("producer-" + mode + "-*.tix"))) != 1:
@@ -83,7 +128,7 @@ def collect():
         if len(matches) != 1 or not matches[0].stat().st_size:
             raise ValueError(f"missing or ambiguous TIX data for {suite}")
         expanded = OUTPUT / (suite + ".tix")
-        child_tix = list(map(str, children)) if suite == "rdkafka-hs-integration" else []
+        child_tix = [*map(str, children), runtime["tix"]] if suite == "rdkafka-hs-integration" else []
         run("hpc", "sum", "--union", *include, "--output=" + str(expanded), str(matches[0]), str(zeros), *child_tix)
         tixfiles.append(expanded)
         artifacts.append(expanded)
@@ -100,6 +145,8 @@ def collect():
     counts = [int(n) for n in re.findall(r"All (\d+) tests passed", log.read_text())]
     if len(counts) != 2 or sum(counts) != len(tests):
         raise ValueError("suite pass counts do not match the complete registered test list")
+    if set(runtime["tests"]) != {name for name in tests if ".runtime-contract." in name}:
+        raise ValueError("nonthreaded runtime coverage does not match the registered runtime contracts")
     combined = OUTPUT / "combined.tix"
     run("hpc", "sum", "--union", *include, "--output=" + str(combined), *map(str, tixfiles))
     artifacts.append(combined)
@@ -120,6 +167,7 @@ def collect():
     module_ticks = {module: 0 for module in modules}
     classified_metrics = {"handwritten": {}, "generated": {}}
     unused_functions = []
+    source_lines = {}
     for line in ticks.splitlines():
         match = re.fullmatch(r'\s*(\d+)\s+(\d+)\s+[^ ]+/(Kafka[\w.]+)\s+(\d+):([\d:-]+)\s+(.+)', line)
         if not match:
@@ -135,10 +183,17 @@ def collect():
             origin = mapping[source_line - 1]
             generated = origin["generated"]
             source, source_line = origin["file"], origin["line"]
-            if not generated:
-                native_ticks += 1
         if not source or not (ROOT / source).is_file():
             raise ValueError("missing source for HPC tick")
+        if not generated:
+            if source not in source_lines:
+                source_lines[source] = (ROOT / source).read_text().splitlines()
+            lines = source_lines[source]
+            if not 1 <= source_line <= len(lines):
+                raise ValueError("coverage tick has no source line")
+            generated = compiler_generated_declaration(lines[source_line - 1])
+        if module == "Kafka.Internal.RdKafka" and not generated:
+            native_ticks += 1
         kind = label.split(" [", 1)[0]
         category = "generated" if generated else "handwritten"
         metric = classified_metrics[category].setdefault(kind, {"ticks": 0, "hit": 0})
@@ -178,7 +233,7 @@ def collect():
         raise ValueError("missing actual broker version")
     evidence = dict(test_configuration={key: os.getenv(key) for key in ("RDKAFKA_TEST_BROKER", "RDKAFKA_TEST_ADMIN", "RDKAFKA_TEST_RPK", "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY")}, schema_version=1, revision=run("git", "rev-parse", "HEAD").strip(), fingerprint=before,
                     at=datetime.now(timezone.utc).isoformat(), command=command, suites=list(SUITES), tests=tests,
-                    passed_test_count=sum(counts), toolchain=run("ghc", "--numeric-version").strip(), cabal=run("cabal", "--numeric-version").strip(),
+                    passed_test_count=sum(counts), supplemental_runs=[runtime], toolchain=run("ghc", "--numeric-version").strip(), cabal=run("cabal", "--numeric-version").strip(),
                     loaded_native=loaded_native, broker_versions=broker_versions, native=run("pkg-config", "--modversion", "rdkafka").strip(),
                     broker=os.getenv("RDKAFKA_TEST_BROKER", "127.0.0.1:39092"),
                     misses=misses, module_tick_counts=module_ticks, measured_native_wrapper_ticks=native_ticks,

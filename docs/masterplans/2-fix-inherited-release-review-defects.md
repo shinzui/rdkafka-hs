@@ -141,6 +141,8 @@ EP-14 M1 is Complete: 65 unit and four focused native cases pass normally and in
 
 ## Surprises & Discoveries
 
+EP-14 data laws and mapped coverage now pass 78 unit and 518 integration cases, plus four actual nonthreaded runtime executions. Three compiled data mutations and two controls verify builder/field behavior. The inventory has 86 tested and 95 open rows after 57 additional representation, mapping, version and diagnostic contracts are reconciled. Twenty-two tooling controls pass. [Data evidence](../testing/public-data-evidence.json) records exact scope and coverage corrections. EP-14 M2/M3, the saved seek failure and EP-15 remain open.
+
 EP-14 metadata closes native return cancellation leaks and discarded topic/timestamp-member errors. Ten focused checks pass normally and with Haskell/native instrumentation; five compiled mutations fail their intended assertions. Group decoding handles native CompletingRebalance and returns unsupported-state errors. [Metadata evidence](../testing/metadata-evidence.json) records exact ownership, boundary and controlled-state scope. Full mapped coverage/inventory reconciliation is next; EP-14 remains In Progress.
 
 EP-14 verifies actual threaded/nonthreaded executables. Async construction now rejects a runtime that cannot start its callback loop; sync consumption and deprecated runner close pass in both variants. Four focused cases and one compiled nonthreaded mutation verify the contract. See [runtime evidence](../testing/runtime-evidence.json). Remaining EP-14 contracts and EP-15 are open.

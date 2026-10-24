@@ -1,0 +1,56 @@
+{
+  "status": "accepted data-law and mapped coverage checkpoint; EP-14 incomplete",
+  "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+  "full_mapped": {
+    "manifest": "docs/testing/coverage-evidence.json",
+    "registered": 596,
+    "unit": 78,
+    "integration": 518,
+    "property_cases": 1000,
+    "seed": 20261024,
+    "nonthreaded_supplement": 4,
+    "merged_nonthreaded_modules": [
+      "Kafka.Consumer"
+    ],
+    "handwritten_native_wrapper_ticks": 2902,
+    "log": "/tmp/rdkafka-ep14-data-full-coverage-final.log",
+    "sha256": "7bad3dbfe025b6ad1618be2374d99e8e41de6b5b85bc047ee794de7ab727b729"
+  },
+  "normal_unit": {
+    "passed": 78,
+    "log": "/tmp/rdkafka-ep14-data-unit-final2.log",
+    "sha256": "a975e7a850017af3665f5a68554289f8c286a78e74c60accb075d8a35515571c"
+  },
+  "native_instrumented_data": {
+    "passed": 13,
+    "log": "/tmp/rdkafka-ep14-data-asan.log",
+    "sha256": "1856a625993491588bd63719ba376aca21dc5b9137c46d584e861197abfb701c",
+    "scope": "Before the final distinct metadata-member byte generator strengthening; final full mapped run covers that strengthening. AddressSanitizer, not LeakSanitizer."
+  },
+  "mutations": "dist-mutations/20261024T171848Z-data-19904-0/results.json",
+  "compiled_mutations_caught": 3,
+  "controls": 2,
+  "mutation_scope": [
+    "wrong consumer property key",
+    "reversed producer debug context order",
+    "native metadata/assignment byte field substitution"
+  ],
+  "tooling_controls": 22,
+  "required_checks": {
+    "log": "/tmp/rdkafka-ep14-data-check.log",
+    "sha256": "14a33c039a398fe5c26b56fe5f70e5b85736e658deae4d70cfc4bedff3c68545"
+  },
+  "corrections": [
+    "Native error descriptor boundary sentinels have NULL descriptions. The test C shim now filters both name and description; 188 described errors and three numeric sentinels are checked. The initial shim crash is excluded from library defect evidence.",
+    "Physical deriving declarations are compiler-generated coverage. Handwritten instances and mixed declaration/code lines are not exempt.",
+    "Independent runtime builds have different generated RdKafka MIX hashes. Only the identical Kafka.Consumer module is merged; no tick or hash rewriting."
+  ],
+  "inventory": {
+    "newly_reconciled": 57,
+    "statuses": {
+      "tested": 86,
+      "unimplemented": 95
+    }
+  },
+  "remaining": "Builder/native-validation reconciliation, metadata Unicode boundaries, ordinary consumer API gaps, saved deprecated-seek failure, remaining handwritten misses and EP-15 environments remain open."
+}

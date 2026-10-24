@@ -66,6 +66,21 @@ rd_kafka_resp_err_t rd_kafka_list_groups(rd_kafka_t *rk, const char *group,
       struct rd_kafka_group_info *info = &groups->groups[0];
       free(info->state); info->state = strdup(states[mode - 10]);
     }
+    if (mode == 17) {
+      if (groups->group_cnt != 1 || groups->groups[0].member_cnt != 1) abort();
+      struct rd_kafka_group_member_info *member = &groups->groups[0].members[0];
+      free(member->member_id); member->member_id = strdup("member-field");
+      free(member->client_id); member->client_id = strdup("client-field");
+      free(member->client_host); member->client_host = strdup("host-field");
+      const unsigned char metadata_bytes[] = {0, 1, 0, 255};
+      const unsigned char assignment_bytes[] = {255, 0, 2, 0, 3};
+      free(member->member_metadata); member->member_metadata = malloc(sizeof(metadata_bytes));
+      member->member_metadata_size = sizeof(metadata_bytes);
+      memcpy(member->member_metadata, metadata_bytes, sizeof(metadata_bytes));
+      free(member->member_assignment); member->member_assignment = malloc(sizeof(assignment_bytes));
+      member->member_assignment_size = sizeof(assignment_bytes);
+      memcpy(member->member_assignment, assignment_bytes, sizeof(assignment_bytes));
+    }
     boundary(2);
   }
   pthread_mutex_unlock(&lock); return error;

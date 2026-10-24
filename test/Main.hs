@@ -5,6 +5,7 @@ import Kafka.Consumer.ConsumerRecordMapSpec qualified as ConsumerRecordMapSpec
 import Kafka.Consumer.ConsumerRecordTraverseSpec qualified as ConsumerRecordTraverseSpec
 import Kafka.Internal.CallbackOwnerSpec qualified as CallbackOwnerSpec
 import Kafka.Producer.ProducerPropertiesSpec qualified as ProducerPropertiesSpec
+import Kafka.PublicDataContractSpec qualified as PublicDataContractSpec
 import Kafka.PublicPropertiesSpec qualified as PublicPropertiesSpec
 import Kafka.VersionTest qualified as VersionTest
 import System.Environment (getArgs)
@@ -29,5 +30,6 @@ runTests =
         ConsumerRecordTraverseSpec.tests,
         VersionTest.tests,
         ProducerPropertiesSpec.tests,
-        PublicPropertiesSpec.tests
+        PublicPropertiesSpec.tests,
+        PublicDataContractSpec.tests
       ]

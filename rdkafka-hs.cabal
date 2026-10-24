@@ -220,6 +220,7 @@ test-suite rdkafka-hs-integration
 
 test-suite rdkafka-hs-test
   import: common-options
+  c-sources: test/cbits/error_constants.c
   default-extensions: PackageImports
   type: exitcode-stdio-1.0
   main-is: Main.hs
@@ -252,5 +253,6 @@ test-suite rdkafka-hs-test
     Kafka.Internal.CallbackOwnerSpec
     Kafka.Producer.ProducerPropertiesSpec
     Kafka.PropertySupport
+    Kafka.PublicDataContractSpec
     Kafka.PublicPropertiesSpec
     Kafka.VersionTest

@@ -75,6 +75,19 @@ def validate(matrix, exports, evidence, allow_open):
             errors.append("missing hand-written .chs coverage")
         if not evidence.get("tests"):
             errors.append("empty registered-test evidence")
+        runtime_tests = {name for name in registered if ".runtime-contract." in name}
+        runtime = [run for run in evidence.get("supplemental_runs", []) if run.get("kind") == "nonthreaded-runtime"]
+        if len(runtime) != 1 or not runtime_tests:
+            errors.append("missing nonthreaded runtime coverage")
+        else:
+            supplement = runtime[0]
+            way = supplement.get("rts_way")
+            if not isinstance(way, str) or "thr" in way:
+                errors.append("runtime supplement is not nonthreaded")
+            if set(supplement.get("tests", [])) != runtime_tests or supplement.get("passed") != len(runtime_tests):
+                errors.append("runtime supplement does not cover every registered runtime contract")
+            if supplement.get("tix") not in artifacts:
+                errors.append("missing runtime coverage artifact")
         exceptions = matrix.get("miss_classifications", {})
         for miss in evidence.get("misses", []):
             if miss.get("owner") not in range(8, 16):

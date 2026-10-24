@@ -2278,8 +2278,8 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2345,8 +2345,8 @@
         "rdkafka-hs-integration.producer-properties.callback composition preserves order and identity"
       ],
       "status": "tested",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2440,9 +2440,9 @@
         "rdkafka-hs-integration.seek-partitions.sync.native tail sentinel replays final two records"
       ],
       "status": "tested",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
       "evidence": "docs/testing/seek-evidence.json",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2519,8 +2519,8 @@
         "rdkafka-hs-integration.producer-regressions.later delivery callback replaces the earlier callback"
       ],
       "status": "tested",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2628,8 +2628,8 @@
       "status": "tested",
       "native_diagnostics": "docs/testing/callback-native-diagnostics.json",
       "mutations": "dist-mutations/20261024T135134Z-callback-6370-0/results.json",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -2686,8 +2686,8 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -3038,8 +3038,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-Types-ConsumerMessageError",
@@ -3052,8 +3084,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-Types-ConsumerRecord",
@@ -3066,8 +3130,39 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.records.record functor identity",
+        "rdkafka-hs.Public properties.records.record functor composition",
+        "rdkafka-hs.Public properties.records.record bifunctor identity and composition",
+        "rdkafka-hs.Public properties.records.record mapping preserves origin timestamp and headers",
+        "rdkafka-hs.Public properties.records.record traversal identity and failure preserve the applicative contract",
+        "rdkafka-hs.Public properties.records.record traversal composition preserves nested effects",
+        "rdkafka-hs.Public properties.records.record bitraversal visits key before value",
+        "rdkafka-hs.Public properties.records.record bitraversal composition preserves nested effects",
+        "rdkafka-hs.Public properties.records.record folds retain key and value order",
+        "rdkafka-hs.Public properties.records.deprecated record mapping remains equivalent",
+        "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve successful effects",
+        "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-Types-KafkaConsumer",
@@ -3094,8 +3189,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-Types-OffsetCommit",
@@ -3108,8 +3235,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-Types-OffsetReset",
@@ -3122,8 +3281,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-Types-OffsetStoreMethod",
@@ -3136,8 +3327,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-Types-OffsetStoreSync",
@@ -3150,8 +3373,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-Types-PartitionOffset",
@@ -3164,8 +3419,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-Types-RebalanceEvent",
@@ -3178,8 +3465,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-Types-SubscribedPartitions",
@@ -3192,8 +3511,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-Types-Timestamp",
@@ -3206,8 +3557,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-Types-TopicPartition",
@@ -3220,8 +3603,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-Types-bitraverseM",
@@ -3234,8 +3649,39 @@
       "expected": "Exact output and typeclass laws, with replay seed for generated failures",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.records.record functor identity",
+        "rdkafka-hs.Public properties.records.record functor composition",
+        "rdkafka-hs.Public properties.records.record bifunctor identity and composition",
+        "rdkafka-hs.Public properties.records.record mapping preserves origin timestamp and headers",
+        "rdkafka-hs.Public properties.records.record traversal identity and failure preserve the applicative contract",
+        "rdkafka-hs.Public properties.records.record traversal composition preserves nested effects",
+        "rdkafka-hs.Public properties.records.record bitraversal visits key before value",
+        "rdkafka-hs.Public properties.records.record bitraversal composition preserves nested effects",
+        "rdkafka-hs.Public properties.records.record folds retain key and value order",
+        "rdkafka-hs.Public properties.records.deprecated record mapping remains equivalent",
+        "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve successful effects",
+        "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-Types-crMapKV",
@@ -3248,8 +3694,39 @@
       "expected": "Exact output and typeclass laws, with replay seed for generated failures",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.records.record functor identity",
+        "rdkafka-hs.Public properties.records.record functor composition",
+        "rdkafka-hs.Public properties.records.record bifunctor identity and composition",
+        "rdkafka-hs.Public properties.records.record mapping preserves origin timestamp and headers",
+        "rdkafka-hs.Public properties.records.record traversal identity and failure preserve the applicative contract",
+        "rdkafka-hs.Public properties.records.record traversal composition preserves nested effects",
+        "rdkafka-hs.Public properties.records.record bitraversal visits key before value",
+        "rdkafka-hs.Public properties.records.record bitraversal composition preserves nested effects",
+        "rdkafka-hs.Public properties.records.record folds retain key and value order",
+        "rdkafka-hs.Public properties.records.deprecated record mapping remains equivalent",
+        "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve successful effects",
+        "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-Types-crMapKey",
@@ -3262,8 +3739,39 @@
       "expected": "Exact output and typeclass laws, with replay seed for generated failures",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.records.record functor identity",
+        "rdkafka-hs.Public properties.records.record functor composition",
+        "rdkafka-hs.Public properties.records.record bifunctor identity and composition",
+        "rdkafka-hs.Public properties.records.record mapping preserves origin timestamp and headers",
+        "rdkafka-hs.Public properties.records.record traversal identity and failure preserve the applicative contract",
+        "rdkafka-hs.Public properties.records.record traversal composition preserves nested effects",
+        "rdkafka-hs.Public properties.records.record bitraversal visits key before value",
+        "rdkafka-hs.Public properties.records.record bitraversal composition preserves nested effects",
+        "rdkafka-hs.Public properties.records.record folds retain key and value order",
+        "rdkafka-hs.Public properties.records.deprecated record mapping remains equivalent",
+        "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve successful effects",
+        "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-Types-crMapValue",
@@ -3276,8 +3784,39 @@
       "expected": "Exact output and typeclass laws, with replay seed for generated failures",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.records.record functor identity",
+        "rdkafka-hs.Public properties.records.record functor composition",
+        "rdkafka-hs.Public properties.records.record bifunctor identity and composition",
+        "rdkafka-hs.Public properties.records.record mapping preserves origin timestamp and headers",
+        "rdkafka-hs.Public properties.records.record traversal identity and failure preserve the applicative contract",
+        "rdkafka-hs.Public properties.records.record traversal composition preserves nested effects",
+        "rdkafka-hs.Public properties.records.record bitraversal visits key before value",
+        "rdkafka-hs.Public properties.records.record bitraversal composition preserves nested effects",
+        "rdkafka-hs.Public properties.records.record folds retain key and value order",
+        "rdkafka-hs.Public properties.records.deprecated record mapping remains equivalent",
+        "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve successful effects",
+        "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-Types-sequenceFirst",
@@ -3290,8 +3829,39 @@
       "expected": "Exact output and typeclass laws, with replay seed for generated failures",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.records.record functor identity",
+        "rdkafka-hs.Public properties.records.record functor composition",
+        "rdkafka-hs.Public properties.records.record bifunctor identity and composition",
+        "rdkafka-hs.Public properties.records.record mapping preserves origin timestamp and headers",
+        "rdkafka-hs.Public properties.records.record traversal identity and failure preserve the applicative contract",
+        "rdkafka-hs.Public properties.records.record traversal composition preserves nested effects",
+        "rdkafka-hs.Public properties.records.record bitraversal visits key before value",
+        "rdkafka-hs.Public properties.records.record bitraversal composition preserves nested effects",
+        "rdkafka-hs.Public properties.records.record folds retain key and value order",
+        "rdkafka-hs.Public properties.records.deprecated record mapping remains equivalent",
+        "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve successful effects",
+        "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-Types-traverseFirst",
@@ -3304,8 +3874,39 @@
       "expected": "Exact output and typeclass laws, with replay seed for generated failures",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.records.record functor identity",
+        "rdkafka-hs.Public properties.records.record functor composition",
+        "rdkafka-hs.Public properties.records.record bifunctor identity and composition",
+        "rdkafka-hs.Public properties.records.record mapping preserves origin timestamp and headers",
+        "rdkafka-hs.Public properties.records.record traversal identity and failure preserve the applicative contract",
+        "rdkafka-hs.Public properties.records.record traversal composition preserves nested effects",
+        "rdkafka-hs.Public properties.records.record bitraversal visits key before value",
+        "rdkafka-hs.Public properties.records.record bitraversal composition preserves nested effects",
+        "rdkafka-hs.Public properties.records.record folds retain key and value order",
+        "rdkafka-hs.Public properties.records.deprecated record mapping remains equivalent",
+        "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve successful effects",
+        "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-Types-traverseFirstM",
@@ -3318,8 +3919,39 @@
       "expected": "Exact output and typeclass laws, with replay seed for generated failures",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.records.record functor identity",
+        "rdkafka-hs.Public properties.records.record functor composition",
+        "rdkafka-hs.Public properties.records.record bifunctor identity and composition",
+        "rdkafka-hs.Public properties.records.record mapping preserves origin timestamp and headers",
+        "rdkafka-hs.Public properties.records.record traversal identity and failure preserve the applicative contract",
+        "rdkafka-hs.Public properties.records.record traversal composition preserves nested effects",
+        "rdkafka-hs.Public properties.records.record bitraversal visits key before value",
+        "rdkafka-hs.Public properties.records.record bitraversal composition preserves nested effects",
+        "rdkafka-hs.Public properties.records.record folds retain key and value order",
+        "rdkafka-hs.Public properties.records.deprecated record mapping remains equivalent",
+        "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve successful effects",
+        "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-Types-traverseM",
@@ -3332,8 +3964,39 @@
       "expected": "Exact output and typeclass laws, with replay seed for generated failures",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.records.record functor identity",
+        "rdkafka-hs.Public properties.records.record functor composition",
+        "rdkafka-hs.Public properties.records.record bifunctor identity and composition",
+        "rdkafka-hs.Public properties.records.record mapping preserves origin timestamp and headers",
+        "rdkafka-hs.Public properties.records.record traversal identity and failure preserve the applicative contract",
+        "rdkafka-hs.Public properties.records.record traversal composition preserves nested effects",
+        "rdkafka-hs.Public properties.records.record bitraversal visits key before value",
+        "rdkafka-hs.Public properties.records.record bitraversal composition preserves nested effects",
+        "rdkafka-hs.Public properties.records.record folds retain key and value order",
+        "rdkafka-hs.Public properties.records.deprecated record mapping remains equivalent",
+        "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve successful effects",
+        "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Consumer-assign",
@@ -3587,9 +4250,9 @@
         "rdkafka-hs-integration.seek-partitions.sync.rewind propagates assignment change after committed lookup"
       ],
       "status": "tested",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
       "evidence": "docs/testing/seek-evidence.json",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -3702,8 +4365,36 @@
       "expected": "Known supplied settings and diagnostic fields appear; output handle remains usable; no native dump allocation leak",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs-integration.public-contract.diagnostics.supported-property print flushes and preserves the caller handle",
+        "rdkafka-hs-integration.public-contract.diagnostics.client print flushes and preserves the caller handle",
+        "rdkafka-hs-integration.public-contract.diagnostics.failed fdopen releases the duplicate and preserves the original",
+        "rdkafka-hs-integration.public-contract.diagnostics.failed native flush is reported after closing the duplicate",
+        "rdkafka-hs-integration.public-contract.diagnostics.producer configuration dumps retain exact explicit and global settings",
+        "rdkafka-hs-integration.public-contract.diagnostics.consumer configuration dump preserves global settings after subscription merge",
+        "rdkafka-hs-integration.public-contract.diagnostics.native dump counter detects an unreleased array",
+        "rdkafka-hs-integration.public-contract.diagnostics.global cancellation at native acquisition releases its array",
+        "rdkafka-hs-integration.public-contract.diagnostics.topic cancellation at native acquisition releases its array"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Dump-dumpTopicConf",
@@ -3716,8 +4407,36 @@
       "expected": "Known supplied settings and diagnostic fields appear; output handle remains usable; no native dump allocation leak",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs-integration.public-contract.diagnostics.supported-property print flushes and preserves the caller handle",
+        "rdkafka-hs-integration.public-contract.diagnostics.client print flushes and preserves the caller handle",
+        "rdkafka-hs-integration.public-contract.diagnostics.failed fdopen releases the duplicate and preserves the original",
+        "rdkafka-hs-integration.public-contract.diagnostics.failed native flush is reported after closing the duplicate",
+        "rdkafka-hs-integration.public-contract.diagnostics.producer configuration dumps retain exact explicit and global settings",
+        "rdkafka-hs-integration.public-contract.diagnostics.consumer configuration dump preserves global settings after subscription merge",
+        "rdkafka-hs-integration.public-contract.diagnostics.native dump counter detects an unreleased array",
+        "rdkafka-hs-integration.public-contract.diagnostics.global cancellation at native acquisition releases its array",
+        "rdkafka-hs-integration.public-contract.diagnostics.topic cancellation at native acquisition releases its array"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Dump-hPrintKafka",
@@ -3730,8 +4449,36 @@
       "expected": "Known supplied settings and diagnostic fields appear; output handle remains usable; no native dump allocation leak",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs-integration.public-contract.diagnostics.supported-property print flushes and preserves the caller handle",
+        "rdkafka-hs-integration.public-contract.diagnostics.client print flushes and preserves the caller handle",
+        "rdkafka-hs-integration.public-contract.diagnostics.failed fdopen releases the duplicate and preserves the original",
+        "rdkafka-hs-integration.public-contract.diagnostics.failed native flush is reported after closing the duplicate",
+        "rdkafka-hs-integration.public-contract.diagnostics.producer configuration dumps retain exact explicit and global settings",
+        "rdkafka-hs-integration.public-contract.diagnostics.consumer configuration dump preserves global settings after subscription merge",
+        "rdkafka-hs-integration.public-contract.diagnostics.native dump counter detects an unreleased array",
+        "rdkafka-hs-integration.public-contract.diagnostics.global cancellation at native acquisition releases its array",
+        "rdkafka-hs-integration.public-contract.diagnostics.topic cancellation at native acquisition releases its array"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Dump-hPrintSupportedKafkaConf",
@@ -3744,8 +4491,36 @@
       "expected": "Known supplied settings and diagnostic fields appear; output handle remains usable; no native dump allocation leak",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs-integration.public-contract.diagnostics.supported-property print flushes and preserves the caller handle",
+        "rdkafka-hs-integration.public-contract.diagnostics.client print flushes and preserves the caller handle",
+        "rdkafka-hs-integration.public-contract.diagnostics.failed fdopen releases the duplicate and preserves the original",
+        "rdkafka-hs-integration.public-contract.diagnostics.failed native flush is reported after closing the duplicate",
+        "rdkafka-hs-integration.public-contract.diagnostics.producer configuration dumps retain exact explicit and global settings",
+        "rdkafka-hs-integration.public-contract.diagnostics.consumer configuration dump preserves global settings after subscription merge",
+        "rdkafka-hs-integration.public-contract.diagnostics.native dump counter detects an unreleased array",
+        "rdkafka-hs-integration.public-contract.diagnostics.global cancellation at native acquisition releases its array",
+        "rdkafka-hs-integration.public-contract.diagnostics.topic cancellation at native acquisition releases its array"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Internal-RdKafka-RdKafkaRespErrT",
@@ -3758,8 +4533,28 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Metadata-BrokerMetadata",
@@ -4206,8 +5001,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Producer-Types-ImmediateError",
@@ -4248,8 +5075,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Producer-Types-ProducerRecord",
@@ -4262,8 +5121,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Producer-Types-PurgeFlag",
@@ -4276,8 +5167,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Producer-flushProducer",
@@ -4360,8 +5283,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Topic-Types-PartitionCount",
@@ -4374,8 +5329,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Topic-Types-ReplicationFactor",
@@ -4388,8 +5375,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Topic-deleteTopic",
@@ -4418,8 +5437,8 @@
         "rdkafka-hs-integration.topic-configuration.deletion reports a missing response as a timeout"
       ],
       "status": "tested",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4472,8 +5491,8 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4524,8 +5543,8 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4579,8 +5598,8 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4633,8 +5652,8 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4687,8 +5706,8 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4741,8 +5760,8 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4795,8 +5814,8 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -4825,8 +5844,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Types-BrokerAddress",
@@ -4839,8 +5890,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Types-BrokerId",
@@ -4853,8 +5936,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Types-ClientId",
@@ -4867,8 +5982,40 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Types-Headers",
@@ -4881,8 +6028,43 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.headers.header list round-trip preserves duplicates and binary bytes",
+        "rdkafka-hs.Public properties.headers.header concatenation follows list order",
+        "rdkafka-hs.Public properties.headers.headers have two identities and associative concatenation",
+        "rdkafka-hs.Public properties.headers.fixed duplicate empty and binary header values",
+        "rdkafka-hs.Public properties.records.record functor identity",
+        "rdkafka-hs.Public properties.records.record functor composition",
+        "rdkafka-hs.Public properties.records.record bifunctor identity and composition",
+        "rdkafka-hs.Public properties.records.record mapping preserves origin timestamp and headers",
+        "rdkafka-hs.Public properties.records.record traversal identity and failure preserve the applicative contract",
+        "rdkafka-hs.Public properties.records.record traversal composition preserves nested effects",
+        "rdkafka-hs.Public properties.records.record bitraversal visits key before value",
+        "rdkafka-hs.Public properties.records.record bitraversal composition preserves nested effects",
+        "rdkafka-hs.Public properties.records.record folds retain key and value order",
+        "rdkafka-hs.Public properties.records.deprecated record mapping remains equivalent",
+        "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve successful effects",
+        "rdkafka-hs.Public properties.records.deprecated traversal helpers preserve failed effects"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Types-KafkaCompressionCodec",
@@ -4895,8 +6077,43 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form",
+        "rdkafka-hs.Public properties.every compression debug and log enumeration has its native spelling",
+        "rdkafka-hs.Public data contracts.builders.all codecs have independently specified builder spellings",
+        "rdkafka-hs.Public data contracts.builders.debug contexts preserve order duplicates and the empty-list identity"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Types-KafkaDebug",
@@ -4909,8 +6126,43 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form",
+        "rdkafka-hs.Public properties.every compression debug and log enumeration has its native spelling",
+        "rdkafka-hs.Public data contracts.builders.all codecs have independently specified builder spellings",
+        "rdkafka-hs.Public data contracts.builders.debug contexts preserve order duplicates and the empty-list identity"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Types-KafkaError",
@@ -4923,8 +6175,44 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form",
+        "rdkafka-hs.Public properties.every compression debug and log enumeration has its native spelling",
+        "rdkafka-hs.Public data contracts.builders.all codecs have independently specified builder spellings",
+        "rdkafka-hs.Public data contracts.builders.debug contexts preserve order duplicates and the empty-list identity",
+        "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Types-KafkaLogLevel",
@@ -4937,8 +6225,44 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form",
+        "rdkafka-hs.Public properties.every compression debug and log enumeration has its native spelling",
+        "rdkafka-hs.Public data contracts.builders.all codecs have independently specified builder spellings",
+        "rdkafka-hs.Public data contracts.builders.debug contexts preserve order duplicates and the empty-list identity",
+        "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Types-Millis",
@@ -4951,8 +6275,44 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form",
+        "rdkafka-hs.Public properties.every compression debug and log enumeration has its native spelling",
+        "rdkafka-hs.Public data contracts.builders.all codecs have independently specified builder spellings",
+        "rdkafka-hs.Public data contracts.builders.debug contexts preserve order duplicates and the empty-list identity",
+        "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Types-PartitionId",
@@ -4965,8 +6325,44 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form",
+        "rdkafka-hs.Public properties.every compression debug and log enumeration has its native spelling",
+        "rdkafka-hs.Public data contracts.builders.all codecs have independently specified builder spellings",
+        "rdkafka-hs.Public data contracts.builders.debug contexts preserve order duplicates and the empty-list identity",
+        "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Types-Timeout",
@@ -4979,8 +6375,44 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form",
+        "rdkafka-hs.Public properties.every compression debug and log enumeration has its native spelling",
+        "rdkafka-hs.Public data contracts.builders.all codecs have independently specified builder spellings",
+        "rdkafka-hs.Public data contracts.builders.debug contexts preserve order duplicates and the empty-list identity",
+        "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Types-TopicName",
@@ -4993,8 +6425,44 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form",
+        "rdkafka-hs.Public properties.every compression debug and log enumeration has its native spelling",
+        "rdkafka-hs.Public data contracts.builders.all codecs have independently specified builder spellings",
+        "rdkafka-hs.Public data contracts.builders.debug contexts preserve order duplicates and the empty-list identity",
+        "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Types-TopicType",
@@ -5007,8 +6475,44 @@
       "expected": "Construction/selection round trips; declared equality/order/show/enum/functor/traversal instances obey their documented laws",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form",
+        "rdkafka-hs.Public properties.every compression debug and log enumeration has its native spelling",
+        "rdkafka-hs.Public data contracts.builders.all codecs have independently specified builder spellings",
+        "rdkafka-hs.Public data contracts.builders.debug contexts preserve order duplicates and the empty-list identity",
+        "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Types-headersFromList",
@@ -5021,8 +6525,44 @@
       "expected": "Exact output and typeclass laws, with replay seed for generated failures",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form",
+        "rdkafka-hs.Public properties.every compression debug and log enumeration has its native spelling",
+        "rdkafka-hs.Public data contracts.builders.all codecs have independently specified builder spellings",
+        "rdkafka-hs.Public data contracts.builders.debug contexts preserve order duplicates and the empty-list identity",
+        "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Types-headersToList",
@@ -5035,8 +6575,44 @@
       "expected": "Exact output and typeclass laws, with replay seed for generated failures",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form",
+        "rdkafka-hs.Public properties.every compression debug and log enumeration has its native spelling",
+        "rdkafka-hs.Public data contracts.builders.all codecs have independently specified builder spellings",
+        "rdkafka-hs.Public data contracts.builders.debug contexts preserve order duplicates and the empty-list identity",
+        "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Types-kafkaCompressionCodecToText",
@@ -5049,8 +6625,44 @@
       "expected": "Exact output and typeclass laws, with replay seed for generated failures",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form",
+        "rdkafka-hs.Public properties.every compression debug and log enumeration has its native spelling",
+        "rdkafka-hs.Public data contracts.builders.all codecs have independently specified builder spellings",
+        "rdkafka-hs.Public data contracts.builders.debug contexts preserve order duplicates and the empty-list identity",
+        "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Types-kafkaDebugToText",
@@ -5063,8 +6675,44 @@
       "expected": "Exact output and typeclass laws, with replay seed for generated failures",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form",
+        "rdkafka-hs.Public properties.every compression debug and log enumeration has its native spelling",
+        "rdkafka-hs.Public data contracts.builders.all codecs have independently specified builder spellings",
+        "rdkafka-hs.Public data contracts.builders.debug contexts preserve order duplicates and the empty-list identity",
+        "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Types-topicType",
@@ -5077,8 +6725,44 @@
       "expected": "Exact output and typeclass laws, with replay seed for generated failures",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Public properties.representations.text newtypes preserve arbitrary represented text",
+        "rdkafka-hs.Public properties.representations.integer newtypes preserve signed machine boundaries",
+        "rdkafka-hs.Public properties.representations.offset and milliseconds preserve signed 64-bit boundaries",
+        "rdkafka-hs.Public properties.representations.timestamp constructors retain their represented boundary",
+        "rdkafka-hs.Public properties.representations.system topic classification requires two initial underscores",
+        "rdkafka-hs.Public properties.representations.fixed empty underscore and signed numeric boundaries",
+        "rdkafka-hs.Public data contracts.representations.numeric ordering and reads agree with represented signed values",
+        "rdkafka-hs.Public data contracts.representations.numeric instances preserve primitive arithmetic including boundaries",
+        "rdkafka-hs.Public data contracts.representations.text ordering string conversion reads and generic representations round-trip",
+        "rdkafka-hs.Public data contracts.representations.consumer variants retain fields and distinguish constructors",
+        "rdkafka-hs.Public data contracts.representations.producer records delivery variants and topic requests retain exact fields",
+        "rdkafka-hs.Public data contracts.representations.metadata structures retain identities states members and binary data",
+        "rdkafka-hs.Public data contracts.representations.every Kafka error preserves its Exception identity and generic form",
+        "rdkafka-hs.Public properties.every compression debug and log enumeration has its native spelling",
+        "rdkafka-hs.Public data contracts.builders.all codecs have independently specified builder spellings",
+        "rdkafka-hs.Public data contracts.builders.debug contexts preserve order duplicates and the empty-list identity",
+        "rdkafka-hs.Public data contracts.all linked native errors retain sparse numeric codes names and descriptions"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Version-LibrdkafkaVersion",
@@ -5091,8 +6775,33 @@
       "expected": "Exact packed-bit fields and textual/loaded version agree",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Kafka.Version.linked librdkafka is at least 2.15.0",
+        "rdkafka-hs.Kafka.Version.version string agrees with the version number",
+        "rdkafka-hs.Kafka.Version.decodes the hex version encoding",
+        "rdkafka-hs.Public properties.version.version bytes decode independently of prerelease byte",
+        "rdkafka-hs.Public properties.version.version extraction agrees with arithmetic for every Int",
+        "rdkafka-hs.Public properties.version.fixed zero and full version byte boundaries"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Version-decodeLibrdkafkaVersion",
@@ -5105,8 +6814,33 @@
       "expected": "Exact packed-bit fields and textual/loaded version agree",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Kafka.Version.linked librdkafka is at least 2.15.0",
+        "rdkafka-hs.Kafka.Version.version string agrees with the version number",
+        "rdkafka-hs.Kafka.Version.decodes the hex version encoding",
+        "rdkafka-hs.Public properties.version.version bytes decode independently of prerelease byte",
+        "rdkafka-hs.Public properties.version.version extraction agrees with arithmetic for every Int",
+        "rdkafka-hs.Public properties.version.fixed zero and full version byte boundaries"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Version-librdkafkaVersion",
@@ -5119,8 +6853,33 @@
       "expected": "Exact packed-bit fields and textual/loaded version agree",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Kafka.Version.linked librdkafka is at least 2.15.0",
+        "rdkafka-hs.Kafka.Version.version string agrees with the version number",
+        "rdkafka-hs.Kafka.Version.decodes the hex version encoding",
+        "rdkafka-hs.Public properties.version.version bytes decode independently of prerelease byte",
+        "rdkafka-hs.Public properties.version.version extraction agrees with arithmetic for every Int",
+        "rdkafka-hs.Public properties.version.fixed zero and full version byte boundaries"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Version-librdkafkaVersionNumber",
@@ -5133,8 +6892,33 @@
       "expected": "Exact packed-bit fields and textual/loaded version agree",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Kafka.Version.linked librdkafka is at least 2.15.0",
+        "rdkafka-hs.Kafka.Version.version string agrees with the version number",
+        "rdkafka-hs.Kafka.Version.decodes the hex version encoding",
+        "rdkafka-hs.Public properties.version.version bytes decode independently of prerelease byte",
+        "rdkafka-hs.Public properties.version.version extraction agrees with arithmetic for every Int",
+        "rdkafka-hs.Public properties.version.fixed zero and full version byte boundaries"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "API-Kafka-Version-librdkafkaVersionParts",
@@ -5147,8 +6931,33 @@
       "expected": "Exact packed-bit fields and textual/loaded version agree",
       "modes": "all supported modes",
       "ownership": "Haskell values retain their public constructors, fields and instances; native inputs are borrowed for the call",
-      "tests": [],
-      "status": "unimplemented"
+      "tests": [
+        "rdkafka-hs.Kafka.Version.linked librdkafka is at least 2.15.0",
+        "rdkafka-hs.Kafka.Version.version string agrees with the version number",
+        "rdkafka-hs.Kafka.Version.decodes the hex version encoding",
+        "rdkafka-hs.Public properties.version.version bytes decode independently of prerelease byte",
+        "rdkafka-hs.Public properties.version.version extraction agrees with arithmetic for every Int",
+        "rdkafka-hs.Public properties.version.fixed zero and full version byte boundaries"
+      ],
+      "status": "tested",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
+      "evidence_configuration": {
+        "ghc": "9.12.4",
+        "native": "(\"2.15.0\",34537727)",
+        "broker": [
+          {
+            "node_id": 0,
+            "version": "v26.2.1 - 8cd781be99c737c7d147d9dc239a0bbdd591a4d8"
+          }
+        ],
+        "fixture": {
+          "RDKAFKA_TEST_BROKER": "127.0.0.1:39092",
+          "RDKAFKA_TEST_ADMIN": null,
+          "RDKAFKA_TEST_RPK": null,
+          "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
+        }
+      }
     },
     {
       "id": "OWN-config",
@@ -5187,8 +6996,8 @@
       "status": "tested",
       "native_diagnostics": "docs/testing/callback-native-diagnostics.json",
       "mutations": "dist-mutations/20261024T135134Z-callback-6370-0/results.json",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5271,8 +7080,8 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5331,8 +7140,8 @@
         "rdkafka-hs-integration.producer-regressions.known invalid partition rejection releases capture"
       ],
       "status": "tested",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5419,8 +7228,8 @@
       "status": "tested",
       "native_diagnostics": "docs/testing/callback-native-diagnostics.json",
       "mutations": "dist-mutations/20261024T135134Z-callback-6370-0/results.json",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5467,8 +7276,8 @@
       "status": "tested",
       "mutations": "dist-mutations/20261024T141053Z-transaction-39758-0/results.json",
       "native_diagnostics": "docs/testing/transaction-native-diagnostics.json",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5583,8 +7392,8 @@
         "rdkafka-hs-integration.Fixture error controls.weak control retains while rooted and collects after release"
       ],
       "status": "tested",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5629,8 +7438,8 @@
         "rdkafka-hs-integration.topic-configuration.maximum C replication count retains native validation"
       ],
       "status": "tested",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5681,8 +7490,8 @@
         "rdkafka-hs-integration.topic-configuration.oversized native timeout configuration never reads a truncated buffer"
       ],
       "status": "tested",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5722,8 +7531,8 @@
         "rdkafka-hs-integration.topic-configuration.concurrent requests keep their own queues and responses"
       ],
       "status": "tested",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5802,8 +7611,8 @@
         "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: minimum unrepresentable partition"
       ],
       "status": "tested",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5851,8 +7660,8 @@
         "rdkafka-hs-integration.producer-regressions.empty queue supports repeated flush and close"
       ],
       "status": "tested",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5889,8 +7698,8 @@
         "rdkafka-hs-integration.producer-regressions.later delivery callback replaces the earlier callback"
       ],
       "status": "tested",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5925,8 +7734,8 @@
         "rdkafka-hs-integration.producer-regressions.native error decoding failure releases rejected callback capture"
       ],
       "status": "tested",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",
@@ -5964,8 +7773,8 @@
         "rdkafka-hs-integration.producer-properties.callback composition preserves order and identity"
       ],
       "status": "tested",
-      "fingerprint": "b578bd424b68a7f6dda5b028cc9b8c2574cc4367dde558fe70e1c675e0330ead",
-      "evidence_revision": "5a80c66d7dcccc74062e14f146d18d32b33587ff",
+      "fingerprint": "19b70f13af39a6184d9fc6299551348e74c2a937c32a81773b97a70ba6764914",
+      "evidence_revision": "2917f3af396dd1536944951a65946ada87ceb874",
       "evidence_configuration": {
         "ghc": "9.12.4",
         "native": "(\"2.15.0\",34537727)",

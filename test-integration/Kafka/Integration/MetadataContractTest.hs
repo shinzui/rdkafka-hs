@@ -4,6 +4,7 @@ import Control.Concurrent (forkFinally, forkIOWithUnmask, killThread, threadDela
 import Control.Concurrent.MVar (newEmptyMVar, putMVar, readMVar)
 import Control.Exception (AsyncException (ThreadKilled), SomeException, bracket, finally, fromException, throwIO, try)
 import Control.Monad (forM, forM_, replicateM_)
+import Data.ByteString qualified as BS
 import Data.List (sort)
 import Data.Text qualified as Text
 import GHC.Conc (BlockReason (BlockedOnException), ThreadStatus (ThreadBlocked), threadStatus)
@@ -129,6 +130,10 @@ tests env =
                  withMetadataFault 16 $ do
                    result <- consumerGroupInfo producer (Timeout 5000) group
                    result @?= Left (KafkaError "Unsupported Kafka consumer group state: FutureState")
+                   mapM metadataStat [2, 3] >>= (@?= [1, 1])
+                 withMetadataFault 17 $ do
+                   described <- consumerGroupInfo producer (Timeout 5000) group >>= either throwIO pure
+                   map giMembers described @?= [[GroupMemberInfo (GroupMemberId "member-field") (ClientId "client-field") "host-field" (BS.pack [0, 1, 0, 255]) (BS.pack [255, 0, 2, 0, 3])]]
                    mapM metadataStat [2, 3] >>= (@?= [1, 1])
                described <- consumerGroupInfo producer (Timeout 5000) group >>= either throwIO pure
                map giState described @?= [GroupEmpty]
