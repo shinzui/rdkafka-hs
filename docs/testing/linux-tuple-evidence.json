@@ -1,38 +1,61 @@
 {
-  "status": "accepted initial Linux/newer tuple integration; diagnostic and failover prototypes require permanent replay",
+  "status": "Accepted Linux/newer released tuple and effective named ownership diagnostics; comprehensive EP-20 qualification remains gated by EP-16",
   "source": {
     "project": "mori://shinzui/rdkafka-hs",
-    "candidate_fingerprint": "eb6352fe62c75ec289a0a5f543ed0692106d24f3370ddb46ef31f0188410b14a",
+    "candidate_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c",
+    "execution_fingerprint": "74c7156e6fee8653bcec844001fd8f95d703bcf4d8e978a857a9f8f3560b6b0a",
+    "revision": "bfa4f2e plus captured source",
     "archive": {
-      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/candidate.tar.gz",
-      "sha256": "b02206dc4621d86226f15f6b8b88768e8e9e494b51cb13ec6746805ae1d367ba"
+      "path": "dist-compatibility/expanded-source9/candidate.tar.gz",
+      "sha256": "a70e4839d24c5e5179ff9a8be48643951e185d604cd8ba3401587730279f3b22"
     },
-    "qualification_prototype": "The native-lifetime mode is an explicitly recorded modification of test-integration/Main.hs. Its before/after bytes and transformation are retained; native diagnostic outcomes are prototype evidence, not final candidate qualification."
+    "root_file_inventory": {
+      "path": "dist-compatibility/expanded-source9/root-functional-files.json",
+      "sha256": "69506c90cfc124f3a175a664873f5d8b49aff62a7426265c56c3dd64fcc84c21"
+    },
+    "archive_file_inventory": {
+      "path": "dist-compatibility/expanded-source9/phase9-functional-files.json",
+      "sha256": "d0e5d59aa49833ecd1305410c839cbebdbbb418679cecc6de0c2548b142dca4b"
+    },
+    "archive_comparison": {
+      "changed_files": [],
+      "added_files": [],
+      "omitted_development_files": [
+        ".envrc",
+        "cabal.project",
+        "flake.lock",
+        "flake.module.nix",
+        "flake.nix",
+        "justfile",
+        "nix/haskell.nix",
+        "nix/pre-commit.nix",
+        "nix/redpanda.nix",
+        "nix/treefmt.nix"
+      ],
+      "omitted_project_configuration": {
+        "path": "cabal.project",
+        "content": "packages: .\n",
+        "replacement": "Cabal implicit single package in clean extraction; same package set, no solver/compiler constraints in omitted file"
+      },
+      "execution_fingerprint": "74c7156e6fee8653bcec844001fd8f95d703bcf4d8e978a857a9f8f3560b6b0a",
+      "root_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c"
+    },
+    "configuration_sha256": "c6c0771e7da58c35d40170db3ec18cdd2439997e223ef4c088ac3f4e793707f9"
   },
   "environment": {
-    "os": "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.5 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo\n",
-    "kernel": "Linux 6.18.15 aarch64",
+    "os": "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.5 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo",
+    "kernel": "Linux 6.18.15",
     "architecture": "aarch64",
     "ghc": "9.14.1",
     "cabal": "3.16.1.0",
-    "loaded_libraries": {
-      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/loaded-libraries.log",
-      "sha256": "1eadb3fce16b3a55fd4cc4a9a27eccefc277fd3e664fd3b76c75acccfa846e3a"
-    },
-    "native_binary": {
-      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/native-candidate.so.1",
-      "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f"
-    },
+    "java": "openjdk 21.0.12.1 2026-08-18\nOpenJDK Runtime Environment (build 21.0.12.1+1-1-24.04.4-Ubuntu)\nOpenJDK 64-Bit Server VM (build 21.0.12.1+1-1-24.04.4-Ubuntu, mixed mode, sharing)",
     "native_version": "2.16.0",
-    "loaded_native_identity": {
-      "version": "2.16.0",
-      "number": 34603263,
-      "path": "/opt/librdkafka-2.16.0/lib/librdkafka.so.1",
-      "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f",
-      "observed": "(\"2.16.0\",34603263)"
-    },
     "broker_version": "Apache Kafka 4.4.0",
-    "broker_topology": "Three owned combined broker/controllers, IDs 1/2/3 on loopback 41092/42092/43092; broker default min ISR 1 for single-replica inherited fixtures; failover topic replication 3 and min ISR 2"
+    "loaded_native_identity": {
+      "observed": "(\"2.16.0\",34603263)",
+      "path": "/opt/librdkafka-2.16.0/lib/librdkafka.so.1",
+      "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f"
+    }
   },
   "release_sources": {
     "ghc": {
@@ -60,33 +83,324 @@
       "unit suite",
       "integration suite"
     ],
-    "unit": 78,
-    "broker_smoke": 14,
-    "counted_callback_teardown": 2,
-    "nonthreaded": 4,
-    "normal_smoke_tests": [
+    "unit_tests": 78,
+    "native_lifetime_tests": 279,
+    "native_seconds": 232.63,
+    "native_tests": [
+      "rdkafka-hs-integration.callback-lifetime.async throwing error callback preserves native lifecycle",
+      "rdkafka-hs-integration.callback-lifetime.async throwing log callback preserves native lifecycle",
+      "rdkafka-hs-integration.callback-lifetime.async throwing stats callback preserves native lifecycle",
+      "rdkafka-hs-integration.callback-lifetime.async throwing rebalance callback preserves native lifecycle",
+      "rdkafka-hs-integration.callback-lifetime.async throwing commit callback preserves native lifecycle",
+      "rdkafka-hs-integration.callback-lifetime.sync throwing error callback preserves native lifecycle",
+      "rdkafka-hs-integration.callback-lifetime.sync throwing log callback preserves native lifecycle",
+      "rdkafka-hs-integration.callback-lifetime.sync throwing stats callback preserves native lifecycle",
+      "rdkafka-hs-integration.callback-lifetime.sync throwing rebalance callback preserves native lifecycle",
+      "rdkafka-hs-integration.callback-lifetime.sync throwing commit callback preserves native lifecycle",
       "rdkafka-hs-integration.callback-lifetime.async error callback releases after destroy with retained wrapper",
       "rdkafka-hs-integration.callback-lifetime.sync error callback releases after destroy with retained wrapper",
+      "rdkafka-hs-integration.callback-lifetime.producer delivery callback releases after native finalization",
+      "rdkafka-hs-integration.callback-lifetime.noncaptured control is collectible",
+      "rdkafka-hs-integration.callback-lifetime.async log callback is live then releases",
+      "rdkafka-hs-integration.callback-lifetime.async stats callback is live then releases",
+      "rdkafka-hs-integration.callback-lifetime.sync log callback is live then releases",
+      "rdkafka-hs-integration.callback-lifetime.sync stats callback is live then releases",
+      "rdkafka-hs-integration.callback-lifetime.async construction failure releases callbacks: topic",
+      "rdkafka-hs-integration.callback-lifetime.async construction failure releases callbacks: native",
+      "rdkafka-hs-integration.callback-lifetime.async construction failure releases callbacks: redirect",
+      "rdkafka-hs-integration.callback-lifetime.async construction failure releases callbacks: subscribe",
+      "rdkafka-hs-integration.callback-lifetime.sync construction failure releases callbacks: topic",
+      "rdkafka-hs-integration.callback-lifetime.sync construction failure releases callbacks: native",
+      "rdkafka-hs-integration.callback-lifetime.sync construction failure releases callbacks: redirect",
+      "rdkafka-hs-integration.callback-lifetime.sync construction failure releases callbacks: subscribe",
+      "rdkafka-hs-integration.callback-lifetime.producer native construction failure releases callbacks",
+      "rdkafka-hs-integration.callback-lifetime.async constructor exception at callback-install releases partial native ownership",
+      "rdkafka-hs-integration.callback-lifetime.async constructor exception at post-native-loglevel releases partial native ownership",
+      "rdkafka-hs-integration.callback-lifetime.sync constructor exception at callback-install releases partial native ownership",
+      "rdkafka-hs-integration.callback-lifetime.sync constructor exception at post-native-loglevel releases partial native ownership",
+      "rdkafka-hs-integration.callback-lifetime.async rebalance callback releases captured borrowed configuration",
+      "rdkafka-hs-integration.callback-lifetime.async commit callback releases captured borrowed configuration",
+      "rdkafka-hs-integration.callback-lifetime.sync rebalance callback releases captured borrowed configuration",
+      "rdkafka-hs-integration.callback-lifetime.sync commit callback releases captured borrowed configuration",
+      "rdkafka-hs-integration.callback-lifetime.replaced producer delivery callbacks both release",
+      "rdkafka-hs-integration.callback-lifetime.async concurrent destruction joins at native entry",
+      "rdkafka-hs-integration.callback-lifetime.async concurrent destruction joins at native completion",
+      "rdkafka-hs-integration.callback-lifetime.async concurrent destruction joins at native shutdown callback",
+      "rdkafka-hs-integration.callback-lifetime.sync concurrent destruction joins at native entry",
+      "rdkafka-hs-integration.callback-lifetime.sync concurrent destruction joins at native completion",
+      "rdkafka-hs-integration.callback-lifetime.sync concurrent destruction joins at native shutdown callback",
+      "rdkafka-hs-integration.callback-lifetime.async cancellation at native entry preserves exactly-once teardown",
+      "rdkafka-hs-integration.callback-lifetime.async cancellation at native completion preserves exactly-once teardown",
+      "rdkafka-hs-integration.callback-lifetime.async cancellation at native shutdown callback preserves exactly-once teardown",
+      "rdkafka-hs-integration.callback-lifetime.sync cancellation at native entry preserves exactly-once teardown",
+      "rdkafka-hs-integration.callback-lifetime.sync cancellation at native completion preserves exactly-once teardown",
+      "rdkafka-hs-integration.callback-lifetime.sync cancellation at native shutdown callback preserves exactly-once teardown",
+      "rdkafka-hs-integration.callback-lifetime.async cancellation after poll stop and queue detachment preserves teardown",
+      "rdkafka-hs-integration.callback-lifetime.producer constructor cancellation at partial registration releases its owner",
+      "rdkafka-hs-integration.callback-lifetime.producer constructor cancellation at native acceptance releases its owner",
+      "rdkafka-hs-integration.callback-lifetime.consumer-async constructor cancellation at partial registration releases its owner",
+      "rdkafka-hs-integration.callback-lifetime.consumer-async constructor cancellation at native acceptance releases its owner",
+      "rdkafka-hs-integration.callback-lifetime.consumer-sync constructor cancellation at partial registration releases its owner",
+      "rdkafka-hs-integration.callback-lifetime.consumer-sync constructor cancellation at native acceptance releases its owner",
+      "rdkafka-hs-integration.callback-lifetime.async cancellation while waiting for active callback permits retry",
+      "rdkafka-hs-integration.callback-lifetime.sync cancellation while waiting for active callback permits retry",
+      "rdkafka-hs-integration.callback-lifetime.async closed consumer GC releases its registrations once",
+      "rdkafka-hs-integration.callback-lifetime.sync closed consumer GC releases its registrations once",
+      "rdkafka-hs-integration.callback-lifetime.producer error callback remains live through close and releases on GC",
+      "rdkafka-hs-integration.callback-lifetime.producer log callback remains live through close and releases on GC",
+      "rdkafka-hs-integration.callback-lifetime.producer stats callback remains live through close and releases on GC",
+      "rdkafka-hs-integration.callback-lifetime.failed native construction releases the caller-owned duplicate config",
       "rdkafka-hs-integration.transaction-errors.transaction-error-leak-probe releases 300 immediate native errors",
+      "rdkafka-hs-integration.transaction-errors.native allocation control detects the inherited three-error leak",
+      "rdkafka-hs-integration.transaction-errors.initialization timeout destroys its native error on each retry",
+      "rdkafka-hs-integration.transaction-errors.zero-timeout initialization resumes successfully against the broker",
+      "rdkafka-hs-integration.transaction-errors.transaction state errors preserve empty commit and abort recovery",
+      "rdkafka-hs-integration.transaction-errors.duplicate transactional IDs report a real fatal fencing error",
+      "rdkafka-hs-integration.transaction-errors.broker-rejected delivery requires abort and permits a successful new transaction",
+      "rdkafka-hs-integration.transaction-errors.init without transactional ID preserves native code and destroys error",
+      "rdkafka-hs-integration.transaction-errors.begin without transactional ID preserves native code and destroys error",
+      "rdkafka-hs-integration.transaction-errors.abort without transactional ID preserves native code and destroys error",
+      "rdkafka-hs-integration.transaction-errors.commit without transactional ID preserves native code and destroys error",
+      "rdkafka-hs-integration.transaction-errors.offset without transactional ID preserves native code and destroys error",
+      "rdkafka-hs-integration.transaction-errors.init NULL return remains success",
+      "rdkafka-hs-integration.transaction-errors.begin NULL return remains success",
+      "rdkafka-hs-integration.transaction-errors.abort NULL return remains success",
+      "rdkafka-hs-integration.transaction-errors.commit NULL return remains success",
+      "rdkafka-hs-integration.transaction-errors.offset NULL return remains success",
+      "rdkafka-hs-integration.transaction-errors.init invalid native code still destroys acquired error",
+      "rdkafka-hs-integration.transaction-errors.begin invalid native code still destroys acquired error",
+      "rdkafka-hs-integration.transaction-errors.abort invalid native code still destroys acquired error",
+      "rdkafka-hs-integration.transaction-errors.commit invalid native code still destroys acquired error",
+      "rdkafka-hs-integration.transaction-errors.offset invalid native code still destroys acquired error",
+      "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 0 before destruction",
+      "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 1 before destruction",
+      "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 2 before destruction",
+      "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 3 before destruction",
+      "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 4 before destruction",
+      "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 5 before destruction",
+      "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 6 before destruction",
+      "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 7 before destruction",
+      "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 0 before destruction",
+      "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 1 before destruction",
+      "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 2 before destruction",
+      "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 3 before destruction",
+      "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 4 before destruction",
+      "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 5 before destruction",
+      "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 6 before destruction",
+      "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 7 before destruction",
+      "rdkafka-hs-integration.transaction-errors.init cancellation at decoder stage 20 releases once",
+      "rdkafka-hs-integration.transaction-errors.begin cancellation at decoder stage 20 releases once",
+      "rdkafka-hs-integration.transaction-errors.abort cancellation at decoder stage 20 releases once",
+      "rdkafka-hs-integration.transaction-errors.commit cancellation at decoder stage 20 releases once",
+      "rdkafka-hs-integration.transaction-errors.commit cancellation at decoder stage 21 releases once",
+      "rdkafka-hs-integration.transaction-errors.commit cancellation at decoder stage 22 releases once",
+      "rdkafka-hs-integration.transaction-errors.commit cancellation at decoder stage 23 releases once",
+      "rdkafka-hs-integration.transaction-errors.offset cancellation at decoder stage 20 releases once",
+      "rdkafka-hs-integration.transaction-errors.offset cancellation at decoder stage 21 releases once",
+      "rdkafka-hs-integration.transaction-errors.offset cancellation at decoder stage 22 releases once",
+      "rdkafka-hs-integration.transaction-errors.offset cancellation at decoder stage 23 releases once",
+      "rdkafka-hs-integration.transaction-errors.async commit publishes output and source next offset atomically; abort publishes neither",
+      "rdkafka-hs-integration.transaction-errors.sync commit publishes output and source next offset atomically; abort publishes neither",
+      "rdkafka-hs-integration.lifecycle.flushProducerTimeout times out, purgeProducer empties the queue",
+      "rdkafka-hs-integration.lifecycle.consumerClosed is False until closeConsumer",
+      "rdkafka-hs-integration.lifecycle.setSaslCredentials replaces credentials on a consumer",
+      "rdkafka-hs-integration.lifecycle.setSaslCredentials replaces credentials on a producer",
+      "rdkafka-hs-integration.lifecycle.setSaslCredentials rejects NUL in username without changing producer or consumer identity",
+      "rdkafka-hs-integration.lifecycle.setSaslCredentials rejects NUL in password without changing producer or consumer identity",
+      "rdkafka-hs-integration.lifecycle.setSaslCredentials releases each actual native error after decoding its exact code",
+      "rdkafka-hs-integration.lifecycle.setSaslCredentials cancellation at error decoding releases the owned error",
+      "rdkafka-hs-integration.lifecycle.setSaslCredentials cancellation at error acquisition releases the owned error",
+      "rdkafka-hs-integration.producer-regressions.explicit topic timeout expires an accepted message",
+      "rdkafka-hs-integration.producer-regressions.global timeout still expires an accepted message",
+      "rdkafka-hs-integration.producer-regressions.queue-full rejection releases callback capture without invoking it",
+      "rdkafka-hs-integration.producer-regressions.accepted callback retains its capture until a purged report completes",
+      "rdkafka-hs-integration.producer-regressions.throwing global callback preserves per-message delivery and releases capture",
+      "rdkafka-hs-integration.producer-regressions.throwing per-message callback reports exception and releases capture",
+      "rdkafka-hs-integration.producer-regressions.repeated queue-full rejections release every callback capture",
+      "rdkafka-hs-integration.producer-regressions.cancellation at a rejected enqueue releases capture before unmasking",
+      "rdkafka-hs-integration.producer-regressions.cancellation after native acceptance retains callback until its report",
+      "rdkafka-hs-integration.producer-regressions.another poller can deliver before successful enqueue returns",
+      "rdkafka-hs-integration.producer-regressions.running callback keeps its capture after the native root is released",
+      "rdkafka-hs-integration.producer-regressions.native error decoding failure releases rejected callback capture",
+      "rdkafka-hs-integration.producer-regressions.non-null native success-code error rejects and releases capture",
+      "rdkafka-hs-integration.producer-regressions.unknown native error code is preserved instead of reading errno",
+      "rdkafka-hs-integration.producer-regressions.actual client configuration: defaults",
+      "rdkafka-hs-integration.producer-regressions.actual client configuration: global only",
+      "rdkafka-hs-integration.producer-regressions.actual client configuration: topic only",
+      "rdkafka-hs-integration.producer-regressions.actual client configuration: disjoint maps",
+      "rdkafka-hs-integration.producer-regressions.actual client configuration: explicit topic wins duplicate",
+      "rdkafka-hs-integration.producer-regressions.actual client configuration: last topic property wins",
+      "rdkafka-hs-integration.producer-regressions.actual client configuration: empty topic map preserves global",
+      "rdkafka-hs-integration.producer-regressions.actual client configuration: zero topic timeout is infinite",
+      "rdkafka-hs-integration.producer-regressions.actual client configuration: maximum native topic timeout",
+      "rdkafka-hs-integration.producer-regressions.actual client configuration: explicit topic wins native timeout alias",
+      "rdkafka-hs-integration.producer-regressions.actual client configuration: topic codec overrides global codec",
+      "rdkafka-hs-integration.producer-regressions.actual client configuration: global codec survives unrelated topic keys",
+      "rdkafka-hs-integration.producer-regressions.byte-exact round trip with NoCompression",
+      "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Gzip",
+      "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Snappy",
+      "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Lz4",
+      "rdkafka-hs-integration.producer-regressions.byte-exact round trip with Zstd",
+      "rdkafka-hs-integration.producer-regressions.queued purge flags: none",
+      "rdkafka-hs-integration.producer-regressions.queued purge flags: queue",
+      "rdkafka-hs-integration.producer-regressions.queued purge flags: inflight",
+      "rdkafka-hs-integration.producer-regressions.queued purge flags: nonblocking",
+      "rdkafka-hs-integration.producer-regressions.queued purge flags: queue+inflight",
+      "rdkafka-hs-integration.producer-regressions.queued purge flags: queue+nonblocking",
+      "rdkafka-hs-integration.producer-regressions.queued purge flags: inflight+nonblocking",
+      "rdkafka-hs-integration.producer-regressions.queued purge flags: all",
+      "rdkafka-hs-integration.producer-regressions.in-flight purge flags: none",
+      "rdkafka-hs-integration.producer-regressions.in-flight purge flags: queue",
+      "rdkafka-hs-integration.producer-regressions.in-flight purge flags: inflight",
+      "rdkafka-hs-integration.producer-regressions.in-flight purge flags: nonblocking",
+      "rdkafka-hs-integration.producer-regressions.in-flight purge flags: queue+inflight",
+      "rdkafka-hs-integration.producer-regressions.in-flight purge flags: queue+nonblocking",
+      "rdkafka-hs-integration.producer-regressions.in-flight purge flags: inflight+nonblocking",
+      "rdkafka-hs-integration.producer-regressions.in-flight purge flags: all",
+      "rdkafka-hs-integration.producer-regressions.bounded flush timeout recovers when the delayed response arrives",
+      "rdkafka-hs-integration.producer-regressions.close retries a timed-out flush until the delayed delivery completes",
+      "rdkafka-hs-integration.producer-regressions.oversized rejection releases capture without a delivery report",
+      "rdkafka-hs-integration.producer-regressions.known invalid partition rejection releases capture",
+      "rdkafka-hs-integration.producer-regressions.empty queue supports repeated flush and close",
+      "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: NUL topic name",
+      "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: NUL header name",
+      "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: maximum unrepresentable partition",
+      "rdkafka-hs-integration.producer-regressions.rejects before native enqueue: minimum unrepresentable partition",
+      "rdkafka-hs-integration.producer-regressions.configuration rejection: unknown global key",
+      "rdkafka-hs-integration.producer-regressions.configuration rejection: unknown topic key",
+      "rdkafka-hs-integration.producer-regressions.configuration rejection: invalid topic timeout",
+      "rdkafka-hs-integration.producer-regressions.configuration rejection: excessive topic timeout",
+      "rdkafka-hs-integration.producer-regressions.configuration rejection: global-only key in topic map",
+      "rdkafka-hs-integration.producer-regressions.later delivery callback replaces the earlier callback",
+      "rdkafka-hs-integration.producer-regressions.null native delivery frame reports the generic errno fallback without dereferencing a message",
+      "rdkafka-hs-integration.producer-regressions.native delivery without an opaque Haskell callback preserves the complete record",
+      "rdkafka-hs-integration.producer-regressions.delivery header acquisition failure preserves the outcome with empty headers",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.counter detects a retained native list before explicit release",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.async.pair conversion failure releases the partial list before GC",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.async.offset conversion failure releases the partial list before GC",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.async.ordinary input lists release after exact native results",
       "rdkafka-hs-integration.public-contract.partition-list-ownership.async.native logical offsets decode independently without losing partition identity",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.async.missing native partition queue preserves assignment and later forwarding",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.async.assignment outputs release after exact decoding",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.async.subscription outputs release after exact decoding",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.async.subscription acquisition failure preserves the native error without a list",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.async.assignment decoder failure releases the owned output",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.async.subscription decoder failure releases the owned output",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.async.cancellation at input allocation releases the owned list",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.async.cancellation at assignment return releases the owned output",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.sync.pair conversion failure releases the partial list before GC",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.sync.offset conversion failure releases the partial list before GC",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.sync.ordinary input lists release after exact native results",
       "rdkafka-hs-integration.public-contract.partition-list-ownership.sync.native logical offsets decode independently without losing partition identity",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.sync.missing native partition queue preserves assignment and later forwarding",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.sync.assignment outputs release after exact decoding",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.sync.subscription outputs release after exact decoding",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.sync.subscription acquisition failure preserves the native error without a list",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.sync.assignment decoder failure releases the owned output",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.sync.subscription decoder failure releases the owned output",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.sync.cancellation at input allocation releases the owned list",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.sync.cancellation at assignment return releases the owned output",
+      "rdkafka-hs-integration.public-contract.messages.batch conversion releases every returned native message",
+      "rdkafka-hs-integration.public-contract.messages.native message counter detects a retained final object",
+      "rdkafka-hs-integration.public-contract.messages.batch decoder exception releases unprocessed messages",
+      "rdkafka-hs-integration.public-contract.messages.batch native header errors remain errors while later records are released",
+      "rdkafka-hs-integration.public-contract.messages.batch cancellation at native return releases every acquired message",
+      "rdkafka-hs-integration.public-contract.messages.batch cancellation at middle conversion releases every acquired message",
+      "rdkafka-hs-integration.public-contract.messages.async single cancellation at native return releases its native message",
+      "rdkafka-hs-integration.public-contract.messages.async single cancellation at inside conversion releases its native message",
+      "rdkafka-hs-integration.public-contract.messages.sync single cancellation at native return releases its native message",
+      "rdkafka-hs-integration.public-contract.messages.sync single cancellation at inside conversion releases its native message",
+      "rdkafka-hs-integration.public-contract.messages.async header failure preserves the polled record origin",
+      "rdkafka-hs-integration.public-contract.messages.sync header failure preserves the polled record origin",
+      "rdkafka-hs-integration.public-contract.messages.async plain polling surfaces native header failure",
+      "rdkafka-hs-integration.public-contract.messages.sync plain polling surfaces native header failure",
+      "rdkafka-hs-integration.public-contract.messages.async attributed error preserves independently absent partition-and-offset",
+      "rdkafka-hs-integration.public-contract.messages.async attributed error preserves independently absent offset",
+      "rdkafka-hs-integration.public-contract.messages.async attributed error preserves independently absent partition",
+      "rdkafka-hs-integration.public-contract.messages.sync attributed error preserves independently absent partition-and-offset",
+      "rdkafka-hs-integration.public-contract.messages.sync attributed error preserves independently absent offset",
+      "rdkafka-hs-integration.public-contract.messages.sync attributed error preserves independently absent partition",
+      "rdkafka-hs-integration.public-contract.messages.callback-event polling cancellation releases a returned message",
+      "rdkafka-hs-integration.public-contract.messages.callback buffer preserves attributed header failure",
+      "rdkafka-hs-integration.public-contract.messages.callback buffer preserves plain header failure",
+      "rdkafka-hs-integration.public-contract.messages.originless callback error survives seek filtering and a paused partition",
+      "rdkafka-hs-integration.public-contract.messages.callback-event polling releases and discards a returned fatal frame",
+      "rdkafka-hs-integration.public-contract.messages.zero batch size leaves the queued records available",
+      "rdkafka-hs-integration.public-contract.messages.unsupported sync batch does not discard a record",
+      "rdkafka-hs-integration.public-contract.messages.signed native batch failure preserves its error and queued data",
+      "rdkafka-hs-integration.public-contract.messages.infinite batch timeout returns available records",
       "rdkafka-hs-integration.public-contract.messages.batch capacity 1 preserves complete ordered records across partial batches",
       "rdkafka-hs-integration.public-contract.messages.batch capacity 2 preserves complete ordered records across partial batches",
       "rdkafka-hs-integration.public-contract.messages.batch capacity 5 preserves complete ordered records across partial batches",
-      "rdkafka-hs-integration.public-contract.runtime-contract.RTS capability is observed by async construction",
-      "rdkafka-hs-integration.public-contract.runtime-contract.explicit async construction checks the runtime",
-      "rdkafka-hs-integration.public-contract.runtime-contract.sync subscription delivers an exact record",
-      "rdkafka-hs-integration.public-contract.runtime-contract.deprecated sync runner closes after an exact record",
-      "rdkafka-hs-integration.seek-partitions.async.single seek replays exact record",
-      "rdkafka-hs-integration.seek-partitions.sync.single seek replays exact record"
+      "rdkafka-hs-integration.public-contract.messages.invalid batch array size is rejected before native acquisition: -1",
+      "rdkafka-hs-integration.public-contract.messages.invalid batch array size is rejected before native acquisition: -9223372036854775808",
+      "rdkafka-hs-integration.public-contract.messages.invalid batch array size is rejected before native acquisition: 9223372036854775807",
+      "rdkafka-hs-integration.public-contract.messages.batch preserves complete records followed by exact partition EOF and idle timeout",
+      "rdkafka-hs-integration.public-contract.messages.empty batch respects timeout 0",
+      "rdkafka-hs-integration.public-contract.messages.empty batch respects timeout 100",
+      "rdkafka-hs-integration.public-contract.diagnostics.supported-property print flushes and preserves the caller handle",
+      "rdkafka-hs-integration.public-contract.diagnostics.client print flushes and preserves the caller handle",
+      "rdkafka-hs-integration.public-contract.diagnostics.failed fdopen releases the duplicate and preserves the original",
+      "rdkafka-hs-integration.public-contract.diagnostics.failed native flush is reported after closing the duplicate",
+      "rdkafka-hs-integration.public-contract.diagnostics.producer configuration dumps retain exact explicit and global settings",
+      "rdkafka-hs-integration.public-contract.diagnostics.producer constructor log level overrides the global property on the native client",
+      "rdkafka-hs-integration.public-contract.diagnostics.consumer configuration dump preserves global settings after subscription merge",
+      "rdkafka-hs-integration.public-contract.diagnostics.native dump counter detects an unreleased array",
+      "rdkafka-hs-integration.public-contract.diagnostics.global cancellation at native acquisition releases its array",
+      "rdkafka-hs-integration.public-contract.diagnostics.topic cancellation at native acquisition releases its array",
+      "rdkafka-hs-integration.public-contract.metadata-contract.native metadata counter detects an unreleased result",
+      "rdkafka-hs-integration.public-contract.metadata-contract.native topic-constructor failure survives metadata convenience queries",
+      "rdkafka-hs-integration.public-contract.metadata-contract.empty native metadata remains empty and releases every result",
+      "rdkafka-hs-integration.public-contract.metadata-contract.timestamp lookup preserves native overall errors",
+      "rdkafka-hs-integration.public-contract.metadata-contract.watermark queries preserve unknown partition errors and empty provided metadata",
+      "rdkafka-hs-integration.public-contract.metadata-contract.topic identity replica sets and exact watermarks",
+      "rdkafka-hs-integration.public-contract.metadata-contract.distinct native metadata fields retain exact identities and errors",
+      "rdkafka-hs-integration.public-contract.metadata-contract.provided metadata preserves partition failures in convenience helpers",
+      "rdkafka-hs-integration.public-contract.metadata-contract.native metadata partition failures survive convenience helpers",
+      "rdkafka-hs-integration.public-contract.metadata-contract.group query timeout preserves initial metadata wait failure",
+      "rdkafka-hs-integration.public-contract.metadata-contract.missing topic errors survive convenience helpers",
+      "rdkafka-hs-integration.public-contract.metadata-contract.timestamp lookup distinguishes before at and after actual record times",
+      "rdkafka-hs-integration.public-contract.metadata-contract.mixed timestamp request preserves native partition failure",
+      "rdkafka-hs-integration.public-contract.metadata-contract.metadata timeouts preserve the native error",
+      "rdkafka-hs-integration.public-contract.metadata-contract.metadata native acquisition cancellation releases its result",
+      "rdkafka-hs-integration.public-contract.metadata-contract.groups native acquisition cancellation releases its result",
+      "rdkafka-hs-integration.public-contract.metadata-contract.async group identity lifecycle and supported native states",
+      "rdkafka-hs-integration.public-contract.metadata-contract.sync group identity lifecycle and supported native states"
     ],
-    "valgrind": {
-      "version": "3.22.0",
-      "invalid_access_control": "Two freed-configuration reads in native rd_kafka_conf_get and the Haskell/C bridge were detected.",
-      "quiescent_smoke": "Eight cases passed; zero errors and zero definite, indirect or possible leaks; no suppressions.",
-      "header_candidate": "Exact NoCompression header roundtrip passes with zero errors and no definite/indirect/possible leaks.",
-      "header_mutation": "Omitting native rd_kafka_headers_destroy cleanup is detected under actual produceva: 48 bytes definitely and 210 bytes indirectly lost; exit 99.",
-      "limit": "Reachable RTS/library allocations are retained separately. Complete ownership scenarios, final quiescent runner and current candidate replay remain required."
+    "actual_nonthreaded_tests": 4,
+    "apache_policy_case": {
+      "tests": 1,
+      "declared": "reject",
+      "observed": "InvalidConfig; no topic created"
+    },
+    "memory": {
+      "tool": "Valgrind 3.22.0",
+      "parent_and_child_reports": 15,
+      "invalid_access_errors": 0,
+      "definite_bytes_lost": 0,
+      "indirect_bytes_lost": 0,
+      "retained_native_header_stacks": 0,
+      "retained_test_seam_allocation_stacks": 0,
+      "intentional_process_global_sasl_stacks": 225,
+      "possible_RTS_worker_TLS": [
+        {
+          "path": "dist-compatibility/expanded-source9/native-phase9.134783.valgrind",
+          "sha256": "f5985fed7d3760f65ed02e685feaf667e55c702e68eb66fd28ac49f1088dc89e"
+        },
+        {
+          "path": "dist-compatibility/expanded-source9/native-phase9.134810.valgrind",
+          "sha256": "50aabcae28231c2458a37b48e81951720c97f2d6482824790cfc6612ba02ae5b"
+        }
+      ],
+      "RTS_explanation": "Only detached GHC worker-thread TLS stacks remain possibly lost (304 bytes per affected child); exact GHC 9.14.1 Task.c and posix/OSThreads.c are retained. The pure forkOn baseline did not reproduce this timing-dependent TLS observation. No project/native per-client stack is suppressed.",
+      "global_SASL_explanation": "All retained stacks containing librdkafka allocation frames lead exclusively through rd_kafka_sasl_cyrus_global_init into Cyrus SASL process-global initialization. Tagged 2.16.0 source intentionally omits sasl_done because another application may share SASL. These are not per-message/client owners.",
+      "suppression": "Only the independently reproduced 20-byte CapIOManager startup baseline is suppressed by exact RTS frames.",
+      "controls": {
+        "invalid_access_exit": 99,
+        "stock_header_exit": 0,
+        "mutant_header_exit": 99,
+        "header_oracle": "Inspect all leak kinds and native allocation stacks, including still-reachable blocks. Stock has no rd_kafka_headers_new retention; deliberate cleanup omission has retained native headers. Earlier mutation replay exit 0 is preserved as evidence that a summary-only oracle can miss conservative GHC roots."
+      }
     }
   },
   "discarded_attempts": [
@@ -599,6 +913,500 @@
           "path": "dist-compatibility/owned-fixture-checkpoint/kafka440-features.txt",
           "sha256": "ae488e65d55150668e17b768cca3ee4bbda5fb44a77a534b201d5c177b15e3a9"
         }
+      }
+    }
+  },
+  "later_attempts": [
+    {
+      "label": "phase7",
+      "accepted": false,
+      "behavioral_tests_passed": 279,
+      "seconds": 229.68,
+      "finding": "Valgrind retains two native topics (2176 direct +427 indirect bytes) because new public-message fault modes 24/25 temporarily clear rkt but did not restore it before real native message destruction. Fixture cleanup now restores original rkt and err as well as partition/offset; fresh source replay is required.",
+      "artifacts": {
+        "native-phase7.stdout": {
+          "path": "dist-compatibility/expanded-recovery-checkpoint/native-phase7.stdout",
+          "sha256": "4cde75846e7960a3f6c3c9588ba1703df9eb87532b92d1386d4c8f8b5c1ea38f"
+        },
+        "native-phase7.95421.log": {
+          "path": "dist-compatibility/expanded-recovery-checkpoint/native-phase7.95421.log",
+          "sha256": "a1f09a800754c2d9f30951023f341f03a18b46c8f12ad615361677ffaac66e8c"
+        },
+        "native-phase7-command.json": {
+          "path": "dist-compatibility/expanded-recovery-checkpoint/native-phase7-command.json",
+          "sha256": "1495a5f70635b2631041c49628ec26a090d31f6577fdefbaf73722e2d01894e5"
+        },
+        "native-phase7-tests.json": {
+          "path": "dist-compatibility/expanded-recovery-checkpoint/native-phase7-tests.json",
+          "sha256": "5c0ad609423f4578b70c8ff6e10a8a875b14f4613cdc7d8fc1a49ca710a620c6"
+        },
+        "candidate-phase7-receipt.json": {
+          "path": "dist-compatibility/expanded-recovery-checkpoint/candidate-phase7-receipt.json",
+          "sha256": "14af1e7c85bd26c7377c18cefb1c4d72441fb82144a9ff5a4972ee8ce3983fa0"
+        }
+      }
+    }
+  ],
+  "initial_checkpoint": {
+    "source": {
+      "project": "mori://shinzui/rdkafka-hs",
+      "candidate_fingerprint": "eb6352fe62c75ec289a0a5f543ed0692106d24f3370ddb46ef31f0188410b14a",
+      "archive": {
+        "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/candidate.tar.gz",
+        "sha256": "b02206dc4621d86226f15f6b8b88768e8e9e494b51cb13ec6746805ae1d367ba"
+      },
+      "qualification_prototype": "The native-lifetime mode is an explicitly recorded modification of test-integration/Main.hs. Its before/after bytes and transformation are retained; native diagnostic outcomes are prototype evidence, not final candidate qualification."
+    },
+    "environment": {
+      "os": "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.5 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo\n",
+      "kernel": "Linux 6.18.15 aarch64",
+      "architecture": "aarch64",
+      "ghc": "9.14.1",
+      "cabal": "3.16.1.0",
+      "loaded_libraries": {
+        "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/loaded-libraries.log",
+        "sha256": "1eadb3fce16b3a55fd4cc4a9a27eccefc277fd3e664fd3b76c75acccfa846e3a"
+      },
+      "native_binary": {
+        "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/native-candidate.so.1",
+        "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f"
+      },
+      "native_version": "2.16.0",
+      "loaded_native_identity": {
+        "version": "2.16.0",
+        "number": 34603263,
+        "path": "/opt/librdkafka-2.16.0/lib/librdkafka.so.1",
+        "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f",
+        "observed": "(\"2.16.0\",34603263)"
+      },
+      "broker_version": "Apache Kafka 4.4.0",
+      "broker_topology": "Three owned combined broker/controllers, IDs 1/2/3 on loopback 41092/42092/43092; broker default min ISR 1 for single-replica inherited fixtures; failover topic replication 3 and min ISR 2"
+    },
+    "results": {
+      "components_built": [
+        "library",
+        "examples",
+        "unit suite",
+        "integration suite"
+      ],
+      "unit": 78,
+      "broker_smoke": 14,
+      "counted_callback_teardown": 2,
+      "nonthreaded": 4,
+      "normal_smoke_tests": [
+        "rdkafka-hs-integration.callback-lifetime.async error callback releases after destroy with retained wrapper",
+        "rdkafka-hs-integration.callback-lifetime.sync error callback releases after destroy with retained wrapper",
+        "rdkafka-hs-integration.transaction-errors.transaction-error-leak-probe releases 300 immediate native errors",
+        "rdkafka-hs-integration.public-contract.partition-list-ownership.async.native logical offsets decode independently without losing partition identity",
+        "rdkafka-hs-integration.public-contract.partition-list-ownership.sync.native logical offsets decode independently without losing partition identity",
+        "rdkafka-hs-integration.public-contract.messages.batch capacity 1 preserves complete ordered records across partial batches",
+        "rdkafka-hs-integration.public-contract.messages.batch capacity 2 preserves complete ordered records across partial batches",
+        "rdkafka-hs-integration.public-contract.messages.batch capacity 5 preserves complete ordered records across partial batches",
+        "rdkafka-hs-integration.public-contract.runtime-contract.RTS capability is observed by async construction",
+        "rdkafka-hs-integration.public-contract.runtime-contract.explicit async construction checks the runtime",
+        "rdkafka-hs-integration.public-contract.runtime-contract.sync subscription delivers an exact record",
+        "rdkafka-hs-integration.public-contract.runtime-contract.deprecated sync runner closes after an exact record",
+        "rdkafka-hs-integration.seek-partitions.async.single seek replays exact record",
+        "rdkafka-hs-integration.seek-partitions.sync.single seek replays exact record"
+      ],
+      "valgrind": {
+        "version": "3.22.0",
+        "invalid_access_control": "Two freed-configuration reads in native rd_kafka_conf_get and the Haskell/C bridge were detected.",
+        "quiescent_smoke": "Eight cases passed; zero errors and zero definite, indirect or possible leaks; no suppressions.",
+        "header_candidate": "Exact NoCompression header roundtrip passes with zero errors and no definite/indirect/possible leaks.",
+        "header_mutation": "Omitting native rd_kafka_headers_destroy cleanup is detected under actual produceva: 48 bytes definitely and 210 bytes indirectly lost; exit 99.",
+        "limit": "Reachable RTS/library allocations are retained separately. Complete ownership scenarios, final quiescent runner and current candidate replay remain required."
+      }
+    }
+  },
+  "previous_native_checkpoint": {
+    "fingerprint": "4a4d041b2c440f9ee9e53ae0291b07835afa4cbb4677ed722447d57e6d906606",
+    "tests": 279,
+    "seconds": 234.81,
+    "valgrind_exit": 0,
+    "invalid_accesses": 0,
+    "definite_and_indirect_leaks": 0,
+    "limitations": "Two child logs retain 304-byte possible TLS allocations exclusively in GHC createAttachedOSThread/createOSThread/startWorkerTask stacks. Tagged GHC Task.c and posix/OSThreads.c show these are detached RTS workers. No project stack is suppressed. Full allocation-stack inspection remains in progress: conservative stale words in GHC heap can make deliberate native header leaks appear still reachable, so a zero-error summary alone is not sufficient.",
+    "control_replay": "Actual invalid-access control exits 99; stock header path has no retained rd_kafka_headers_new stack. The same mutant library initially exits 0, then detailed all-leak-kind replay exposes header retention and exits 99. Preserve both outcomes; use allocation stacks as the oracle.",
+    "artifact_directory": "dist-compatibility/expanded-source8"
+  },
+  "accepted_final_artifacts": {
+    "native-phase9.134763.valgrind": {
+      "path": "dist-compatibility/expanded-source9/native-phase9.134763.valgrind",
+      "sha256": "bf5f0a40255d062fd2f9e59e66d1267748bdbcaea39cf26b3298e97ab9fdcca3"
+    },
+    "phase9-package-check.log": {
+      "path": "dist-compatibility/expanded-source9/phase9-package-check.log",
+      "sha256": "a19b4064f1acadadad1e1f24beae3785b778a6c5baabde7f333e4dacb7191d30"
+    },
+    "v216-sasl-cyrus.c": {
+      "path": "dist-compatibility/expanded-source9/v216-sasl-cyrus.c",
+      "sha256": "0a1781f34535d192b404464afaa9466a39d2246b93e3593fc2161c5d166b6153"
+    },
+    "native-phase9-binary": {
+      "path": "dist-compatibility/expanded-source9/native-phase9-binary",
+      "sha256": "4da060580b375bfe31242b6b1e421801d54ddda9b7ffd332cc867e785ae7bb97"
+    },
+    "native-header-mutant9.log": {
+      "path": "dist-compatibility/expanded-source9/native-header-mutant9.log",
+      "sha256": "f32c3efd2f92b7c1c06ff6f33e9afb5c82be7b27d39e01d3fabbfbe76503e9c3"
+    },
+    "current-source.json": {
+      "path": "dist-compatibility/expanded-source9/current-source.json",
+      "sha256": "c4bf1202261f924377da4e1d6f259b3966aaef85949c6fb648ff58133188c72d"
+    },
+    "native-phase9.134628.valgrind": {
+      "path": "dist-compatibility/expanded-source9/native-phase9.134628.valgrind",
+      "sha256": "58c94ed0ad90cf7d3cd7630ca457ca299a973124a16f0e3869a86ef3742748b4"
+    },
+    "nonthreaded-build9.log": {
+      "path": "dist-compatibility/expanded-source9/nonthreaded-build9.log",
+      "sha256": "367db75d4bd65ea9f4e08a4836567f2f60183e3fa7c14595da5c79e212b3a16f"
+    },
+    "authentication-final9-tests.txt": {
+      "path": "dist-compatibility/expanded-source9/authentication-final9-tests.txt",
+      "sha256": "e011f6a1ed4544904bc4117ebdd30e85339b33c096b3d0619bbff506f5e2e893"
+    },
+    "ghc9124-Marshal-Array.hs": {
+      "path": "dist-compatibility/expanded-source9/ghc9124-Marshal-Array.hs",
+      "sha256": "0a0cb7e36925c5332e5fb4dda03ad11f10b1ffa0e96d71e56de657d32f52216d"
+    },
+    "qualification9-progress.log": {
+      "path": "dist-compatibility/expanded-source9/qualification9-progress.log",
+      "sha256": "725e4e551f9a122dd698b2817f5594c4b5e4fcf7846f0f1e7ae1366710356b84"
+    },
+    "native-phase9.135889.valgrind": {
+      "path": "dist-compatibility/expanded-source9/native-phase9.135889.valgrind",
+      "sha256": "daf316120d8eb7905496bed39920d6110e920435b3cc69999b8b6e76d1c48af5"
+    },
+    "darwin-asan-version.log": {
+      "path": "dist-compatibility/expanded-source9/darwin-asan-version.log",
+      "sha256": "250f23c2a7b1b6ea32218ce5efdac3d157db099342c29485f788af715e16c473"
+    },
+    "native-phase9.134698.valgrind": {
+      "path": "dist-compatibility/expanded-source9/native-phase9.134698.valgrind",
+      "sha256": "4376d4163b9981a461f8ca04a022c15b675546f63e4a0dc9b7ca840885dd52b8"
+    },
+    "v215-subscription.c": {
+      "path": "dist-compatibility/expanded-source9/v215-subscription.c",
+      "sha256": "8a9134c343f9d7bf40eaaf00d19caa6ca505afa98bdf739763a4f7ba2b4c7f68"
+    },
+    "darwin-native-receipt.json": {
+      "path": "dist-compatibility/expanded-source9/darwin-native-receipt.json",
+      "sha256": "ab74ca68a62aa0a601d7d8f6782807c46fe5437bc102430b85ea79360bbb0b83"
+    },
+    "ghc914-IOManager.c": {
+      "path": "dist-compatibility/expanded-source9/ghc914-IOManager.c",
+      "sha256": "75b19a43809b3155ba6265c6c4bc73fab86ddfed4d17312ce5422fe4227714dc"
+    },
+    "darwin-asan-candidate.log": {
+      "path": "dist-compatibility/expanded-source9/darwin-asan-candidate.log",
+      "sha256": "bed5ff95177992d5ec812468fa79432c938c50d61928bb88344f2a951a4b8d36"
+    },
+    "native-phase9.134648.valgrind": {
+      "path": "dist-compatibility/expanded-source9/native-phase9.134648.valgrind",
+      "sha256": "b9ce9b6934221126ec8ea00174f960fe2b061b22a0c9519b46ac6217eafe001d"
+    },
+    "root-functional-files.json": {
+      "path": "dist-compatibility/expanded-source9/root-functional-files.json",
+      "sha256": "69506c90cfc124f3a175a664873f5d8b49aff62a7426265c56c3dd64fcc84c21"
+    },
+    "native-phase9.134587.valgrind": {
+      "path": "dist-compatibility/expanded-source9/native-phase9.134587.valgrind",
+      "sha256": "77e4a2a6e9d04ee4f22f8649cf8c47ae328027669411eb277e1c3b697efca613"
+    },
+    "phase9-version.log": {
+      "path": "dist-compatibility/expanded-source9/phase9-version.log",
+      "sha256": "6ec9b644a82e1dd0a2ec1c57250b4e2d3043deb9a608d8384f7ec30026876a93"
+    },
+    "ghc914-rts.supp": {
+      "path": "dist-compatibility/expanded-source9/ghc914-rts.supp",
+      "sha256": "c9b04b1b79da557d62a4183c4108a636646feadb4f025ff4439ae026121e48f4"
+    },
+    "coverage-strict.log": {
+      "path": "dist-compatibility/expanded-source9/coverage-strict.log",
+      "sha256": "542cc685cf514e26aec1535c91dba78ce90b78baacf3eebe98e98afc47a43222"
+    },
+    "phase9-unit.log": {
+      "path": "dist-compatibility/expanded-source9/phase9-unit.log",
+      "sha256": "1e9125e7cda4a5a18944f368fde934dc8a4b1900d981189931e1fa0632fe7f09"
+    },
+    "native-phase9-tests.txt": {
+      "path": "dist-compatibility/expanded-source9/native-phase9-tests.txt",
+      "sha256": "b831efa655febe0285f836ab1723191edd5adf33c462cd4974a0244c2ef75648"
+    },
+    "ghc9124-Storable.hs": {
+      "path": "dist-compatibility/expanded-source9/ghc9124-Storable.hs",
+      "sha256": "dda27f3c55cda6fbce4d44c127b6b26f5f18aa1e8b7ade6510e51cd4eec9e9cd"
+    },
+    "native-phase9.134670.valgrind": {
+      "path": "dist-compatibility/expanded-source9/native-phase9.134670.valgrind",
+      "sha256": "d3257f8515d736c3d4c2946db63b91c82a1c7a32cb3e58dc820c84c4609d325e"
+    },
+    "tuple9-environment.json": {
+      "path": "dist-compatibility/expanded-source9/tuple9-environment.json",
+      "sha256": "bbcb28035890918e115956be97a6cca328d0d6584f751b18c79bd9890d894065"
+    },
+    "ghc914-Task.c": {
+      "path": "dist-compatibility/expanded-source9/ghc914-Task.c",
+      "sha256": "f911aeccd0076d6091567a1842e9dbe3733f5a9e134b107c8f4e1c833745b907"
+    },
+    "coverage-allow-open.log": {
+      "path": "dist-compatibility/expanded-source9/coverage-allow-open.log",
+      "sha256": "6aaeb4a62ef5152f0f1adf20bb654b54b8fe12f057b757150972ebe61992fb7a"
+    },
+    "nonthreaded-runtime9.log": {
+      "path": "dist-compatibility/expanded-source9/nonthreaded-runtime9.log",
+      "sha256": "64f2de222b1848528141d2f18cf942adeedf21ade725229e19805a236d33f516"
+    },
+    "darwin-native-candidate": {
+      "path": "dist-compatibility/expanded-source9/darwin-native-candidate",
+      "sha256": "b927f6f6ccda06a50269df2156f524108c7d735995aad643e1cc61d9f3ae7d5f"
+    },
+    "v216-subscription.c": {
+      "path": "dist-compatibility/expanded-source9/v216-subscription.c",
+      "sha256": "8a9134c343f9d7bf40eaaf00d19caa6ca505afa98bdf739763a4f7ba2b4c7f68"
+    },
+    "native-phase9.135909.valgrind": {
+      "path": "dist-compatibility/expanded-source9/native-phase9.135909.valgrind",
+      "sha256": "7553908191c3cae5343f631ddef08d0d4f679c5a536e6815711cf3a5513b067e"
+    },
+    "native-header-stock9.log": {
+      "path": "dist-compatibility/expanded-source9/native-header-stock9.log",
+      "sha256": "64006cdb72c4dbb7654549faedba32d9e4291dc888218bcae308b537339aa2a5"
+    },
+    "primary-measured9-with-contexts.json": {
+      "path": "dist-compatibility/expanded-source9/primary-measured9-with-contexts.json",
+      "sha256": "9a98d410cbeb3ef8ce0e3d99f39d989dbf145ee434db9aedf7aa771c52922ffe"
+    },
+    "phase9-build.log": {
+      "path": "dist-compatibility/expanded-source9/phase9-build.log",
+      "sha256": "15848881c353039514fedb23424160586241f4cc00332ac11283b414d901675d"
+    },
+    "darwin-version-candidate": {
+      "path": "dist-compatibility/expanded-source9/darwin-version-candidate",
+      "sha256": "b3285ab47834bea5f592ba3bcf973b6433d5294c9d6a259c4e31370ead063f8f"
+    },
+    "native-phase9.134810.valgrind": {
+      "path": "dist-compatibility/expanded-source9/native-phase9.134810.valgrind",
+      "sha256": "50aabcae28231c2458a37b48e81951720c97f2d6482824790cfc6612ba02ae5b"
+    },
+    "native-phase9.134743.valgrind": {
+      "path": "dist-compatibility/expanded-source9/native-phase9.134743.valgrind",
+      "sha256": "d564ffaa8319d5e295bc1b583d08b8b615bee9e02682b16199df8d344279ca92"
+    },
+    "phase9-diagnostic-identity.log": {
+      "path": "dist-compatibility/expanded-source9/phase9-diagnostic-identity.log",
+      "sha256": "b5e947e38cfa999d968be7abd53685be88beb01ac33c6191db9c34ec24554a6d"
+    },
+    "native-header-stock9.valgrind": {
+      "path": "dist-compatibility/expanded-source9/native-header-stock9.valgrind",
+      "sha256": "b30e9245641fa29f53468b1b491ad4c62436ce4502a9ad9a6579ab54b78208c6"
+    },
+    "phase9-loaded.log": {
+      "path": "dist-compatibility/expanded-source9/phase9-loaded.log",
+      "sha256": "0ea352a045eddd425369467d19eef2c60d2ca235538e1335b9557897a003d120"
+    },
+    "primary-mapped9.log": {
+      "path": "dist-compatibility/expanded-source9/primary-mapped9.log",
+      "sha256": "563e4fcf86cd2047cea629df6837a502e4795dca676f96671655b9758eacf6c8"
+    },
+    "native-phase9.log": {
+      "path": "dist-compatibility/expanded-source9/native-phase9.log",
+      "sha256": "951b4b7b5d1b30800ea4699fe604aaf4a9e04a5a290570ff02afc1283569faf3"
+    },
+    "primary-measured9.json": {
+      "path": "dist-compatibility/expanded-source9/primary-measured9.json",
+      "sha256": "34c5f6a7adfebf78d56084fd34bc8ea50cc4ceb5dbba82e067574ab10f7d58e3"
+    },
+    "qualification9-results.json": {
+      "path": "dist-compatibility/expanded-source9/qualification9-results.json",
+      "sha256": "e0915ee5d4e748697d3ddab61599eea0ff74ea3db67aa1ae5c4e2b747491a7d1"
+    },
+    "configuration.json": {
+      "path": "dist-compatibility/expanded-source9/configuration.json",
+      "sha256": "c6c0771e7da58c35d40170db3ec18cdd2439997e223ef4c088ac3f4e793707f9"
+    },
+    "native-phase9.137396.valgrind": {
+      "path": "dist-compatibility/expanded-source9/native-phase9.137396.valgrind",
+      "sha256": "e527e901e42638741bd6fda76dc782ef6bf1a7678b08659248721418293d64fa"
+    },
+    "native-header-mutant9.valgrind": {
+      "path": "dist-compatibility/expanded-source9/native-header-mutant9.valgrind",
+      "sha256": "8501cc160b066a23f74d0c79ac66f7c3a61407b5db4c61fa62dbb85bc5098337"
+    },
+    "apache-policy9.log": {
+      "path": "dist-compatibility/expanded-source9/apache-policy9.log",
+      "sha256": "619f1dacc2a5c8f5e4fa510ce8d50ef9490183a6e2a9078da8c6a023eaecec7c"
+    },
+    "primary-normal9.log": {
+      "path": "dist-compatibility/expanded-source9/primary-normal9.log",
+      "sha256": "0cc78933babadbb7d223879eb76ddd60513010cfab5cd282a0e4ee974a52faeb"
+    },
+    "candidate.tar.gz": {
+      "path": "dist-compatibility/expanded-source9/candidate.tar.gz",
+      "sha256": "a70e4839d24c5e5179ff9a8be48643951e185d604cd8ba3401587730279f3b22"
+    },
+    "ghc914-OSThreads.c": {
+      "path": "dist-compatibility/expanded-source9/ghc914-OSThreads.c",
+      "sha256": "762b8e71d1e99327338a4614efa1d2a0283ae6bf9dcdeecb96a9d81cae9986a3"
+    },
+    "phase9-functional-files.json": {
+      "path": "dist-compatibility/expanded-source9/phase9-functional-files.json",
+      "sha256": "d0e5d59aa49833ecd1305410c839cbebdbbb418679cecc6de0c2548b142dca4b"
+    },
+    "broker-final9.log": {
+      "path": "dist-compatibility/expanded-source9/broker-final9.log",
+      "sha256": "f9236628ae671ffa549c4c9ce17ba8ba1acaf5f69e066acfe4ebfe94bd303681"
+    },
+    "rdkafka-mp3-historical-native-trace9.log": {
+      "path": "dist-compatibility/expanded-source9/rdkafka-mp3-historical-native-trace9.log",
+      "sha256": "5c787df34cea6516047d39e72a4a327864bf83ec560fef3f8f829b0c51a08979"
+    },
+    "context-registration.log": {
+      "path": "dist-compatibility/expanded-source9/context-registration.log",
+      "sha256": "49b53b3006255e8436a31adb5efbbd3eaa2a41e15fbe9cd6cb382bfe896767dd"
+    },
+    "native-phase9.134725.valgrind": {
+      "path": "dist-compatibility/expanded-source9/native-phase9.134725.valgrind",
+      "sha256": "29662c22c1f41b856536061098d484b3b5a8b3328d06229ec2844c998fdca278"
+    },
+    "fixture-cleanup.json": {
+      "path": "dist-compatibility/expanded-source9/fixture-cleanup.json",
+      "sha256": "22a1434a32c0b23c77e8cb0f788c46ca45dc4129ff55add57033437db77be5aa"
+    },
+    "native-diagnostic-exports.diff": {
+      "path": "dist-compatibility/expanded-source9/native-diagnostic-exports.diff",
+      "sha256": "ff6312086bba73e0e6891060f48f02540b38174dbcbc26c080b12b8655bceafb"
+    },
+    "authentication-final9.log": {
+      "path": "dist-compatibility/expanded-source9/authentication-final9.log",
+      "sha256": "a9cc23df591ca6608c613090bf42ae57ece89c1dc3e3ede7bbc0dee1cbcd2457"
+    },
+    "native-phase9.137374.valgrind": {
+      "path": "dist-compatibility/expanded-source9/native-phase9.137374.valgrind",
+      "sha256": "2914657723d38601197d8565fe5e9464898efad60b82b004bf8a8afb18ccca05"
+    },
+    "current-environment.json": {
+      "path": "dist-compatibility/expanded-source9/current-environment.json",
+      "sha256": "bef1715288957bc95f9acbfdb84ba444209ecbb886070a71a980129741ceda29"
+    },
+    "native-phase9.134783.valgrind": {
+      "path": "dist-compatibility/expanded-source9/native-phase9.134783.valgrind",
+      "sha256": "f5985fed7d3760f65ed02e685feaf667e55c702e68eb66fd28ac49f1088dc89e"
+    },
+    "native-invalid9.valgrind": {
+      "path": "dist-compatibility/expanded-source9/native-invalid9.valgrind",
+      "sha256": "c5897519cc5a1b81b9bb0abd329746f2d1e80dd3d844b43da2344def8f8f10cb"
+    },
+    "source-comparison.json": {
+      "path": "dist-compatibility/expanded-source9/source-comparison.json",
+      "sha256": "635403f708e286d4461d40a3d86842d4c670ac70862a9688e2b5fbd72801ace5"
+    },
+    "diagnostic-export-symbols.txt": {
+      "path": "dist-compatibility/expanded-source9/diagnostic-export-symbols.txt",
+      "sha256": "b959a9d7f9aab8245708a13d9d605c7e32b01930ecc91372f5d848094830f873"
+    },
+    "nonthreaded-info9.log": {
+      "path": "dist-compatibility/expanded-source9/nonthreaded-info9.log",
+      "sha256": "4624cb69ac272748f36b86dca2969623bb2ce1a54d2f66dbbf5226ff74f36e3d"
+    },
+    "native-diagnostic9.so.1": {
+      "path": "dist-compatibility/expanded-source9/native-diagnostic9.so.1",
+      "sha256": "c6fdc93c4cdefaeeafd8f3fc9bb0ce49cc63746d57cddbaab2839a04c23b309c"
+    },
+    "native-phase9.134604.valgrind": {
+      "path": "dist-compatibility/expanded-source9/native-phase9.134604.valgrind",
+      "sha256": "a334a37b296703dc8e61dd86ef80614a453180df72433da2ef3e4ab96cf65795"
+    },
+    "broker-final9-tests.txt": {
+      "path": "dist-compatibility/expanded-source9/broker-final9-tests.txt",
+      "sha256": "1b2270f302280d667a9a755787ee368fce03adc8f849ef070c54f02d99919b84"
+    },
+    "rdkafka-mp3-historical-mapped9.log": {
+      "path": "dist-compatibility/expanded-source9/rdkafka-mp3-historical-mapped9.log",
+      "sha256": "401b8f756dc647a81b00f74b182ea83b9be6eeb526efcff7557caa8cd3fa73cf"
+    },
+    "native-invalid9.log": {
+      "path": "dist-compatibility/expanded-source9/native-invalid9.log",
+      "sha256": "223d146ce867f09c836471f5067d7957c50c4426e4f941f340b46f41189839ab"
+    },
+    "darwin-asan-control.log": {
+      "path": "dist-compatibility/expanded-source9/darwin-asan-control.log",
+      "sha256": "7d3f29e4f75b0cb43aff9c863c81300e2851c4f2b8c958b4bf8c9113b8fb00ee"
+    },
+    "candidate-receipt.json": {
+      "path": "dist-compatibility/expanded-source9/candidate-receipt.json",
+      "sha256": "5b490ca3e42d563fec2e7b0ea8735fc40e8a2c8754964a449532e3344402bd1f"
+    },
+    "darwin-asan-results.json": {
+      "path": "dist-compatibility/expanded-source9/darwin-asan-results.json",
+      "sha256": "b68f72dc78eefb93b70287c25d05ce35c974cc1044a7fe9cab9701c726394098"
+    }
+  },
+  "accepted_diagnostic_native": {
+    "path": "/opt/librdkafka-diagnostics/lib/librdkafka.so.1",
+    "sha256": "c6fdc93c4cdefaeeafd8f3fc9bb0ce49cc63746d57cddbaab2839a04c23b309c",
+    "source": "Same tagged 2.16.0 C bodies, linker-map change exposes exactly three private error-flag fixture setters; no opaque native layout is copied",
+    "exports_diff": {
+      "path": "dist-compatibility/expanded-source9/native-diagnostic-exports.diff",
+      "sha256": "ff6312086bba73e0e6891060f48f02540b38174dbcbc26c080b12b8655bceafb"
+    },
+    "loaded_identity": {
+      "path": "dist-compatibility/expanded-source9/phase9-diagnostic-identity.log",
+      "sha256": "b5e947e38cfa999d968be7abd53685be88beb01ac33c6191db9c34ec24554a6d"
+    }
+  },
+  "darwin_complement": {
+    "fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c",
+    "tests": 279,
+    "seconds": 90.38,
+    "native_version": "2.15.0",
+    "native_revision": "9a94e11452cdeb0a844db44ee5dd01ccbe17d3ab",
+    "native_binary_sha256": "2fa8b4e5d5e623550305022c6dc881674ccf0c0fb43183e532c27d9faaa6e51f",
+    "scope": "Matched Apple clang AddressSanitizer native runtime; deliberate invalid access aborts and candidate has no findings. Leak detection disabled: no Darwin leak-freedom claim.",
+    "results": [
+      {
+        "label": "version",
+        "command": [
+          "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-compatibility/expanded-source9/darwin-version-candidate",
+          "--native-version"
+        ],
+        "exit": 0
+      },
+      {
+        "label": "control",
+        "command": [
+          "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-compatibility/expanded-source9/darwin-native-candidate",
+          "--callback-lifetime-native-control"
+        ],
+        "exit": -6
+      },
+      {
+        "label": "candidate",
+        "command": [
+          "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-compatibility/expanded-source9/darwin-native-candidate",
+          "-p",
+          "/producer-regressions/ || /callback-lifetime/ || (/public-contract/ && (/messages/ || /partition-list-ownership/ || /metadata-contract/ || /diagnostics/)) || /transaction-errors/ || /lifecycle/",
+          "+RTS",
+          "-N2",
+          "-RTS"
+        ],
+        "exit": 0
+      }
+    ],
+    "artifacts": {
+      "darwin-asan-control.log": {
+        "path": "dist-compatibility/expanded-source9/darwin-asan-control.log",
+        "sha256": "7d3f29e4f75b0cb43aff9c863c81300e2851c4f2b8c958b4bf8c9113b8fb00ee"
+      },
+      "darwin-asan-candidate.log": {
+        "path": "dist-compatibility/expanded-source9/darwin-asan-candidate.log",
+        "sha256": "bed5ff95177992d5ec812468fa79432c938c50d61928bb88344f2a951a4b8d36"
+      },
+      "darwin-native-receipt.json": {
+        "path": "dist-compatibility/expanded-source9/darwin-native-receipt.json",
+        "sha256": "ab74ca68a62aa0a601d7d8f6782807c46fe5437bc102430b85ea79360bbb0b83"
       }
     }
   }

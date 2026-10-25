@@ -6,7 +6,7 @@ import hashlib
 import json
 import sys
 from pathlib import Path
-from coverage_common import ROOT, compiler_exports, fingerprint
+from coverage_common import ROOT, compiler_exports, fingerprint, qualification_context_errors
 
 # Original repair owners remain valid; the expanded qualification plans own
 # transferred obligations. EP-20 consumes evidence rather than producing it.
@@ -94,6 +94,17 @@ def validate(matrix, exports, evidence, allow_open):
                 errors.append("runtime supplement does not cover every registered runtime contract")
             if supplement.get("tix") not in artifacts:
                 errors.append("missing runtime coverage artifact")
+        contexts = evidence.get("qualification_contexts", [])
+        modes = set()
+        for context in contexts:
+            errors.extend(qualification_context_errors(context, fingerprint()))
+            if context.get("mode") in modes:
+                errors.append("duplicate qualification context")
+            modes.add(context.get("mode"))
+            if not set(context.get("tests", [])) <= registered:
+                errors.append("qualification context tests are not registered in evidence")
+            if any(artifacts.get(name) != checksum for name, checksum in context.get("artifacts", {}).items()):
+                errors.append("qualification artifacts are absent from aggregate evidence")
         exceptions = matrix.get("miss_classifications", {})
         for miss in evidence.get("misses", []):
             if miss.get("owner") not in OWNERS:

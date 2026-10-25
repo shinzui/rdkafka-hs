@@ -15,6 +15,7 @@ import Kafka.ProducerTestSupport (nativeProducerProperty, withProducerTracking)
 import Kafka.TestEnv
 import System.Directory (getTemporaryDirectory, removeFile)
 import System.IO (Handle, SeekMode (AbsoluteSeek), hClose, hFlush, hIsClosed, hPutStr, hSeek, hTell, openBinaryTempFile)
+import System.IO.Error (ioeGetLocation)
 import System.Timeout (timeout)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (assertBool, testCase, (@?=))
@@ -50,7 +51,7 @@ tests env =
           withOutput $ \_ handle -> do
             result <- try @IOException (hPrintSupportedKafkaConf handle)
             case result of
-              Left _ -> pure ()
+              Left exception -> ioeGetLocation exception @?= "fdopen"
               Right _ -> throwIO (userError "injected fdopen failure was suppressed")
             hIsClosed handle >>= (@?= False)
             mapM diagnosticStat [2, 3, 4] >>= (@?= [0, 0, 0])
@@ -61,7 +62,7 @@ tests env =
           withOutput $ \_ handle -> do
             result <- try @IOException (hPrintSupportedKafkaConf handle)
             case result of
-              Left _ -> pure ()
+              Left exception -> ioeGetLocation exception @?= "fclose"
               Right _ -> throwIO (userError "injected fclose failure was suppressed")
             hIsClosed handle >>= (@?= False)
             mapM diagnosticStat [2, 3, 4] >>= (@?= [1, 1, 0])

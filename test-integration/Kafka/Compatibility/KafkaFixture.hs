@@ -14,12 +14,13 @@ module Kafka.Compatibility.KafkaFixture
     startBroker,
     awaitBrokers,
     fixtureAllStopped,
+    withBrokersStopped,
   )
 where
 
 import Control.Concurrent (threadDelay)
 import Control.Concurrent.MVar
-import Control.Exception (SomeException, bracket, bracketOnError, mask, mask_, onException, throwIO, try)
+import Control.Exception (SomeException, bracket, bracketOnError, bracket_, mask, mask_, onException, throwIO, try)
 import Control.Monad (forM, forM_, unless, void)
 import Data.IORef
 import Data.List (intercalate, sort)
@@ -244,3 +245,8 @@ fixtureAllStopped :: KafkaFixture -> IO Bool
 fixtureAllStopped fixture = and <$> mapM stopped (fixtureNodes fixture)
   where
     stopped (Node _ _ _ state) = readMVar state >>= maybe (pure True) (fmap (/= Nothing) . getProcessExitCode)
+
+-- Install restoration for each successfully stopped process before stopping
+-- the next. Start all controllers before the caller waits for quorum health.
+withBrokersStopped :: KafkaFixture -> IO a -> IO a
+withBrokersStopped fixture action = foldr (\node next -> bracket_ (stopNode node) (startNode fixture node) next) action (fixtureNodes fixture)

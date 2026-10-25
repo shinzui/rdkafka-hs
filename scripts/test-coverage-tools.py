@@ -81,6 +81,25 @@ class GateControls(unittest.TestCase):
     def errors(self, allow=True):
         return checker.validate(self.matrix, self.exports, self.evidence, allow)
 
+    def test_qualification_context_requires_exact_current_registration_and_complete_artifacts(self):
+        with tempfile.TemporaryDirectory(prefix="rdkafka-context-control-") as directory:
+            root = Path(directory)
+            listing, log = root / "listing.txt", root / "run.log"
+            listing.write_text("broker.case\n")
+            log.write_text("All 1 tests passed (0.1s)\n")
+            context = dict(kind="qualification-context", mode="--broker-qualification", fingerprint="candidate", tests=["broker.case"], passed=1,
+                           command=["binary", "--broker-qualification"], environment={"broker": "isolated"}, source={"archive": "controlled"},
+                           listing=str(listing), log=str(log), artifacts={str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in (listing, log)})
+            self.assertEqual(common.qualification_context_errors(context, "candidate", ["broker.case"]), [])
+            self.assertIn("stale qualification context", common.qualification_context_errors(context, "new-candidate"))
+            self.assertIn("qualification context differs from current registered tests", common.qualification_context_errors(context, "candidate", ["broker.case", "missing.case"]))
+            for broken in ("All 0 tests passed\n", "broker.case: FAIL\nAll 1 tests passed\n", "interrupted\n"):
+                log.write_text(broken)
+                context["artifacts"][str(log)] = hashlib.sha256(log.read_bytes()).hexdigest()
+                self.assertIn("qualification log does not prove every test passed", common.qualification_context_errors(context, "candidate"))
+            log.write_text("All 1 tests passed\n")
+            self.assertTrue(any("modified qualification artifact" in e for e in common.qualification_context_errors(context, "candidate")))
+
     def test_owned_open_inventory_is_valid_for_development(self):
         self.assertEqual(self.errors(), [])
 

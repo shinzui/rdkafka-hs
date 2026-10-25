@@ -27,11 +27,11 @@ Users gain execution evidence for Linux and a newer compatible released toolchai
 
 ## Progress
 
-- [ ] M1: Define source-bound tuple evidence and pass an actual Linux build plus representative broker/runtime smoke.
-- [ ] M2: Demonstrate effective native leak and invalid-access controls, then pass candidate lifetime scenarios on Linux and complementary Darwin diagnostics.
-- [ ] M3: Execute a registry/tag-verified newer released compiler/native tuple and publish accurate compatibility results for EP-20.
+- [x] M1: Define source-bound tuple evidence and pass an actual Linux build plus representative broker/runtime smoke.
+- [x] M2: Demonstrate effective native leak and invalid-access controls, then pass candidate lifetime scenarios on Linux and complementary Darwin diagnostics.
+- [x] M3: Execute a registry/tag-verified newer released compiler/native tuple and publish accurate compatibility results for EP-20.
 
-In Progress (2026-10-24). Apple Container is available for a run-owned Linux environment. Authoritative release discovery identifies GHC 9.14.1 and librdkafka 2.16.0 as newer stable candidates; The initial package build and 78 unit cases pass after correcting the include directory and forcing preprocessing after the failed header lookup. Sixteen explicit broker/lifetime smoke cases and four actual nonthreaded cases pass on the captured initial archive. Native Valgrind invalid-access control is effective; heap quiescence and header cleanup controls are being prototyped before accepting M2. No whole-child completion is claimed.
+Complete (2026-10-25). The captured functional candidate `2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c` passes an actual Ubuntu 24.04.5/aarch64, GHC 9.14.1/Cabal 3.16.1.0, librdkafka 2.16.0 and Apache Kafka 4.4.0 clean-package build (library, examples, both suites), 78 unit cases, four actual nonthreaded runtime cases and the exact Apache topic-policy rejection. The 279-case Valgrind cohort passes in 232.63 seconds with zero invalid accesses or definite/indirect losses across parent and fourteen child reports. All retained native allocation stacks were inspected, including still-reachable allocations. Native invalid-access and deliberate header-cleanup-omission controls fail as intended; stock header cleanup passes without retained native header stacks. Complementary Darwin/native 2.15.0 ASan passes the same 279 named cases in 90.38 seconds with its invalid-access control detected. Exact source inventories, commands, loaded binaries, hashes, prior failures and limitations are in [Linux evidence](../testing/linux-tuple-evidence.json) and [the tuple matrix](../testing/compatibility-matrix.json). This completes the named tuple requirements; EP-16 and the final EP-20 gate remain open.
 
 ## Surprises & Discoveries
 
@@ -39,13 +39,17 @@ Existing Darwin native AddressSanitizer runs use librdkafka 2.15.0 and `detect_l
 
 The expanded cohort identified two test-fixture prerequisites: stock Linux hides three private native error-flag setters, and the metadata control assumed a one-broker cluster. The diagnostic build exports exactly those setters, an explicit Haskell preflight rejects their absence, and the metadata control selects one broker from its actual native allocation. A minimal GHC 9.14.1 executable reproduces a 20-byte CapIOManager initialization allocation from the child processes. Exact upstream source and a ten-frame RTS-only suppression are preserved; no project stack or positive control is suppressed. The owned VM became unresponsive during concurrent cohorts; interrupted runs remain failed/unaccepted, and subsequent cohorts run sequentially. The frozen clean-archive 268-case cohort completed with two failures (Apache abort-recovery delivery and pending cancellation at the final transaction decoder stage) plus one unsuppressed 31-byte C-string allocation attributed to GHC newCStringLen0. All raw parent/child logs are retained. This is not accepted M2 evidence; per-group diagnostic isolation and source-level diagnosis are in progress. Temporary malloc tracing identifies the 31-byte allocation as RDKAFKA_TEST_NATIVE_LIFETIME=1, created by the convenience flag's setEnv call. GHC 9.14.1 source explicitly retains putenv storage. Heap runs will provide that environment externally and omit the convenience flag; no project-stack suppression is added.
 
+The next clean-archive 279-case cohort passes all behavioral assertions but Valgrind rejects two retained native topics (2176 direct plus 427 indirect bytes). The new originless/fatal message fixture changed the documented public rkt field and failed to restore it before real destruction. Restoring original rkt/err closes that fixture ownership defect; the failed artifact remains unaccepted and source-bound replay is required.
+
 ## Decision Log
 
 2026-10-24: The user explicitly deferred exhaustive coverage and broader compatibility from EP-14/15, requested a comprehensive follow-up, and required preservation of work already started. Retain existing implementations and evidence; start this child only after its baseline/dependency conditions are met.
 
 ## Outcomes & Retrospective
 
-Planning only. Record actual results and remaining limits during implementation. Before completion, distill durable applicability, environment and ownership decisions into the profiled ADR bundle.
+Actual execution on the released newer Linux tuple complements the retained primary Darwin tuple without changing dependency bounds or runtime pins. The accepted clean archive omits ten development inputs; its omitted `cabal.project` contains only `packages: .`, equivalent to Cabal's implicit single-package selection. All included functional files match the captured root; archive/execution fingerprints are recorded separately.
+
+The diagnostics exposed and repaired a test fixture's native topic leak, and exposed a weakness in an exit-code-only header-leak oracle: conservative GHC roots can classify retained native headers as reachable. Acceptance therefore inspects all leak kinds and allocation stacks as well as detected deliberate faults. Remaining native-containing stacks are solely intentional process-global Cyrus SASL initialization (tagged upstream source explicitly omits shared global teardown). Two child reports retain 304-byte possible TLS allocations solely in detached GHC worker frames; tagged RTS sources explain their ownership, while the separate pure worker baseline did not reproduce that timing-dependent observation. Only the independently reproduced 20-byte CapIOManager startup allocation has an exact RTS-only suppression. No project allocation is suppressed, and no whole-process or Darwin leak-freedom claim is made. ADR-10, ADR-15 and ADR-27 retain the applicable evidence and ownership boundaries; these execution-specific findings remain here and in the evidence manifest.
 
 ## Context and Orientation
 

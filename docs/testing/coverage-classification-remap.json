@@ -323,6 +323,15 @@
           "sha256": "cce48116f5c80ea4c7d3c2af3bc3723e3e19dfd14c3c4a362a166c18201f93fc"
         }
       }
+    },
+    {
+      "from_revision": "bfa4f2e",
+      "method": "Renew only exact unchanged source lines in SequenceMatcher equal blocks; arbitrary rebalance error branch changed and has no inherited exemption.",
+      "renewed_source_keys": [
+        "Kafka.Consumer.Callbacks:100:ExpBox False"
+      ],
+      "moved": [],
+      "dropped": []
     }
   ]
 }

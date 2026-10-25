@@ -17,6 +17,8 @@ static rd_kafka_message_t *messages[8];
 static int live[8];
 static int32_t original_partition[8];
 static int64_t original_offset[8];
+static rd_kafka_topic_t *original_topic[8];
+static rd_kafka_resp_err_t original_error[8];
 
 #define REAL(name) __typeof__(&name) real = (__typeof__(&name))dlsym(RTLD_NEXT, #name); \
   if (!real) { fprintf(stderr, "message ownership: %s\n", dlerror()); abort(); }
@@ -48,6 +50,8 @@ void rdkafka_hs_test_messages_end(void) {
   for (int i = 0; i < count; ++i) if (live[i]) {
     messages[i]->partition = original_partition[i];
     messages[i]->offset = original_offset[i];
+    messages[i]->rkt = original_topic[i];
+    messages[i]->err = original_error[i];
     retained[remaining++] = messages[i];
   }
   enabled = 0; released = 1; count = 0;
@@ -71,6 +75,8 @@ static void acquired(rd_kafka_message_t *message) {
   if (count == 8 || !message) abort();
   original_partition[count] = message->partition;
   original_offset[count] = message->offset;
+  original_topic[count] = message->rkt;
+  original_error[count] = message->err;
   messages[count] = message; live[count++] = 1; stats[1]++;
 }
 static long long now_ms(void) {
@@ -119,13 +125,20 @@ ssize_t rd_kafka_consume_batch_queue(rd_kafka_queue_t *queue, int timeout,
 
 static rd_kafka_message_t *single(rd_kafka_message_t *message, int app, int queue) {
   pthread_mutex_lock(&lock);
-  int selected = (queue ? mode >= 10 && mode <= 12 : mode >= 13 && mode <= 19) || (mode >= 21 && mode <= 23);
+  int selected = (queue ? mode >= 10 && mode <= 12 : mode >= 13 && mode <= 19) || (mode >= 21 && mode <= 25);
   if (enabled && app && selected && message && message->err == RD_KAFKA_RESP_ERR_NO_ERROR) {
     acquired(message);
     /* Native error frames can lack a partition or offset independently.
      * Retain the real allocation and restore its fields before destruction. */
     if (mode == 21 || mode == 23) message->partition = RD_KAFKA_PARTITION_UA;
     if (mode == 21 || mode == 22) message->offset = RD_KAFKA_OFFSET_INVALID;
+    if (mode == 24 || mode == 25) {
+      /* Only documented public message fields change; restore them before
+       * native destruction, so the original allocation/ownership stays real. */
+      message->rkt = NULL; message->partition = RD_KAFKA_PARTITION_UA;
+      message->offset = RD_KAFKA_OFFSET_INVALID;
+      message->err = mode == 24 ? RD_KAFKA_RESP_ERR__BAD_MSG : RD_KAFKA_RESP_ERR__FATAL;
+    }
     if (mode == 10 || mode == 13) boundary();
   }
   pthread_mutex_unlock(&lock);
@@ -144,6 +157,8 @@ rd_kafka_message_t *rd_kafka_consume_queue(rd_kafka_queue_t *queue, int timeout)
 rd_kafka_resp_err_t rd_kafka_message_headers(const rd_kafka_message_t *message,
                                            rd_kafka_headers_t **headers) {
   REAL(rd_kafka_message_headers);
+  extern int rdkafka_hs_test_producer_header_failure(void);
+  if (rdkafka_hs_test_producer_header_failure()) { *headers = NULL; return RD_KAFKA_RESP_ERR__BAD_MSG; }
   pthread_mutex_lock(&lock);
   int index;
   for (index = 0; index < count && messages[index] != message; ++index) {}
@@ -189,6 +204,8 @@ void rd_kafka_message_destroy(rd_kafka_message_t *message) {
     else {
       message->partition = original_partition[i];
       message->offset = original_offset[i];
+      message->rkt = original_topic[i];
+      message->err = original_error[i];
       live[i] = 0; stats[2]++;
     }
     break;

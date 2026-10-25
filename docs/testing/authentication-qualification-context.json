@@ -1,0 +1,101 @@
+{
+  "kind": "qualification-context",
+  "mode": "--authentication-qualification",
+  "fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c",
+  "tests": [
+    "authentication-contract.verified TLS authenticated delivery and exact consume/commit in both modes",
+    "authentication-contract.authenticated identity without topic ACL receives exact produce denial",
+    "authentication-contract.invalid-password producer reports the exact connection failure and no delivery",
+    "authentication-contract.untrusted-CA producer reports the exact connection failure and no delivery",
+    "authentication-contract.hostname-mismatch producer reports the exact connection failure and no delivery",
+    "authentication-contract.invalid-password async consumer reports the exact connection failure",
+    "authentication-contract.invalid-password sync consumer reports the exact connection failure",
+    "authentication-contract.untrusted-CA async consumer reports the exact connection failure",
+    "authentication-contract.untrusted-CA sync consumer reports the exact connection failure",
+    "authentication-contract.hostname-mismatch async consumer reports the exact connection failure",
+    "authentication-contract.hostname-mismatch sync consumer reports the exact connection failure",
+    "authentication-contract.async exact topic/group/admin authorization denials",
+    "authentication-contract.sync exact topic/group/admin authorization denials",
+    "authentication-contract.producer credential replacement authenticates a new identity after observed reconnect and recovers from invalid replacement",
+    "authentication-contract.async consumer credential replacement authenticates after observed reconnect and recovers from invalid replacement",
+    "authentication-contract.sync consumer credential replacement authenticates after observed reconnect and recovers from invalid replacement",
+    "authentication-contract.interruption destroys owned secure processes, credentials, ACL state and private keys"
+  ],
+  "passed": 17,
+  "command": [
+    "/evidence/native-phase9-binary",
+    "--authentication-qualification"
+  ],
+  "environment": {
+    "os": "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.5 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo",
+    "kernel": "Linux 6.18.15",
+    "architecture": "aarch64",
+    "ghc": "9.14.1",
+    "cabal": "3.16.1.0",
+    "java": "openjdk 21.0.12.1 2026-08-18\nOpenJDK Runtime Environment (build 21.0.12.1+1-1-24.04.4-Ubuntu)\nOpenJDK 64-Bit Server VM (build 21.0.12.1+1-1-24.04.4-Ubuntu, mixed mode, sharing)",
+    "native_version": "2.16.0",
+    "broker_version": "Apache Kafka 4.4.0",
+    "loaded_native_identity": {
+      "observed": "(\"2.16.0\",34603263)",
+      "path": "/opt/librdkafka-2.16.0/lib/librdkafka.so.1",
+      "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f"
+    },
+    "broker_topology": "run-owned one-node combined broker/controller; ephemeral SASL_SSL listener; verified localhost CA; ephemeral PLAIN users and ACLs"
+  },
+  "source": {
+    "project": "mori://shinzui/rdkafka-hs",
+    "candidate_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c",
+    "execution_fingerprint": "74c7156e6fee8653bcec844001fd8f95d703bcf4d8e978a857a9f8f3560b6b0a",
+    "revision": "bfa4f2e plus captured source",
+    "archive": {
+      "path": "dist-compatibility/expanded-source9/candidate.tar.gz",
+      "sha256": "a70e4839d24c5e5179ff9a8be48643951e185d604cd8ba3401587730279f3b22"
+    },
+    "root_file_inventory": {
+      "path": "dist-compatibility/expanded-source9/root-functional-files.json",
+      "sha256": "69506c90cfc124f3a175a664873f5d8b49aff62a7426265c56c3dd64fcc84c21"
+    },
+    "archive_file_inventory": {
+      "path": "dist-compatibility/expanded-source9/phase9-functional-files.json",
+      "sha256": "d0e5d59aa49833ecd1305410c839cbebdbbb418679cecc6de0c2548b142dca4b"
+    },
+    "archive_comparison": {
+      "changed_files": [],
+      "added_files": [],
+      "omitted_development_files": [
+        ".envrc",
+        "cabal.project",
+        "flake.lock",
+        "flake.module.nix",
+        "flake.nix",
+        "justfile",
+        "nix/haskell.nix",
+        "nix/pre-commit.nix",
+        "nix/redpanda.nix",
+        "nix/treefmt.nix"
+      ],
+      "omitted_project_configuration": {
+        "path": "cabal.project",
+        "content": "packages: .\n",
+        "replacement": "Cabal implicit single package in clean extraction; same package set, no solver/compiler constraints in omitted file"
+      },
+      "execution_fingerprint": "74c7156e6fee8653bcec844001fd8f95d703bcf4d8e978a857a9f8f3560b6b0a",
+      "root_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c"
+    },
+    "configuration_sha256": "c6c0771e7da58c35d40170db3ec18cdd2439997e223ef4c088ac3f4e793707f9"
+  },
+  "listing": "dist-compatibility/expanded-source9/authentication-final9-tests.txt",
+  "log": "dist-compatibility/expanded-source9/authentication-final9.log",
+  "artifacts": {
+    "dist-compatibility/expanded-source9/authentication-final9-tests.txt": "e011f6a1ed4544904bc4117ebdd30e85339b33c096b3d0619bbff506f5e2e893",
+    "dist-compatibility/expanded-source9/authentication-final9.log": "a9cc23df591ca6608c613090bf42ae57ece89c1dc3e3ede7bbc0dee1cbcd2457",
+    "dist-compatibility/expanded-source9/candidate.tar.gz": "a70e4839d24c5e5179ff9a8be48643951e185d604cd8ba3401587730279f3b22",
+    "dist-compatibility/expanded-source9/root-functional-files.json": "69506c90cfc124f3a175a664873f5d8b49aff62a7426265c56c3dd64fcc84c21",
+    "dist-compatibility/expanded-source9/phase9-functional-files.json": "d0e5d59aa49833ecd1305410c839cbebdbbb418679cecc6de0c2548b142dca4b",
+    "dist-compatibility/expanded-source9/source-comparison.json": "635403f708e286d4461d40a3d86842d4c670ac70862a9688e2b5fbd72801ace5",
+    "dist-compatibility/expanded-source9/configuration.json": "c6c0771e7da58c35d40170db3ec18cdd2439997e223ef4c088ac3f4e793707f9",
+    "dist-compatibility/expanded-source9/fixture-cleanup.json": "22a1434a32c0b23c77e8cb0f788c46ca45dc4129ff55add57033437db77be5aa",
+    "dist-compatibility/expanded-source9/phase9-loaded.log": "0ea352a045eddd425369467d19eef2c60d2ca235538e1335b9557897a003d120",
+    "dist-compatibility/expanded-source9/phase9-version.log": "6ec9b644a82e1dd0a2ec1c57250b4e2d3043deb9a608d8384f7ec30026876a93"
+  }
+}

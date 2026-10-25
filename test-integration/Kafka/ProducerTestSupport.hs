@@ -1,12 +1,13 @@
-module Kafka.ProducerTestSupport (withProducerTracking, awaitEnqueueBoundary, releaseEnqueueBoundary, nativeProducerProperty, ProducerMock, withProducerMock, delayMockProduce, mockReceivedProduce) where
+module Kafka.ProducerTestSupport (withProducerTracking, awaitEnqueueBoundary, releaseEnqueueBoundary, nativeProducerProperty, triggerNullDelivery, enqueueWithoutOpaque, ProducerMock, withProducerMock, delayMockProduce, mockReceivedProduce) where
 
 import Control.Concurrent (threadDelay)
 import Control.Exception (bracket, bracket_)
-import Foreign.C.String (CString, peekCString)
+import Data.Text qualified as T
+import Foreign.C.String (CString, peekCString, withCString)
 import Foreign.C.Types (CInt (..))
 import Foreign.Ptr (Ptr, nullPtr)
 import Kafka.TestEnv (resolveBrokers)
-import Kafka.Types (BrokerAddress)
+import Kafka.Types (BrokerAddress, TopicName (..))
 import System.Timeout (timeout)
 import Test.Tasty.HUnit (assertFailure, (@?=))
 
@@ -32,6 +33,16 @@ nativeProducerProperty :: Int -> IO (Maybe String)
 nativeProducerProperty index =
   property (fromIntegral index) >>= \ptr ->
     if ptr == nullPtr then pure Nothing else Just <$> peekCString ptr
+
+foreign import ccall safe "rdkafka_hs_test_producer_null_delivery" nullDelivery :: IO CInt
+
+foreign import ccall safe "rdkafka_hs_test_producer_without_opaque" withoutOpaque :: CString -> IO CInt
+
+triggerNullDelivery :: IO Int
+triggerNullDelivery = fromIntegral <$> nullDelivery
+
+enqueueWithoutOpaque :: TopicName -> IO ()
+enqueueWithoutOpaque (TopicName topic) = withCString (T.unpack topic) withoutOpaque >>= (@?= 0)
 
 data ProducerMock
 

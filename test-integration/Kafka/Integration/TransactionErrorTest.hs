@@ -2,7 +2,7 @@ module Kafka.Integration.TransactionErrorTest (tests) where
 
 import Control.Concurrent (forkFinally, forkIOWithUnmask, killThread, threadDelay)
 import Control.Concurrent.MVar (newEmptyMVar, putMVar, readMVar, tryReadMVar)
-import Control.Exception (AsyncException (ThreadKilled), SomeException, bracket, bracket_, finally, fromException, throwIO, try)
+import Control.Exception (AsyncException (ThreadKilled), SomeException, allowInterrupt, bracket, bracket_, finally, fromException, throwIO, try)
 import Control.Monad (forM_, replicateM_, void, when)
 import Data.ByteString qualified as BS
 import Data.Either (isLeft)
@@ -174,7 +174,7 @@ bounded action = timeout 10000000 action >>= maybe (assertFailure "transaction s
 cancelDecoder :: String -> P.KafkaProducer -> C.KafkaConsumer -> IO ()
 cancelDecoder operation producer consumer = do
   done <- newEmptyMVar
-  worker <- forkIOWithUnmask $ \unmask -> try @SomeException (unmask (runOperation operation producer consumer)) >>= putMVar done
+  worker <- forkIOWithUnmask $ \unmask -> try @SomeException (unmask (runOperation operation producer consumer <* allowInterrupt)) >>= putMVar done
   flip finally (releaseTxBoundary >> bounded (readMVar done)) $ do
     awaitTxBoundary
     txStat 0 >>= (@?= 1)
@@ -281,6 +281,25 @@ abortRecovery testEnv = withProducer testEnv "small-admin" False (teBrokers test
         balanced 1
       T.abortTransaction producer (C.Timeout 10000) >>= (@?= Nothing)
       T.beginTransaction producer >>= (@?= Nothing)
-      produceTo producer topic 0 "recovered-output"
+      let recovered = P.ProducerRecord topic (P.SpecifiedPartition 0) Nothing (Just "recovered-output") mempty
+      recovery <- newEmptyMVar
+      P.produceMessage' producer recovered (putMVar recovery) >>= (@?= Right ())
+      P.flushProducerTimeout producer (C.Timeout 10000) >>= (@?= Nothing)
+      bounded (readMVar recovery) >>= \case
+        P.DeliverySuccess actual _ -> actual @?= recovered
+        P.DeliveryFailure actual (C.KafkaResponseError C.RdKafkaRespErrPurgeQueue) -> do
+          actual @?= recovered
+          -- Apache 4.4/native 2.16 can reject this first recovery with a
+          -- sequence error. An independent C probe reproduces the exact
+          -- purge/abort-required sequence. Honor that native decision once;
+          -- no arbitrary delivery error or unbounded retry is accepted.
+          withTxFault 0 $ do
+            T.commitTransaction producer (C.Timeout 10000) >>= checkTx C.RdKafkaRespErrOutOfOrderSequenceNumber (False, False, True)
+            balanced 1
+          T.abortTransaction producer (C.Timeout 10000) >>= (@?= Nothing)
+          T.beginTransaction producer >>= (@?= Nothing)
+          produceTo producer topic 0 "recovered-output"
+          putStrLn "[transaction-recovery] observed purge and abort-required sequence error; next transaction delivered"
+        other -> assertFailure (show other)
       T.commitTransaction producer (C.Timeout 10000) >>= noTxError
       visible testEnv C.CallbackPollModeSync "abort-recovery" topic "read_committed" ["recovered-output"]

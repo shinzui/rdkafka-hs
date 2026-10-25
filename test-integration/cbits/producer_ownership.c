@@ -18,6 +18,52 @@ static const char *property_names[] = {
 };
 #define PROPERTY_COUNT (sizeof property_names / sizeof property_names[0])
 static char *property_values[PROPERTY_COUNT];
+typedef void (*delivery_callback)(rd_kafka_t *, const rd_kafka_message_t *, void *);
+static delivery_callback observed_delivery;
+static rd_kafka_t *observed_client;
+
+void rdkafka_hs_producer_client_created(rd_kafka_type_t type, rd_kafka_t *client) {
+  pthread_mutex_lock(&producer_lock);
+  if (producer_enabled && type == RD_KAFKA_PRODUCER) observed_client = client;
+  pthread_mutex_unlock(&producer_lock);
+}
+void rd_kafka_conf_set_dr_msg_cb(rd_kafka_conf_t *conf, delivery_callback callback) {
+  __typeof__(&rd_kafka_conf_set_dr_msg_cb) real = (__typeof__(&rd_kafka_conf_set_dr_msg_cb))dlsym(RTLD_NEXT, "rd_kafka_conf_set_dr_msg_cb");
+  if (!real) abort();
+  real(conf, callback);
+  pthread_mutex_lock(&producer_lock);
+  if (producer_enabled) observed_delivery = callback;
+  pthread_mutex_unlock(&producer_lock);
+}
+int rdkafka_hs_test_producer_null_delivery(void) {
+  pthread_mutex_lock(&producer_lock);
+  rd_kafka_t *client = observed_client; delivery_callback callback = observed_delivery;
+  int valid = producer_enabled && producer_mode == 6 && client && callback;
+  pthread_mutex_unlock(&producer_lock);
+  if (!valid) abort();
+  /* A callback entry can change thread-local errno; zero exercises the
+   * native generic-failure fallback without assuming errno survives RTS entry. */
+  errno = 0;
+  callback(client, NULL, NULL);
+  return RD_KAFKA_RESP_ERR__FAIL;
+}
+int rdkafka_hs_test_producer_without_opaque(const char *topic) {
+  pthread_mutex_lock(&producer_lock);
+  rd_kafka_t *client = observed_client;
+  int valid = producer_enabled && producer_mode == 6 && client;
+  pthread_mutex_unlock(&producer_lock);
+  if (!valid) abort();
+  /* Real native enqueue intentionally has no Haskell per-message opaque root. */
+  return rd_kafka_producev(client, RD_KAFKA_V_TOPIC(topic), RD_KAFKA_V_PARTITION(0),
+      RD_KAFKA_V_MSGFLAGS(RD_KAFKA_MSG_F_COPY), RD_KAFKA_V_KEY("native-key", 10),
+      RD_KAFKA_V_VALUE("native-without-opaque", 21), RD_KAFKA_V_END);
+}
+int rdkafka_hs_test_producer_header_failure(void) {
+  pthread_mutex_lock(&producer_lock);
+  int result = producer_enabled && producer_mode == 7;
+  pthread_mutex_unlock(&producer_lock);
+  return result;
+}
 
 static void clear_properties(void) {
   for (size_t i = 0; i < PROPERTY_COUNT; ++i) {
@@ -31,12 +77,14 @@ void rdkafka_hs_test_producer_begin(int mode) {
   producer_enabled = 1;
   producer_mode = mode;
   producer_entered = producer_released = 0;
+  observed_delivery = NULL; observed_client = NULL;
   pthread_mutex_unlock(&producer_lock);
 }
 void rdkafka_hs_test_producer_end(void) {
   pthread_mutex_lock(&producer_lock);
   producer_enabled = 0;
   producer_released = 1;
+  observed_delivery = NULL; observed_client = NULL;
   clear_properties();
   pthread_cond_broadcast(&producer_resume);
   pthread_mutex_unlock(&producer_lock);

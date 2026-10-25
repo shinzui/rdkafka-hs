@@ -27,7 +27,7 @@
     "sha256": "2c45980cc04be4e3579487dd66c991d48769255ac109ae257ff61581abf0cc2b",
     "observed": "Sync consumer previously read fourteen records and reported assignment partition zero. Several blocking metadata/group/time calls intervened before seek returned State. The other four seek cases were skipped by the group dependency.",
     "native_diagnosis": "At native release 2.15.0 rd_kafka_seek waits for the fetcher result. rd_kafka_toppar_seek returns State for a fetch state below OFFSET_QUERY, excluding STOPPING, which returns PrevInProgress. Thus the assignment snapshot did not establish the later active-fetcher precondition.",
-    "limit": "The saved log does not identify the event that stopped this fetcher. No rebalance, max-poll, broker event, GC defect or memory corruption is asserted as the historical cause. Green reruns are not a reconstruction."
+    "limit": "The saved log alone does not identify the native transition. The new native-only reproduction shows duplicate topic/partition identity; parent lifetime and late finalizer ordering are under investigation. No max-poll or broker event is asserted as the cause."
   },
   "fixture_change": "All five inherited positive offset scenarios run in both modes on fresh run-owned topics and unique grouped consumers. Each confirms exact record zero immediately before seeking, then verifies exact next identity/offset/value or documented EOF/timeout. Unassignment/State/reassignment and repeated replay remain separate tests. State is not suppressed or retried into success.",
   "native_source": {
@@ -48,5 +48,80 @@
   },
   "required_checks": "/tmp/rdkafka-ep14-legacy-fixtures-check.log",
   "adr_checks": "/tmp/rdkafka-ep14-legacy-fixtures-adr.log",
-  "leak_instrumentation": false
+  "leak_instrumentation": false,
+  "scope_decision": {
+    "at": "2026-10-25",
+    "user_choice": "Keep the historical investigation required",
+    "completion_requirement": "Identify a reproducible supported transition that accounts for the saved condition, with concrete native/operation evidence; passing reruns and an unknown-cause limitation do not close this requirement."
+  },
+  "continued_forensics": {
+    "historical_checkout": "fc5892d",
+    "checkout_receipt": "dist-compatibility/seek-historical-fc5892d/forensic-receipt.json",
+    "archive_crosscheck": "Historical mutation archive retains byte-identical ConsumerTest.hs, TestEnv.hs, Consumer.hs and ConsumerProperties.hs relative to fc5892d. The native/admin source hashes also match the preserved subject manifest. The whole failed-run fingerprint differs, so no exact whole-candidate reconstruction is claimed.",
+    "traced_replay": {
+      "tests": 182,
+      "seconds": 100.61,
+      "result": "pass; sync fetcher remains active through metadata/group/time queries and first seek is served in active state"
+    },
+    "forced_gc_replay": {
+      "tests": 182,
+      "seconds": 100.79,
+      "options": [
+        "-G1",
+        "-A32k"
+      ],
+      "result": "pass with explicit performGC before every inherited consumer operation; not a reconstruction"
+    },
+    "broker_log": "Read-only retained primary broker logs establish the exact historical topic was created at 2026-10-24 07:33:31.078 UTC and deleted at 07:34:47.721 UTC after the suite teardown. No intervening deletion of that exact topic occurs. Default INFO logs contain no matching group/fetch-state transition, so they cannot identify the inactive-fetcher cause.",
+    "accepted_cause": null,
+    "artifacts": {
+      "rdkafka-mp3-historical-trace7.log": {
+        "path": "dist-compatibility/expanded-recovery-checkpoint/rdkafka-mp3-historical-trace7.log",
+        "sha256": "445c86226e5c49b469933b1be9fbd18a3958d350bbaff3f976991054893c5c12"
+      },
+      "rdkafka-mp3-historical-gc7.log": {
+        "path": "dist-compatibility/expanded-recovery-checkpoint/rdkafka-mp3-historical-gc7.log",
+        "sha256": "9c0521941eae17709a7b4f504344facdf99da7c3842fb7b7c990c84dcfdc20b6"
+      },
+      "rdkafka-mp3-historical-broker7.log": {
+        "path": "dist-compatibility/expanded-recovery-checkpoint/rdkafka-mp3-historical-broker7.log",
+        "sha256": "f20d9eda2095d6564ca1dafa6640ed07d4dde43417efd3f531d22e7ab5d78634"
+      }
+    }
+  },
+  "native_trace_reproduction": {
+    "status": "Native State reproduced; exact object divergence under investigation",
+    "tests_failed": 5,
+    "real_failure_count": 1,
+    "dependency_skips": 4,
+    "seconds": 99.16,
+    "native_project": "mori://confluentinc/librdkafka",
+    "native_revision": "9a94e11452cdeb0a844db44ee5dd01ccbe17d3ab",
+    "native_change": "C-only fetch-state transitions and seek-entry trace, with stop-state backtraces; no behavior/layout change. ConsumerTest restored to original with no Haskell debug or forced GC.",
+    "observed": "Consumer 73 delivers records on an active partition; first seek later enters with state none. No active-to-none transition is logged; the original active partition reaches stopping/stopped only during final teardown. Distinguish object identity before attributing the result to lost assignment or a stopped fetcher.",
+    "artifacts": {
+      "rdkafka-mp3-historical-native-trace9.log": {
+        "path": "dist-compatibility/expanded-source9/rdkafka-mp3-historical-native-trace9.log",
+        "sha256": "5c787df34cea6516047d39e72a4a327864bf83ec560fef3f8f829b0c51a08979"
+      }
+    },
+    "identity_probe": {
+      "observed": "The reproduced failing sync consumer delivers on rkt 0xba7a2c500 / partition 0xba7328500. During all-topics metadata a second rkt 0xba7a2ca00 / partition 0xba7328f00 is created for the same topic. Seek uses the second partition in state none. The original remains active until teardown. A separate native lifetime trace aborts when the preceding async consumer topic finalizer accesses its already destroyed parent mutex; parent-address reuse is under investigation.",
+      "artifacts": {
+        "historical-identities-pass.log": {
+          "path": "dist-compatibility/expanded-source9/historical-identities-pass.log",
+          "sha256": "7db8174078eac3b4efc9e1018186f2632c8e495cf9e4dc847da22054d433b798"
+        },
+        "historical-identities-state.log": {
+          "path": "dist-compatibility/expanded-source9/historical-identities-state.log",
+          "sha256": "e1717a0b11937edd5dacd526a0008ddeae4db60d3bb323db72d0e286d6b55ebb"
+        },
+        "historical-late-topic-finalizer-abort.log": {
+          "path": "dist-compatibility/expanded-source9/historical-late-topic-finalizer-abort.log",
+          "sha256": "bd5a9d023a1be7917028f3b0ba55a995932d81203837fba8dd818bad306a2f69"
+        }
+      },
+      "limit": "Do not yet assert that the precise old saved event was a late finalizer. The observed duplicate object and separate invalid-parent destructor motivate a direct address/order probe."
+    }
+  }
 }

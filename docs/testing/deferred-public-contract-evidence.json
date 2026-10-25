@@ -1,29 +1,31 @@
 {
-  "status": "accepted EP-16 M1 and partial M2 checkpoint; comprehensive qualification remains open",
-  "fingerprint": "abbf4e69f7806356c083acb0bb163c3e24f1fc7b4b1b5d78d1f469b0653a8993",
+  "status": "Accepted current public-contract and source-audit checkpoint; EP-16 remains open",
+  "fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c",
   "normal": {
     "unit": 78,
-    "integration": 735,
+    "integration": 753,
     "seconds": [
-      1.0,
-      332.5
+      1.12,
+      349.49
     ]
   },
   "mapped": {
     "unit": 78,
-    "integration": 735,
+    "integration": 753,
+    "external_behavior_cases": 26,
+    "registered_behavior_cases": 857,
     "nonthreaded": 4,
-    "tooling_controls": 27,
+    "tooling_controls": 28,
     "native_wrapper_ticks": 2752
   },
   "inventory": {
     "rows": 181,
-    "tested": 165,
-    "open": 16,
-    "newly_reconciled": 19
+    "tested": 179,
+    "open": 2,
+    "newly_reconciled": 33
   },
-  "unclassified_handwritten_ticks": 70,
-  "source_classifications": 390,
+  "unclassified_handwritten_ticks": 2,
+  "source_classifications": 401,
   "new_source_audit": "docs/testing/deferred-source-audit.json",
   "mutations": {
     "manifest": "dist-mutations/20261025T001512Z-source-edges-91215-0/results.json",
@@ -32,47 +34,56 @@
   },
   "artifacts": {
     "normal": {
-      "path": "dist-compatibility/owned-fixture-checkpoint/primary-phase5-normal.log",
-      "sha256": "f88e7453eb9fe561d9b08db2ee062c101c0eaa10ee23309c0e17607332297173"
+      "path": "dist-compatibility/expanded-source9/primary-normal9.log",
+      "sha256": "0cc78933babadbb7d223879eb76ddd60513010cfab5cd282a0e4ee974a52faeb"
     },
     "mapped": {
-      "path": "dist-compatibility/owned-fixture-checkpoint/primary-phase5-mapped.log",
-      "sha256": "00365edde70161aa36232659be4181b60db999709bba2432559fc86eca59bb11"
+      "path": "dist-compatibility/expanded-source9/primary-mapped9.log",
+      "sha256": "563e4fcf86cd2047cea629df6837a502e4795dca676f96671655b9758eacf6c8"
     },
     "allow_open": {
-      "path": "dist-compatibility/owned-fixture-checkpoint/primary-phase5-allow_open.log",
-      "sha256": "e942254489b57cbfb27bccae0805b9a1a46bc36847777c9596433a9f0d7d9aa7"
+      "path": "dist-compatibility/expanded-source9/coverage-allow-open.log",
+      "sha256": "6aaeb4a62ef5152f0f1adf20bb654b54b8fe12f057b757150972ebe61992fb7a"
     },
     "strict": {
-      "path": "dist-compatibility/owned-fixture-checkpoint/primary-phase5-strict.log",
-      "sha256": "beea750daca56559d29ad310e526e7f758df8028462ac78605d17e5388e6d96d"
+      "path": "dist-compatibility/expanded-source9/coverage-strict.log",
+      "sha256": "542cc685cf514e26aec1535c91dba78ce90b78baacf3eebe98e98afc47a43222"
+    },
+    "tooling": {
+      "path": "dist-compatibility/expanded-source9/coverage-tools9.log",
+      "sha256": "32be708ddfdb2bfe9039dfb8c4ace081e2635be74e0618dab745c03e8c2620b1"
     },
     "measured": {
-      "path": "dist-compatibility/owned-fixture-checkpoint/primary-phase5-measured.json",
-      "sha256": "4a3fc998e574923920befbf4f82b09cae9dd4bf8be563aff8d7b33fe7696fbaa"
+      "path": "dist-compatibility/expanded-source9/primary-measured9-with-contexts.json",
+      "sha256": "9a98d410cbeb3ef8ce0e3d99f39d989dbf145ee434db9aedf7aa771c52922ffe"
+    },
+    "required_checks": {
+      "path": "dist-compatibility/expanded-source9/required-check9.log",
+      "sha256": "938e9221c460f2b6aba3decc91039024bd71b0ec0204c8a8fad6b254573b97dc"
     }
   },
   "limits": [
-    "Historical seek trigger remains unknown and its scope question is pending.",
-    "Reachable handwritten paths remain open; strict coverage must continue to fail.",
-    "Linux/broker/native/security results are owned by their separate children and are not inferred from this checkpoint."
+    "Historical seek cause remains required by explicit user decision. Native-only tracing reproduced State with seek in state none while the delivered partition remains active; native object divergence is still under investigation.",
+    "Two unexplained producer pre-enqueue exception-cleanup ticks remain. No out-of-memory behavior is claimed tested or exempted.",
+    "External context imports add exact registered behavior names only; no HPC counts or ticks are imported. Strict coverage rejects both open rows and both unexplained ticks."
   ],
   "previous_checkpoint": {
     "status": "accepted EP-16 M1 and partial M2 checkpoint; comprehensive qualification remains open",
-    "fingerprint": "91f0344ac7c75b240029fef0d33d1f63dd53356175b53b50c7eb2af665d40da5",
+    "fingerprint": "abbf4e69f7806356c083acb0bb163c3e24f1fc7b4b1b5d78d1f469b0653a8993",
     "normal": {
       "unit": 78,
-      "integration": 730,
+      "integration": 735,
       "seconds": [
-        1.47,
-        338.99
+        1.0,
+        332.5
       ]
     },
     "mapped": {
       "unit": 78,
-      "integration": 730,
+      "integration": 735,
       "nonthreaded": 4,
-      "native_wrapper_ticks": 2750
+      "tooling_controls": 27,
+      "native_wrapper_ticks": 2752
     },
     "inventory": {
       "rows": 181,
@@ -80,8 +91,8 @@
       "open": 16,
       "newly_reconciled": 19
     },
-    "unclassified_handwritten_ticks": 117,
-    "source_classifications": 367,
+    "unclassified_handwritten_ticks": 70,
+    "source_classifications": 390,
     "new_source_audit": "docs/testing/deferred-source-audit.json",
     "mutations": {
       "manifest": "dist-mutations/20261025T001512Z-source-edges-91215-0/results.json",
@@ -90,27 +101,46 @@
     },
     "artifacts": {
       "normal": {
-        "path": "/tmp/rdkafka-mp3-normal-final.log",
-        "sha256": "650b358f4f46046e0497748ab3fd3a9c5b1472017b2a07fed867cef055d4fb66"
+        "path": "dist-compatibility/owned-fixture-checkpoint/primary-phase5-normal.log",
+        "sha256": "f88e7453eb9fe561d9b08db2ee062c101c0eaa10ee23309c0e17607332297173"
       },
       "mapped": {
-        "path": "dist-coverage/reports/test.log",
-        "sha256": "e1853ee656c088344ee67a0ceed76646a850ae168fb221998425473f24a68f4e"
+        "path": "dist-compatibility/owned-fixture-checkpoint/primary-phase5-mapped.log",
+        "sha256": "00365edde70161aa36232659be4181b60db999709bba2432559fc86eca59bb11"
       },
-      "tooling": {
-        "path": "/tmp/rdkafka-mp3-coverage-tools-final.log",
-        "sha256": "de59283957bf02bdcdb0592ef26c13b5ddddff2225d1b8c49e5dc898828b8653"
+      "allow_open": {
+        "path": "dist-compatibility/owned-fixture-checkpoint/primary-phase5-allow_open.log",
+        "sha256": "e942254489b57cbfb27bccae0805b9a1a46bc36847777c9596433a9f0d7d9aa7"
       },
-      "mutations": {
-        "path": "dist-mutations/20261025T001512Z-source-edges-91215-0/results.json",
-        "sha256": "a6080376608cd705070d9f11887e885d2f30c212cfdbfaa4da9b20a97fb79177"
+      "strict": {
+        "path": "dist-compatibility/owned-fixture-checkpoint/primary-phase5-strict.log",
+        "sha256": "beea750daca56559d29ad310e526e7f758df8028462ac78605d17e5388e6d96d"
+      },
+      "measured": {
+        "path": "dist-compatibility/owned-fixture-checkpoint/primary-phase5-measured.json",
+        "sha256": "4a3fc998e574923920befbf4f82b09cae9dd4bf8be563aff8d7b33fe7696fbaa"
       }
     },
     "limits": [
       "Historical seek trigger remains unknown and its scope question is pending.",
       "Reachable handwritten paths remain open; strict coverage must continue to fail.",
       "Linux/broker/native/security results are owned by their separate children and are not inferred from this checkpoint."
-    ]
+    ],
+    "post_measurement_note": "The commit formatter subsequently sorted the new Cabal module registrations. This measured fingerprint remains the exact pre-format checkpoint; fresh current-candidate evidence is required and is not inferred from formatting equivalence."
   },
-  "post_measurement_note": "The commit formatter subsequently sorted the new Cabal module registrations. This measured fingerprint remains the exact pre-format checkpoint; fresh current-candidate evidence is required and is not inferred from formatting equivalence."
+  "post_measurement_note": "Current functional source exactly matches measured evidence. The clean Linux archive differs only by ten documented omitted development inputs; cabal.project contains only packages: . and its implicit replacement selects the same package set. Documentation edits do not alter the functional fingerprint.",
+  "qualification_contexts": [
+    {
+      "path": "docs/testing/broker-qualification-context.json",
+      "sha256": "d080bb062d1afed7d5a5b71ab37ed9b70b83fbe114d44650253af3999cc56c36"
+    },
+    {
+      "path": "docs/testing/authentication-qualification-context.json",
+      "sha256": "bbd1b7edc15934382e7b7f4e516ecce5688f257c0ee9eb19277e3b42ef26c730"
+    }
+  ],
+  "rebalance_mutations": {
+    "path": "dist-mutations/20261025T014120Z-rebalance-76179-0/results.json",
+    "sha256": "ecc0364f6a0552605aaa48af5954a17474608166805ed5692ffdc809b3bd4785"
+  }
 }

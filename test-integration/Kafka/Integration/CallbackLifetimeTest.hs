@@ -2,7 +2,7 @@ module Kafka.Integration.CallbackLifetimeTest (tests, runInvalidAccessControl, r
 
 import Control.Concurrent (ThreadId, forkFinally, forkIOWithUnmask, killThread, myThreadId, threadDelay)
 import Control.Concurrent.MVar (MVar, newEmptyMVar, putMVar, readMVar, tryPutMVar, tryReadMVar)
-import Control.Exception (AsyncException (ThreadKilled), SomeException, bracket, finally, fromException, throwIO, try)
+import Control.Exception (AsyncException (ThreadKilled), ErrorCall, SomeException, bracket, finally, fromException, throwIO, try)
 import Control.Monad (void)
 import Data.IORef (IORef, atomicModifyIORef', mkWeakIORef, modifyIORef', newIORef, readIORef, writeIORef)
 import Data.List (isInfixOf)
@@ -67,6 +67,18 @@ tests env =
            ]
         <> [ testCase "producer native construction failure releases callbacks" $
                failedProducerProbe env >>= awaitCollected
+           ]
+        <> [ testCase (label <> " constructor exception at " <> stage <> " releases partial native ownership") $
+               withCallbackTracking 0 $ do
+                 weak <- exceptionalConsumerProbe env mode label stage
+                 let created = if stage == "post-native-loglevel" then 1 else 0
+                 ( do
+                     mapM callbackStat [1, 2, 3] >>= (@?= replicate 3 created)
+                     callbackStat 8 >>= (@?= if created == 1 && mode == C.CallbackPollModeAsync then 1 else 0)
+                   )
+                   `finally` awaitCollected weak
+           | (label, mode) <- [("async", C.CallbackPollModeAsync), ("sync", C.CallbackPollModeSync)],
+             stage <- ["callback-install", "post-native-loglevel"]
            ]
         <> [ testCase (label <> " " <> kind <> " callback releases captured borrowed configuration") $
                withTopic env (Text.pack ("owner-" <> label <> "-" <> kind)) 1 $ \topic producer -> do
@@ -247,6 +259,20 @@ failedConsumerProbe env mode label stage = do
       | stage == "subscribe" -> pure ()
     Right (Right consumer) -> C.destroyConsumer consumer >> assertFailure "invalid constructor succeeded"
     other -> assertFailure ("unexpected constructor result: " <> case other of Left e -> show e; Right (Left e) -> show e)
+  pure weak
+
+{-# NOINLINE exceptionalConsumerProbe #-}
+exceptionalConsumerProbe :: TestEnv -> C.CallbackPollMode -> String -> String -> IO (Weak (IORef Int))
+exceptionalConsumerProbe env mode label stage = do
+  capture <- newIORef 0
+  weak <- mkWeakIORef capture (pure ())
+  let props = C.brokersList (teBrokers env) <> C.groupId (makeGroupId env (Text.pack ("constructor-exception-" <> label <> stage))) <> C.noAutoCommit <> C.callbackPollMode mode <> C.setCallback (C.errorCallback (\_ _ -> atomicModifyIORef' capture (\n -> (n + 1, ()))))
+      injected = if stage == "callback-install" then props <> C.setCallback (error "controlled callback installation exception") else props <> C.logLevel (error "controlled post-native log-level exception")
+  result <- try @SomeException (C.newAssignedConsumer injected)
+  case result of
+    Left exception -> assertBool (show exception) (case fromException exception :: Maybe ErrorCall of Just _ -> True; Nothing -> False)
+    Right (Left err) -> assertFailure (show err)
+    Right (Right consumer) -> releaseConsumer consumer >> assertFailure "injected constructor exception did not occur"
   pure weak
 
 {-# NOINLINE failedProducerProbe #-}

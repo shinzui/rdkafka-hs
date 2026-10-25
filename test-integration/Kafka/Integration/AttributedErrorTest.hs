@@ -6,7 +6,6 @@ module Kafka.Integration.AttributedErrorTest
 where
 
 import Control.Exception (finally)
-import Control.Monad (void)
 import Data.ByteString (ByteString)
 import Data.Map qualified as Map
 import Data.Text qualified as Text
@@ -37,7 +36,7 @@ scenario env mode label =
             <> extraProps (Map.fromList [("enable.partition.eof", "true")])
             <> callbackPollMode mode
     consumer <- newAssignedConsumer props >>= either (assertFailure . ("newAssignedConsumer: " <>) . show) pure
-    flip finally (void (closeConsumer consumer)) $ do
+    flip finally (releaseConsumer consumer) $ do
       assign
         consumer
         [ TopicPartition topic (PartitionId 0) PartitionOffsetBeginning,
@@ -46,8 +45,11 @@ scenario env mode label =
         >>= (@?= Nothing)
 
       (records, eofs) <- collectUntilEofs consumer 2
-      fmap crValue records @?= [Just "busy"]
-      fmap crPartition records @?= [PartitionId 1]
+      [(crTopic record, crPartition record, crOffset record, crKey record, crValue record, crHeaders record) | record <- records]
+        @?= [(topic, PartitionId 1, Offset 0, Nothing, Just "busy", mempty)]
+      case map crTimestamp records of
+        [CreateTime (Millis time)] -> assertBool "missing attributed record timestamp" (time > 0)
+        other -> assertFailure (show other)
 
       let eof p o =
             ConsumerMessageError

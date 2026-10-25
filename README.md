@@ -461,15 +461,26 @@ Design decisions are recorded in [docs/adr/](docs/adr/index.md).
 
 ## Integration tests
 
-The current repair candidate has been tested on macOS 26.7/arm64 with GHC 9.12.4,
-librdkafka 2.15.0 and private Redpanda 26.2.1. Its complete normal and Haskell
-coverage runs pass 78 unit and 708 integration cases, with four additional
-nonthreaded runtime checks. Clean source-package build/tests and the actual
-example also pass; see [primary validation](docs/testing/primary-validation-evidence.json).
-Linux/newer toolchain, distributed Apache Kafka, real authentication/TLS/ACL
-and comprehensive native leak qualification are tracked in the
-[follow-up plan](docs/masterplans/3-complete-deferred-coverage-and-compatibility-validation.md).
-Those environments are not claimed as tested by this candidate's broad bounds.
+The current functional candidate passes 78 unit and 753 integration cases in both
+normal and Haskell coverage runs on macOS 26.7/arm64, GHC 9.12.4,
+librdkafka 2.15.0 and private Redpanda 26.2.1. Four additional runtime checks
+run in an actual nonthreaded executable.
+
+A clean source archive also builds the library, examples and suites on Ubuntu
+24.04.5/aarch64 with GHC 9.14.1, librdkafka 2.16.0 and Apache Kafka 4.4.0.
+That tuple passes 78 unit, four nonthreaded and 279 native-lifetime cases,
+nine distributed leader/group/outage/transaction cases, and seventeen
+SASL PLAIN/TLS/ACL/credential-reconnect cases. Linux diagnostics detect deliberate
+invalid-access and native-header retention controls; complementary Darwin ASan
+covers invalid access with leak detection disabled. These are named scenario
+results, with diagnostic limits recorded in the
+[compatibility matrix](docs/testing/compatibility-matrix.json).
+
+Comprehensive qualification remains open: the historical seek cause, two
+producer exception-path coverage ticks and the final all-evidence/package gate
+are tracked by the [follow-up plan](docs/masterplans/3-complete-deferred-coverage-and-compatibility-validation.md).
+The [historical primary release record](docs/testing/primary-validation-evidence.json)
+retains its own exact source and package results.
 
 The integration suite `rdkafka-hs-integration` needs a running Kafka broker and
 is disabled unless the manual `integration` flag is set, so `cabal build all`,

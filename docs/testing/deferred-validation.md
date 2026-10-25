@@ -4,6 +4,25 @@ On 2026-10-24 the user explicitly narrowed the immediate release to the demonstr
 
 The frozen checkpoint `060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e` passes 78 unit and 708 integration cases normally and mapped, plus four actual nonthreaded runtime cases. The full report measures 2,750 handwritten native-wrapper ticks. Its remaining 192 unclassified handwritten ticks are preserved by exact keys/counts in [the snapshot](deferred-validation-snapshot.json), with all raw misses and artifact hashes in [coverage evidence](coverage-evidence.json). The inventory retains 146 tested and 35 open historical rows. Many open rows already have new passing cases and need reconciliation, not duplicate implementations.
 
+## Current implementation checkpoint
+
+The historical snapshot above remains unchanged. The current functional source
+`2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c`
+passes 78 unit and 753 integration cases normally and mapped, plus four separate
+nonthreaded cases. Nine actual distributed-broker and seventeen actual security
+cases contribute source-validated behavior registrations, without contributing
+HPC ticks: 857 aggregate registered cases. The inventory now has 179 tested and
+two open rows; 401 exact source classifications leave two unexplained handwritten
+producer exception-cleanup ticks. See [current public evidence](deferred-public-contract-evidence.json).
+
+EP-17, EP-18 and EP-19 are Complete for the named source-bound scenarios in the
+[compatibility matrix](compatibility-matrix.json). EP-16 still requires the
+historical seek cause (explicitly retained by the user) and the two source ticks.
+Native-only tracing reproduced State with seek in state none while the delivered
+partition stays active; native object identity remains under investigation.
+EP-20 remains Not Started because its whole-child EP-16 prerequisite is unmet.
+The tables below preserve the original handoff, not the current row statuses.
+
 ## Release boundary
 
 The current release retains all fixes and tests, complete primary normal/mapped runs, generated seeds, native diagnostic controls and semantic mutations. Primary inventory validation uses the explicit `--allow-open` mode; strict `just coverage-check` still rejects comprehensive gaps. New code changes must not be excused as deferred if they leave a known failing regression. Broader execution and exhaustive closure are not claimed by broad bounds, source inspection or this deferral.
@@ -64,7 +83,7 @@ These rows retain their original status/owner in `coverage-matrix.json` for prov
 
 All source/test/C fixtures and Haskell mutation families remain registered. Recent retained commits are `4daa8a6` (queue payload/constructor boundaries), `2137727` (partial partition-list cleanup) and `b740b72` (fresh inherited seek fixtures). Do not reset them, delete existing cases, recreate the four replaced Python mutation runners, or overwrite historical rejected-run notes.
 
-Keep `legacy-seek-evidence.json` and its hash of `dist-coverage/failures/ep8-sync-seek-state.log`. The log proves State after an older assignment observation but does not identify what stopped fetching; the max-poll hypothesis did not reproduce State. Existing tests preserve exact native State and recovery, and all ten positive scenarios now observe real delivery immediately before seeking. Further forensics belongs to EP-16, not an invented release explanation.
+Keep `legacy-seek-evidence.json` and its hash of `dist-coverage/failures/ep8-sync-seek-state.log`. The log proves State after an older assignment observation but does not identify its native transition; the max-poll hypothesis did not reproduce State. Existing tests preserve exact native State and recovery, and all ten positive scenarios now observe real delivery immediately before seeking. Further forensics belongs to EP-16, not an invented release explanation.
 
 Source audit reuse is conditional on the exact source. `coverage-classification-remap.json` preserved all 334 classifications and moved 33 coordinates only through identical source lines. A new change needs another source-coordinate review. `callback-native-diagnostics.json` retains a failing invalid-access control; `partition-list-evidence.json` retains the four failing pre-fix encoding cases and 19 passing scoped ownership cases. These are started/completed assets, not backlog to repeat blindly.
 

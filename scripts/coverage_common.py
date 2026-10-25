@@ -79,3 +79,46 @@ def compiler_exports(builddir):
             entries.append({"symbol": names[0], "members": sorted(set(names[1:]))})
         result[module] = sorted(entries, key=lambda x: x["symbol"])
     return result
+
+
+QUALIFICATION_MODES = frozenset(("--broker-qualification", "--authentication-qualification"))
+
+
+def qualification_context_errors(context, candidate, registered=None):
+    """Supplement behavioral registration only; never manufacture HPC ticks."""
+    errors = []
+    if context.get("kind") != "qualification-context" or context.get("mode") not in QUALIFICATION_MODES:
+        errors.append("unsupported qualification context")
+    if context.get("fingerprint") != candidate:
+        errors.append("stale qualification context")
+    names = context.get("tests", [])
+    if not isinstance(names, list) or not names or len(names) != len(set(names)):
+        errors.append("empty or duplicate qualification tests")
+    elif registered is not None and set(names) != set(registered):
+        errors.append("qualification context differs from current registered tests")
+    if context.get("passed") != len(names):
+        errors.append("incomplete qualification context")
+    if not context.get("environment") or not context.get("source") or context.get("mode") not in context.get("command", []):
+        errors.append("missing qualification source/environment/command")
+    artifacts = context.get("artifacts", {})
+    if not isinstance(artifacts, dict) or not artifacts:
+        errors.append("missing qualification artifacts")
+        artifacts = {}
+    for name, checksum in artifacts.items():
+        path = ROOT / name
+        if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != checksum:
+            errors.append("missing or modified qualification artifact: " + name)
+    for field in ("listing", "log"):
+        name = context.get(field)
+        if name not in artifacts:
+            errors.append("missing qualification " + field)
+            continue
+        path = ROOT / name
+        if not path.is_file():
+            continue
+        content = path.read_text()
+        if field == "listing" and content.splitlines() != names:
+            errors.append("qualification listing differs from recorded tests")
+        if field == "log" and (re.findall(r"All (\d+) tests passed", content) != [str(len(names))] or re.search(r": FAIL(?:\s|$)", content)):
+            errors.append("qualification log does not prove every test passed")
+    return errors

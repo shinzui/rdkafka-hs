@@ -1,6 +1,7 @@
 # Bundle Update Log
 
 ## 2026-10-25
+* **Update**: Require checked native unassignment for arbitrary rebalance failures; clear copied state only after success and retain exact reset errors. Record real eager/cooperative loss-phase evidence.
 * **Update**: Extend identity preservation to SASL credential strings and require cancellation-safe native error transfer
 * **Update**: Document shared run-owned Apache process lifecycle and ephemeral SASL TLS security hooks for expanded qualification
 * **Update**: Bind handwritten coverage exceptions to exact source hashes and preserve ownership transfers during expanded qualification.

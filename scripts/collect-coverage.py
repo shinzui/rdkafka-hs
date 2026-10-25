@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Run both suites on one instrumented candidate and retain source maps."""
 
+import argparse
 import hashlib
 import json
 import os
@@ -10,7 +11,7 @@ import sys
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
-from coverage_common import compiler_generated_declaration, library_hpc_includes, ROOT, components, fingerprint, run
+from coverage_common import compiler_generated_declaration, library_hpc_includes, ROOT, components, fingerprint, qualification_context_errors, run
 
 SUITES = ("rdkafka-hs-test", "rdkafka-hs-integration")
 BUILD = "dist-coverage"
@@ -64,7 +65,7 @@ def runtime_coverage():
     return evidence, [build_log, info_log, log, tix, consumer_tix]
 
 
-def collect():
+def collect(context_paths=()):
     OUTPUT.mkdir(parents=True, exist_ok=True)
     before = fingerprint()
     command = ["cabal", "test", *SUITES, "-f", "integration", "--enable-coverage", "--builddir=" + BUILD,
@@ -233,9 +234,26 @@ def collect():
         broker_versions = [{"node_id": b["node_id"], "version": b["version"]} for b in json.load(response)]
     if not broker_versions:
         raise ValueError("missing actual broker version")
+    contexts = []
+    primary_tests = list(tests)
+    binary = cs["test:rdkafka-hs-integration"] / "build/rdkafka-hs-integration/rdkafka-hs-integration"
+    for context_path in context_paths:
+        context_path = context_path.resolve()
+        context = json.loads(context_path.read_text())
+        mode = context.get("mode")
+        if mode not in ("--broker-qualification", "--authentication-qualification"):
+            raise ValueError("unsupported qualification mode")
+        names = subprocess.check_output([str(binary), mode, "--list-tests", "+RTS", "--read-tix-file=no", "-RTS"],
+                                        cwd=ROOT, text=True, env=dict(os.environ, HPCTIXFILE=str(OUTPUT / "context-list.tix"))).splitlines()
+        errors = qualification_context_errors(context, before, names)
+        if errors or any(c["mode"] == mode for c in contexts) or set(names) & set(tests):
+            raise ValueError("invalid qualification supplement: " + "; ".join(errors or ["duplicate context/test registration"]))
+        contexts.append(context)
+        tests.extend(names)
+        artifacts.extend([context_path, *(ROOT / name for name in context["artifacts"])])
     evidence = dict(test_configuration={key: os.getenv(key) for key in ("RDKAFKA_TEST_BROKER", "RDKAFKA_TEST_ADMIN", "RDKAFKA_TEST_RPK", "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY")}, schema_version=1, revision=run("git", "rev-parse", "HEAD").strip(), fingerprint=before,
                     at=datetime.now(timezone.utc).isoformat(), command=command, suites=list(SUITES), tests=tests,
-                    passed_test_count=sum(counts), supplemental_runs=[runtime], toolchain=run("ghc", "--numeric-version").strip(), cabal=run("cabal", "--numeric-version").strip(),
+                    passed_test_count=sum(counts) + sum(c["passed"] for c in contexts), primary_passed_test_count=sum(counts), primary_tests=primary_tests, qualification_contexts=contexts, supplemental_runs=[runtime], toolchain=run("ghc", "--numeric-version").strip(), cabal=run("cabal", "--numeric-version").strip(),
                     loaded_native=loaded_native, broker_versions=broker_versions, native=run("pkg-config", "--modversion", "rdkafka").strip(),
                     broker=os.getenv("RDKAFKA_TEST_BROKER", "127.0.0.1:39092"),
                     misses=misses, module_tick_counts=module_ticks, measured_native_wrapper_ticks=native_ticks,
@@ -248,7 +266,9 @@ def collect():
 
 if __name__ == "__main__":
     try:
-        collect()
+        parser = argparse.ArgumentParser(description=__doc__)
+        parser.add_argument("--context", action="append", type=Path, default=[], help="source-bound external broker/security behavioral evidence; adds no HPC ticks")
+        collect(parser.parse_args().context)
     except (ValueError, OSError, subprocess.CalledProcessError) as error:
         print(f"Coverage collection failed: {error}; see {OUTPUT}/test.log", file=sys.stderr)
         sys.exit(1)

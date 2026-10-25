@@ -115,6 +115,16 @@ tests env =
           counts NativeEvent >>= (@?= (20, 20))
           metadata <- allTopicsMetadata producer (Timeout 5000)
           (filter (`elem` topicsToReject) . map tmTopicName . kmTopics) <$> metadata @?= Right [],
+      testCase "mismatched topic in an error response cannot report another topic's error" $
+        bracket (mkProducer env) releaseProducer $ \producer -> withNativeTracking $ do
+          let topic = TopicName (prefixedName env "config-wrong-error-topic")
+          responseMode WrongTopic
+          createTopic producer (NewTopic topic (PartitionCount 1) (ReplicationFactor 1) (Map.singleton "cleanup.policy" "not-a-policy"))
+            >>= (@?= Left KafkaInvalidReturnValue)
+          counts NativeNewTopic >>= (@?= (1, 1))
+          counts NativeEvent >>= (@?= (1, 1))
+          assertAbsent producer topic
+          assertBalanced,
       testCase "unrepresentable partition count never wraps to broker defaults" $
         bracket (mkProducer env) releaseProducer $ \producer -> do
           let topic = TopicName (prefixedName env "config-partition-overflow")

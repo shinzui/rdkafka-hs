@@ -116,6 +116,126 @@
         }
       },
       "method": "Inspect exact missed HPC spans and all repository callers; verify native constructor/dump/header guarantees independently against released 2.15.0 and 2.16.0 source. Arbitrary rebalance errors remain open because the native header explicitly permits them."
+    },
+    {
+      "status": "Eleven exact source-backed keys; producer marshalling exception continuation remains open",
+      "baseline_fingerprint": "4a4d041b2c440f9ee9e53ae0291b07835afa4cbb4677ed722447d57e6d906606",
+      "keys": [
+        "Kafka.Consumer:547:ExpBox False",
+        "Kafka.Consumer:547:ExpBox True",
+        "Kafka.Consumer:319:ExpBox False",
+        "Kafka.Consumer.Callbacks:75:ExpBox False",
+        "Kafka.Internal.RdKafka:1492:ExpBox False",
+        "Kafka.Internal.RdKafka:1416:ExpBox False",
+        "Kafka.Internal.Setup:228:ExpBox False",
+        "Kafka.Internal.Shared:59:ExpBox False",
+        "Kafka.Internal.Shared:52:BinBox GuardBinBox False",
+        "Kafka.Metadata:255:ExpBox False",
+        "Kafka.Metadata:149:ExpBox False"
+      ],
+      "proofs": [
+        {
+          "key": "Kafka.Consumer:547:ExpBox False",
+          "source": "src/Kafka/Consumer.hs",
+          "source_sha256": "170ea8259f8b0279db807c48799f323a268e7636efcbc929ade003cd4e4bb70a",
+          "rationale": "The private subscription decoder fallback expects partition-specific subscriptions. Public Subscription contains only a Set TopicName, and Consumer.subscribe constructs exactly one partition -1 entry per unique topic. Released native subscribe copies this list; subscription returns the saved topic list. Empty subscriptions yield no entry and every nonempty public entry takes SubscribedPartitionsAll. Manual assignments use a distinct API and do not change subscription. Specific partition decoding is therefore unavailable through this public subscription path; native queries and their errors are still exercised."
+        },
+        {
+          "key": "Kafka.Consumer:547:ExpBox True",
+          "source": "src/Kafka/Consumer.hs",
+          "source_sha256": "170ea8259f8b0279db807c48799f323a268e7636efcbc929ade003cd4e4bb70a",
+          "rationale": "The entire private SubscribedPartitions fallback has the same source-proven domain restriction as its ps argument: all public subscription entries are unique topic/-1 pairs. Both multiple-topic and regex subscriptions observe the exact All representation; this is not a general exclusion of subscription IO or decoding."
+        },
+        {
+          "key": "Kafka.Consumer:319:ExpBox False",
+          "source": "src/Kafka/Consumer.hs",
+          "source_sha256": "170ea8259f8b0279db807c48799f323a268e7636efcbc929ade003cd4e4bb70a",
+          "rationale": "Only the nullPtr argument at columns 50-68 is unforced. GHC 9.12.4 Storable (Ptr a) expands STORABLE with sizeOf _ = SIZEOF_HSPTR. Pointer size, negative/overflow bounds and the native allocation boundary are exercised; the ignored pointer value cannot acquire a hit."
+        },
+        {
+          "key": "Kafka.Consumer.Callbacks:75:ExpBox False",
+          "source": "src/Kafka/Consumer/Callbacks.hs",
+          "source_sha256": "7e993c821435554f7d705ad0369ce4dab3c561216c1966baf29cf967e310e362",
+          "rationale": "Only the unit literal at columns 23-24 in return () is ignored. The Nothing queue branch executes in synchronous callback mode; IO sequencing does not demand the unit value. No queue acquisition, forwarding or release action is excluded."
+        },
+        {
+          "key": "Kafka.Internal.RdKafka:1492:ExpBox False",
+          "source": "src/Kafka/Internal/RdKafka.chs",
+          "source_sha256": "869947169916ead0bf7254a9ecceeecbe9ec8600be80d29e724c2dc1e53c1fcf",
+          "rationale": "Only the unit value in Right () is lazy and discarded by current private callers, which distinguish Left from Right but never force the successful payload. Native codes and success/error branches execute; the value-level tick is not a missing error conversion."
+        },
+        {
+          "key": "Kafka.Internal.RdKafka:1416:ExpBox False",
+          "source": "src/Kafka/Internal/RdKafka.chs",
+          "source_sha256": "869947169916ead0bf7254a9ecceeecbe9ec8600be80d29e724c2dc1e53c1fcf",
+          "rationale": "Only the errMsg tuple field is unforced. Topic.runRequest pattern-matches Left (name, err, _) and propagates the native error code; no public result exposes that private String. The native error-string read, tuple construction, response-name validation and owned-event cleanup are not exempted."
+        },
+        {
+          "key": "Kafka.Internal.Setup:228:ExpBox False",
+          "source": "src/Kafka/Internal/Setup.hs",
+          "source_sha256": "69ef4227adf311f7dee3ec283825d42c1e3a2561df6f66bab29d2abb8b446188",
+          "rationale": "Only the success unit in pure () at columns 22-23 is unforced; validation and both NUL failure predicates run. Sequencing this IO action ignores its result."
+        },
+        {
+          "key": "Kafka.Internal.Shared:59:ExpBox False",
+          "source": "src/Kafka/Internal/Shared.hs",
+          "source_sha256": "fb9eb7755af2a3da0db73b665a0e09a7c6ee3b1381aaac9e658a78f1ebd7e100",
+          "rationale": "The private pollEvents helper has exactly one production caller, Producer.produceMessage', which supplies Just (Timeout 0). It is hidden by Cabal and is not re-exported by the producer API. Only the Nothing default literal 0 is unavailable to public calls; actual native poll and timeout extraction execute."
+        },
+        {
+          "key": "Kafka.Internal.Shared:52:BinBox GuardBinBox False",
+          "source": "src/Kafka/Internal/Shared.hs",
+          "source_sha256": "fb9eb7755af2a3da0db73b665a0e09a7c6ee3b1381aaac9e658a78f1ebd7e100",
+          "rationale": "This is the impossible False branch of Prelude.otherwise after both SASL string validations. The otherwise body and both invalid credential guards execute. The constant guard cannot evaluate False."
+        },
+        {
+          "key": "Kafka.Metadata:255:ExpBox False",
+          "source": "src/Kafka/Metadata.hs",
+          "source_sha256": "abcfd0962c104901916c4b4a456b4e99b9905ffd430b74b4e2244e5a2744512f",
+          "rationale": "Only the ignored unit at columns 40-41 in the Left acquisition cleanup is unforced. A failed acquisition has no owned ForeignPtr; its error is propagated. Successful native results still finalize explicitly and are covered by counted/cancelled native acquisitions."
+        },
+        {
+          "key": "Kafka.Metadata:149:ExpBox False",
+          "source": "src/Kafka/Metadata.hs",
+          "source_sha256": "abcfd0962c104901916c4b4a456b4e99b9905ffd430b74b4e2244e5a2744512f",
+          "rationale": "The two ticks are the lazy unit literal and const () thunk in a failed topic-handle acquisition cleanup. bracket sequences return (const () err) without demanding its value. The failed acquire/error propagation and the successful native-topic destroy remain real tested effects."
+        }
+      ],
+      "source_artifacts": {
+        "ghc9124-Marshal-Array.hs": {
+          "project": "mori://ghc/ghc",
+          "version": "9.12.4",
+          "artifact_uri": "source-artifact URI pending",
+          "project_relative_path": "libraries/ghc-internal/src/GHC/Internal/Foreign/Marshal/Array.hs",
+          "path": "dist-compatibility/expanded-source9/ghc9124-Marshal-Array.hs",
+          "sha256": "0a0cb7e36925c5332e5fb4dda03ad11f10b1ffa0e96d71e56de657d32f52216d"
+        },
+        "ghc9124-Storable.hs": {
+          "project": "mori://ghc/ghc",
+          "version": "9.12.4",
+          "artifact_uri": "source-artifact URI pending",
+          "project_relative_path": "libraries/ghc-internal/src/GHC/Internal/Foreign/Storable.hs",
+          "path": "dist-compatibility/expanded-source9/ghc9124-Storable.hs",
+          "sha256": "dda27f3c55cda6fbce4d44c127b6b26f5f18aa1e8b7ade6510e51cd4eec9e9cd"
+        },
+        "v215-subscription.c": {
+          "project": "mori://confluentinc/librdkafka",
+          "version": "2.15.0",
+          "artifact_uri": "source-artifact URI pending",
+          "project_relative_path": "src/rdkafka_subscription.c",
+          "path": "dist-compatibility/expanded-source9/v215-subscription.c",
+          "sha256": "8a9134c343f9d7bf40eaaf00d19caa6ca505afa98bdf739763a4f7ba2b4c7f68"
+        },
+        "v216-subscription.c": {
+          "project": "mori://confluentinc/librdkafka",
+          "version": "2.16.0",
+          "artifact_uri": "source-artifact URI pending",
+          "project_relative_path": "src/rdkafka_subscription.c",
+          "path": "dist-compatibility/expanded-source9/v216-subscription.c",
+          "sha256": "8a9134c343f9d7bf40eaaf00d19caa6ca505afa98bdf739763a4f7ba2b4c7f68"
+        }
+      },
+      "remaining": "The originless-error cooperative filter branch now has a real controlled regression and awaits fresh mapped confirmation. Producer.hs:204 exception-only StablePtr cleanup remains unexecuted; do not claim allocation-exhaustion injection or exempt it without an accepted source-domain decision."
     }
   ]
 }

@@ -9,6 +9,10 @@ this project adheres to the [Haskell Package Versioning Policy](https://pvp.hask
 
 ### Fixed
 
+- Unexpected rebalance errors now check native unassignment before clearing
+  synchronous buffered records and pauses. Failed unassignment preserves the
+  buffer and reports the native reset error.
+
 - Consumer partition-list conversion releases partially filled native lists
   immediately if encoding a later member throws.
 - Consumer and metadata inputs reject embedded NUL topic/group names and

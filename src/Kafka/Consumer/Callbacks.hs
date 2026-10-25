@@ -116,7 +116,12 @@ setRebalanceCallback f k e pls = do
           then checkRebalanceError (rdKafkaIncrementalUnassign kptr pls) >> forgetPendingPartitions (getKafkaConf k) (Set.fromList assignment)
           else checkRebalanceCode (newForeignPtr_ nullPtr >>= rdKafkaAssign kptr) >> resetPendingMessages (getKafkaConf k)
       containCallbackException $ f k (RebalanceRevoke assignment)
-    x -> error $ "Rebalance: UNKNOWN response: " <> show x
+    x -> mask_ $ do
+      -- Native arbitrary rebalance failures require an explicit unassignment.
+      -- Publish no success event and preserve state if the reset itself fails.
+      checkRebalanceCode (newForeignPtr_ nullPtr >>= rdKafkaAssign kptr)
+      resetPendingMessages (getKafkaConf k)
+      throwIO x
 
 -- The outer native callback boundary contains and reports these exceptions.
 -- Do not publish an after-assignment/revocation event when the native action

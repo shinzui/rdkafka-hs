@@ -28,10 +28,10 @@ Users can see exactly how producer delivery, consumption, group membership and t
 ## Progress
 
 - [x] M1: Create a run-owned Apache Kafka topology and prove a representative leader-change roundtrip with exact record accounting.
-- [ ] M2: Verify outage/reconnect, group assignment/eviction/pause/seek and transaction recovery in applicable callback modes.
-- [ ] M3: Accept source-bound failure evidence, restored fixtures and broker-policy results for EP-20.
+- [x] M2: Verify outage/reconnect, group assignment/eviction/pause/seek and transaction recovery in applicable callback modes.
+- [x] M3: Accept source-bound failure evidence, restored fixtures and broker-policy results for EP-20.
 
-In Progress (2026-10-25). M1 is accepted: both permanent Cabal leader-change cases pass on the released Linux/native/Apache tuple. Async observes leader 1 → 2; sync observes 3 → 1. They assert exact replica and ISR sets, records at offsets 0/1, committed next offset 2, no extra record, and restored three-member ISR before owned-process/data cleanup. `../testing/broker-failure-evidence.json` retains both initial and permanent results. M2/M3 and fresh current-candidate replay remain open.
+Complete (2026-10-25). All nine permanent `--broker-qualification` cases pass on the same captured functional candidate as EP-17, from the actual clean source archive, in 347.08 seconds. They cover both callback modes for leader change and transaction recovery, eager/cooperative × async/sync handoff and full outage, plus cancellation during the outage. Exact records, pauses/seeks, stored/committed offsets, assignmentLost=True in the actual loss window, queue-full/timeouts, retriable transaction flags and read-committed visibility are asserted. Apache's unknown-topic-configuration rejection and inherited transaction initialization/fencing cases pass in the accepted Linux cohort. All stopped brokers are restored before fixture teardown; external process/data inspection confirms all owned fixture processes and data are removed. [Broker evidence](../testing/broker-failure-evidence.json), [the registered context](../testing/broker-qualification-context.json) and [the tuple matrix](../testing/compatibility-matrix.json) retain names, commands, source/environment identities, hashes and prior checkpoints.
 
 ## Surprises & Discoveries
 
@@ -43,7 +43,9 @@ Current tests contain real local consumer fencing, cooperative assignment/revoca
 
 ## Outcomes & Retrospective
 
-Planning only. Record actual results and remaining limits during implementation. Before completion, distill durable applicability, environment and ownership decisions into the profiled ADR bundle.
+Distributed execution closes the real-broker obligations without replacing native error frames or weakening exact success assertions. Leader cases observe ISR 3 → 2 → 3, exact offsets 0/1 and committed next offset 2. Group cases observe real loss callbacks, WaitCoord then NoOffset during outage/unassignment, then exact recovered records and final committed [4,4]. Transaction cases retain the retriable nonfatal, non-abort-required commit timeout and successfully retry the same transaction after restoration with exactly-once read-committed visibility.
+
+The outage fixture restores each successfully stopped node through nested brackets, starts all controllers before awaiting quorum, and proves this cleanup under cancellation. The native 2.16/Apache 4.4 oversize-abort recovery variation was independently reproduced by a C client; the test allows only that exact optional purge/abort-required sequence before demanding a successful new transaction. Neither broad retry-to-success nor shared-broker mutation is used. The production rebalance error-reset repair and its checked cleanup follow the updated ADR-19; remaining fixture and tuple findings are task-local. No publication or comprehensive EP-20 acceptance follows from this child's completion.
 
 ## Context and Orientation
 

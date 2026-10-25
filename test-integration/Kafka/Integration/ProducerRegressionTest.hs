@@ -265,6 +265,19 @@ tests env =
                flushProducerTimeout producer (Timeout 0) >>= (@?= Nothing)
                closeProducer producer
                closeProducer producer,
+           testCase "close retries a timed-out flush until the delayed delivery completes" $
+             withMockProducer $ \mock producer -> do
+               calls <- newIORef 0
+               reports <- newEmptyMVar
+               delayMockProduce mock 1600
+               (result, weak) <- enqueueCapture producer mockRecord calls (Just reports)
+               result @?= Right ()
+               awaitCondition ((== 1) <$> mockReceivedProduce mock)
+               closeProducer producer
+               takeWithin reports >>= (@?= DeliverySuccess mockRecord (C.Offset 0))
+               awaitCollected weak
+               readIORef calls >>= (@?= 1)
+               flushProducerTimeout producer (Timeout 0) >>= (@?= Nothing),
            testCase "oversized rejection releases capture without a delivery report" $
              withProducer (extraProp "message.max.bytes" "1000") $ \producer -> do
                calls <- newIORef 0
@@ -336,6 +349,31 @@ tests env =
                flushProducerTimeout producer (Timeout 1000) >>= (@?= Nothing)
                takeWithin lastReports >>= (@?= DeliveryFailure record (KafkaResponseError RdKafkaRespErrPurgeQueue))
                readIORef first >>= (@?= 0)
+         ]
+      <> [ testCase "null native delivery frame reports the generic errno fallback without dereferencing a message" $ withProducerTracking 6 $ do
+             reports <- newEmptyMVar
+             bracket (newProducer (producerProps env <> setCallback (deliveryCallback (putMVar reports))) >>= either throwIO pure) releaseProducer $ \_ -> do
+               triggerNullDelivery >>= (@?= fromEnum RdKafkaRespErrFail)
+               takeWithin reports >>= (@?= NoMessageError (KafkaResponseError RdKafkaRespErrFail)),
+           testCase "native delivery without an opaque Haskell callback preserves the complete record" $
+             withTopic env "producer-no-opaque" 1 $ \topic _ -> withProducerTracking 6 $ do
+               reports <- newEmptyMVar
+               bracket (newProducer (producerProps env <> setCallback (deliveryCallback (putMVar reports))) >>= either throwIO pure) releaseProducer $ \producer -> do
+                 enqueueWithoutOpaque topic
+                 flushProducerTimeout producer (Timeout 10000) >>= (@?= Nothing)
+                 let expected = ProducerRecord topic (SpecifiedPartition 0) (Just "native-key") (Just "native-without-opaque") mempty
+                 takeWithin reports >>= (@?= DeliverySuccess expected (C.Offset 0)),
+           testCase "delivery header acquisition failure preserves the outcome with empty headers" $
+             withTopic env "producer-header-failure" 1 $ \topic _ -> withProducerTracking 7 $ do
+               global <- newEmptyMVar
+               individual <- newEmptyMVar
+               bracket (newProducer (producerProps env <> setCallback (deliveryCallback (putMVar global))) >>= either throwIO pure) releaseProducer $ \producer -> do
+                 let original = ProducerRecord topic (SpecifiedPartition 0) (Just "key") (Just "payload") (headersFromList [("present", "before-failure")])
+                     expected = DeliverySuccess (original {prHeaders = mempty}) (C.Offset 0)
+                 produceMessage' producer original (putMVar individual) >>= (@?= Right ())
+                 flushProducerTimeout producer (Timeout 10000) >>= (@?= Nothing)
+                 takeWithin global >>= (@?= expected)
+                 takeWithin individual >>= (@?= expected)
          ]
   where
     record = ProducerRecord (TopicName (prefixedName env "producer-regression")) (SpecifiedPartition 0) Nothing (Just "callback payload") (headersFromList [("producer-test", "present"), ("producer-test", BS.pack [0, 255])])

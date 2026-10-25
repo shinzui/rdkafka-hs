@@ -207,7 +207,9 @@ families "rebalance" =
     r "owned-rebalance-error-retained" (replace "bracket acquire rdKafkaErrorDestroy" "bracket acquire (const (pure ()))") "cooperative assign async native reports failure without a success event",
     r "cooperative-assign-error-ignored" (replace "then checkRebalanceError (rdKafkaIncrementalAssign kptr pls)" "then void $ rdKafkaIncrementalAssign kptr pls") "cooperative assign async native reports failure without a success event",
     r "cooperative-revoke-error-ignored" (replace "then checkRebalanceError (rdKafkaIncrementalUnassign kptr pls)" "then void $ rdKafkaIncrementalUnassign kptr pls") "cooperative revoke sync native reports failure without a success event",
-    r "rebalance-error-code-ignored" (replace "checkRebalanceCode action = action >>= either throwIO pure . rdKafkaErrorToEither" "checkRebalanceCode action = void action") "eager revoke sync native reports failure without a success event"
+    r "rebalance-error-code-ignored" (replace "checkRebalanceCode action = action >>= either throwIO pure . rdKafkaErrorToEither" "checkRebalanceCode action = void action") "eager revoke sync native reports failure without a success event",
+    r "unexpected-rebalance-reset-omitted" (section "    x -> mask_ $ do" "-- The outer native callback boundary" (replace "checkRebalanceCode (newForeignPtr_ nullPtr >>= rdKafkaAssign kptr)" "pure ()")) "sync unexpected rebalance error clears assignment and pending records",
+    r "unexpected-rebalance-reset-error-ignored" (section "    x -> mask_ $ do" "-- The outer native callback boundary" (replace "checkRebalanceCode (newForeignPtr_ nullPtr >>= rdKafkaAssign kptr)" "void (newForeignPtr_ nullPtr >>= rdKafkaAssign kptr)")) "async unexpected rebalance error preserves state when native reset fails"
   ]
   where
     r label change test = mutation "public-contract" label "src/Kafka/Consumer/Callbacks.hs" change test

@@ -1,37 +1,44 @@
 {
-  "status": "passed: clean source archive authentication, TLS, ACL, reconnect and automated interruption qualification",
+  "status": "Accepted 17 permanent security cases replayed on the exact current clean source archive; ephemeral secrets/processes/ACL data removed",
   "environment": {
-    "os": "Ubuntu 24.04.5 LTS aarch64",
+    "os": "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.5 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo",
+    "kernel": "Linux 6.18.15",
+    "architecture": "aarch64",
     "ghc": "9.14.1",
     "cabal": "3.16.1.0",
-    "native": "2.16.0",
-    "native_sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f",
-    "broker": "Apache Kafka 4.4.0",
-    "mechanism": "SASL PLAIN over verified TLS",
-    "endpoint_verification": "https; generated CA; localhost SAN; verification never disabled",
-    "topology": "One owned Apache broker/controller. Separate internal loopback health/controller listener; explicit secure public listener used by all authentication clients."
+    "java": "openjdk 21.0.12.1 2026-08-18\nOpenJDK Runtime Environment (build 21.0.12.1+1-1-24.04.4-Ubuntu)\nOpenJDK 64-Bit Server VM (build 21.0.12.1+1-1-24.04.4-Ubuntu, mixed mode, sharing)",
+    "native_version": "2.16.0",
+    "broker_version": "Apache Kafka 4.4.0",
+    "loaded_native_identity": {
+      "observed": "(\"2.16.0\",34603263)",
+      "path": "/opt/librdkafka-2.16.0/lib/librdkafka.so.1",
+      "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f"
+    },
+    "broker_topology": "run-owned one-node combined broker/controller; ephemeral SASL_SSL listener; verified localhost CA; ephemeral PLAIN users and ACLs"
   },
   "source": {
-    "candidate_fingerprint": "abbf4e69f7806356c083acb0bb163c3e24f1fc7b4b1b5d78d1f469b0653a8993",
-    "execution_fingerprint": "2571e68979f3fd59c2b2e85c07c8e986787de49042d4b7645b59b17ea240cf49",
-    "revision": "e29e2f7 plus captured uncommitted source",
+    "project": "mori://shinzui/rdkafka-hs",
+    "candidate_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c",
+    "execution_fingerprint": "74c7156e6fee8653bcec844001fd8f95d703bcf4d8e978a857a9f8f3560b6b0a",
+    "revision": "bfa4f2e plus captured source",
     "archive": {
-      "path": "dist-compatibility/owned-fixture-checkpoint/candidate-phase5.tar.gz",
-      "sha256": "07b996694a93bd7fd1a19d649a64c7456adc0522adc66b5d31919b232a5d7167"
+      "path": "dist-compatibility/expanded-source9/candidate.tar.gz",
+      "sha256": "a70e4839d24c5e5179ff9a8be48643951e185d604cd8ba3401587730279f3b22"
     },
     "root_file_inventory": {
-      "path": "dist-compatibility/owned-fixture-checkpoint/root-fingerprint-files.json",
-      "sha256": "4e82164f2a0fa9c56a85c2372aaa78eb79185770a0fe22f7e94cdb8a8bda9821"
+      "path": "dist-compatibility/expanded-source9/root-functional-files.json",
+      "sha256": "69506c90cfc124f3a175a664873f5d8b49aff62a7426265c56c3dd64fcc84c21"
     },
     "archive_file_inventory": {
-      "path": "dist-compatibility/owned-fixture-checkpoint/phase5-fingerprint-files.json",
-      "sha256": "479ad262d71dd40d6edfd9c1db3069744b8e26898f8d1f588d2db08cde38bda2"
+      "path": "dist-compatibility/expanded-source9/phase9-functional-files.json",
+      "sha256": "d0e5d59aa49833ecd1305410c839cbebdbbb418679cecc6de0c2548b142dca4b"
     },
     "archive_comparison": {
       "changed_files": [],
       "added_files": [],
       "omitted_development_files": [
         ".envrc",
+        "cabal.project",
         "flake.lock",
         "flake.module.nix",
         "flake.nix",
@@ -40,9 +47,16 @@
         "nix/pre-commit.nix",
         "nix/redpanda.nix",
         "nix/treefmt.nix"
-      ]
+      ],
+      "omitted_project_configuration": {
+        "path": "cabal.project",
+        "content": "packages: .\n",
+        "replacement": "Cabal implicit single package in clean extraction; same package set, no solver/compiler constraints in omitted file"
+      },
+      "execution_fingerprint": "74c7156e6fee8653bcec844001fd8f95d703bcf4d8e978a857a9f8f3560b6b0a",
+      "root_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c"
     },
-    "configuration_sha256": "029db047ce9030f57c90485d05305cee35c9031f2651304434c226d586fcb653"
+    "configuration_sha256": "c6c0771e7da58c35d40170db3ec18cdd2439997e223ef4c088ac3f4e793707f9"
   },
   "results": {
     "authentication_cases": 17,
@@ -85,13 +99,38 @@
     "clean_archive_command": [
       "rdkafka-hs-integration",
       "--authentication-qualification"
+    ],
+    "seconds": 84.72,
+    "command": [
+      "/evidence/native-phase9-binary",
+      "--authentication-qualification"
     ]
   },
   "cleanup": {
-    "normal": "Owned Java exited, broker state and credential/JAAS files removed; retained textual logs checked against generated passwords",
-    "interrupted_prototype": "Run-owned VM became unresponsive with concurrent diagnostic/distributed workloads. Only that VM was restarted; prototype secrets/data removed and retained logs sanitized. Interrupted scenarios are not accepted.",
-    "remaining": [],
-    "interruption": "The final case creates an independently owned authenticated secure fixture, cancels its active bracket, observes ThreadKilled, and asserts all owned process handles exited and secret/config/data directories were removed."
+    "owned_java_processes_remaining": [],
+    "fixtures": [
+      {
+        "root": "dist-compatibility/kafka-fixtures/owned-138157-0",
+        "cleanup": "All owned process handles exited; owned broker data removed.",
+        "security_cleanup": null,
+        "broker_data_remaining": [],
+        "secret_directory_remaining": false
+      },
+      {
+        "root": "dist-compatibility/kafka-fixtures/owned-154935-0",
+        "cleanup": "All owned process handles exited; owned broker data removed.",
+        "security_cleanup": "Owned credential files and JAAS configurations removed; owned log files checked for ephemeral passwords.",
+        "broker_data_remaining": [],
+        "secret_directory_remaining": false
+      },
+      {
+        "root": "dist-compatibility/kafka-fixtures/owned-154935-51",
+        "cleanup": "All owned process handles exited; owned broker data removed.",
+        "security_cleanup": "Owned credential files and JAAS configurations removed; owned log files checked for ephemeral passwords.",
+        "broker_data_remaining": [],
+        "secret_directory_remaining": false
+      }
+    ]
   },
   "mechanisms": {
     "PLAIN": "tested with TLS, ACLs and reconnect",
@@ -283,5 +322,107 @@
     "credentials": "ephemeral, local private files only",
     "authorization": "Separate original/replacement writer/reader ACLs; Describe-only denied identity; group denial audited at FindCoordinator; admin allow/deny",
     "cleanup": "Owned ProcessHandles stopped, broker state/JAAS/passwords/private keys removed, retained textual logs scanned for generated passwords"
+  },
+  "previous_accepted_checkpoint": {
+    "source": {
+      "candidate_fingerprint": "abbf4e69f7806356c083acb0bb163c3e24f1fc7b4b1b5d78d1f469b0653a8993",
+      "execution_fingerprint": "2571e68979f3fd59c2b2e85c07c8e986787de49042d4b7645b59b17ea240cf49",
+      "revision": "e29e2f7 plus captured uncommitted source",
+      "archive": {
+        "path": "dist-compatibility/owned-fixture-checkpoint/candidate-phase5.tar.gz",
+        "sha256": "07b996694a93bd7fd1a19d649a64c7456adc0522adc66b5d31919b232a5d7167"
+      },
+      "root_file_inventory": {
+        "path": "dist-compatibility/owned-fixture-checkpoint/root-fingerprint-files.json",
+        "sha256": "4e82164f2a0fa9c56a85c2372aaa78eb79185770a0fe22f7e94cdb8a8bda9821"
+      },
+      "archive_file_inventory": {
+        "path": "dist-compatibility/owned-fixture-checkpoint/phase5-fingerprint-files.json",
+        "sha256": "479ad262d71dd40d6edfd9c1db3069744b8e26898f8d1f588d2db08cde38bda2"
+      },
+      "archive_comparison": {
+        "changed_files": [],
+        "added_files": [],
+        "omitted_development_files": [
+          ".envrc",
+          "flake.lock",
+          "flake.module.nix",
+          "flake.nix",
+          "justfile",
+          "nix/haskell.nix",
+          "nix/pre-commit.nix",
+          "nix/redpanda.nix",
+          "nix/treefmt.nix"
+        ]
+      },
+      "configuration_sha256": "029db047ce9030f57c90485d05305cee35c9031f2651304434c226d586fcb653"
+    },
+    "results": {
+      "authentication_cases": 17,
+      "primary_setter_cases": 7,
+      "compiled_credential_mutations": 4,
+      "mutation_control_cases": 7,
+      "mutation_manifest": {
+        "path": "dist-mutations/20261025T010428Z-credentials-39063-0/results.json",
+        "sha256": "5aa5d6b7833f9f5c2405218e4cc90ba7f43a4cf5d656636932495ccf5b4fa795",
+        "fingerprint": "3849c13e1816569ebea01785af4a0d074f2e5d891df13313d8016a340dd63f44"
+      },
+      "outcomes": [
+        "Exact authenticated delivery, complete records and committed next offset in async/sync modes",
+        "Exact AUTHENTICATION for wrong passwords and SSL for missing CA or hostname mismatch; producer delivery ultimately MSG_TIMED_OUT",
+        "Topic ACL permits Describe but denies Read/Write, yielding exact TOPIC_AUTHORIZATION_FAILED",
+        "Denied group FindCoordinator is audited by the broker and native synchronous commit returns WAIT_COORD; 6-second session limit",
+        "Exact topic creation authorization error and allowed administration by ephemeral admin",
+        "Invalid replacement is observed after owned broker restart, then corrected second identity performs its exclusive topic action; producer and both consumer modes",
+        "NUL username/password rejected before native setter; real native errors destroyed once during ordinary return and pending acquisition/decoder cancellation"
+      ],
+      "tests": [
+        "authentication-contract.verified TLS authenticated delivery and exact consume/commit in both modes",
+        "authentication-contract.authenticated identity without topic ACL receives exact produce denial",
+        "authentication-contract.invalid-password producer reports the exact connection failure and no delivery",
+        "authentication-contract.untrusted-CA producer reports the exact connection failure and no delivery",
+        "authentication-contract.hostname-mismatch producer reports the exact connection failure and no delivery",
+        "authentication-contract.invalid-password async consumer reports the exact connection failure",
+        "authentication-contract.invalid-password sync consumer reports the exact connection failure",
+        "authentication-contract.untrusted-CA async consumer reports the exact connection failure",
+        "authentication-contract.untrusted-CA sync consumer reports the exact connection failure",
+        "authentication-contract.hostname-mismatch async consumer reports the exact connection failure",
+        "authentication-contract.hostname-mismatch sync consumer reports the exact connection failure",
+        "authentication-contract.async exact topic/group/admin authorization denials",
+        "authentication-contract.sync exact topic/group/admin authorization denials",
+        "authentication-contract.producer credential replacement authenticates a new identity after observed reconnect and recovers from invalid replacement",
+        "authentication-contract.async consumer credential replacement authenticates after observed reconnect and recovers from invalid replacement",
+        "authentication-contract.sync consumer credential replacement authenticates after observed reconnect and recovers from invalid replacement",
+        "authentication-contract.interruption destroys owned secure processes, credentials, ACL state and private keys"
+      ],
+      "clean_archive_command": [
+        "rdkafka-hs-integration",
+        "--authentication-qualification"
+      ]
+    },
+    "cleanup": {
+      "normal": "Owned Java exited, broker state and credential/JAAS files removed; retained textual logs checked against generated passwords",
+      "interrupted_prototype": "Run-owned VM became unresponsive with concurrent diagnostic/distributed workloads. Only that VM was restarted; prototype secrets/data removed and retained logs sanitized. Interrupted scenarios are not accepted.",
+      "remaining": [],
+      "interruption": "The final case creates an independently owned authenticated secure fixture, cancels its active bracket, observes ThreadKilled, and asserts all owned process handles exited and secret/config/data directories were removed."
+    }
+  },
+  "current_artifacts": {
+    "authentication-final9.log": {
+      "path": "dist-compatibility/expanded-source9/authentication-final9.log",
+      "sha256": "a9cc23df591ca6608c613090bf42ae57ece89c1dc3e3ede7bbc0dee1cbcd2457"
+    },
+    "authentication-final9-tests.txt": {
+      "path": "dist-compatibility/expanded-source9/authentication-final9-tests.txt",
+      "sha256": "e011f6a1ed4544904bc4117ebdd30e85339b33c096b3d0619bbff506f5e2e893"
+    },
+    "configuration.json": {
+      "path": "dist-compatibility/expanded-source9/configuration.json",
+      "sha256": "c6c0771e7da58c35d40170db3ec18cdd2439997e223ef4c088ac3f4e793707f9"
+    },
+    "fixture-cleanup.json": {
+      "path": "dist-compatibility/expanded-source9/fixture-cleanup.json",
+      "sha256": "22a1434a32c0b23c77e8cb0f788c46ca45dc4129ff55add57033437db77be5aa"
+    }
   }
 }

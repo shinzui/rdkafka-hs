@@ -1,4 +1,4 @@
-module Kafka.ConsumerStateSupport (withStateFault, endStateFault, stateStat, triggerRebalance, stateLeakControl, commitObservation, withQueueTracking, queueEventStat, awaitQueuedRecord) where
+module Kafka.ConsumerStateSupport (withStateFault, endStateFault, stateStat, triggerRebalance, triggerCooperative, stateLeakControl, commitObservation, withQueueTracking, queueEventStat, awaitQueuedRecord) where
 
 import Control.Concurrent (threadDelay)
 import Control.Exception (bracket_)
@@ -16,6 +16,11 @@ foreign import ccall unsafe "rdkafka_hs_test_state_end" endStateFault :: IO ()
 foreign import ccall unsafe "rdkafka_hs_test_state_stat" stat :: CInt -> IO CInt
 
 foreign import ccall safe "rdkafka_hs_test_state_trigger" trigger :: CString -> IO ()
+
+foreign import ccall safe "rdkafka_hs_test_state_trigger_cooperative" triggerCooperativeNative :: CString -> CInt -> IO ()
+
+triggerCooperative :: TopicName -> Bool -> IO ()
+triggerCooperative (TopicName topic) revoke = withCString (Text.unpack topic) (\name -> triggerCooperativeNative name (if revoke then 1 else 0))
 
 foreign import ccall unsafe "rdkafka_hs_test_state_leak_control" stateLeakControl :: IO ()
 

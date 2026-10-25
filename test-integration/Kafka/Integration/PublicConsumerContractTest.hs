@@ -114,6 +114,25 @@ tests testEnv =
                    pollMessage consumer (Timeout 0) >>= (@?= Left (KafkaResponseError RdKafkaRespErrBadMsg))
                    message <- pollMessage consumer (Timeout 10000) >>= either throwIO pure
                    crOffset message @?= Offset 1,
+               testCase "originless callback error survives seek filtering and a paused partition" $
+                 withRecords testEnv "buffer-originless-error" CallbackPollModeSync $ \topic consumer -> do
+                   withMessageFault 24 $ do
+                     pollConsumerEvents consumer (Just (Timeout 10000))
+                     balanced 1
+                   seekPartitions consumer [TopicPartition topic (PartitionId 0) (PartitionOffset 2)] (Timeout 2000) >>= (@?= Nothing)
+                   pausePartitions consumer [(topic, PartitionId 0)] >>= (@?= KafkaResponseError RdKafkaRespErrNoError)
+                   pollMessageAttributed consumer (Timeout 0)
+                     >>= (@?= Left (ConsumerMessageError (KafkaResponseError RdKafkaRespErrBadMsg) Nothing Nothing Nothing))
+                   resumePartitions consumer [(topic, PartitionId 0)] >>= (@?= KafkaResponseError RdKafkaRespErrNoError)
+                   record <- pollMessage consumer (Timeout 10000) >>= either throwIO pure
+                   (crTopic record, crPartition record, crOffset record, crValue record) @?= (topic, PartitionId 0, Offset 2, Just "third"),
+               testCase "callback-event polling releases and discards a returned fatal frame" $
+                 withRecords testEnv "buffer-fatal-discard" CallbackPollModeSync $ \topic consumer -> do
+                   withMessageFault 25 $ do
+                     pollConsumerEvents consumer (Just (Timeout 10000))
+                     balanced 1
+                   record <- pollMessage consumer (Timeout 10000) >>= either throwIO pure
+                   (crTopic record, crOffset record, crValue record) @?= (topic, Offset 1, Just "second"),
                testCase "zero batch size leaves the queued records available" $
                  withRecords testEnv "batch-zero" CallbackPollModeAsync $ \_ consumer -> withMessageFault 0 $ do
                    pollMessageBatch consumer (Timeout 1000) (BatchSize 0) >>= (@?= [])
@@ -122,7 +141,7 @@ tests testEnv =
                    balanced 3,
                testCase "unsupported sync batch does not discard a record" $
                  withRecords testEnv "batch-sync" CallbackPollModeSync $ \_ consumer -> withMessageFault 20 $ do
-                   pollMessageBatch consumer (Timeout 0) (BatchSize 3) >>= assertBadSpecification
+                   pollMessageBatch consumer (Timeout 0) (BatchSize 3) >>= (@?= [Left (KafkaBadSpecification "Calling pollMessageBatch while CallbackPollMode is set to CallbackPollModeSync.")])
                    messageStat 0 >>= (@?= 0)
                    record <- pollMessage consumer (Timeout 10000) >>= either throwIO pure
                    (crOffset record, crValue record) @?= (Offset 0, Just "first"),
@@ -164,10 +183,33 @@ tests testEnv =
              ]
           <> [ testCase ("invalid batch array size is rejected before native acquisition: " <> show size) $
                  withRecords testEnv ("batch-size-" <> show size) CallbackPollModeAsync $ \_ consumer -> withMessageFault 20 $ do
-                   pollMessageBatch consumer (Timeout 0) (BatchSize size) >>= assertBadSpecification
+                   pollMessageBatch consumer (Timeout 0) (BatchSize size) >>= (@?= [Left (KafkaBadSpecification "Batch size must be nonnegative and fit a native pointer array.")])
                    messageStat 0 >>= (@?= 0)
                    balanced 0
              | size <- [-1, minBound, maxBound]
+             ]
+          <> [ testCase "batch preserves complete records followed by exact partition EOF and idle timeout" $
+                 withTopic testEnv "batch-eof-fields" 1 $ \topic producer -> do
+                   forM_ ["first", "second", "third"] (produceTo producer topic 0)
+                   let props = brokersList (teBrokers testEnv) <> groupId (makeGroupId testEnv "batch-eof-fields") <> noAutoCommit <> noAutoOffsetStore <> callbackPollMode CallbackPollModeAsync <> extraProp "enable.partition.eof" "true"
+                   bracket (newAssignedConsumer props >>= either throwIO pure) releaseConsumer $ \consumer -> do
+                     assign consumer [TopicPartition topic (PartitionId 0) PartitionOffsetBeginning] >>= (@?= Nothing)
+                     withMessageFault 0 $ do
+                       let eof = KafkaResponseError RdKafkaRespErrPartitionEof
+                           collect values
+                             | any (\case Left err -> err == eof; _ -> False) values = pure values
+                             | otherwise = do
+                                 batch <- pollMessageBatch consumer (Timeout 500) (BatchSize 5)
+                                 assertBool (show batch) (length batch <= 5)
+                                 collect (values <> batch)
+                       results <- bounded (collect [])
+                       map (fmap (\record -> (crTopic record, crPartition record, crOffset record, crKey record, crValue record, crHeaders record))) results
+                         @?= [Right (topic, PartitionId 0, Offset offset, Nothing, Just value, mempty) | (offset, value) <- zip [0 ..] ["first", "second", "third"]] <> [Left eof]
+                       forM_ results $ \case
+                         Right record -> case crTimestamp record of CreateTime (Millis time) -> assertBool "missing EOF batch record timestamp" (time > 0); other -> assertFailure (show other)
+                         Left _ -> pure ()
+                       pollMessageBatch consumer (Timeout 100) (BatchSize 5) >>= (@?= [])
+                       balanced 4
              ]
           <> [ testCase ("empty batch respects timeout " <> show milliseconds)
                  $ bracket
@@ -193,10 +235,6 @@ tests testEnv =
       MetadataContractTest.tests testEnv,
       ConfigStringContractTest.tests testEnv
     ]
-
-assertBadSpecification :: (Show a) => [Either KafkaError a] -> IO ()
-assertBadSpecification [Left (KafkaBadSpecification _)] = pure ()
-assertBadSpecification result = assertFailure (show result)
 
 withRecords :: TestEnv -> String -> CallbackPollMode -> (TopicName -> KafkaConsumer -> IO a) -> IO a
 withRecords testEnv label mode action = withTopic testEnv ("message-owner-" <> safeLabel) 1 $ \topic producer -> do
@@ -284,8 +322,14 @@ rebalanceErrorTests testEnv =
            poll <- ["async", "sync"],
            failure <- if protocol == "cooperative" then ["native", "decode"] else ["native"]
          ]
+      <> [ testCase (poll <> " unexpected rebalance error " <> description) $
+             runChildProbe ("rebalance-unexpected-" <> poll <> "-" <> failure) ["--rebalance-error-probe", "unexpected", "failure", poll, failure]
+         | poll <- ["async", "sync"],
+           (failure, description) <- [("native", "clears assignment and pending records"), ("reset-failure", "preserves state when native reset fails")]
+         ]
 
 runRebalanceProbe :: String -> String -> String -> String -> IO ()
+runRebalanceProbe "unexpected" _ poll failure = runUnexpectedRebalanceProbe poll failure
 runRebalanceProbe protocol operation poll failure = do
   fault <- case (protocol, operation, failure) of
     ("cooperative", "assign", "native") -> pure 1
@@ -328,3 +372,36 @@ runRebalanceProbe protocol operation poll failure = do
                   then isJust (fromException exception :: Maybe ErrorCall)
                   else (fromException exception :: Maybe KafkaError) == Just (KafkaResponseError RdKafkaRespErrState)
         assertBool (show (observed, seen, fmap show result)) (observed == expected && seen == [before] && expectedError)
+
+runUnexpectedRebalanceProbe :: String -> String -> IO ()
+runUnexpectedRebalanceProbe poll failure = do
+  brokers <- lookupEnv "RDKAFKA_TEST_BROKER" >>= either die pure . resolveBrokers
+  testEnv <- newTestEnv brokers
+  events <- newIORef []
+  reported <- newEmptyMVar
+  let mode = if poll == "async" then CallbackPollModeAsync else CallbackPollModeSync
+      fault = if failure == "native" then 7 else 8
+      expected = KafkaResponseError (if failure == "native" then RdKafkaRespErrGroupAuthorizationFailed else RdKafkaRespErrState)
+      props = brokersList brokers <> groupId (makeGroupId testEnv "unexpected-rebalance") <> noAutoCommit <> noAutoOffsetStore <> callbackPollMode mode <> setCallback (rebalanceCallback (\_ event -> modifyIORef' events (<> [event])))
+  bracket getUncaughtExceptionHandler setUncaughtExceptionHandler $ \_ -> do
+    setUncaughtExceptionHandler (putMVar reported)
+    withTopic testEnv (Text.pack ("unexpected-rebalance-" <> poll <> failure)) 1 $ \topic producer ->
+      withStateFault fault $
+        bracket (newAssignedConsumer props >>= either throwIO pure) (\consumer -> endStateFault `finally` releaseConsumer consumer) $ \consumer -> do
+          assign consumer [TopicPartition topic (PartitionId 0) PartitionOffsetBeginning] >>= (@?= Nothing)
+          produceTo producer topic 0 "pending-before-rebalance-error"
+          if mode == CallbackPollModeSync then pollConsumerEvents consumer (Just (Timeout 10000)) else pure ()
+          beforeCalls <- stateStat 5
+          triggerRebalance topic
+          result <- timeout 1000000 (readMVar reported)
+          fmap (\exception -> fromException exception :: Maybe KafkaError) result @?= Just (Just expected)
+          stateStat 5 >>= (@?= beforeCalls + 1)
+          readIORef events >>= (@?= [])
+          if failure == "native"
+            then do
+              assignment consumer >>= (@?= Right M.empty)
+              pollMessage consumer (Timeout 0) >>= (@?= Left (KafkaResponseError RdKafkaRespErrTimedOut))
+            else do
+              assignment consumer >>= (@?= Right (M.singleton topic [PartitionId 0]))
+              record <- pollMessage consumer (Timeout 10000) >>= either throwIO pure
+              (crTopic record, crPartition record, crOffset record, crValue record) @?= (topic, PartitionId 0, Offset 0, Just "pending-before-rebalance-error")

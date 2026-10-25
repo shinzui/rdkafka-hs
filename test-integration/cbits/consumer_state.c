@@ -101,8 +101,9 @@ rd_kafka_error_t *rd_kafka_incremental_unassign(rd_kafka_t *rk, const rd_kafka_t
 rd_kafka_resp_err_t rd_kafka_assign(rd_kafka_t *rk, const rd_kafka_topic_partition_list_t *partitions) {
   REAL(rd_kafka_assign);
   pthread_mutex_lock(&lock);
-  int controlled = enabled && rk == client && mode >= 5;
-  if (controlled) stats[5]++;
+  int observed = enabled && rk == client && mode >= 5 && mode <= 8;
+  int controlled = observed && (mode == 5 || mode == 6 || (mode == 8 && !partitions));
+  if (observed) stats[5]++;
   pthread_mutex_unlock(&lock);
   return controlled ? RD_KAFKA_RESP_ERR__STATE : real(rk, partitions);
 }
@@ -110,11 +111,25 @@ void rdkafka_hs_test_state_trigger(const char *topic) {
   pthread_mutex_lock(&lock);
   rd_kafka_t *target = client; rebalance_callback callback = installed;
   int revoke = mode == 2 || mode == 4 || mode == 6;
+  int unexpected = mode == 7 || mode == 8;
   if (!enabled || !target || !callback) abort();
   stats[6]++;
   pthread_mutex_unlock(&lock);
   rd_kafka_topic_partition_list_t *partitions = rd_kafka_topic_partition_list_new(1);
   rd_kafka_topic_partition_list_add(partitions, topic, 0);
+  callback(target, unexpected ? RD_KAFKA_RESP_ERR_GROUP_AUTHORIZATION_FAILED : revoke ? RD_KAFKA_RESP_ERR__REVOKE_PARTITIONS : RD_KAFKA_RESP_ERR__ASSIGN_PARTITIONS, partitions, NULL);
+  rd_kafka_topic_partition_list_destroy(partitions);
+}
+void rdkafka_hs_test_state_trigger_cooperative(const char *topic, int revoke) {
+  pthread_mutex_lock(&lock);
+  rd_kafka_t *target = client; rebalance_callback callback = installed;
+  if (!enabled || mode != 9 || !target || !callback) abort();
+  pthread_mutex_unlock(&lock);
+  /* No protocol or action is replaced: the client must have negotiated
+   * COOPERATIVE and the installed bridge calls real incremental APIs. */
+  rd_kafka_topic_partition_list_t *partitions = rd_kafka_topic_partition_list_new(1);
+  rd_kafka_topic_partition_t *partition = rd_kafka_topic_partition_list_add(partitions, topic, 0);
+  if (!revoke) partition->offset = RD_KAFKA_OFFSET_END;
   callback(target, revoke ? RD_KAFKA_RESP_ERR__REVOKE_PARTITIONS : RD_KAFKA_RESP_ERR__ASSIGN_PARTITIONS, partitions, NULL);
   rd_kafka_topic_partition_list_destroy(partitions);
 }

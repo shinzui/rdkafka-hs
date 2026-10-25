@@ -1,5 +1,5 @@
 {
-  "status": "Permanent M1 leader-change scenarios pass in both callback modes; remaining group/outage/transaction qualification open",
+  "status": "Accepted all nine permanent leader/group/outage/transaction/cancellation cases on the exact clean archive; Apache policy and inherited fencing/init evidence integrated",
   "source": {
     "candidate_archive": {
       "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/candidate.tar.gz",
@@ -83,13 +83,7 @@
       "sha256": "e04defe1b1b98ad409439177368842c1c2c2767a44aebe68c77066fa6e4ad02d"
     }
   },
-  "remaining": [
-    "Fixture lifecycle/cancellation acceptance and fresh candidate replay",
-    "Full outage/reconnect and callback/commit/poll recovery",
-    "Eager/cooperative group eviction and actual assignmentLost True",
-    "Broker/coordinator transaction interruption and read-committed recovery",
-    "Actual Apache topic-configuration rejection policy"
-  ],
+  "remaining": [],
   "permanent_m1": {
     "test_cases": 2,
     "source_fingerprint": "35f44f61ae9c18f7e7e0e085f3258081e1d391fc2c934c9bf112a64ab0d8cf00",
@@ -116,5 +110,268 @@
       "sha256": "bf13d5b8e73c44c17788214b953afcc4e21d17dc06724011ce2885077f92d7b1"
     },
     "remaining": "Fresh full candidate replay and interruption acceptance are distinct from the passing M1 behaviors."
+  },
+  "distributed_checkpoint": {
+    "tests": 8,
+    "seconds": 337.27,
+    "source_receipt": "dist-compatibility/expanded-recovery-checkpoint/distributed-phase6-receipt.json",
+    "observations": {
+      "leader": {
+        "modes": [
+          "async",
+          "sync"
+        ],
+        "offsets": [
+          0,
+          1
+        ],
+        "committed_next": 2,
+        "ISR": "three -> two -> three"
+      },
+      "group": {
+        "protocols": [
+          "eager",
+          "cooperative"
+        ],
+        "modes": [
+          "async",
+          "sync"
+        ],
+        "transitions": [
+          "split",
+          "pause/seek",
+          "handoff",
+          "full outage",
+          "loss-phase eviction",
+          "reconnect"
+        ],
+        "assignmentLost_in_before_revoke": true,
+        "outage_commit_all": "WaitCoord before eviction; NoOffset after unassignment",
+        "producer": "queue-full overflow and accepted timeout, with neither record appearing after restore",
+        "pre_outage_stored_next": 3,
+        "pre_outage_committed_next": 2,
+        "replay_offsets": [
+          2,
+          2
+        ],
+        "final_committed_next": [
+          4,
+          4
+        ]
+      },
+      "transaction": {
+        "modes": [
+          "async",
+          "sync"
+        ],
+        "offline_commit": "TimedOut; retriable=True, fatal=False, abort=False",
+        "native_error_counts": [
+          1,
+          1
+        ],
+        "restored": "same transaction commit succeeds; read-committed publishes offset 0 exactly once"
+      }
+    },
+    "artifacts": {
+      "distributed-all6.log": {
+        "path": "dist-compatibility/expanded-recovery-checkpoint/distributed-all6.log",
+        "sha256": "65efc755a6a98f8bb143623f4e7668fe9f27986d49da5a42b49d79a182c9e627"
+      },
+      "distributed-phase6-receipt.json": {
+        "path": "dist-compatibility/expanded-recovery-checkpoint/distributed-phase6-receipt.json",
+        "sha256": "09f0fc485c48fbbeca7cc236eee6c7c0b490430ed1d5240b77097318d6e3823d"
+      },
+      "apache-policy6.log": {
+        "path": "dist-compatibility/expanded-recovery-checkpoint/apache-policy6.log",
+        "sha256": "15e7af9d13c2dacee1f8b8cecf7376899067f61975e3e60c0cae1fba96ab1753"
+      }
+    }
+  },
+  "accepted_current": {
+    "source": {
+      "project": "mori://shinzui/rdkafka-hs",
+      "candidate_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c",
+      "execution_fingerprint": "74c7156e6fee8653bcec844001fd8f95d703bcf4d8e978a857a9f8f3560b6b0a",
+      "revision": "bfa4f2e plus captured source",
+      "archive": {
+        "path": "dist-compatibility/expanded-source9/candidate.tar.gz",
+        "sha256": "a70e4839d24c5e5179ff9a8be48643951e185d604cd8ba3401587730279f3b22"
+      },
+      "root_file_inventory": {
+        "path": "dist-compatibility/expanded-source9/root-functional-files.json",
+        "sha256": "69506c90cfc124f3a175a664873f5d8b49aff62a7426265c56c3dd64fcc84c21"
+      },
+      "archive_file_inventory": {
+        "path": "dist-compatibility/expanded-source9/phase9-functional-files.json",
+        "sha256": "d0e5d59aa49833ecd1305410c839cbebdbbb418679cecc6de0c2548b142dca4b"
+      },
+      "archive_comparison": {
+        "changed_files": [],
+        "added_files": [],
+        "omitted_development_files": [
+          ".envrc",
+          "cabal.project",
+          "flake.lock",
+          "flake.module.nix",
+          "flake.nix",
+          "justfile",
+          "nix/haskell.nix",
+          "nix/pre-commit.nix",
+          "nix/redpanda.nix",
+          "nix/treefmt.nix"
+        ],
+        "omitted_project_configuration": {
+          "path": "cabal.project",
+          "content": "packages: .\n",
+          "replacement": "Cabal implicit single package in clean extraction; same package set, no solver/compiler constraints in omitted file"
+        },
+        "execution_fingerprint": "74c7156e6fee8653bcec844001fd8f95d703bcf4d8e978a857a9f8f3560b6b0a",
+        "root_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c"
+      },
+      "configuration_sha256": "c6c0771e7da58c35d40170db3ec18cdd2439997e223ef4c088ac3f4e793707f9"
+    },
+    "environment": {
+      "os": "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.5 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo",
+      "kernel": "Linux 6.18.15",
+      "architecture": "aarch64",
+      "ghc": "9.14.1",
+      "cabal": "3.16.1.0",
+      "java": "openjdk 21.0.12.1 2026-08-18\nOpenJDK Runtime Environment (build 21.0.12.1+1-1-24.04.4-Ubuntu)\nOpenJDK 64-Bit Server VM (build 21.0.12.1+1-1-24.04.4-Ubuntu, mixed mode, sharing)",
+      "native_version": "2.16.0",
+      "broker_version": "Apache Kafka 4.4.0",
+      "loaded_native_identity": {
+        "observed": "(\"2.16.0\",34603263)",
+        "path": "/opt/librdkafka-2.16.0/lib/librdkafka.so.1",
+        "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f"
+      },
+      "broker_topology": "run-owned three-node combined broker/controllers; ephemeral loopback ports; RF3/min ISR2 fault topics"
+    },
+    "tests": [
+      "broker-failure.async observed leader election preserves exact records and commits",
+      "broker-failure.sync observed leader election preserves exact records and commits",
+      "broker-failure.eager async handoff pause seek eviction and complete outage recover exact offsets",
+      "broker-failure.eager sync handoff pause seek eviction and complete outage recover exact offsets",
+      "broker-failure.cooperative async handoff pause seek eviction and complete outage recover exact offsets",
+      "broker-failure.cooperative sync handoff pause seek eviction and complete outage recover exact offsets",
+      "broker-failure.async transaction commit timeout across full outage retries and preserves read-committed visibility",
+      "broker-failure.sync transaction commit timeout across full outage retries and preserves read-committed visibility",
+      "broker-failure.cancellation during complete outage restores all owned brokers"
+    ],
+    "passed": 9,
+    "seconds": 347.08,
+    "command": [
+      "/evidence/native-phase9-binary",
+      "--broker-qualification"
+    ],
+    "native_transaction_integration": [
+      "rdkafka-hs-integration.transaction-errors.transaction-error-leak-probe releases 300 immediate native errors",
+      "rdkafka-hs-integration.transaction-errors.native allocation control detects the inherited three-error leak",
+      "rdkafka-hs-integration.transaction-errors.initialization timeout destroys its native error on each retry",
+      "rdkafka-hs-integration.transaction-errors.zero-timeout initialization resumes successfully against the broker",
+      "rdkafka-hs-integration.transaction-errors.transaction state errors preserve empty commit and abort recovery",
+      "rdkafka-hs-integration.transaction-errors.duplicate transactional IDs report a real fatal fencing error",
+      "rdkafka-hs-integration.transaction-errors.broker-rejected delivery requires abort and permits a successful new transaction",
+      "rdkafka-hs-integration.transaction-errors.init without transactional ID preserves native code and destroys error",
+      "rdkafka-hs-integration.transaction-errors.begin without transactional ID preserves native code and destroys error",
+      "rdkafka-hs-integration.transaction-errors.abort without transactional ID preserves native code and destroys error",
+      "rdkafka-hs-integration.transaction-errors.commit without transactional ID preserves native code and destroys error",
+      "rdkafka-hs-integration.transaction-errors.offset without transactional ID preserves native code and destroys error",
+      "rdkafka-hs-integration.transaction-errors.init NULL return remains success",
+      "rdkafka-hs-integration.transaction-errors.begin NULL return remains success",
+      "rdkafka-hs-integration.transaction-errors.abort NULL return remains success",
+      "rdkafka-hs-integration.transaction-errors.commit NULL return remains success",
+      "rdkafka-hs-integration.transaction-errors.offset NULL return remains success",
+      "rdkafka-hs-integration.transaction-errors.init invalid native code still destroys acquired error",
+      "rdkafka-hs-integration.transaction-errors.begin invalid native code still destroys acquired error",
+      "rdkafka-hs-integration.transaction-errors.abort invalid native code still destroys acquired error",
+      "rdkafka-hs-integration.transaction-errors.commit invalid native code still destroys acquired error",
+      "rdkafka-hs-integration.transaction-errors.offset invalid native code still destroys acquired error",
+      "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 0 before destruction",
+      "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 1 before destruction",
+      "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 2 before destruction",
+      "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 3 before destruction",
+      "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 4 before destruction",
+      "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 5 before destruction",
+      "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 6 before destruction",
+      "rdkafka-hs-integration.transaction-errors.commit copies native flag combination 7 before destruction",
+      "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 0 before destruction",
+      "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 1 before destruction",
+      "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 2 before destruction",
+      "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 3 before destruction",
+      "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 4 before destruction",
+      "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 5 before destruction",
+      "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 6 before destruction",
+      "rdkafka-hs-integration.transaction-errors.offset copies native flag combination 7 before destruction",
+      "rdkafka-hs-integration.transaction-errors.init cancellation at decoder stage 20 releases once",
+      "rdkafka-hs-integration.transaction-errors.begin cancellation at decoder stage 20 releases once",
+      "rdkafka-hs-integration.transaction-errors.abort cancellation at decoder stage 20 releases once",
+      "rdkafka-hs-integration.transaction-errors.commit cancellation at decoder stage 20 releases once",
+      "rdkafka-hs-integration.transaction-errors.commit cancellation at decoder stage 21 releases once",
+      "rdkafka-hs-integration.transaction-errors.commit cancellation at decoder stage 22 releases once",
+      "rdkafka-hs-integration.transaction-errors.commit cancellation at decoder stage 23 releases once",
+      "rdkafka-hs-integration.transaction-errors.offset cancellation at decoder stage 20 releases once",
+      "rdkafka-hs-integration.transaction-errors.offset cancellation at decoder stage 21 releases once",
+      "rdkafka-hs-integration.transaction-errors.offset cancellation at decoder stage 22 releases once",
+      "rdkafka-hs-integration.transaction-errors.offset cancellation at decoder stage 23 releases once",
+      "rdkafka-hs-integration.transaction-errors.async commit publishes output and source next offset atomically; abort publishes neither",
+      "rdkafka-hs-integration.transaction-errors.sync commit publishes output and source next offset atomically; abort publishes neither"
+    ],
+    "apache_configuration_policy": {
+      "declared": "reject",
+      "passed": 1,
+      "command": [
+        "/evidence/native-phase9-binary",
+        "-p",
+        "/unsupported configuration follows/"
+      ],
+      "artifact": {
+        "path": "dist-compatibility/expanded-source9/apache-policy9.log",
+        "sha256": "619f1dacc2a5c8f5e4fa510ce8d50ef9490183a6e2a9078da8c6a023eaecec7c"
+      }
+    },
+    "cleanup": {
+      "owned_java_processes_remaining": [],
+      "fixtures": [
+        {
+          "root": "dist-compatibility/kafka-fixtures/owned-138157-0",
+          "cleanup": "All owned process handles exited; owned broker data removed.",
+          "security_cleanup": null,
+          "broker_data_remaining": [],
+          "secret_directory_remaining": false
+        },
+        {
+          "root": "dist-compatibility/kafka-fixtures/owned-154935-0",
+          "cleanup": "All owned process handles exited; owned broker data removed.",
+          "security_cleanup": "Owned credential files and JAAS configurations removed; owned log files checked for ephemeral passwords.",
+          "broker_data_remaining": [],
+          "secret_directory_remaining": false
+        },
+        {
+          "root": "dist-compatibility/kafka-fixtures/owned-154935-51",
+          "cleanup": "All owned process handles exited; owned broker data removed.",
+          "security_cleanup": "Owned credential files and JAAS configurations removed; owned log files checked for ephemeral passwords.",
+          "broker_data_remaining": [],
+          "secret_directory_remaining": false
+        }
+      ]
+    },
+    "artifacts": {
+      "broker-final9.log": {
+        "path": "dist-compatibility/expanded-source9/broker-final9.log",
+        "sha256": "f9236628ae671ffa549c4c9ce17ba8ba1acaf5f69e066acfe4ebfe94bd303681"
+      },
+      "broker-final9-tests.txt": {
+        "path": "dist-compatibility/expanded-source9/broker-final9-tests.txt",
+        "sha256": "1b2270f302280d667a9a755787ee368fce03adc8f849ef070c54f02d99919b84"
+      },
+      "configuration.json": {
+        "path": "dist-compatibility/expanded-source9/configuration.json",
+        "sha256": "c6c0771e7da58c35d40170db3ec18cdd2439997e223ef4c088ac3f4e793707f9"
+      },
+      "fixture-cleanup.json": {
+        "path": "dist-compatibility/expanded-source9/fixture-cleanup.json",
+        "sha256": "22a1434a32c0b23c77e8cb0f788c46ca45dc4129ff55add57033437db77be5aa"
+      }
+    }
   }
 }
