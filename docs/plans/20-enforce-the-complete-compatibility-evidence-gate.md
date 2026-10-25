@@ -11,6 +11,12 @@ provenance:
     model: "gpt-6.1-sol"
     harness: "codex-cli"
     at: 2026-10-24T23:17:06Z
+  revisions:
+    - model: "gpt-6.1-sol"
+      harness: "codex-cli"
+      at: 2026-10-25T04:28:42Z
+      mode: "implement"
+      note: "Implement complete tuple, diagnostic-control and clean-package gate"
 ---
 
 # Enforce the complete compatibility evidence gate
@@ -25,7 +31,7 @@ Users and release maintainers get one fail-closed command that checks the entire
 - [ ] M2: Replay required package/tests/examples from a clean source distribution and integrate all accepted child evidence.
 - [ ] M3: Pass the comprehensive gate on one frozen candidate and publish accurate tested-environment/applicability documentation.
 
-Not Started. This plan preserves deferred requirements and existing evidence; no implementation result is implied.
+In Progress (2026-10-25). The complete gate is implemented in the existing coverage checker and `just test-compatibility`; 42 synthetic controls pass, including all required rejection categories plus omitted test identities, changed configuration, native memory findings and package source/tooling drift. Fresh optimized and clean-package suites each pass 78 unit plus 754 integration cases. Fresh 280-case Linux Valgrind and Darwin ASan cohorts pass; all 16 Linux reports have zero errors and zero definite/indirect/possible losses, with retained native stacks limited to documented process-global SASL initialization. The current mapped run is unaccepted: one cooperative-buffer fixture observed six acquisitions but four releases. Investigation identifies pointer-generation lookup in the test C observer as the next blocker; preserve the failed log before repair and replay. No final comprehensive acceptance is claimed.
 
 ## Surprises & Discoveries
 

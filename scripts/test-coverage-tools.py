@@ -88,7 +88,7 @@ class GateControls(unittest.TestCase):
             listing.write_text("broker.case\n")
             log.write_text("All 1 tests passed (0.1s)\n")
             context = dict(kind="qualification-context", mode="--broker-qualification", fingerprint="candidate", tests=["broker.case"], passed=1,
-                           command=["binary", "--broker-qualification"], environment={"broker": "isolated"}, source={"archive": "controlled"},
+                           command=["binary", "--broker-qualification"], environment={"broker": "isolated"}, source={"archive": "controlled", "candidate_fingerprint": "candidate"},
                            listing=str(listing), log=str(log), artifacts={str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in (listing, log)})
             self.assertEqual(common.qualification_context_errors(context, "candidate", ["broker.case"]), [])
             self.assertIn("stale qualification context", common.qualification_context_errors(context, "new-candidate"))
@@ -276,6 +276,134 @@ class GateControls(unittest.TestCase):
                     self.assertEqual(result.returncode, expected_exit, result.stdout + result.stderr)
                     if failed_case:
                         self.assertRegex(result.stdout, re.escape(failed_case) + r":\s+FAIL")
+
+
+class CompatibilityControls(unittest.TestCase):
+    def setUp(self):
+        import tarfile
+        self.directory = tempfile.TemporaryDirectory(prefix='rdkafka-compatibility-controls-')
+        self.addCleanup(self.directory.cleanup)
+        self.root = Path(self.directory.name)
+        for module in (checker, common):
+            patcher = patch.object(module, 'ROOT', self.root)
+            patcher.start()
+            self.addCleanup(patcher.stop)
+        identity = patch.object(checker, 'fingerprint', return_value='candidate')
+        identity.start()
+        self.addCleanup(identity.stop)
+        (self.root / 'src').mkdir()
+        (self.root / 'scripts').mkdir()
+        (self.root / 'src/Sample.hs').write_text('module Sample where\n')
+        (self.root / 'scripts/check.py').write_text('print("check")\n')
+        (self.root / 'rdkafka-hs.cabal').write_text('name: sample\n')
+        (self.root / 'cabal.project').write_text('packages: .\n')
+        archive = self.root / 'package.tar.gz'
+        with tarfile.open(archive, 'w:gz') as package:
+            for name in ['src/Sample.hs', 'scripts/check.py', 'rdkafka-hs.cabal']:
+                package.add(self.root / name, arcname='sample/' + name)
+        files = common.runtime_sources()
+        files['scripts/check.py'] = hashlib.sha256((self.root / 'scripts/check.py').read_bytes()).hexdigest()
+        self.artifact = lambda p: dict(path=p.name, sha256=hashlib.sha256(p.read_bytes()).hexdigest())
+        proof = dict(fingerprint='candidate', tested_fingerprint='candidate', archive=self.artifact(archive), files=files)
+        (self.root / 'proof.json').write_text(json.dumps(proof))
+        primary = ['rdkafka-hs.unit', 'rdkafka-hs-integration.producer-regressions.case', 'rdkafka-hs-integration.public-contract.runtime-contract.case', 'rdkafka-hs-integration.topic-configuration.unsupported configuration follows policy']
+        self.coverage = dict(primary_tests=primary, qualification_contexts=[dict(mode='--broker-qualification', tests=['broker.case']), dict(mode='--authentication-qualification', tests=['security.case'])])
+        self.matrix = dict(qualification=dict(status='passed', candidate_fingerprint='candidate', tuples=[]))
+        for rid, (ghc, native, scenarios) in checker.REQUIRED_TUPLES.items():
+            rows = []
+            for sid in sorted(scenarios):
+                tests = checker.scenario_tests(sid, self.coverage)
+                counts = [1, 3] if sid == 'complete-normal-and-mapped' else [len(tests)]
+                log = self.root / (sid + '.log')
+                log.write_text(''.join('All %d tests passed\n' % count for count in counts))
+                rows.append(dict(id=sid, required=True, status='passed', command=['test'], tests=tests, passed=len(tests), log_counts=counts, log=self.artifact(log), artifacts={'log': self.artifact(log)}))
+            for scenario in rows:
+                if scenario['id'] == 'native-ownership-diagnostics':
+                    memory = self.root / 'memory.valgrind'
+                    memory.write_text('ERROR SUMMARY: 0 errors\ndefinitely lost: 0 bytes\nindirectly lost: 0 bytes\n')
+                    scenario['diagnostic_reports'] = [self.artifact(memory)]
+            configuration = self.root / (rid + '-configuration.json')
+            configuration.write_text(json.dumps({'fixture': 'owned'}))
+            self.matrix['qualification']['tuples'].append(dict(id=rid, required=True, status='passed', source=dict(candidate_fingerprint='candidate'), environment=dict(ghc=ghc, native_version=native, loaded_native_identity=dict(version=native), os='os', kernel='Darwin' if rid.startswith('darwin') else 'Linux', architecture='aarch64', cabal='3.16', broker_version='broker', broker_topology='owned'), scenarios=rows, test_configuration={'fixture': 'owned'}, configuration_artifact=self.artifact(configuration)))
+        controls = {}
+        for name, (code, signature) in checker.REQUIRED_CONTROLS.items():
+            log = self.root / (name + '.log')
+            log.write_text(signature)
+            controls[name] = dict(status='detected', exit=code, log=self.artifact(log))
+        log = self.root / 'package.log'
+        log.write_text('All 1 tests passed\nAll 3 tests passed\n')
+        example = self.root / 'example.log'
+        example.write_text('EXAMPLE VERIFIED: four exact records, ordered offsets, fancy header and committed offset 4')
+        self.report = dict(schema_version=1, status='passed', fingerprint='candidate', controls=controls, package=dict(archive=self.artifact(archive), source=dict(candidate_fingerprint='candidate', scope_proof='proof.json'), tests=primary, passed=4, log_counts=[1, 3], log=self.artifact(log), built_examples=True, example=dict(records=4, committed_offset=4, log=self.artifact(example))), artifacts={'proof': self.artifact(self.root / 'proof.json')})
+
+    def errors(self):
+        return checker.validate_compatibility(self.matrix, self.report, self.coverage)
+
+    def test_complete_manifest_passes(self):
+        self.assertEqual(self.errors(), [])
+
+    def test_missing_required_tuple_fails(self):
+        self.matrix['qualification']['tuples'].pop()
+        self.assertIn('missing or duplicate required tuple', self.errors())
+
+    def test_unavailable_required_tuple_fails(self):
+        self.matrix['qualification']['tuples'][0]['status'] = 'unavailable'
+        self.assertTrue(any('unavailable' in e for e in self.errors()))
+
+    def test_stale_source_fails(self):
+        self.matrix['qualification']['tuples'][0]['source']['candidate_fingerprint'] = 'old'
+        self.assertTrue(any('source-scope proof' in e for e in self.errors()))
+
+    def test_configuration_change_fails(self):
+        self.matrix['qualification']['tuples'][0]['test_configuration']['fixture'] = 'other'
+        self.assertTrue(any('stale test configuration' in e for e in self.errors()))
+
+    def test_corrupted_artifact_fails(self):
+        self.report['package']['log']['sha256'] = 'wrong'
+        self.assertTrue(any('modified compatibility artifact' in e for e in self.errors()))
+
+    def test_zero_tests_fail(self):
+        self.matrix['qualification']['tuples'][0]['scenarios'][0].update(tests=[], passed=0)
+        self.assertTrue(any('zero, duplicate or incomplete' in e for e in self.errors()))
+
+    def test_wrong_loaded_version_fails(self):
+        self.matrix['qualification']['tuples'][0]['environment']['loaded_native_identity']['version'] = 'wrong'
+        self.assertTrue(any('wrong actual compiler/loaded native version' in e for e in self.errors()))
+
+    def test_missing_ownership_control_fails(self):
+        self.report['controls'].pop('linux-header-retention')
+        self.assertIn('missing required ownership diagnostic control', self.errors())
+
+    def test_omitted_scenario_case_fails(self):
+        scenario = next(s for r in self.matrix['qualification']['tuples'] for s in r['scenarios'] if s['id'] == 'complete-normal-and-mapped')
+        scenario['tests'] = scenario['tests'][:-1]
+        scenario['passed'] -= 1
+        self.assertTrue(any('complete registered scenario' in e for e in self.errors()))
+
+    def test_native_memory_finding_fails_even_with_updated_checksum(self):
+        scenario = next(s for r in self.matrix['qualification']['tuples'] for s in r['scenarios'] if s['id'] == 'native-ownership-diagnostics')
+        memory = self.root / 'memory.valgrind'
+        memory.write_text('ERROR SUMMARY: 1 errors\ndefinitely lost: 48 bytes\nrd_kafka_headers_new\n')
+        scenario['diagnostic_reports'] = [self.artifact(memory)]
+        self.assertTrue(any('native memory finding' in e for e in self.errors()))
+
+    def test_package_source_change_fails_even_with_matching_fingerprint(self):
+        (self.root / 'src/Sample.hs').write_text('module Sample where\nchanged = True\n')
+        self.assertIn('source-scope runtime/build/test files changed', self.errors())
+
+    def test_tooling_change_invalidates_package_proof(self):
+        (self.root / 'scripts/check.py').write_text('print("changed")\n')
+        self.assertIn('source-scope runtime/build/test files changed', self.errors())
+
+    def test_unchanged_runtime_archive_allows_tooling_only_behavior_reuse(self):
+        proof = json.loads((self.root / 'proof.json').read_text())
+        proof['files'].pop('scripts/check.py')
+        proof['tested_fingerprint'] = 'tested'
+        (self.root / 'behavior-proof.json').write_text(json.dumps(proof))
+        (self.root / 'scripts/check.py').write_text('print("changed")\n')
+        self.assertEqual(common.source_scope_errors(dict(candidate_fingerprint='tested', scope_proof='behavior-proof.json'), 'candidate'), [])
+        (self.root / 'src/Sample.hs').write_text('changed')
+        self.assertIn('source-scope runtime/build/test files changed', common.source_scope_errors(dict(candidate_fingerprint='tested', scope_proof='behavior-proof.json'), 'candidate'))
 
 
 if __name__ == "__main__":

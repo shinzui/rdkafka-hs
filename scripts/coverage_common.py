@@ -4,6 +4,7 @@ import hashlib
 import json
 import re
 import subprocess
+import tarfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -84,6 +85,48 @@ def compiler_exports(builddir):
 QUALIFICATION_MODES = frozenset(("--broker-qualification", "--authentication-qualification"))
 
 
+def runtime_sources():
+    files = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
+             for directory in ("src", "test", "test-integration", "test-support", "example")
+             for p in (ROOT / directory).rglob("*") if p.is_file()}
+    files["rdkafka-hs.cabal"] = hashlib.sha256((ROOT / "rdkafka-hs.cabal").read_bytes()).hexdigest()
+    return files
+
+
+def source_scope_errors(source, candidate, require_archive=False):
+    """Reuse behavior only when every runtime/build/test byte matches its archive.
+
+    Tooling changes require fresh coverage/gate execution, but do not invalidate
+    an unchanged compiled broker or native diagnostic scenario.
+    """
+    if source.get("candidate_fingerprint") == candidate and not require_archive:
+        return []
+    try:
+        proof = json.loads((ROOT / source["scope_proof"]).read_text())
+        if proof.get("fingerprint") != candidate or proof.get("tested_fingerprint") != source.get("candidate_fingerprint"):
+            return ["stale source-scope proof"]
+        archive = ROOT / proof["archive"]["path"]
+        if hashlib.sha256(archive.read_bytes()).hexdigest() != proof["archive"]["sha256"]:
+            return ["modified source-scope archive"]
+        expected = runtime_sources()
+        if require_archive:
+            expected.update({str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
+                             for p in (ROOT / "scripts").rglob("*") if p.is_file() and "__pycache__" not in p.parts})
+        if proof.get("files") != expected:
+            return ["source-scope runtime/build/test files changed"]
+        with tarfile.open(archive) as package:
+            files = {"/".join(m.name.split("/")[1:]): m for m in package.getmembers() if m.isfile()}
+            for name, checksum in expected.items():
+                if name not in files or hashlib.sha256(package.extractfile(files[name]).read()).hexdigest() != checksum:
+                    return ["source-scope archive differs: " + name]
+        # Cabal's implicit project is equivalent only to this exact project.
+        if (ROOT / "cabal.project").read_text() != "packages: .\n" or any((ROOT / name).exists() for name in ("cabal.project.local", "cabal.project.freeze")):
+            return ["source-scope project configuration changed"]
+        return []
+    except (KeyError, OSError, ValueError, tarfile.TarError) as error:
+        return ["missing or invalid source-scope proof: " + str(error)]
+
+
 def qualification_context_errors(context, candidate, registered=None):
     """Supplement behavioral registration only; never manufacture HPC ticks."""
     errors = []
@@ -100,6 +143,7 @@ def qualification_context_errors(context, candidate, registered=None):
         errors.append("incomplete qualification context")
     if not context.get("environment") or not context.get("source") or context.get("mode") not in context.get("command", []):
         errors.append("missing qualification source/environment/command")
+    errors.extend(source_scope_errors(context.get("source", {}), candidate))
     artifacts = context.get("artifacts", {})
     if not isinstance(artifacts, dict) or not artifacts:
         errors.append("missing qualification artifacts")

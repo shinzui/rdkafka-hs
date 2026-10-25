@@ -132,3 +132,8 @@ coverage:
 coverage-check:
     cabal build lib:rdkafka-hs
     python3 scripts/check-coverage.py
+
+# Require complete source, actual tuples, diagnostic controls and package replay.
+[group("build")]
+test-compatibility:
+    python3 scripts/check-coverage.py --compatibility

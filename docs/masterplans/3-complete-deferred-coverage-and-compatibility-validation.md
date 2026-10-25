@@ -51,7 +51,7 @@ The public-coverage audit has different acceptance from real broker failures and
 | 17 | Execute Linux/newer tuples and effective native lifetime diagnostics | [EP-17](../plans/17-validate-linux-and-released-toolchain-native-lifetimes.md) | Accepted primary candidate from MasterPlan 2 | Defines tuple evidence consumed by EP-18/19/20 | Complete |
 | 18 | Prove distributed broker/group/transaction recovery | [EP-18](../plans/18-verify-distributed-broker-failure-and-group-recovery.md) | Accepted primary candidate from MasterPlan 2 | Integrates tuple schema with EP-17 and secure fixture with EP-19 | Complete |
 | 19 | Prove authentication, TLS, ACLs and credential reconnect | [EP-19](../plans/19-verify-authenticated-kafka-and-credential-recovery.md) | Accepted primary candidate from MasterPlan 2 | Can reuse EP-18 Apache fixture; integrates with EP-17 schema | Complete |
-| 20 | Enforce complete source/tuple/package qualification | [EP-20](../plans/20-enforce-the-complete-compatibility-evidence-gate.md) | EP-16, EP-17, EP-18 and EP-19 Complete | Consumes all manifests | Not Started |
+| 20 | Enforce complete source/tuple/package qualification | [EP-20](../plans/20-enforce-the-complete-compatibility-evidence-gate.md) | EP-16, EP-17, EP-18 and EP-19 Complete | Consumes all manifests | In Progress |
 
 ## Dependency Graph
 
