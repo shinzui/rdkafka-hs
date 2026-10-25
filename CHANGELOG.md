@@ -7,94 +7,43 @@ this project adheres to the [Haskell Package Versioning Policy](https://pvp.hask
 
 ## [Unreleased]
 
+## [1.1.0.0] - 2026-10-24
+
+### Changed
+
+- Later subscription property values now override earlier values. Topic names
+  still accumulate by set union. This changes the inherited precedence rule.
+- Producer topic settings now take effect; explicit topic values override
+  matching global values. Empty keys and values remain distinct from absent ones.
+- Consumer, seek, metadata and administration calls preserve native failures,
+  including per-partition errors. Embedded NUL names and out-of-range numeric
+  inputs are rejected before changing state.
+- Callback exceptions are contained in Haskell and reported through the runtime
+  exception handler. Async consumers require a threaded runtime; sync consumers
+  also work in nonthreaded executables.
+
 ### Fixed
 
-- Unexpected rebalance errors now check native unassignment before clearing
-  synchronous buffered records and pauses. Failed unassignment preserves the
-  buffer and reports the native reset error.
+- Topic creation applies its configuration without the inherited crash. Admin
+  requests retain their actual deadline and cannot report malformed responses
+  as success.
+- Manual synchronous callback polling preserves ordered records. Successful
+  seek/rebalance operations discard the appropriate stale buffered state;
+  failed native state changes preserve it and report their errors.
+- Native clients, callbacks, message batches, metadata/group results,
+  transaction errors and partition lists release their owners across failure,
+  cancellation and teardown. Temporary seek topics are destroyed before their
+  native parent, preventing late finalizers from corrupting another consumer.
+- Diagnostic output flushes correctly, preserves the caller's handle and closes
+  temporary native streams and duplicate descriptors on errors.
+- SASL credential replacement preserves Unicode identity, rejects embedded NUL
+  and releases native errors. Native producer error codes remain intact, and
+  rejected per-message callback roots are released before error decoding.
 
-- Consumer partition-list conversion releases partially filled native lists
-  immediately if encoding a later member throws.
-- Consumer and metadata inputs reject embedded NUL topic/group names and
-  partition IDs outside the native C integer range with `KafkaBadSpecification`,
-  preventing inherited truncation and wrapping from targeting another identity.
-  Malformed lists are rejected before state changes.
-
-- Metadata and group queries now scope native result ownership through copying,
-  including cancellation at acquisition. Convenience queries preserve missing
-  topic errors, and timestamp lookups report partition errors. Group decoding
-  recognizes `CompletingRebalance` and returns errors for unsupported states.
-
-- Async consumer construction now returns a clear `KafkaBadSpecification`
-  without a threaded runtime, instead of accepting a consumer whose callback
-  loop never starts. Link with `-threaded` or choose `CallbackPollModeSync`.
-
-- Diagnostic printing now flushes its native output and keeps the caller’s
-  handle open. Native streams and duplicate descriptors are scoped through
-  failures; configuration dump arrays are freed on cancellation and conversion
-  errors.
-
-- Consumer construction preserves topic settings supplied globally and applies
-  explicit subscription values afterwards. Pause, resume, store, position and
-  committed-offset calls now report native per-partition errors after any
-  overall error, while preserving successful effects in mixed requests.
-
-- Rebalance callbacks now check native assignment and revocation failures,
-  release cooperative error objects even if decoding fails, and report errors
-  through the callback exception handler without emitting a success event.
-
-- Polling now scopes native message acquisition and destruction together.
-  Cancellation and conversion failures release every batch member, including
-  unprocessed messages. Callback-event polling also closes the acquisition gap.
-- Native header-read failures are surfaced as errors, with origin information
-  for attributed polling, instead of silently replacing headers with an empty
-  list. Batch size and signed native acquisition errors are checked safely.
-
-- Later subscription property values now override earlier values, matching
-  consumer and producer property composition. Topic names still accumulate
-  by set union.
-
-- Transaction operations now destroy native error objects after copying their
-  results and recovery flags, including decoding failures and cancellation.
-  Sending transactional source offsets also scopes native group metadata and
-  its temporary partition list.
-
-- Persistent callbacks now release their Haskell closures after native client
-  destruction, including failed construction and replaced registrations.
-  Shutdown retains callable bridges, concurrent destroy waits for completion,
-  and callback exceptions are reported on separate Haskell threads.
-
-- `seekPartitions` now returns native per-partition failures in request order
-  after any overall error. Zero timeout preserves initiation-only semantics;
-  synchronous calls no longer hide pending or failed members. Rewind propagates
-  seek failures, and mixed requests may partially succeed.
-
-- Topic creation now applies nonempty configuration maps using the allocated
-  request, fixing an inherited `Prelude.undefined` crash. Topic administration
-  releases requests, options, application queue references and response events
-  on success, broker errors and interruption.
-- Topic creation/deletion preserve native request errors and wait for the
-  configured `socket.timeout.ms` request deadline instead of failing after
-  one idle poll. Malformed response topics cannot report success.
-- Topic administration rejects embedded NUL inputs and counts outside the C
-  integer range, preventing inherited name truncation and numeric wrapping.
-- Producer topic settings now affect the actual producing client, fixing
-  inherited ignored `sendTimeout`, `topicCompression` and `extraTopicProps`
-  settings. Explicit topic values override matching global values while
-  preserving unrelated global settings.
-- Immediate produce rejection now releases the per-message callback root.
-  Enqueue ownership decisions are masked against cancellation, and accepted
-  callbacks remain available until their delivery report is served.
-- A throwing global delivery callback no longer skips the per-message callback
-  or unwinds through native frames. Its exception is reported on a separate
-  Haskell thread through the runtime's uncaught-exception policy; per-message
-  callbacks continue to run on their own unmasked threads.
-- Producer error objects retain their native code, including `UNKNOWN`, instead
-  of being incorrectly remapped through system `errno`. Rejected callback roots
-  are released before error decoding, including decoding exceptions.
-- Producer records preserve absent versus empty keys and values. Embedded NUL
-  topic/header names and partition integers outside the native C range return
-  immediate errors instead of being silently truncated or wrapped.
+Validation includes full primary normal/coverage runs and named Linux, Apache
+failover, native lifetime and authenticated TLS/ACL/reconnect scenarios. The
+remaining comprehensive qualification work stays tracked in
+[MasterPlan 3](docs/masterplans/3-complete-deferred-coverage-and-compatibility-validation.md).
 
 ## [1.0.0.1] - 2026-10-23
 

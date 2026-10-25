@@ -21,13 +21,13 @@ rdkafka-hs is not on Hackage; depend on a release tag. In `cabal.project`:
 source-repository-package
   type: git
   location: https://github.com/shinzui/rdkafka-hs.git
-  tag: v1.0.0.1
+  tag: v1.1.0.0
 ```
 
 and in each component's `build-depends`:
 
 ```cabal
-build-depends: rdkafka-hs >=1.0 && <1.1
+build-depends: rdkafka-hs >=1.1 && <1.2
 ```
 
 The modules are `Kafka.Consumer`, `Kafka.Producer`, `Kafka.Metadata`,
@@ -42,7 +42,7 @@ suites and benchmarks), replace the dependency and its bounds; keeping
 
 ```diff
 -    hw-kafka-client >=5.3 && <6,
-+    rdkafka-hs >=1.0 && <1.1,
++    rdkafka-hs >=1.1 && <1.2,
 ```
 
 Imports do not change: the `Kafka.*` module namespace, type names and record

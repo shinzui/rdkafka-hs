@@ -1,0 +1,599 @@
+{
+  "status": "Approved and verified release candidate; ready for GitHub/tag publication",
+  "version": "1.1.0.0",
+  "release_date": "2026-10-24",
+  "cutoff_revision": "68ae3c6",
+  "publication_performed": false,
+  "publication_destination": "GitHub/tag only",
+  "release_scope": "Explicit user-selected release before MasterPlan 3 completion; ADR-27 primary release gate. No waiver of the two source-coverage ticks or EP-20 integration.",
+  "version_rationale": "Major PVP 1.1 for changed subscription composition precedence and observable error/callback/runtime semantics; no dependency floor or bounds raised.",
+  "source": {
+    "baseline_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c",
+    "release_root_fingerprint": "7c38d28b736675a12e47eccf3cf05ad3dfaa705db840199f5e5b53fa7372aca8",
+    "changed_functional_inputs": [
+      "rdkafka-hs.cabal"
+    ],
+    "exact_change": "Cabal package version 1.0.0.1 -> 1.1.0.0; all other functional input bytes match the measured cutoff",
+    "baseline_revision": "68ae3c6",
+    "baseline_inventory_sha256": "69506c90cfc124f3a175a664873f5d8b49aff62a7426265c56c3dd64fcc84c21",
+    "current_files": {
+      ".envrc": "ab05c96e656bbea46411558b2db569ec9e743ecb215e1a6dabb4945257ea2748",
+      "cabal.project": "124cd2f0cb590811d7668bef1e444eb106d6212ac24c1c2a2fe4ea35112ddf43",
+      "flake.lock": "102f077bb7507c6106d6c1f68dd331897b672f9f49bcfe32442d23203a19db7e",
+      "flake.module.nix": "1d4fd136fd34e655224cbec5dcda0b54a2397576de7ec0cb6742389854d2ab42",
+      "flake.nix": "d7c0a6d7108989b7dea8d261ae95ac6c442a5523d8ceae90551da16d6c37bfc9",
+      "justfile": "5ccc99b60bbe2729b11627ebc1e5bd75adbb9e31b3446740a2b54f90305f2a0e",
+      "nix/haskell.nix": "f2708172d34ccd2c487c8fa3879bdd3a1c026fb0be80f5d28e83a5595b15dadb",
+      "nix/pre-commit.nix": "d97b7fe8bdb4f9ed1ebb600e885d26869f05e4c30d18e9b72cccec8aef566675",
+      "nix/redpanda.nix": "04ad9945a2afed58e72390ba477d02b57cf1d7f38be97f61d426e63411709f51",
+      "nix/treefmt.nix": "72f7f17ef11c802946022414fac36c6ca41de3f4ef80de3cc389c0303c28b7b3",
+      "rdkafka-hs.cabal": "5ae6c3a04fa92fca20fd78fce9dc40a2fbcee4e39b89c94f638b102c8b291ed0",
+      "scripts/binding-inventory.sh": "a7bd371bd974c36c83a7340fcb4a675f22b7eee8e9c36f5891ddfedb66b6a523",
+      "scripts/check-coverage.py": "7cad546c7a94089f9514883bb4e48b0ff94eca859fd95d88ec7d71754128fa82",
+      "scripts/collect-coverage.py": "16045debb9cd0983d16ab73927096ec2d85f0371da241997c57ced442bcbe276",
+      "scripts/coverage-preprocess.py": "122b1cc3da7185a6024a16acc7a50aff575baa3da4103fe8de9b6f44e81d27b4",
+      "scripts/coverage-zero.hs": "b85d7eebc40855f26f3e4f3206af22cf43c792028823ed8894200c6ac5f116ae",
+      "scripts/coverage_common.py": "6a72e2d3104bd99c49a627388eb056671518a60e8f710a9cf9c472880bbaceff",
+      "scripts/test-coverage-tools.py": "0a6b8402c2eba60378fb60779ba9dabd67b8a2fe0a551ecee653cde310105227",
+      "scripts/test-coverage.sh": "ff86e30b1c8098a0d0d6d36c32cbc15b76b22e4bfdb143798868bd1b6227c772",
+      "scripts/test-mutations.hs": "57b75bde6acc500fa053e025b37dd10d6591a924b34acc4a37435ef6544f0720",
+      "src/Kafka/Callbacks.hs": "62118058d9f9559e5b1b7a1969aba06fefeaaa2d7111c313c465f315ba972225",
+      "src/Kafka/Consumer/Callbacks.hs": "7e993c821435554f7d705ad0369ce4dab3c561216c1966baf29cf967e310e362",
+      "src/Kafka/Consumer/ConsumerProperties.hs": "15ed5eaf6fbe734780d672ee265be84841b5b3fef1a132d5cf017397b72c519b",
+      "src/Kafka/Consumer/Convert.hs": "9bf267580d3ee008308585ee061e9364a1dbc6556090d78b5e5df0ef767b9115",
+      "src/Kafka/Consumer/Subscription.hs": "11a8ba57b0ede1fb09881a42a1098e3583f82f55136334e14b6ce1cbde5746e1",
+      "src/Kafka/Consumer/Types.hs": "e815e1744538de8e2bea589d138a887b2e4e254be89d0f0103dd7cdcc75ae7a9",
+      "src/Kafka/Consumer.hs": "170ea8259f8b0279db807c48799f323a268e7636efcbc929ade003cd4e4bb70a",
+      "src/Kafka/Dump.hs": "434594525064002a7988b63de9e9b5315ca07422c30a8a0e94590987e30b01c1",
+      "src/Kafka/Internal/CallbackOwner.hs": "f2fc3e162b3a953838c39f6b428cb19dd94ebdccf58c8346b611016859dbd308",
+      "src/Kafka/Internal/RdKafka.chs": "869947169916ead0bf7254a9ecceeecbe9ec8600be80d29e724c2dc1e53c1fcf",
+      "src/Kafka/Internal/Setup.hs": "69ef4227adf311f7dee3ec283825d42c1e3a2561df6f66bab29d2abb8b446188",
+      "src/Kafka/Internal/Shared.hs": "fb9eb7755af2a3da0db73b665a0e09a7c6ee3b1381aaac9e658a78f1ebd7e100",
+      "src/Kafka/Metadata.hs": "abcfd0962c104901916c4b4a456b4e99b9905ffd430b74b4e2244e5a2744512f",
+      "src/Kafka/Producer/Callbacks.hs": "ab1d03cac40deafba24f1b38df4d4e0ed3956651d84241d6040306639b167c47",
+      "src/Kafka/Producer/Convert.hs": "9ba868c4ea7d938ab857f2e92f1a033a633b8f7b834da58502d6fb9831f99483",
+      "src/Kafka/Producer/ProducerProperties.hs": "b83c1f1768a2031ce3beff6674f12f9d73cda629569136346b8a01022bd986ce",
+      "src/Kafka/Producer/Types.hs": "c664e146f6046c8c70de37bfd68ad3eb4460d15d49794edf2a914ca336d492df",
+      "src/Kafka/Producer.hs": "cce48116f5c80ea4c7d3c2af3bc3723e3e19dfd14c3c4a362a166c18201f93fc",
+      "src/Kafka/Topic/Types.hs": "ce743d50cede9bb9a02a3e00200275253e5e6473e5590a009031bf15daa897a1",
+      "src/Kafka/Topic.hs": "932bbd96cc0b28baf18843e4679acc0ea7f09fdefb74a3e4a3a28c9940b6a53c",
+      "src/Kafka/Transaction.hs": "da4d191cfb9453e22e9fae19858ac3c04981475556df381fca581c29f5204074",
+      "src/Kafka/Types.hs": "abfe2147976ac5b273759e8502d8368c0669d376161e49ebe7fd22f32f9dd5c5",
+      "src/Kafka/Version.hs": "1731e25b9b2afade15f0018291d033d7b4527c6538b4153a337736d3ef3b07e5",
+      "test/Kafka/Consumer/ConsumerPropertiesSpec.hs": "177e004afa1fe1f7ade62da944d49e3f0edbb36de44a6052ea275c2069027e55",
+      "test/Kafka/Consumer/ConsumerRecordMapSpec.hs": "cf7efcc153eb7b4462e3d29be5e13f39b0752fe7efecd9f9ab376cf4289d4b74",
+      "test/Kafka/Consumer/ConsumerRecordTraverseSpec.hs": "3fc2b6a96d56ffca91d9eebd5d691157038a9f2ddaa18f188e644c8cb5dd503b",
+      "test/Kafka/Internal/CallbackOwnerSpec.hs": "e97bdf33fcc9747fe92048a38286cdcaba57df553d3dd0a3e5d87d984efad913",
+      "test/Kafka/Producer/ProducerPropertiesSpec.hs": "353861e5ec344c7b31267123b472a9514d59eddf0bc80bba2ab022b8cfaf5c43",
+      "test/Kafka/PublicDataContractSpec.hs": "786090a02ec24d76c56b34a496934d52e9fd1930886c747171a802f8f2764866",
+      "test/Kafka/PublicPropertiesSpec.hs": "2374fcf0bf0af6439ca07a0bfe87c960e59b06d1e122189acd9f9f66779fffcb",
+      "test/Kafka/VersionTest.hs": "e976a0247e5345f21725df2105756ada7be44bcd3a7ac8822c1eb77b3df594ab",
+      "test/Main.hs": "f4f3ffa7d2efcc678f24adaa505f91b3af2eadc5fce1551575772ac09975a2ae",
+      "test/cbits/error_constants.c": "4b37d0bd73b4322f1f3327c728196198a37d0cd50c99cedec6943bd43ab8e091",
+      "test-integration/Kafka/AdminTestSupport.hs": "446cceaf01c8684ef19ce8afa062ca9f4c71d9100e64f846bc63b9987ffc15fe",
+      "test-integration/Kafka/CallbackLifetimeSupport.hs": "c1bc4b6f151a61fee3d1ce0069de557757969059ea92733948e6b7fad6f5cbe9",
+      "test-integration/Kafka/CallbackTestSupport.hs": "83d004ffc55309782f2c7778a1b5b9b7eba38ed2a312834b88c1a176ad7da4f3",
+      "test-integration/Kafka/Compatibility/KafkaFixture.hs": "b3ffe1aab36ba7ba8523075383228676c5f4d7e5f837592dbbb32844beab4e1a",
+      "test-integration/Kafka/Compatibility/SecurityFixture.hs": "bd46bf52a1919dee7042721820365f5765cd8c787a727ee3d9b7a8e541644921",
+      "test-integration/Kafka/ConsumerStateSupport.hs": "9a4853b2e3c29c07707e621bc61f81e66827d5b3d8803be838af3fb9091542dd",
+      "test-integration/Kafka/DiagnosticTestSupport.hs": "d136d780329a5ec1084b429e28636b911fff5cc6c7c69b5a7a2f39effdc37915",
+      "test-integration/Kafka/FaultTestSupport.hs": "a30011b3c337602b0ee1b9f5a32b12369e26988fb25b6953ea83c2f3f20137b0",
+      "test-integration/Kafka/FixtureSupport.hs": "05378368d2dcc06489cc728ab6850a812b685107c6cc8b1af4b69931b4d36092",
+      "test-integration/Kafka/FixtureSupportTest.hs": "c303cac1d6cd9af84ab6a0c05fdd1ed8aa42ebdd0ebc0e5422054aa1e6eaa230",
+      "test-integration/Kafka/Integration/AssignOnlyTest.hs": "3315aea4b74e6ce0c97ab2344e9a4d0b595f7e03de2c5f112ec8db4222555d3e",
+      "test-integration/Kafka/Integration/AttributedErrorTest.hs": "ff34038b0f440c81a3dcd8b8dac01b22f670a666f973fe568a702169f2d8d6b7",
+      "test-integration/Kafka/Integration/AuthenticationTest.hs": "bb27336c28447b47974df788ee3895da2d0070f1f25c3ecc7512577150bc0f34",
+      "test-integration/Kafka/Integration/BatchTest.hs": "c3e45b157332f1e112e65860d8bce92bc5cbf038023aefcefe9b227794e9d46b",
+      "test-integration/Kafka/Integration/BrokerFailureTest.hs": "82fa14bb0e0ef10604ac4b736d630a6085c37ae0a9c11b0b6a126263ccbf039d",
+      "test-integration/Kafka/Integration/CallbackLifetimeTest.hs": "e7e3863cfadd95cf680826a8bc327a0d28ddc936027244f4852276f6b0489b27",
+      "test-integration/Kafka/Integration/ConfigStringContractTest.hs": "b3f462436b870108f1bf77fa7e2ddcd408beb90c1fbbe858b3651768e3340c93",
+      "test-integration/Kafka/Integration/ConfigurationTest.hs": "6a39fa4cac34d1aa606dc340ea9a87119c93d25398aed86b4df7a2a21d9033df",
+      "test-integration/Kafka/Integration/ConsumerCommitContractTest.hs": "97f6377e59fc31a87d71fc71fbcafe2400a694c1bdff82e19fa1d597d8f8a9d8",
+      "test-integration/Kafka/Integration/ConsumerPropertyTest.hs": "17270f8d083b25b4705e0ec1a90dd0d26e5f014cb0b740098bc76e758d371d2a",
+      "test-integration/Kafka/Integration/ConsumerStateContractTest.hs": "64387c447e99131cd888ff2dc7f542a13e11be2773a70111a3f58a46d559be58",
+      "test-integration/Kafka/Integration/ConsumerTest.hs": "31503c6c6deaaf426d66716bc895c307cd27f16631651e6f86bca53ad106ba3e",
+      "test-integration/Kafka/Integration/DeprecatedRunnerContractTest.hs": "fb56a16e3260277d8549d7ad09841fe29d726d43582c4ede2902b8fc030ae038",
+      "test-integration/Kafka/Integration/DestroyTest.hs": "6b7efde39d5b7f2427a4fc7932ae1a3d79e379a41561099e44597538b8f88a7e",
+      "test-integration/Kafka/Integration/DiagnosticContractTest.hs": "219ad3010ee5b6aaf29f24d8642a6530da2a0bcce331ea388c9e211a7de7de05",
+      "test-integration/Kafka/Integration/FatalErrorTest.hs": "1b3e3f362473ea5b1cdc4636accb8660429d69cac028d01a869d431ae62f118f",
+      "test-integration/Kafka/Integration/HeadersTest.hs": "2f4302e3c797d6f529923051231cb39a6f9293627667c2466d5da4c58dbf6951",
+      "test-integration/Kafka/Integration/InputBoundaryContractTest.hs": "0330e5811c3d52c8768c4a1c14426cf20a0934330ca404e4f9b60637e5c5c7a8",
+      "test-integration/Kafka/Integration/LifecycleTest.hs": "6f3207ddb12e48509178d2fdbd8dce54c7cd246c6a8d8b395f2a587f773d99d6",
+      "test-integration/Kafka/Integration/MetadataContractTest.hs": "6e5e95c16b51d2b55fde57b639ecd930cc3b4acc337d801dfcaad29a57ded821",
+      "test-integration/Kafka/Integration/ObserverTest.hs": "3f1b164c2583be38ddab4f9805de98624cdfa4b71c5ddfe9e71ff185370dde37",
+      "test-integration/Kafka/Integration/PartitionListContractTest.hs": "b67b7342a956f7b39e86f26cb8c7470022e7771422213ada2f69d84a7dd18d11",
+      "test-integration/Kafka/Integration/PerMessageCommitTest.hs": "0f8aab226a7e20b168cf730008ab338f79b074c97d1ee2428232a2723285ae30",
+      "test-integration/Kafka/Integration/ProducerPropertyTest.hs": "174849cb6a7e9a79e7dde55c4c389539f64404270beaac4db1a3ce6799bc8b78",
+      "test-integration/Kafka/Integration/ProducerRegressionTest.hs": "1a947e2d9e08daa745bd934d370d4c01f46def410d7a738da9f9cabc9386279a",
+      "test-integration/Kafka/Integration/PublicConsumerContractTest.hs": "fc494afeb66f74bbe43a8222a2ed2125d42fb1203eb875b759432b6c87887f19",
+      "test-integration/Kafka/Integration/QueueEventTest.hs": "ae53bd39eda230b0177d3491b9cddabdd98e275eb3ec093b0118d9afb5e32a7d",
+      "test-integration/Kafka/Integration/ReadCommittedTest.hs": "4c46662ead0e3c5a42692e38ddcfd9df3f47710874165af9e861ce971251bbfb",
+      "test-integration/Kafka/Integration/RuntimeContractTest.hs": "2eb8cd950d7caae1923cae5c5e007456dec52a90854525b68f098849d879dfb1",
+      "test-integration/Kafka/Integration/SeekPartitionsTest.hs": "681ac36e6934a0ccc84bbc2f956926e89e32b8a183dada2028002b3237a7cdea",
+      "test-integration/Kafka/Integration/StoreOffsetsTest.hs": "e21bb025e4971dfe1be633c917ff73f4af75aa0f0970079bb04d234aff41a0d3",
+      "test-integration/Kafka/Integration/TopicConfigurationTest.hs": "a080a96bea1daeedc7c52b46ac2c81c31e1e92909e189a887268b8b3c3868a05",
+      "test-integration/Kafka/Integration/TopicTest.hs": "65cd9f8f88c48867449ea23d3d4c4f4551d2b4ac47a9fab53232640ff98cad34",
+      "test-integration/Kafka/Integration/TransactionErrorTest.hs": "f0f2e47de349c62b0ddd7e05e3d39a3a4dc517e3076256659c33b38115049b9b",
+      "test-integration/Kafka/MessageTestSupport.hs": "0a50082c63dab5920f8d1cdedf26f27bd6db20324c50e28f08a0a05246917937",
+      "test-integration/Kafka/MetadataTestSupport.hs": "80fdf914084f6ab2a0ed915dd8719c449ed902e697c309bd6c751a76c4198ba3",
+      "test-integration/Kafka/ProducerTestSupport.hs": "de430f3469b482222c6271e56369bee1738958a95c12c7f79ea3ae8ed25bebbb",
+      "test-integration/Kafka/SeekTestSupport.hs": "5c19e85be0f3ec19a750c8d7ac1e87b955dca8948d8f216cab036175f34b89f8",
+      "test-integration/Kafka/TestEnv.hs": "f82b4306c90317e713f7de107cd7bc281626c04fd7327ae421a49de10b1dc91a",
+      "test-integration/Kafka/TransactionTestSupport.hs": "e1fe8986d6516e7b376f9658461075945779b4720981e4dc249ef1a9a5d0b8a9",
+      "test-integration/Main.hs": "2d1a83b7806d2a2ab82c9538bf1626ffa956f8ff963c041f09a74fa991ff0fce",
+      "test-integration/cbits/admin_ownership.c": "8e87264528efa1e3b2ea41066f2ff86eac98c30eb7fbce1120798042b18f6e3d",
+      "test-integration/cbits/callback_lifetime.c": "487b0aae3ba986b41551b83088131916ade2f93cd275b1d2ff4731a95b2c934a",
+      "test-integration/cbits/consumer_state.c": "8a17c5b22f74b24cddf2bf6696ee4201e93c3af3820dd449ca8b9eba59023e59",
+      "test-integration/cbits/diagnostics.c": "3604cd7d14086d8c7b87b9f7711dbeeabf47302ad9432233d11ae2c045ad3d43",
+      "test-integration/cbits/message_ownership.c": "fe42e5877b717ed28a8a8b16cd7964f9f77cfd4e27bf38606e398ec7e9cd018b",
+      "test-integration/cbits/metadata.c": "b66571362e623857d7e7f546db5050c4182ce44d5e5f9622f29b2b4a65a1e879",
+      "test-integration/cbits/partition_lists.c": "ddf469bc350593b605d037ab00da8f53397dd50a846af09a47fe4a48a7ff5212",
+      "test-integration/cbits/producer_ownership.c": "b713e759b868ddefc197ad42824ebac14a4f59360c0e0c0cd1b6afae8b9cc129",
+      "test-integration/cbits/seek_faults.c": "6ef343f1f9df478bb9fcd8013d2202ee4561090ee2c174a7e60f580636cf0126",
+      "test-integration/cbits/transaction_ownership.c": "be1e2053d47c4bf8602ad3092649611cb8e163f3658c9308f7d5daedccec5254",
+      "test-support/Kafka/PropertySupport.hs": "0f6b5b580914bdf6eecd8c317236c0157ca3c1edf248f1d9356591b44385e9ec"
+    }
+  },
+  "normal": {
+    "unit": 78,
+    "integration": 753,
+    "integration_seconds": 367.91,
+    "actual_project": "Checkout; initial nested extraction inherited the parent Cabal project. Preserve this as valid checkout execution, not clean-archive proof."
+  },
+  "clean_package": {
+    "archive": {
+      "path": "dist-release-1.1.0.0/github-only/rdkafka-hs-1.1.0.0.tar.gz",
+      "sha256": "4afcb8fa14a2597c8cf2378a9711e07bf05694fc1ddb475d2a35fe81fa8afb55"
+    },
+    "source_inventory": {
+      "path": "dist-release-1.1.0.0/selected-package-inventory.json",
+      "sha256": "ff673e4e5134bf43dabd74ada7e88568881faea37aad206c140365bca56a2421"
+    },
+    "included_files_compared": 163,
+    "included_bytes_match_checkout": true,
+    "project_configuration": "Explicit packages: . in extraction, byte-identical to omitted development cabal.project; corrected commands select this extraction.",
+    "components_built": [
+      "library",
+      "example",
+      "unit suite",
+      "integration suite"
+    ],
+    "unit_passed": 78,
+    "selected_broker_passed": 338,
+    "broker_results": [
+      {
+        "label": "clean-unit",
+        "command": [
+          "cabal",
+          "test",
+          "rdkafka-hs-test",
+          "-f",
+          "integration",
+          "--test-show-details=direct",
+          "--test-options=--quickcheck-tests=1000 --quickcheck-replay=20261024"
+        ],
+        "exit": 0,
+        "seconds": 24.08
+      },
+      {
+        "label": "clean-broker",
+        "command": [
+          "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-release-1.1.0.0/replay/rdkafka-hs-1.1.0.0/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.1.0.0/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+          "-p",
+          "/topic-configuration/ || /partition-list-ownership/ || /runtime-contract/ || /seek-partitions/ || /transaction-errors/ || /producer-regressions/ || /callback-lifetime/",
+          "--quickcheck-tests=1000",
+          "--quickcheck-replay=20261024"
+        ],
+        "exit": 0,
+        "seconds": 97.67
+      }
+    ],
+    "example": {
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-release-1.1.0.0/example-verifier/clean-probe",
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-release-1.1.0.0/replay/rdkafka-hs-1.1.0.0/dist-newstyle/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.1.0.0/x/kafka-client-example/build/kafka-client-example/kafka-client-example"
+      ],
+      "exit": 0,
+      "seconds": 10.06,
+      "expected": "four exact records at offsets 0..3, fancy header and committed next offset 4"
+    },
+    "nonthreaded_runtime": {
+      "passed": 4,
+      "RTS_way": "rts_v",
+      "seconds": 0.91,
+      "evidence": {
+        "path": "dist-release-1.1.0.0/package-nonthreaded.log",
+        "sha256": "5b11185b6db722ba7a1ee2e9426ca6f8c3f45f1ccc76cc0ca5f3e4554ff5fd2f"
+      },
+      "runtime_identity": {
+        "path": "dist-release-1.1.0.0/package-nonthreaded-info.log",
+        "sha256": "e30f15edf898c4f023cbf2f49a34315dfefee8daf9edb50281a7fa588c9f1638"
+      }
+    },
+    "haddock": {
+      "status": "passed",
+      "seconds": 90.08,
+      "archive": {
+        "path": "dist-release-1.1.0.0/rdkafka-hs-1.1.0.0-docs.tar.gz",
+        "sha256": "68782c14c7f144c484f2308945e0e0e508c6743fc9c364fab22f3ae94805243b"
+      }
+    },
+    "runtime_tested_archive": {
+      "path": "dist-release-1.1.0.0/rdkafka-hs-1.1.0.0.tar.gz",
+      "sha256": "097ce5c889d642763530fa6d78f17e827fdeb118e65178499550d5f730ac13f8"
+    },
+    "runtime_tested_inventory": {
+      "path": "dist-release-1.1.0.0/package-inventory.json",
+      "sha256": "f20282740bc24d43deb9fd48c5b066d4b914e9ee3ac65c48ac02cf38674c1ee6"
+    },
+    "variant_verification": "Every selected archive byte matches the approved checkout. Its sole difference from the clean-runtime-tested archive is the reviewed GitHub-only README; all compiled inputs are identical."
+  },
+  "baseline_reuse": {
+    "fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c",
+    "normal": {
+      "unit": 78,
+      "integration": 753,
+      "seconds": [
+        1.12,
+        349.49
+      ]
+    },
+    "mapped": {
+      "unit": 78,
+      "integration": 753,
+      "external_behavior_cases": 26,
+      "registered_behavior_cases": 857,
+      "nonthreaded": 4,
+      "tooling_controls": 28,
+      "native_wrapper_ticks": 2752
+    },
+    "inventory": {
+      "rows": 181,
+      "tested": 180,
+      "open": 1,
+      "newly_reconciled": 34
+    },
+    "allow_open": "Passed before package-version edit at exact cutoff source; current comprehensive ledger retains its original fingerprints rather than being relabeled for a version-only bump.",
+    "proof": "Every captured functional input matches the fully measured cutoff except the literal Cabal version field. New exact 1.1.0.0 normal, clean-archive and runtime checks are separate results. No fresh 1.1.0.0 Linux/security/HPC execution is claimed.",
+    "evidence": "docs/testing/deferred-public-contract-evidence.json"
+  },
+  "downstream": {
+    "project": "mori://shinzui/kafka-effectful",
+    "revision": "5a6d274d9ef6465393920c907d1913d3b3d7e263",
+    "scratch": "dist-release-1.1.0.0/downstream",
+    "change": "Five dependency names/bounds changed only in scratch from hw-kafka-client >=5.3 && <6 to rdkafka-hs >=1.1 && <1.2; project selects exact clean candidate locally",
+    "source_workspace_changed": false,
+    "build": "passed",
+    "broker_free_tests": 44,
+    "test": "passed"
+  },
+  "preserved_followup": {
+    "master_plan": "docs/masterplans/3-complete-deferred-coverage-and-compatibility-validation.md",
+    "EP16": "two producer pre-enqueue synchronous pinned-allocation failure cleanup ticks remain open",
+    "historical_seek": "Causal reconstruction and isolated scoped-lifetime differential accepted",
+    "EP17": "Complete at retained source-bound tuple",
+    "EP18": "Complete at retained source-bound tuple",
+    "EP19": "Complete at retained source-bound tuple",
+    "EP20": "Not Started; whole-child EP-16 prerequisite remains unmet"
+  },
+  "credentials": "No Hackage credentials were configured during preflight. This release uses GitHub/tag distribution; no Hackage upload is performed.",
+  "artifacts": {
+    "package-unit.log": {
+      "path": "dist-release-1.1.0.0/package-unit.log",
+      "sha256": "4f28b96dbd997db3531215668535920b60467fba88682e5d2d10ddff07190a0b"
+    },
+    "downstream-test.log": {
+      "path": "dist-release-1.1.0.0/downstream-test.log",
+      "sha256": "ed8880194590e7019c51d7d1317f08be1a2c0a548007e741a15f008d0064b000"
+    },
+    "downstream-build.log": {
+      "path": "dist-release-1.1.0.0/downstream-build.log",
+      "sha256": "2d279db4fdf21fd1b03ebc3f20cde0926e0835786010a4aa3d0925561793f210"
+    },
+    "format.log": {
+      "path": "dist-release-1.1.0.0/format.log",
+      "sha256": "8536b327e328917cb7951730eca821ad30015bc8265834be5211e3acc296a2d7"
+    },
+    "root-unit.log": {
+      "path": "dist-release-1.1.0.0/root-unit.log",
+      "sha256": "1531d5d8f093cbe497502000d40032c1cc9640a91b506446cf52538f591964d7"
+    },
+    "package-build.log": {
+      "path": "dist-release-1.1.0.0/package-build.log",
+      "sha256": "de5939c7aa6e2362dc65e11c1ef05162c213141c1377ab8515ddb6d3d5f0dcbd"
+    },
+    "package-nonthreaded.log": {
+      "path": "dist-release-1.1.0.0/package-nonthreaded.log",
+      "sha256": "5b11185b6db722ba7a1ee2e9426ca6f8c3f45f1ccc76cc0ca5f3e4554ff5fd2f"
+    },
+    "clean-example-build.log": {
+      "path": "dist-release-1.1.0.0/clean-example-build.log",
+      "sha256": "9da859fd8b0d237eb85fb35593e2ab17b3faca2e460c29761a81119733ba4864"
+    },
+    "required-checks.log": {
+      "path": "dist-release-1.1.0.0/required-checks.log",
+      "sha256": "b41b811bc3ae96e7f2f4af39d70a4e22be83f605ee8a0500e832a0aeb998f70f"
+    },
+    "clean-example.log": {
+      "path": "dist-release-1.1.0.0/clean-example.log",
+      "sha256": "e4aa43b8605eeeb19fcac8633b38a97a6a1fc6bd091ce4d30a964b5a5e2fa9eb"
+    },
+    "sdist.log": {
+      "path": "dist-release-1.1.0.0/sdist.log",
+      "sha256": "d520fe2b216b5e9a5e5a7f5f670cb715357e4aaefa8965aec0ad6df722c40e4c"
+    },
+    "package-nonthreaded-info.log": {
+      "path": "dist-release-1.1.0.0/package-nonthreaded-info.log",
+      "sha256": "e30f15edf898c4f023cbf2f49a34315dfefee8daf9edb50281a7fa588c9f1638"
+    },
+    "package-nonthreaded-build.log": {
+      "path": "dist-release-1.1.0.0/package-nonthreaded-build.log",
+      "sha256": "12061fca7aa59f0a0fcda066eb6a0d8a2cb4cfaa867f27e3daf7a3bbf6c19e29"
+    },
+    "clean-unit.log": {
+      "path": "dist-release-1.1.0.0/clean-unit.log",
+      "sha256": "6f0d23b4afe96b6772381a7d2ef584988775c2fecbc3fd78994f32f418e3c519"
+    },
+    "clean-broker.log": {
+      "path": "dist-release-1.1.0.0/clean-broker.log",
+      "sha256": "d2b55f2827ce39414fcc8ac70a076642432945b6f54a03e4282b25ec527278db"
+    },
+    "final-docs-check.log": {
+      "path": "dist-release-1.1.0.0/final-docs-check.log",
+      "sha256": "62644b6a564a5ae4e08acf494818d103474d0da76074f1a6abb2aaaca2cc020d"
+    },
+    "package-integration.log": {
+      "path": "dist-release-1.1.0.0/package-integration.log",
+      "sha256": "590e952f073111fb4d1ebe605a0df4f245d6b019e8db42ff6f20a752f1a237e3"
+    },
+    "clean-build.log": {
+      "path": "dist-release-1.1.0.0/clean-build.log",
+      "sha256": "60befb12e3482471f948dbe96b074925deca88632751e59fdd0872dcd628f0af"
+    },
+    "cabal-check.log": {
+      "path": "dist-release-1.1.0.0/cabal-check.log",
+      "sha256": "a19b4064f1acadadad1e1f24beae3785b778a6c5baabde7f333e4dacb7191d30"
+    },
+    "forensic-cleanup.log": {
+      "path": "dist-release-1.1.0.0/forensic-cleanup.log",
+      "sha256": "e266e2872f002ada97df71d372e94742fae30494bf124dcf3bbd0bfb83131ee2"
+    },
+    "package-haddock.log": {
+      "path": "dist-release-1.1.0.0/package-haddock.log",
+      "sha256": "c3923f630cf90323ff36f0140b515e8ff19e07055cf95f756fe9ffca71a1607d"
+    },
+    "approved-format.log": {
+      "path": "dist-release-1.1.0.0/approved-format.log",
+      "sha256": "b01bcb5948b99a7f264828948b30582a7fc0f96810955c9773e7f20870d0fe9e"
+    },
+    "approved-test.log": {
+      "path": "dist-release-1.1.0.0/approved-test.log",
+      "sha256": "2031bc40516b18488ad90d48cf38ed0f7ebf41d72e8a51e5a6fb94920993134b"
+    },
+    "approved-check.log": {
+      "path": "dist-release-1.1.0.0/approved-check.log",
+      "sha256": "eccb513fade467fde5ce79f493b8a096eb9479d4920534e676796f83149ca5d5"
+    }
+  },
+  "metadata_artifacts": {
+    "clean-results.json": {
+      "path": "dist-release-1.1.0.0/clean-results.json",
+      "sha256": "cd7a8c19a61907b3eb71f239f5618a7cdcdce6cc0546b848822b0ea169d1bd19"
+    },
+    "downstream-receipt.json": {
+      "path": "dist-release-1.1.0.0/downstream-receipt.json",
+      "sha256": "a01431ffa2806eda55d643ff491b285c24657a895eb1e5d9dcff8535146acfcc"
+    },
+    "clean-broker-tests.json": {
+      "path": "dist-release-1.1.0.0/clean-broker-tests.json",
+      "sha256": "0d4edadb226519b9cbf4e9c0a7b7bc70e8b1cc9cba7ff3ca18c8a105006f2fac"
+    },
+    "project-selection-correction.json": {
+      "path": "dist-release-1.1.0.0/project-selection-correction.json",
+      "sha256": "8ef9ddb7ed5785b70dd9d2e45c9b4688d474ed341235bd2c02d28c0b07831352"
+    },
+    "results.json": {
+      "path": "dist-release-1.1.0.0/results.json",
+      "sha256": "97e35b737184ec45c9c6017528ba6ac359ee2e6648f8b852bea95f63f79341b2"
+    },
+    "package-inventory.json": {
+      "path": "dist-release-1.1.0.0/package-inventory.json",
+      "sha256": "f20282740bc24d43deb9fd48c5b066d4b914e9ee3ac65c48ac02cf38674c1ee6"
+    },
+    "forensic-cleanup-selection.json": {
+      "path": "dist-release-1.1.0.0/forensic-cleanup-selection.json",
+      "sha256": "7bf6a694dd598aa92a15cf06a46ea75edd58f7128eb5eb4d9838d5685999c26f"
+    },
+    "source-equivalence.json": {
+      "path": "dist-release-1.1.0.0/source-equivalence.json",
+      "sha256": "0bc121a2a862983d4060c69f7b54e46c2523cd82577839390b960210bd5c9d00"
+    },
+    "clean-example-result.json": {
+      "path": "dist-release-1.1.0.0/clean-example-result.json",
+      "sha256": "335776ec3e53485278c38d9818431c2e55706940cefc9afcd5c1dfe9422f508d"
+    }
+  },
+  "review": "Concrete release diff approved by user before release commit and tag creation.",
+  "accepted_commands": [
+    {
+      "label": "cabal-check",
+      "command": [
+        "cabal",
+        "check"
+      ],
+      "cwd": ".",
+      "exit": 0,
+      "seconds": 0.06
+    },
+    {
+      "label": "sdist",
+      "command": [
+        "cabal",
+        "sdist",
+        "--output-directory=/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-release-1.1.0.0"
+      ],
+      "cwd": ".",
+      "exit": 0,
+      "seconds": 0.15
+    },
+    {
+      "label": "package-build",
+      "command": [
+        "cabal",
+        "build",
+        "all",
+        "rdkafka-hs-test",
+        "rdkafka-hs-integration",
+        "-f",
+        "examples",
+        "-f",
+        "integration"
+      ],
+      "cwd": "dist-release-1.1.0.0/replay/rdkafka-hs-1.1.0.0",
+      "exit": 0,
+      "seconds": 46.05,
+      "actual_project": "Checkout inherited from parent; not clean-package evidence"
+    },
+    {
+      "label": "package-unit",
+      "command": [
+        "cabal",
+        "test",
+        "rdkafka-hs-test",
+        "-f",
+        "integration",
+        "--test-show-details=direct",
+        "--test-options=--quickcheck-tests=1000 --quickcheck-replay=20261024"
+      ],
+      "cwd": "dist-release-1.1.0.0/replay/rdkafka-hs-1.1.0.0",
+      "exit": 0,
+      "seconds": 24.32,
+      "actual_project": "Checkout inherited from parent; not clean-package evidence"
+    },
+    {
+      "label": "package-integration",
+      "command": [
+        "cabal",
+        "test",
+        "rdkafka-hs-integration",
+        "-f",
+        "integration",
+        "--test-show-details=direct",
+        "--test-options=--quickcheck-tests=1000 --quickcheck-replay=20261024"
+      ],
+      "cwd": "dist-release-1.1.0.0/replay/rdkafka-hs-1.1.0.0",
+      "exit": 0,
+      "seconds": 367.91,
+      "actual_project": "Checkout inherited from parent; not clean-package evidence"
+    },
+    {
+      "label": "package-haddock",
+      "command": [
+        "cabal",
+        "haddock",
+        "--haddock-for-hackage",
+        "--haddock-hyperlink-source",
+        "--haddock-quickjump"
+      ],
+      "cwd": "dist-release-1.1.0.0/replay/rdkafka-hs-1.1.0.0",
+      "exit": 0,
+      "seconds": 90.08,
+      "actual_project": "Clean extraction with explicit local packages: . project file"
+    },
+    {
+      "label": "package-nonthreaded-build",
+      "command": [
+        "cabal",
+        "build",
+        "rdkafka-hs-integration",
+        "-f",
+        "integration",
+        "--builddir=dist-nonthreaded",
+        "--ghc-options=-single-threaded -with-rtsopts=-T"
+      ],
+      "cwd": "dist-release-1.1.0.0/replay/rdkafka-hs-1.1.0.0",
+      "exit": 0,
+      "seconds": 57.7,
+      "actual_project": "Clean extraction with explicit local packages: . project file"
+    },
+    {
+      "label": "package-nonthreaded-info",
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-release-1.1.0.0/replay/rdkafka-hs-1.1.0.0/dist-nonthreaded/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.1.0.0/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "+RTS",
+        "--info"
+      ],
+      "cwd": "dist-release-1.1.0.0/replay/rdkafka-hs-1.1.0.0",
+      "exit": 0,
+      "seconds": 0.7,
+      "actual_project": "Clean extraction with explicit local packages: . project file"
+    },
+    {
+      "label": "package-nonthreaded",
+      "command": [
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-release-1.1.0.0/replay/rdkafka-hs-1.1.0.0/dist-nonthreaded/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.1.0.0/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "-p",
+        "/runtime-contract/"
+      ],
+      "cwd": "dist-release-1.1.0.0/replay/rdkafka-hs-1.1.0.0",
+      "exit": 0,
+      "seconds": 0.91,
+      "actual_project": "Clean extraction with explicit local packages: . project file"
+    }
+  ],
+  "review_variants": [
+    {
+      "destination": "GitHub/tag only",
+      "diff": {
+        "path": "dist-release-1.1.0.0/github-only.diff",
+        "sha256": "eb225809116db90462ee6fc2575f7f30ccd4db9084e1a46f9ac23396519df5b6"
+      },
+      "source_archive": {
+        "path": "dist-release-1.1.0.0/github-only/rdkafka-hs-1.1.0.0.tar.gz",
+        "sha256": "4afcb8fa14a2597c8cf2378a9711e07bf05694fc1ddb475d2a35fe81fa8afb55"
+      },
+      "README": "Keeps existing git-tag installation; updates tag and PVP bounds only"
+    },
+    {
+      "destination": "GitHub and first Hackage publication",
+      "diff": {
+        "path": "dist-release-1.1.0.0/github-and-hackage.diff",
+        "sha256": "70a858c95160d9cd9c323b0a09d774f011cda8a127e7139b80e9b2c24eb5c1e5"
+      },
+      "source_archive": {
+        "path": "dist-release-1.1.0.0/rdkafka-hs-1.1.0.0.tar.gz",
+        "sha256": "097ce5c889d642763530fa6d78f17e827fdeb118e65178499550d5f730ac13f8"
+      },
+      "README": "Hackage becomes primary, git-tag fallback retained",
+      "prerequisite": "Configure Hackage credentials locally; none were present during preflight"
+    }
+  ],
+  "variant_equivalence": {
+    "changed_archived_files": [
+      "README.md"
+    ],
+    "added_files": [],
+    "all_compiled_source_test_script_cabal_bytes_identical": true,
+    "effect": "Publication destination changes README only; runtime qualification is shared by both concrete archives."
+  },
+  "forensic_cleanup": {
+    "removed_owned_topics": 8,
+    "remaining_selected_topics": 0,
+    "scope": "Exact named topics from the historical probes on private 39092 only",
+    "evidence": {
+      "path": "dist-release-1.1.0.0/forensic-cleanup.log",
+      "sha256": "e266e2872f002ada97df71d372e94742fae30494bf124dcf3bbd0bfb83131ee2"
+    }
+  },
+  "approval": {
+    "user_message": "looks good continue",
+    "version_and_changelog": "approved",
+    "destination_basis": "Continue existing GitHub/tag distribution. Hackage credentials were unavailable; first Hackage publication remains unperformed."
+  },
+  "final_checks": {
+    "format": "passed; zero changes",
+    "unit_tests": 78,
+    "docs_bindings_nix_build_flake_checks": "passed",
+    "package_source": "163 selected archive files byte-identical to approved checkout"
+  }
+}
