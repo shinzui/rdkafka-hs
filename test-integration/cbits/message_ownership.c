@@ -12,7 +12,7 @@
 
 static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t resume = PTHREAD_COND_INITIALIZER;
-static int enabled, mode, released, count, stats[8];
+static int enabled, mode, released, count, stats[9];
 static rd_kafka_message_t *messages[8];
 static int live[8];
 static int32_t original_partition[8];
@@ -63,7 +63,7 @@ void rdkafka_hs_test_messages_end(void) {
 }
 int rdkafka_hs_test_messages_stat(int index) {
   pthread_mutex_lock(&lock);
-  int result = index >= 0 && index < 8 ? stats[index] : -1;
+  int result = index >= 0 && index < 9 ? stats[index] : -1;
   pthread_mutex_unlock(&lock);
   return result;
 }
@@ -73,11 +73,20 @@ static void boundary(void) {
 }
 static void acquired(rd_kafka_message_t *message) {
   if (count == 8 || !message) abort();
+  for (int i = 0; i < count; ++i)
+    if (messages[i] == message && !live[i]) { stats[8]++; break; }
   original_partition[count] = message->partition;
   original_offset[count] = message->offset;
   original_topic[count] = message->rkt;
   original_error[count] = message->err;
   messages[count] = message; live[count++] = 1; stats[1]++;
+}
+/* Native allocators may reuse a released address in the same observation
+ * scope. Only the live allocation owns the current message's saved fields. */
+static int live_index(const rd_kafka_message_t *message) {
+  for (int i = count - 1; i >= 0; --i)
+    if (messages[i] == message && live[i]) return i;
+  return -1;
 }
 static long long now_ms(void) {
   struct timespec now; clock_gettime(CLOCK_MONOTONIC, &now);
@@ -126,6 +135,12 @@ ssize_t rd_kafka_consume_batch_queue(rd_kafka_queue_t *queue, int timeout,
 static rd_kafka_message_t *single(rd_kafka_message_t *message, int app, int queue) {
   pthread_mutex_lock(&lock);
   int selected = (queue ? mode >= 10 && mode <= 12 : mode >= 13 && mode <= 19) || (mode >= 21 && mode <= 25);
+  if (enabled && app && selected && message && message->err != RD_KAFKA_RESP_ERR_NO_ERROR) {
+    /* Error frames are outside the data-record counter, but are new native
+     * allocations too. A reused dead address must not suppress their release. */
+    for (int i = 0; i < count; ++i)
+      if (messages[i] == message && !live[i]) messages[i] = NULL;
+  }
   if (enabled && app && selected && message && message->err == RD_KAFKA_RESP_ERR_NO_ERROR) {
     acquired(message);
     /* Native error frames can lack a partition or offset independently.
@@ -160,9 +175,8 @@ rd_kafka_resp_err_t rd_kafka_message_headers(const rd_kafka_message_t *message,
   extern int rdkafka_hs_test_producer_header_failure(void);
   if (rdkafka_hs_test_producer_header_failure()) { *headers = NULL; return RD_KAFKA_RESP_ERR__BAD_MSG; }
   pthread_mutex_lock(&lock);
-  int index;
-  for (index = 0; index < count && messages[index] != message; ++index) {}
-  if (enabled && index < count && live[index]) {
+  int index = live_index(message);
+  if (enabled && index >= 0) {
     stats[3]++;
     if (mode >= 21 && mode <= 23) {
       *headers = NULL;
@@ -197,18 +211,25 @@ void rd_kafka_message_destroy(rd_kafka_message_t *message) {
   REAL(rd_kafka_message_destroy);
   int skip = 0;
   pthread_mutex_lock(&lock);
-  if (enabled && APPLICATION_CALL) for (int i = 0; i < count; ++i) if (messages[i] == message) {
-    stats[6]++;
-    if (!live[i]) { stats[5]++; skip = 1; }
-    else if (mode == 5 && i == count - 1) { stats[7]++; skip = 1; }
-    else {
-      message->partition = original_partition[i];
-      message->offset = original_offset[i];
-      message->rkt = original_topic[i];
-      message->err = original_error[i];
-      live[i] = 0; stats[2]++;
+  if (enabled && APPLICATION_CALL) {
+    int i = live_index(message);
+    if (i < 0) {
+      /* With no newer live allocation, a known dead address still detects
+       * an actual duplicate application release. */
+      for (int j = 0; j < count; ++j) if (messages[j] == message) {
+        stats[6]++; stats[5]++; skip = 1; break;
+      }
+    } else {
+      stats[6]++;
+      if (mode == 5 && i == count - 1) { stats[7]++; skip = 1; }
+      else {
+        message->partition = original_partition[i];
+        message->offset = original_offset[i];
+        message->rkt = original_topic[i];
+        message->err = original_error[i];
+        live[i] = 0; stats[2]++;
+      }
     }
-    break;
   }
   pthread_mutex_unlock(&lock);
   if (!skip) real(message);

@@ -282,6 +282,8 @@ cooperativeBufferTest env = testCase "cooperative subset callbacks preserve unre
     let props = consumerPropsNoStore env <> groupId (makeGroupId env "cooperative-buffer-subset") <> callbackPollMode CallbackPollModeSync <> extraProp "partition.assignment.strategy" "cooperative-sticky"
     withStateFault 9 $ bracket (newConsumer props (topics [topic] <> offsetReset Earliest) >>= either throwIO pure) releaseConsumer $ \consumer -> do
       timeout 10000000 (withMessageFault 16 (collect consumer 6)) >>= maybe (assertFailure "six callback records were not copied") pure
+      messageStat 5 >>= (@?= 0)
+      messageStat 8 >>= \reused -> putStrLn ("[message-generations] reused-native-addresses=" <> show reused)
       fmap (M.map sort) <$> assignment consumer >>= (@?= Right (M.singleton topic [PartitionId 0, PartitionId 1]))
       produceTo producer topic 0 "originless-error-frame"
       withMessageFault 24 $ do

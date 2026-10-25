@@ -2,7 +2,7 @@
 type: Architecture Decision Record
 title: Release coverage requires behavior and ownership evidence
 description: Release acceptance requires an explicit tested public-contract and native-ownership inventory, trustworthy fixtures, and source-bound compatibility evidence rather than only passing counts or aggregate coverage.
-timestamp: 2026-10-25T00:02:36Z
+timestamp: 2026-10-25T16:54:47Z
 generated:
   by: codex-cli/gpt-6.1-sol
   at: "2026-10-25T00:02:36Z"
@@ -29,6 +29,8 @@ that release gate and the deferred-obligation ledger. Open comprehensive rows
 remain visible and cannot be relabeled as passing.
 
 A release candidate must have an inventory mapping every supported public behavior and critical native allocation, ownership transfer, error conversion, and release path to precise test assertions and current-source evidence. Include applicable success, failure, boundary, mode, and lifetime cases. A function being called is not proof that its result or cleanup is correct. Re-exports, diagnostics, deprecated entry points, and pure-data laws remain visible in the inventory.
+
+Native ownership observers must identify the current live allocation when an allocator reuses an address. A released address alone is not proof of a double release: later data or error frames can occupy it. Select the live generation, restore its own saved fields, and retire dead address matches when observing uncounted error frames. Preserve a double-release control only when no new allocation has been observed at that address.
 
 Fixtures must preserve unexpected errors and assert exact records, offsets, counts, and results. Meaningful concurrency and asynchronous-exception windows require observed barriers or state, not merely thread launch followed by cancellation. Generated property tests provide replay seeds and minimized failures; native-resource checks include leak/invalid-access evidence with positive controls proving instrumentation is effective. Deliberate semantic mutations must fail the focused behavioral tests, not just compilation.
 

@@ -35,6 +35,8 @@ In Progress (2026-10-25). The complete gate is implemented in the existing cover
 
 ## Surprises & Discoveries
 
+The mapped run on the gate candidate failed the cooperative-buffer observer at six acquired versus four released messages. The test C observer searched the first historical pointer match, so a newly allocated message at a freed address was mistaken for a duplicate release and destruction was skipped. The observer now selects the live allocation and retires dead matches for uncounted error frames. The existing cooperative regression additionally rejects duplicate-release counts and records native address reuse; all 11 selected cooperative cases pass. The failed full log remains `dist-compatibility/comprehensive/mapped-failed-observer.log`. ADR-10 records the durable observer identity constraint. Full acceptance is recollected after this fixture repair.
+
 The current strict coverage checker already rejects open contract rows and unexplained handwritten misses. The user-authorized primary release validates freshness using its explicit --allow-open mode and a transferred-obligation ledger. Do not weaken the strict command or rewrite deferred requirements as passing. This child finishes the broader gate once its producing children have completed.
 
 ## Decision Log
