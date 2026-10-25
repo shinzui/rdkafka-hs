@@ -11,15 +11,14 @@ The historical snapshot above remains unchanged. The current functional source
 passes 78 unit and 753 integration cases normally and mapped, plus four separate
 nonthreaded cases. Nine actual distributed-broker and seventeen actual security
 cases contribute source-validated behavior registrations, without contributing
-HPC ticks: 857 aggregate registered cases. The inventory now has 179 tested and
-two open rows; 401 exact source classifications leave two unexplained handwritten
+HPC ticks: 857 aggregate registered cases. The inventory now has 180 tested and
+one open row; 401 exact source classifications leave two unexplained handwritten
 producer exception-cleanup ticks. See [current public evidence](deferred-public-contract-evidence.json).
 
 EP-17, EP-18 and EP-19 are Complete for the named source-bound scenarios in the
-[compatibility matrix](compatibility-matrix.json). EP-16 still requires the
-historical seek cause (explicitly retained by the user) and the two source ticks.
-Native-only tracing reproduced State with seek in state none while the delivered
-partition stays active; native object identity remains under investigation.
+[compatibility matrix](compatibility-matrix.json). EP-16 still requires the two source ticks. The user-required historical seek
+investigation is accepted through a causal late-topic-finalizer reconstruction
+and an isolated 182-case differential with the already implemented scoped lifetime fix.
 EP-20 remains Not Started because its whole-child EP-16 prerequisite is unmet.
 The tables below preserve the original handoff, not the current row statuses.
 

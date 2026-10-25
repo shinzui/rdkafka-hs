@@ -235,7 +235,7 @@
           "sha256": "8a9134c343f9d7bf40eaaf00d19caa6ca505afa98bdf739763a4f7ba2b4c7f68"
         }
       },
-      "remaining": "The originless-error cooperative filter branch now has a real controlled regression and awaits fresh mapped confirmation. Producer.hs:204 exception-only StablePtr cleanup remains unexecuted; do not claim allocation-exhaustion injection or exempt it without an accepted source-domain decision."
+      "remaining": "Current mapped evidence covers the cooperative originless-error branch. Two Producer.hs:204 exception-continuation ticks remain open. Tagged GHC newAlignedPinnedByteArray# raises HeapOverflow synchronously when allocatePinned returns NULL, so this cannot be dismissed as masked asynchronous allocation-counter exhaustion. A meaningful pinned-allocation failure control remains work; no exemption or simulated coverage is accepted."
     }
   ]
 }

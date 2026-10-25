@@ -476,8 +476,7 @@ covers invalid access with leak detection disabled. These are named scenario
 results, with diagnostic limits recorded in the
 [compatibility matrix](docs/testing/compatibility-matrix.json).
 
-Comprehensive qualification remains open: the historical seek cause, two
-producer exception-path coverage ticks and the final all-evidence/package gate
+Comprehensive qualification remains open: two producer exception-path coverage ticks and the final all-evidence/package gate
 are tracked by the [follow-up plan](docs/masterplans/3-complete-deferred-coverage-and-compatibility-validation.md).
 The [historical primary release record](docs/testing/primary-validation-evidence.json)
 retains its own exact source and package results.

@@ -1,5 +1,5 @@
 {
-  "status": "accepted active-fetcher fixture and error-propagation checkpoint; historical transition was not recorded",
+  "status": "Accepted causal historical reproduction and isolated scoped-lifetime differential; original failure retained",
   "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
   "runs": {
     "normal": {
@@ -73,7 +73,7 @@
       "result": "pass with explicit performGC before every inherited consumer operation; not a reconstruction"
     },
     "broker_log": "Read-only retained primary broker logs establish the exact historical topic was created at 2026-10-24 07:33:31.078 UTC and deleted at 07:34:47.721 UTC after the suite teardown. No intervening deletion of that exact topic occurs. Default INFO logs contain no matching group/fetch-state transition, so they cannot identify the inactive-fetcher cause.",
-    "accepted_cause": null,
+    "accepted_cause": "A managed legacy-seek topic may outlive its native client. Its late C finalizer accesses the freed parent; when that address is reused by the next consumer, TAILQ_REMOVE writes through the old topic link into the new client topic-list head. Metadata/name lookup then constructs a second topic/partition in fetch state none while the real assigned partition remains active. Legacy seek resolves that second partition and returns State.",
     "artifacts": {
       "rdkafka-mp3-historical-trace7.log": {
         "path": "dist-compatibility/expanded-recovery-checkpoint/rdkafka-mp3-historical-trace7.log",
@@ -123,5 +123,93 @@
       },
       "limit": "Do not yet assert that the precise old saved event was a late finalizer. The observed duplicate object and separate invalid-parent destructor motivate a direct address/order probe."
     }
+  },
+  "causal_acceptance": {
+    "historical_subject": "fc5892d core Consumer/Metadata/native API sources with original ConsumerTest and GHC coverage; no Haskell debug/forced GC in the reproducing run. Core source bytes match the original preserved mutation archive; whole failed-candidate fingerprint was not reconstructable.",
+    "native_trace": "Tagged librdkafka 2.15.0 with C-only pointer/state/finalizer logging; no native behavior or opaque layout change.",
+    "timeline": [
+      "Async consumer 72 uses parent 0xbff0b8000, topic 0xbfee2de00 and active partition 0xbfee2e800.",
+      "Sync consumer 73 reuses native parent address 0xbff0b8000 and delivers fourteen records using a different topic 0xbfee2e800 and partition 0xbfee2d900.",
+      "During watermark lookup two delayed application-reference releases finalize old topic 0xbfee2de00. Its parent now reports consumer-73; the stack is runSomeFinalizers -> rd_kafka_topic_destroy_final.",
+      "Native by-name lookup now reports topic count zero, while the original assigned partition has not stopped.",
+      "Metadata/topic lookup constructs topic 0xbfee2de00 again with a new never-started partition 0xbfee2ca00. Seek enters that partition in state none and returns State; four dependent cases skip.",
+      "A separate explicit client-lifetime trace, with no address reuse, records destruction/free of parent consumer 72 before its topic finalizer and aborts on the destroyed parent mutex. This corroborates the invalid lifetime independently of topic-list corruption."
+    ],
+    "mechanism_source": {
+      "project": "mori://confluentinc/librdkafka",
+      "version": "2.15.0",
+      "commit": "9a94e11452cdeb0a844db44ee5dd01ccbe17d3ab",
+      "project_relative_paths": [
+        "src/rdkafka_topic.c:rd_kafka_topic_destroy_final (TAILQ_REMOVE)",
+        "src/rdkafka_topic.c:rd_kafka_topic_find_fl",
+        "src/rdkafka.c:rd_kafka_seek",
+        "src/rdkafka_partition.c:rd_kafka_toppar_seek"
+      ],
+      "artifact_uri_pending": true
+    },
+    "minimal_differential": {
+      "change": "Only legacy seek in the historical checkout is changed to retain its parent with withForeignPtr and bracket/finalize every acquired topic before returning, mirroring the already implemented current lifetime fix. No offsets, errors, waits, topic fixtures or callback mode is changed.",
+      "passed": 182,
+      "seconds": 99.41,
+      "finalizer_order": "Both historical consumer topics finalize while their original parent is still alive; no State and no duplicate topic object."
+    },
+    "current_repair": {
+      "commit": "2d8be3574b395cbd995b23fff09e06da03c95ae8",
+      "source": "src/Kafka/Consumer.hs",
+      "source_sha256": "170ea8259f8b0279db807c48799f323a268e7636efcbc929ade003cd4e4bb70a",
+      "behavior": "Legacy seek retains the native client and explicitly finalizes scoped topics; current native-child Haskell finalizers also retain the parent. Existing ten fresh positive scenarios, native State propagation/recovery tests, full primary normal/mapped runs and current native diagnostic cohorts remain accepted."
+    },
+    "scope_limit": "This is a causal reproduction of the saved failure condition with the preserved historical core, not a claim that the untraced original process event can be observed retrospectively. The stopped-fetcher and max-poll explanations are not asserted.",
+    "artifacts": {
+      "historical-causal-identity.log": {
+        "path": "dist-compatibility/expanded-source9/historical-causal-identity.log",
+        "sha256": "7d71250fd32bf8b5773099504fe6e5a8c57ca3aa18fb435ec8c0e091964a3314"
+      },
+      "historical-trace-v4.dylib": {
+        "path": "dist-compatibility/expanded-source9/historical-trace-v4.dylib",
+        "sha256": "d43912f91b6100e52da2985ed25f812e6c4f313e6325784222c43010402c75d5"
+      },
+      "historical-scoped-binary": {
+        "path": "dist-compatibility/expanded-source9/historical-scoped-binary",
+        "sha256": "159997f6bd528ebcf7a61790ed0e3b9b0a548edfacc9250d9096de08c985eed8"
+      },
+      "historical-scoped-replay.log": {
+        "path": "dist-compatibility/expanded-source9/historical-scoped-replay.log",
+        "sha256": "d467c5510499003864488f66fb7272f327b85c5713caabf698dfdae6ed601f33"
+      },
+      "historical-Consumer-original.hs": {
+        "path": "dist-compatibility/expanded-source9/historical-Consumer-original.hs",
+        "sha256": "302dc7b476e90ec031a6a28f4dd96a0307028fa8b67889724f276ff7a77d734a"
+      },
+      "historical-Consumer-scoped.hs": {
+        "path": "dist-compatibility/expanded-source9/historical-Consumer-scoped.hs",
+        "sha256": "7c61dc0a193e3ca6250312176c6964ed21663bef609fe4b7b1eb821fbbefeb42"
+      },
+      "historical-client-destruction-order.log": {
+        "path": "dist-compatibility/expanded-source9/historical-client-destruction-order.log",
+        "sha256": "949173d4205d89c5831e0015cfe616b16656d2061f9a38e90ebaf4a2b75ec2ab"
+      },
+      "historical-trace-v5.dylib": {
+        "path": "dist-compatibility/expanded-source9/historical-trace-v5.dylib",
+        "sha256": "b1819973bc434e9a8ccb6af66697a3a53446d9d256e4ac2f1e2af87d62b8b673"
+      },
+      "historical-trace-v5-rdkafka.c": {
+        "path": "dist-compatibility/expanded-source9/historical-trace-v5-rdkafka.c",
+        "sha256": "3bbb03d7743debdcc065a173056523c221ffaedd15b38f989927568467c69a48"
+      },
+      "historical-trace-v5-rdkafka_topic.c": {
+        "path": "dist-compatibility/expanded-source9/historical-trace-v5-rdkafka_topic.c",
+        "sha256": "7bad08c3ec3c35ff819b27c0e73e0849d72999f3865a176939242443d69b27dd"
+      },
+      "historical-trace-v5-rdkafka_partition.c": {
+        "path": "dist-compatibility/expanded-source9/historical-trace-v5-rdkafka_partition.c",
+        "sha256": "c3a522c87cfc323f93ef5531f48988e738bec4dc50ded6aea4e382b98329b264"
+      },
+      "historical-native-trace-v5.diff": {
+        "path": "dist-compatibility/expanded-source9/historical-native-trace-v5.diff",
+        "sha256": "59a800395bd40922e7796458e37a08b94d65f37ac94e344fec19e693c322e101"
+      }
+    },
+    "native_v5_sha256": "b1819973bc434e9a8ccb6af66697a3a53446d9d256e4ac2f1e2af87d62b8b673"
   }
 }

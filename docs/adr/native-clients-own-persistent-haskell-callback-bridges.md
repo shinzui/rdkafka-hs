@@ -2,7 +2,7 @@
 type: Architecture Decision Record
 title: Native clients own persistent Haskell callback bridges
 description: Transfer persistent callback registrations to a client-independent owner released after native shutdown, with scoped cleanup for failed construction and native child handles.
-timestamp: 2026-10-24T13:58:55Z
+timestamp: 2026-10-25T03:27:54Z
 generated:
   by: codex-cli/gpt-6.1-sol
   at: "2026-10-24T13:58:55Z"
@@ -26,7 +26,7 @@ Mask allocation through registration and native installation of a callback addre
 
 Consumer graceful close and producer flush/close retain their existing semantics. Explicit consumer destruction serializes through the lifecycle lock; concurrent callers wait for completed cleanup. Appropriately closed clients also release registrations through GC. Callback-supplied consumer wrappers borrow the native pointer and do not acquire its deallocator; retain the owning consumer for subsequent operations.
 
-Native child handles whose destruction can invoke callbacks use Haskell finalizers or safe scoped destruction. Public operations retain the client through explicit child cleanup, including acquisition and exception paths. A reference between GC finalizers alone does not guarantee completion ordering.
+Native child handles whose destruction can invoke callbacks use Haskell finalizers or safe scoped destruction. Public operations retain the client through explicit child cleanup, including acquisition and exception paths. A reference between GC finalizers alone does not guarantee completion ordering. A late native child finalizer can access a destroyed parent whose address has already been reused, corrupting the new client rather than merely crashing. Legacy seek therefore finalizes its temporary topics before returning while explicitly retaining the client. [The historical seek reconstruction](../testing/legacy-seek-evidence.json) observes this failure and a scoped-lifetime differential; current ownership tests retain separate active-state and native-error assertions.
 
 Exceptions from foreign callbacks are contained and reported through the runtime's uncaught-exception handler on a fresh unmasked Haskell thread. Rebalance user actions are contained individually so mandatory native assignment/revocation still runs. Per-message StablePtrs remain separately owned by [ADR-13](delivery-callbacks-transfer-once-and-keep-exceptions-in-haskell.md).
 

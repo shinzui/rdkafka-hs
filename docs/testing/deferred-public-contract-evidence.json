@@ -20,9 +20,9 @@
   },
   "inventory": {
     "rows": 181,
-    "tested": 179,
-    "open": 2,
-    "newly_reconciled": 33
+    "tested": 180,
+    "open": 1,
+    "newly_reconciled": 34
   },
   "unclassified_handwritten_ticks": 2,
   "source_classifications": 401,
@@ -63,7 +63,7 @@
     }
   },
   "limits": [
-    "Historical seek cause remains required by explicit user decision. Native-only tracing reproduced State with seek in state none while the delivered partition remains active; native object divergence is still under investigation.",
+    "Historical seek requirement accepted through causal native-identity reconstruction and an isolated 182-case scoped-lifetime differential; the untraced original event itself remains unobservable retrospectively.",
     "Two unexplained producer pre-enqueue exception-cleanup ticks remain. No out-of-memory behavior is claimed tested or exempted.",
     "External context imports add exact registered behavior names only; no HPC counts or ticks are imported. Strict coverage rejects both open rows and both unexplained ticks."
   ],
@@ -142,5 +142,9 @@
   "rebalance_mutations": {
     "path": "dist-mutations/20261025T014120Z-rebalance-76179-0/results.json",
     "sha256": "ecc0364f6a0552605aaa48af5954a17474608166805ed5692ffdc809b3bd4785"
+  },
+  "historical_seek": {
+    "path": "docs/testing/legacy-seek-evidence.json",
+    "sha256": "4b68dbbd2afcec8d95be8b20e965decbd00b0d09d435ae2b471b1195ddb943a6"
   }
 }

@@ -11227,10 +11227,32 @@
       "expected": "Exact next-record offsets after successful seeks and exact native errors for unsupported state; saved failure must be explained rather than erased by successful reruns",
       "modes": "async and sync callback modes",
       "ownership": "Temporary managed topic handles and their native client remain alive through native seeking; callback-capable finalization belongs to EP-11",
-      "tests": [],
-      "status": "unimplemented",
+      "tests": [
+        "rdkafka-hs-integration.public-contract.consumer-state.async.deprecated-seek-reports-unassigned-state-and-recovers-after-assignment",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.legacy-seek-constructor-failure-does-not-execute-an-earlier-valid-seek",
+        "rdkafka-hs-integration.public-contract.consumer-state.async.deprecated-seek-exact-repeated-replay",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.deprecated-seek-reports-unassigned-state-and-recovers-after-assignment",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.legacy-seek-constructor-failure-does-not-execute-an-earlier-valid-seek",
+        "rdkafka-hs-integration.public-contract.consumer-state.sync.deprecated-seek-exact-repeated-replay",
+        "rdkafka-hs-integration.broker.Consumer.Run consumer with async polling.should seek and return no error",
+        "rdkafka-hs-integration.broker.Consumer.Run consumer with async polling.should seek to the beginning",
+        "rdkafka-hs-integration.broker.Consumer.Run consumer with async polling.should seek to the end",
+        "rdkafka-hs-integration.broker.Consumer.Run consumer with async polling.should respect out-of-bound offsets (invalid offset)",
+        "rdkafka-hs-integration.broker.Consumer.Run consumer with async polling.should respect out-of-bound offsets (huge offset)",
+        "rdkafka-hs-integration.broker.Consumer.Run consumer with sync polling.should seek and return no error",
+        "rdkafka-hs-integration.broker.Consumer.Run consumer with sync polling.should seek to the beginning",
+        "rdkafka-hs-integration.broker.Consumer.Run consumer with sync polling.should seek to the end",
+        "rdkafka-hs-integration.broker.Consumer.Run consumer with sync polling.should respect out-of-bound offsets (invalid offset)",
+        "rdkafka-hs-integration.broker.Consumer.Run consumer with sync polling.should respect out-of-bound offsets (huge offset)"
+      ],
+      "status": "tested",
       "previous_owner": 14,
-      "remaining": "The native-only historical replay reproduces State after delivery. The active partition survives until teardown, while seek sees state none; native object identity is under investigation. Preserve the user-required exact cause investigation."
+      "fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c",
+      "evidence": [
+        "docs/testing/legacy-seek-evidence.json",
+        "docs/testing/deferred-public-contract-evidence.json"
+      ],
+      "historical_diagnosis": "Causal native-only historical reconstruction: late old topic finalizer writes through reused parent memory, removes the active topic from lookup and directs seek to a new never-started partition. Isolated explicit lifetime scoping passes all 182 historical tests; current source already implements that repair."
     },
     {
       "id": "PRODUCER-data-boundaries",
