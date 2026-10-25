@@ -11,6 +11,12 @@ provenance:
     model: "gpt-6.1-sol"
     harness: "codex-cli"
     at: 2026-10-24T23:17:06Z
+  revisions:
+    - model: "gpt-6.1-sol"
+      harness: "codex-cli"
+      at: 2026-10-24T23:51:40Z
+      mode: "implement"
+      note: "Reconcile deferred public contracts and source coverage against preserved primary evidence"
 ---
 
 # Close deferred public-contract and source-coverage gaps
@@ -21,11 +27,11 @@ Users can inspect every public API contract and every uncovered handwritten path
 
 ## Progress
 
-- [ ] M1: Reconcile current registered tests and source-bound evidence with every deferred public-contract row without duplicating existing coverage.
+- [x] M1 (2026-10-24): Reconciled all 35 historical open rows; 19 close on exact existing assertions and 16 retain explicit follow-up owners/missing behavior. The current whole candidate passes 808 normal/mapped cases, four nonthreaded cases and 27 gate controls; see `../testing/deferred-public-contract-evidence.json`.
 - [ ] M2: Close reachable handwritten source/binding gaps with exact regressions and effective semantic/ownership controls; preserve justified exceptions.
 - [ ] M3: Investigate the historical seek transition and pass the strict full inventory/coverage gate, with no unresolved owned path.
 
-Not Started. This plan preserves deferred requirements and existing evidence; no implementation result is implied.
+In Progress (2026-10-24). The accepted primary candidate satisfies the prerequisite. M1 is accepted. M2 has added native attribution, logical-offset, complete batch, constructor-error, callback-identity and live log-level assertions, with eight compiled semantic faults caught by seven passing controls. There are 117 unexplained handwritten ticks left, and M3 remains open. The historical seek scope question was asked while independent environment work continued.
 
 ## Surprises & Discoveries
 
@@ -37,7 +43,7 @@ The earlier full checkpoint `d466235` had 35 open contract rows and 255 unexplai
 
 ## Outcomes & Retrospective
 
-Planning only. Record actual results and remaining limits during implementation. Before completion, distill durable applicability, environment and ownership decisions into the profiled ADR bundle.
+M1 closes 19 historical rows using retained evidence and preserves the remaining 16 obligations. Partial M2 strengthens source/ownership assertions, binds every applicability explanation to source bytes and proves eight semantic faults are caught. Full closure and the historical seek decision remain outstanding. Before completion, distill durable applicability, environment and ownership decisions into the profiled ADR bundle.
 
 ## Context and Orientation
 

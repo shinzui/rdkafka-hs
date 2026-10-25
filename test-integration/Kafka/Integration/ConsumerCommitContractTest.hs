@@ -5,6 +5,7 @@ import Control.Concurrent.MVar (MVar, newEmptyMVar, tryPutMVar, tryTakeMVar)
 import Control.Exception (bracket, throwIO)
 import Control.Monad (forM_, void)
 import Data.List (find, sort)
+import Data.Map.Strict qualified as Map
 import Data.Text qualified as Text
 import Data.Text.Encoding qualified as TE
 import Kafka.Consumer
@@ -21,7 +22,19 @@ tests env =
         withTopic env (Text.pack ("commit-modes-" <> label)) 1 $ \topic producer -> do
           produceTo producer topic 0 "commit-record"
           events <- newEmptyMVar
-          let props = brokersList (teBrokers env) <> groupId (makeGroupId env (Text.pack ("commit-modes-" <> label))) <> noAutoCommit <> noAutoOffsetStore <> callbackPollMode mode <> setCallback (offsetCommitCallback (\_ reportedError partitions -> void (tryPutMVar events (reportedError, partitions))))
+          let props =
+                brokersList (teBrokers env)
+                  <> groupId (makeGroupId env (Text.pack ("commit-modes-" <> label)))
+                  <> noAutoCommit
+                  <> noAutoOffsetStore
+                  <> callbackPollMode mode
+                  <> setCallback
+                    ( offsetCommitCallback
+                        ( \consumer reportedError partitions -> do
+                            assignment consumer >>= (@?= Right (Map.singleton topic [PartitionId 0]))
+                            void (tryPutMVar events (reportedError, partitions))
+                        )
+                    )
               part offset = TopicPartition topic (PartitionId 0) (PartitionOffset offset)
           withStateFault 0 $
             bracket (newAssignedConsumer props >>= either throwIO pure) releaseConsumer $ \consumer -> do

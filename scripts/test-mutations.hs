@@ -211,6 +211,50 @@ families "rebalance" =
   ]
   where
     r label change test = mutation "public-contract" label "src/Kafka/Consumer/Callbacks.hs" change test
+families "source-edges" =
+  [ control "unchanged-message-control" integration "independently absent",
+    control "unchanged-offset-control" integration "native logical offsets decode independently",
+    control "unchanged-constructor-control" integration "construction failure releases callbacks: subscribe",
+    control "unchanged-batch-control" integration "batch capacity",
+    control "unchanged-log-level-control" integration "producer constructor log level",
+    control "unchanged-subscription-error-control" integration "subscription acquisition failure",
+    control "unchanged-legacy-constructor-control" integration "legacy-seek-constructor-failure",
+    edge "negative-partition-fabricates-origin" (replace "cmePartition = if partition >= 0 then Just (PartitionId partition) else Nothing" "cmePartition = Just (PartitionId partition)") "async attributed error preserves independently absent partition-and-offset",
+    edge "negative-offset-fabricates-origin" (replace "cmeOffset = if offset >= 0 then Just (Offset offset) else Nothing" "cmeOffset = Just (Offset offset)") "sync attributed error preserves independently absent offset",
+    edge "beginning-offset-decoded-as-stored" (replace "o == -2 = PartitionOffsetBeginning" "o == -2 = PartitionOffsetStored") "native logical offsets decode independently without losing partition identity",
+    mutation
+      "callback-lifetime"
+      "subscription-failure-client-retained"
+      consumer
+      (section "case subscribeError of" "-- | Create a consumer" (replace "_ <- closeConsumer kafka `finally` destroyConsumer kafka" "_ <- pure Nothing"))
+      "async construction failure releases callbacks: subscribe",
+    mutation
+      "public-contract"
+      "batch-record-order-reversed"
+      consumer
+      (replace "traverse copyMessagePtr messages" "traverse copyMessagePtr (reverse messages)")
+      "batch capacity 2 preserves complete ordered records across partial batches",
+    mutation
+      "public-contract"
+      "producer-constructor-log-level-omitted"
+      "src/Kafka/Producer.hs"
+      (replace "forM_ (ppLogLevel pps) (rdKafkaSetLogLevel kafka . fromEnum)" "pure ()")
+      "producer constructor log level overrides the global property on the native client",
+    mutation
+      "public-contract"
+      "subscription-native-error-replaced"
+      "src/Kafka/Internal/RdKafka.chs"
+      (section "rdKafkaSubscription ::" "{#fun rd_kafka_consumer_poll" (replace "e -> return (Left e)" "_ -> return (Left RdKafkaRespErrTimedOut)"))
+      "subscription acquisition failure preserves the native error without a list",
+    mutation
+      "public-contract"
+      "legacy-topic-acquisition-error-suppressed"
+      consumer
+      (section "withTopics (tp : rest) action" "seekAll pairs" (replace "Left err -> pure (Left err)" "Left _ -> pure (Right ())"))
+      "legacy-seek-constructor-failure-does-not-execute-an-earlier-valid-seek"
+  ]
+  where
+    edge label change test = mutation "public-contract" label consumerConversion change test
 families "state" =
   [ control "unchanged-control" integration "consumer-state",
     c "pause-omitted" (replace "changePause consumer ps True rdKafkaPausePartitions" "changePause consumer ps True (\\_ _ -> pure RdKafkaRespErrNoError)") "pause-resume-preserves-records",

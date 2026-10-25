@@ -1,0 +1,356 @@
+{
+  "status": "accepted initial Linux/newer tuple integration; diagnostic and failover prototypes require permanent replay",
+  "source": {
+    "project": "mori://shinzui/rdkafka-hs",
+    "candidate_fingerprint": "eb6352fe62c75ec289a0a5f543ed0692106d24f3370ddb46ef31f0188410b14a",
+    "archive": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/candidate.tar.gz",
+      "sha256": "b02206dc4621d86226f15f6b8b88768e8e9e494b51cb13ec6746805ae1d367ba"
+    },
+    "qualification_prototype": "The native-lifetime mode is an explicitly recorded modification of test-integration/Main.hs. Its before/after bytes and transformation are retained; native diagnostic outcomes are prototype evidence, not final candidate qualification."
+  },
+  "environment": {
+    "os": "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.5 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo\n",
+    "kernel": "Linux 6.18.15 aarch64",
+    "architecture": "aarch64",
+    "ghc": "9.14.1",
+    "cabal": "3.16.1.0",
+    "loaded_libraries": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/loaded-libraries.log",
+      "sha256": "1eadb3fce16b3a55fd4cc4a9a27eccefc277fd3e664fd3b76c75acccfa846e3a"
+    },
+    "native_binary": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/native-candidate.so.1",
+      "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f"
+    },
+    "native_version": "2.16.0",
+    "loaded_native_identity": {
+      "version": "2.16.0",
+      "number": 34603263,
+      "path": "/opt/librdkafka-2.16.0/lib/librdkafka.so.1",
+      "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f",
+      "observed": "(\"2.16.0\",34603263)"
+    },
+    "broker_version": "Apache Kafka 4.4.0",
+    "broker_topology": "Three owned combined broker/controllers, IDs 1/2/3 on loopback 41092/42092/43092; broker default min ISR 1 for single-replica inherited fixtures; failover topic replication 3 and min ISR 2"
+  },
+  "release_sources": {
+    "ghc": {
+      "registry": "https://downloads.haskell.org/ghc/9.14.1/",
+      "tag": "ghc-9.14.1-release",
+      "tag_object": "961b2ffcc02ea6c93df649fc8367458378fa7aa5"
+    },
+    "native": {
+      "project": "mori://confluentinc/librdkafka",
+      "tag": "v2.16.0",
+      "commit": "c6c9973cf1b25394c58e0cade13a36f386856f77",
+      "release": "https://github.com/confluentinc/librdkafka/releases/tag/v2.16.0"
+    },
+    "broker": {
+      "registry": "https://downloads.apache.org/kafka/4.4.0/",
+      "tag": "4.4.0",
+      "tag_object": "9661b1ef7a0120e476399250b31d530792506787",
+      "sha512_verified": true
+    }
+  },
+  "results": {
+    "components_built": [
+      "library",
+      "examples",
+      "unit suite",
+      "integration suite"
+    ],
+    "unit": 78,
+    "broker_smoke": 14,
+    "counted_callback_teardown": 2,
+    "nonthreaded": 4,
+    "normal_smoke_tests": [
+      "rdkafka-hs-integration.callback-lifetime.async error callback releases after destroy with retained wrapper",
+      "rdkafka-hs-integration.callback-lifetime.sync error callback releases after destroy with retained wrapper",
+      "rdkafka-hs-integration.transaction-errors.transaction-error-leak-probe releases 300 immediate native errors",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.async.native logical offsets decode independently without losing partition identity",
+      "rdkafka-hs-integration.public-contract.partition-list-ownership.sync.native logical offsets decode independently without losing partition identity",
+      "rdkafka-hs-integration.public-contract.messages.batch capacity 1 preserves complete ordered records across partial batches",
+      "rdkafka-hs-integration.public-contract.messages.batch capacity 2 preserves complete ordered records across partial batches",
+      "rdkafka-hs-integration.public-contract.messages.batch capacity 5 preserves complete ordered records across partial batches",
+      "rdkafka-hs-integration.public-contract.runtime-contract.RTS capability is observed by async construction",
+      "rdkafka-hs-integration.public-contract.runtime-contract.explicit async construction checks the runtime",
+      "rdkafka-hs-integration.public-contract.runtime-contract.sync subscription delivers an exact record",
+      "rdkafka-hs-integration.public-contract.runtime-contract.deprecated sync runner closes after an exact record",
+      "rdkafka-hs-integration.seek-partitions.async.single seek replays exact record",
+      "rdkafka-hs-integration.seek-partitions.sync.single seek replays exact record"
+    ],
+    "valgrind": {
+      "version": "3.22.0",
+      "invalid_access_control": "Two freed-configuration reads in native rd_kafka_conf_get and the Haskell/C bridge were detected.",
+      "quiescent_smoke": "Eight cases passed; zero errors and zero definite, indirect or possible leaks; no suppressions.",
+      "header_candidate": "Exact NoCompression header roundtrip passes with zero errors and no definite/indirect/possible leaks.",
+      "header_mutation": "Omitting native rd_kafka_headers_destroy cleanup is detected under actual produceva: 48 bytes definitely and 210 bytes indirectly lost; exit 99.",
+      "limit": "Reachable RTS/library allocations are retained separately. Complete ownership scenarios, final quiescent runner and current candidate replay remain required."
+    }
+  },
+  "discarded_attempts": [
+    "Initial include path pointed one directory too deep for <librdkafka/rdkafka.h>; corrected without changing package bounds.",
+    "Cabal retained the failed preprocessing timestamp; touching the unchanged .chs forced regeneration, after which the library built.",
+    "Printing Text directly in a GHC expression lacked its Show instance scope; explicitly unpacking Text recorded the actual loaded version.",
+    "The initial diagnostic smoke exited with native threads still reachable; it is superseded by the bounded GC/native-wait prototype with zero possible leaks."
+  ],
+  "artifacts": {
+    "LeaderProbe.hs": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/LeaderProbe.hs",
+      "sha256": "932cf2bec75d2ed20ed8193a8dd7a0ddc76a0240a79c6b002edd865b298388e9"
+    },
+    "Main.before-quiescence.hs": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/Main.before-quiescence.hs",
+      "sha256": "747ae37d4feef1d5c312a2eaf3cbd4277ee3302cbf3429ee8f719d7863ec2044"
+    },
+    "Main.quiescence-prototype.hs": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/Main.quiescence-prototype.hs",
+      "sha256": "ac4a5eaa3919656bb8b5972ee7c4946a70df2d279728b416e378e4f7f2d3c3f3"
+    },
+    "cabal-release-index.html": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/cabal-release-index.html",
+      "sha256": "69a99efb30e065bef728e361988b0d214e8103eed10046c683b6ea451ecceb47"
+    },
+    "candidate.tar.gz": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/candidate.tar.gz",
+      "sha256": "b02206dc4621d86226f15f6b8b88768e8e9e494b51cb13ec6746805ae1d367ba"
+    },
+    "configs-help.txt": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/configs-help.txt",
+      "sha256": "f1a166d8d72e498d9e9452652708396f20a2b1036018f93b0e17d6f2ff56164e"
+    },
+    "counted-callback-tests.txt": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/counted-callback-tests.txt",
+      "sha256": "cf065db5b874ead76036eb6b0e789170abb29840c6479f5d94adde2553b8841e"
+    },
+    "counted-callback.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/counted-callback.log",
+      "sha256": "7e40ba7a1852908f5f2bc028698d9ac3a2b1da3c5a588a1f6da1e878d17e87ed"
+    },
+    "env.sh": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/env.sh",
+      "sha256": "9cef400b820313b0f4551bc55f7e0c953086c7119f503a08e3b545b08de7fe38"
+    },
+    "fixture-default-policy.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/fixture-default-policy.log",
+      "sha256": "a59f5deb54f0117897bc08637af9a82ee9b04577953061225471e2e827c0fdc6"
+    },
+    "ghc-release-index.html": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/ghc-release-index.html",
+      "sha256": "f1f5b13b839e94ae7433ee7724742897a9ceed77c58f33df0a604c541a0da317"
+    },
+    "header-candidate.stdout": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/header-candidate.stdout",
+      "sha256": "af9f07d6f4f9a76ed6084d55a6736ee70eca2196cecd1781ae7686de2c9150f0"
+    },
+    "header-control-tests.txt": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/header-control-tests.txt",
+      "sha256": "d394d838c4cd0e475b98e59fd7b28b995de44536408cc72df32ca94b55519214"
+    },
+    "header-controls.sh": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/header-controls.sh",
+      "sha256": "5fb43885558d317e7c182f32fe0f39ede2b729ef72ec75f6b459a1c62ce5fdc7"
+    },
+    "header-leak-build.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/header-leak-build.log",
+      "sha256": "134cb8262034f9e8b6855f4b89f7ba6118489cd752341b502ac8a6369c50d1db"
+    },
+    "header-leak-mutation.py": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/header-leak-mutation.py",
+      "sha256": "9153671bb14b4410dec0162f1382570c6469133576f918e01f504c8204dfa7d9"
+    },
+    "header-mutation.exit": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/header-mutation.exit",
+      "sha256": "7e332bcee418f7d700927c946d36341f0651d6d90997b58d3d5441dec96b2e74"
+    },
+    "header-mutation.stdout": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/header-mutation.stdout",
+      "sha256": "86f6903fea2d4d347698f5dc063f3fe055131c511679bfd7b5b181e0e6af6220"
+    },
+    "java-setup.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/java-setup.log",
+      "sha256": "b5436b0410bc38a0d920cb84a2f23d6b5a84ea3505f001d7f5d9ef39a79268fe"
+    },
+    "kafka-release-index.html": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/kafka-release-index.html",
+      "sha256": "4366ff9c9ca7dfb12e8094132a928b5cea8059ebfd8e57eb582fbc99b5ad5400"
+    },
+    "kafka-start.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/kafka-start.log",
+      "sha256": "e04defe1b1b98ad409439177368842c1c2c2767a44aebe68c77066fa6e4ad02d"
+    },
+    "kafka.sha512": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/kafka.sha512",
+      "sha256": "2536dc9204ce287a1816def8d68bfe049e860f780e7e65ea1c535c4e660dacee"
+    },
+    "kernel.txt": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/kernel.txt",
+      "sha256": "0986a7c568207573585d452318a4b0b53fbefb2f6a2d689b2770da26e9a9b195"
+    },
+    "leader-build.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/leader-build.log",
+      "sha256": "e76e214025478ec384c464ceb3edb651bedd5f56d97836ecc6de6bd833117ed2"
+    },
+    "leader-probe.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/leader-probe.log",
+      "sha256": "8f82f2c0f05e3d73b2c5040b3de68b060d25c8d18abdfc29d8b52677183c4cf7"
+    },
+    "library-fresh.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/library-fresh.log",
+      "sha256": "9ef91e90f838e94cebf1638a262aabe11be13f18dd9ecb9e3e329902a534065c"
+    },
+    "library-verbose.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/library-verbose.log",
+      "sha256": "73773ee15e14d99cbee421df3872e6ac1f68a3d30c79929552705de65e494b59"
+    },
+    "linux-smoke-tests.json": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/linux-smoke-tests.json",
+      "sha256": "50a4991e3ba780d80bb10559cb6c2bdd713f7d081da43513b379da4c798501d5"
+    },
+    "linux-smoke.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/linux-smoke.log",
+      "sha256": "424fd29085e2e6e17a8ee6f090c5c4f748b41ba3014ae05e04c63f49de4f0468"
+    },
+    "loaded-libraries.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/loaded-libraries.log",
+      "sha256": "1eadb3fce16b3a55fd4cc4a9a27eccefc277fd3e664fd3b76c75acccfa846e3a"
+    },
+    "loaded-native.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/loaded-native.log",
+      "sha256": "6ec9b644a82e1dd0a2ec1c57250b4e2d3043deb9a608d8384f7ec30026876a93"
+    },
+    "native-build-hashes.txt": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/native-build-hashes.txt",
+      "sha256": "05f329f3ba7a3d32827958ae606cdd6ba94c85305b4a5568e16679090ae37f7c"
+    },
+    "native-candidate.so.1": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/native-candidate.so.1",
+      "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f"
+    },
+    "native-header-mutation.so.1": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/native-header-mutation.so.1",
+      "sha256": "be9e3a93250d151b24a578851fed6d784bdaa6e3b1813cb417f27d23ed90fe52"
+    },
+    "native-release.html": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/native-release.html",
+      "sha256": "37a9dcbf689e646f66a2f0b2aaedb1ebe1e25e510777f68c16c13cb8cd88fcb6"
+    },
+    "nonthreaded-build.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/nonthreaded-build.log",
+      "sha256": "8ce719e1acd9c5a7bca7d2b0be4994a4357d7dc3a4ebfdb2cfd4f34111e9d46b"
+    },
+    "nonthreaded-rts.txt": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/nonthreaded-rts.txt",
+      "sha256": "4624cb69ac272748f36b86dca2969623bb2ce1a54d2f66dbbf5226ff74f36e3d"
+    },
+    "nonthreaded-runtime.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/nonthreaded-runtime.log",
+      "sha256": "672324aa3d9a4099f5e114a1ffde606ab45dd044dc0663663545e41f81280352"
+    },
+    "nonthreaded-tests.txt": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/nonthreaded-tests.txt",
+      "sha256": "24b751e0a51502cb8f7e98cd3b05c4980ea3dc578fa6421d9edbb76d6c321831"
+    },
+    "os-release.txt": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/os-release.txt",
+      "sha256": "87458b3b1f1ca0e5c693ade771de7007c3783bdc692fa6b39eb6414bf2af2763"
+    },
+    "package-build.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/package-build.log",
+      "sha256": "4c5d02022f2ac5a1c017ed0263f2117a2680978399f8faa656cf0ef7fa687e64"
+    },
+    "package-build.sh": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/package-build.sh",
+      "sha256": "40ac7fbb04507c8b42826c474d5b164e3b5c9332dfc6944da91c0057045a533d"
+    },
+    "package-recovered.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/package-recovered.log",
+      "sha256": "0370c2efbbce7adcf45841fe85014934c1998508f04670c8f362099b9e823a46"
+    },
+    "package-retry.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/package-retry.log",
+      "sha256": "e51a5218486958c0d0397df09049d6380e8cb881804b5a9874b9a25def468665"
+    },
+    "package-retry.sh": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/package-retry.sh",
+      "sha256": "d42bc4f364dc9922b4a44226e6eb96863c5370c043cee9d42444a2fb077670e6"
+    },
+    "prototype-quiescence.py": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/prototype-quiescence.py",
+      "sha256": "b9931fd223546318197d354f1bf90a8f26f0c85bbaa69293bc45e9dd1ab5ff30"
+    },
+    "quiescence-build.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/quiescence-build.log",
+      "sha256": "4038528f33baf64c514340de07d0f9707e8e08277c30a198fb34c9da2acb9be9"
+    },
+    "rdkafka_header.original.c": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/rdkafka_header.original.c",
+      "sha256": "c82403e08653d0d19b39b5740a9477a838575361eab3c83451effaa809bf2175"
+    },
+    "restart-one.py": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/restart-one.py",
+      "sha256": "88b578b3e71233c580474dfd890ebafc48a4ed412d76707faea03009a112db55"
+    },
+    "runtime.sh": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/runtime.sh",
+      "sha256": "e5a4abd1fca16fd413e1184cba02799733591a389a2b3e9f30b958c661258eb6"
+    },
+    "setup.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/setup.log",
+      "sha256": "3b10f0a5123241a5c401ac93e6c86e67c7a5538cfa52e3577ef9e169f01b11a7"
+    },
+    "setup.sh": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/setup.sh",
+      "sha256": "0c4bcda82ae0b7620ce52b550b0ec869307eca971623103928eb4847ead66386"
+    },
+    "smoke.py": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/smoke.py",
+      "sha256": "ccd36be50cf25e6d2403da5406fee357c24d8e4e8a5e79eaf83ab02a0c933269"
+    },
+    "smoke.sh": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/smoke.sh",
+      "sha256": "e4fcfcead2f99175cc9608f03d941618dac18d2fd97143ead3f9d9094362d115"
+    },
+    "start-kafka.py": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/start-kafka.py",
+      "sha256": "4e3bb507b55624513a7fdd72d10912e754c88620fc9a15e2011a58cb93fb69e8"
+    },
+    "storage-help.txt": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/storage-help.txt",
+      "sha256": "59c2c0ba1636c777feab6b8b859dc8bb5f796e22ea3a059f7afc234a13bac928"
+    },
+    "valgrind-header-candidate.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/valgrind-header-candidate.log",
+      "sha256": "062efe16a1df849980cfd3f82806da8d026ed2acaa23861bd92db746158200eb"
+    },
+    "valgrind-header-mutation.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/valgrind-header-mutation.log",
+      "sha256": "6ab5dcbcd73374bb3942826ac98f73044132429d1b1a1d36af8bc2a655be165a"
+    },
+    "valgrind-invalid-control.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/valgrind-invalid-control.log",
+      "sha256": "1a7d713b91061fbc2bc686b5ca4d269787a23b236e5f1cdca113223dc69ebc65"
+    },
+    "valgrind-invalid-control.stdout": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/valgrind-invalid-control.stdout",
+      "sha256": "223d146ce867f09c836471f5067d7957c50c4426e4f941f340b46f41189839ab"
+    },
+    "valgrind-quiescent.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/valgrind-quiescent.log",
+      "sha256": "4d6cd303990505b856bc398eb52973715023762983f70b7072e10a66803703c6"
+    },
+    "valgrind-quiescent.stdout": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/valgrind-quiescent.stdout",
+      "sha256": "37ba41e918b7ea0f7f4c1f866348c9a9e5997a1c4225e4f0acd6513c0022d886"
+    },
+    "valgrind-smoke.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/valgrind-smoke.log",
+      "sha256": "3c79a6948abdc7b64be9fc4ab973d02ae1dc011fbe9716d62b307d254628ef95"
+    },
+    "valgrind-smoke.stdout": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/valgrind-smoke.stdout",
+      "sha256": "eee1b4e4cb52fb11a371d421fa8db3c5096243e673683ab5904af4a701902aa2"
+    }
+  }
+}

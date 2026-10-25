@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "scope": "Primary release preparation under ADR-27; comprehensive qualification belongs to MasterPlan 3",
+  "scope": "Historical accepted primary release plus in-progress expanded qualification under MasterPlan 3; pending rows are not qualified",
   "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
   "primary": [
     {
@@ -54,5 +54,218 @@
     "No new environment claim follows from broad dependency bounds.",
     "No comprehensive native leak claim follows from Darwin ASan runs with leak detection disabled.",
     "Plaintext setter checks do not prove real authentication or credential replacement at a broker."
-  ]
+  ],
+  "qualification": {
+    "schema_version": 1,
+    "status": "in-progress",
+    "candidate_fingerprint": "eb6352fe62c75ec289a0a5f543ed0692106d24f3370ddb46ef31f0188410b14a",
+    "tuple_fields": [
+      "id",
+      "owner",
+      "required",
+      "status",
+      "source",
+      "environment",
+      "test_configuration",
+      "scenarios",
+      "artifacts"
+    ],
+    "source_fields": [
+      "candidate_fingerprint",
+      "revision",
+      "archive_sha256",
+      "configuration_sha256"
+    ],
+    "environment_fields": [
+      "os",
+      "kernel",
+      "architecture",
+      "ghc",
+      "cabal",
+      "native_version",
+      "loaded_native_identity",
+      "broker_version",
+      "broker_topology"
+    ],
+    "scenario_fields": [
+      "id",
+      "required",
+      "status",
+      "command",
+      "tests",
+      "passed",
+      "artifacts",
+      "limitations"
+    ],
+    "artifact_format": "Repository-relative path to immutable output and its SHA-256; credentials and private keys are never fields",
+    "status_values": [
+      "not-run",
+      "in-progress",
+      "passed",
+      "failed",
+      "unavailable"
+    ],
+    "acceptance": "Only passed required scenarios with nonzero expected test identities, actual loaded versions, matching source/configuration and verified artifact hashes qualify. Historical primary evidence retains its original source identity.",
+    "tuples": [
+      {
+        "id": "linux-arm64-ghc9141-native2160-apache440",
+        "owner": 17,
+        "required": true,
+        "status": "in-progress",
+        "source": {
+          "candidate_fingerprint": "eb6352fe62c75ec289a0a5f543ed0692106d24f3370ddb46ef31f0188410b14a",
+          "archive_sha256": "b02206dc4621d86226f15f6b8b88768e8e9e494b51cb13ec6746805ae1d367ba"
+        },
+        "planned_environment": {
+          "os": "Ubuntu 24.04 Linux",
+          "architecture": "aarch64",
+          "ghc": "9.14.1",
+          "cabal": "3.16.1.0",
+          "native": "2.16.0",
+          "broker": "Apache Kafka 4.4.0"
+        },
+        "environment": {
+          "os": "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.5 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo\n",
+          "kernel": "Linux 6.18.15 aarch64",
+          "architecture": "aarch64",
+          "ghc": "9.14.1",
+          "cabal": "3.16.1.0",
+          "loaded_libraries": {
+            "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/loaded-libraries.log",
+            "sha256": "1eadb3fce16b3a55fd4cc4a9a27eccefc277fd3e664fd3b76c75acccfa846e3a"
+          },
+          "native_binary": {
+            "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/native-candidate.so.1",
+            "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f"
+          },
+          "native_version": "2.16.0",
+          "loaded_native_identity": {
+            "version": "2.16.0",
+            "number": 34603263,
+            "path": "/opt/librdkafka-2.16.0/lib/librdkafka.so.1",
+            "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f",
+            "observed": "(\"2.16.0\",34603263)"
+          },
+          "broker_version": "Apache Kafka 4.4.0",
+          "broker_topology": "Three owned combined broker/controllers, IDs 1/2/3 on loopback 41092/42092/43092; broker default min ISR 1 for single-replica inherited fixtures; failover topic replication 3 and min ISR 2"
+        },
+        "test_configuration": null,
+        "scenarios": [
+          {
+            "id": "initial-broker-smoke",
+            "required": true,
+            "status": "passed",
+            "tests": [
+              "rdkafka-hs-integration.callback-lifetime.async error callback releases after destroy with retained wrapper",
+              "rdkafka-hs-integration.callback-lifetime.sync error callback releases after destroy with retained wrapper",
+              "rdkafka-hs-integration.transaction-errors.transaction-error-leak-probe releases 300 immediate native errors",
+              "rdkafka-hs-integration.public-contract.partition-list-ownership.async.native logical offsets decode independently without losing partition identity",
+              "rdkafka-hs-integration.public-contract.partition-list-ownership.sync.native logical offsets decode independently without losing partition identity",
+              "rdkafka-hs-integration.public-contract.messages.batch capacity 1 preserves complete ordered records across partial batches",
+              "rdkafka-hs-integration.public-contract.messages.batch capacity 2 preserves complete ordered records across partial batches",
+              "rdkafka-hs-integration.public-contract.messages.batch capacity 5 preserves complete ordered records across partial batches",
+              "rdkafka-hs-integration.public-contract.runtime-contract.RTS capability is observed by async construction",
+              "rdkafka-hs-integration.public-contract.runtime-contract.explicit async construction checks the runtime",
+              "rdkafka-hs-integration.public-contract.runtime-contract.sync subscription delivers an exact record",
+              "rdkafka-hs-integration.public-contract.runtime-contract.deprecated sync runner closes after an exact record",
+              "rdkafka-hs-integration.seek-partitions.async.single seek replays exact record",
+              "rdkafka-hs-integration.seek-partitions.sync.single seek replays exact record"
+            ],
+            "passed": 14,
+            "artifacts": {
+              "linux-smoke.log": {
+                "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/linux-smoke.log",
+                "sha256": "424fd29085e2e6e17a8ee6f090c5c4f748b41ba3014ae05e04c63f49de4f0468"
+              },
+              "linux-smoke-tests.json": {
+                "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/linux-smoke-tests.json",
+                "sha256": "50a4991e3ba780d80bb10559cb6c2bdd713f7d081da43513b379da4c798501d5"
+              },
+              "loaded-native.log": {
+                "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/loaded-native.log",
+                "sha256": "6ec9b644a82e1dd0a2ec1c57250b4e2d3043deb9a608d8384f7ec30026876a93"
+              },
+              "loaded-libraries.log": {
+                "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/loaded-libraries.log",
+                "sha256": "1eadb3fce16b3a55fd4cc4a9a27eccefc277fd3e664fd3b76c75acccfa846e3a"
+              }
+            },
+            "command": [
+              "python3",
+              "/evidence/smoke.py"
+            ],
+            "limitations": [
+              "Initial archive only; subsequent test/probe changes require source-bound replay."
+            ]
+          },
+          {
+            "id": "complete-native-ownership-diagnostics",
+            "required": true,
+            "status": "in-progress",
+            "limitations": "Reachable RTS/library allocations are retained separately. Complete ownership scenarios, final quiescent runner and current candidate replay remain required."
+          }
+        ],
+        "artifacts": {},
+        "remaining": [
+          "Promote and replay bounded native quiescence under the final source package",
+          "Run every required native ownership/header scenario with effective controls",
+          "Reconcile final source/configuration and package identity with all producer children"
+        ],
+        "evidence": "docs/testing/linux-tuple-evidence.json"
+      },
+      {
+        "id": "apache-distributed-failure-group-transaction",
+        "owner": 18,
+        "required": true,
+        "status": "in-progress",
+        "remaining": [
+          "Leader election and exact post-failure records",
+          "Bounded full outage and callback/commit/poll recovery",
+          "Eager/cooperative handoff and assignmentLost True",
+          "Interrupted transaction recovery and read-committed visibility",
+          "Actual unknown-topic configuration rejection"
+        ],
+        "environment": {
+          "os": "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.5 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo\n",
+          "kernel": "Linux 6.18.15 aarch64",
+          "architecture": "aarch64",
+          "ghc": "9.14.1",
+          "cabal": "3.16.1.0",
+          "loaded_libraries": {
+            "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/loaded-libraries.log",
+            "sha256": "1eadb3fce16b3a55fd4cc4a9a27eccefc277fd3e664fd3b76c75acccfa846e3a"
+          },
+          "native_binary": {
+            "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/native-candidate.so.1",
+            "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f"
+          },
+          "native_version": "2.16.0",
+          "loaded_native_identity": {
+            "version": "2.16.0",
+            "number": 34603263,
+            "path": "/opt/librdkafka-2.16.0/lib/librdkafka.so.1",
+            "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f",
+            "observed": "(\"2.16.0\",34603263)"
+          },
+          "broker_version": "Apache Kafka 4.4.0",
+          "broker_topology": "Three owned combined broker/controllers, IDs 1/2/3 on loopback 41092/42092/43092; broker default min ISR 1 for single-replica inherited fixtures; failover topic replication 3 and min ISR 2"
+        },
+        "evidence": "docs/testing/broker-failure-evidence.json"
+      },
+      {
+        "id": "sasl-tls-acl-credential-reconnect",
+        "owner": 19,
+        "required": true,
+        "status": "not-run",
+        "remaining": [
+          "Authenticated record and actual denied operation",
+          "Invalid and valid credentials for both client kinds",
+          "Trusted TLS and certificate/hostname rejection",
+          "Produce/consume/group/admin authorization",
+          "Observed reconnect distinguishes replacement credentials",
+          "Cleanup and scrubbed evidence"
+        ]
+      }
+    ]
+  }
 }

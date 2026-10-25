@@ -10,6 +10,12 @@ provenance:
     model: "gpt-6.1-sol"
     harness: "codex-cli"
     at: 2026-10-24T23:17:05Z
+  revisions:
+    - model: "gpt-6.1-sol"
+      harness: "codex-cli"
+      at: 2026-10-24T23:51:40Z
+      mode: "implement"
+      note: "Start EP-16 against accepted primary candidate and reconcile deferred contract evidence"
 ---
 
 # Complete deferred coverage and compatibility validation
@@ -36,9 +42,9 @@ The public-coverage audit has different acceptance from real broker failures and
 
 | # | Deliverable | Path | Hard dependencies | Soft/integration dependencies | Status |
 |---|---|---|---|---|---|
-| 16 | Finish public contracts, handwritten coverage and seek investigation | [EP-16](../plans/16-close-deferred-public-contract-and-source-coverage-gaps.md) | Accepted primary candidate from MasterPlan 2 | Integrates all later tuple results | Not Started |
-| 17 | Execute Linux/newer tuples and effective native lifetime diagnostics | [EP-17](../plans/17-validate-linux-and-released-toolchain-native-lifetimes.md) | Accepted primary candidate from MasterPlan 2 | Defines tuple evidence consumed by EP-18/19/20 | Not Started |
-| 18 | Prove distributed broker/group/transaction recovery | [EP-18](../plans/18-verify-distributed-broker-failure-and-group-recovery.md) | Accepted primary candidate from MasterPlan 2 | Integrates tuple schema with EP-17 and secure fixture with EP-19 | Not Started |
+| 16 | Finish public contracts, handwritten coverage and seek investigation | [EP-16](../plans/16-close-deferred-public-contract-and-source-coverage-gaps.md) | Accepted primary candidate from MasterPlan 2 | Integrates all later tuple results | In Progress |
+| 17 | Execute Linux/newer tuples and effective native lifetime diagnostics | [EP-17](../plans/17-validate-linux-and-released-toolchain-native-lifetimes.md) | Accepted primary candidate from MasterPlan 2 | Defines tuple evidence consumed by EP-18/19/20 | In Progress |
+| 18 | Prove distributed broker/group/transaction recovery | [EP-18](../plans/18-verify-distributed-broker-failure-and-group-recovery.md) | Accepted primary candidate from MasterPlan 2 | Integrates tuple schema with EP-17 and secure fixture with EP-19 | In Progress |
 | 19 | Prove authentication, TLS, ACLs and credential reconnect | [EP-19](../plans/19-verify-authenticated-kafka-and-credential-recovery.md) | Accepted primary candidate from MasterPlan 2 | Can reuse EP-18 Apache fixture; integrates with EP-17 schema | Not Started |
 | 20 | Enforce complete source/tuple/package qualification | [EP-20](../plans/20-enforce-the-complete-compatibility-evidence-gate.md) | EP-16, EP-17, EP-18 and EP-19 Complete | Consumes all manifests | Not Started |
 
@@ -76,7 +82,7 @@ Keep all source, test, C fixtures, registration, mutations and documentation fro
 
 ## Progress
 
-Planning is complete; implementation has not started. The preserved current full checkpoint passes 786 registered cases normally and mapped plus four actual nonthreaded cases; its 192 unexplained handwritten ticks and 35 open historical inventory rows are transferred in `docs/testing/deferred-validation-snapshot.json`. Five child plans preserve the deferred scope. MasterPlan 2's primary candidate is now accepted; [primary evidence](../testing/primary-validation-evidence.json) satisfies the baseline prerequisite. The follow-up implementation remains Not Started. The comprehensive gate remains unavailable until every child has accepted source-bound evidence.
+Implementation is active in EP-16/17/18. EP-16 M1 is accepted: the ledger has 165 tested and 16 open rows, with historical ownership retained; its current primary checkpoint passes 808 normal/mapped cases, four nonthreaded cases and 27 gate controls, with 117 unexplained handwritten ticks still open. EP-17 has actual Linux/GHC 9.14.1/librdkafka 2.16.0 package/unit/smoke execution and effective diagnostic prototypes. EP-18 has observed a real Apache Kafka 4.4.0 leader change with exact records/commits in both callback modes and restored brokers; permanent scenarios and remaining distributed variants are unfinished. EP-19 remains Not Started, and EP-20 remains blocked by all four whole-child prerequisites. The historical seek trigger remains explicitly unknown pending the requested scope decision. No comprehensive qualification or publication is claimed.
 
 ## Surprises & Discoveries
 

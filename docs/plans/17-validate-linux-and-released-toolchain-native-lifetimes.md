@@ -11,6 +11,12 @@ provenance:
     model: "gpt-6.1-sol"
     harness: "codex-cli"
     at: 2026-10-24T23:17:06Z
+  revisions:
+    - model: "gpt-6.1-sol"
+      harness: "codex-cli"
+      at: 2026-10-24T23:59:01Z
+      mode: "implement"
+      note: "Discover released newer tuple and prepare run-owned actual Linux execution"
 ---
 
 # Validate Linux and released toolchain native lifetimes
@@ -25,11 +31,11 @@ Users gain execution evidence for Linux and a newer compatible released toolchai
 - [ ] M2: Demonstrate effective native leak and invalid-access controls, then pass candidate lifetime scenarios on Linux and complementary Darwin diagnostics.
 - [ ] M3: Execute a registry/tag-verified newer released compiler/native tuple and publish accurate compatibility results for EP-20.
 
-Not Started. This plan preserves deferred requirements and existing evidence; no implementation result is implied.
+In Progress (2026-10-24). Apple Container is available for a run-owned Linux environment. Authoritative release discovery identifies GHC 9.14.1 and librdkafka 2.16.0 as newer stable candidates; The initial package build and 78 unit cases pass after correcting the include directory and forcing preprocessing after the failed header lookup. Sixteen explicit broker/lifetime smoke cases and four actual nonthreaded cases pass on the captured initial archive. Native Valgrind invalid-access control is effective; heap quiescence and header cleanup controls are being prototyped before accepting M2. No whole-child completion is claimed.
 
 ## Surprises & Discoveries
 
-Existing Darwin native AddressSanitizer runs use librdkafka 2.15.0 and `detect_leaks=0`; they establish invalid-access coverage only for the named scenarios. `docs/testing/callback-native-diagnostics.json` contains an effective deliberate invalid-access control. Existing weak-reference tests establish collection of Haskell captures, not all native allocations. These proofs remain valuable and must not be replaced with an unsupported claim of whole-process leak freedom.
+Existing Darwin native AddressSanitizer runs use librdkafka 2.15.0 and `detect_leaks=0`; they establish invalid-access coverage only for the named scenarios. `docs/testing/callback-native-diagnostics.json` contains an effective deliberate invalid-access control. Existing weak-reference tests establish collection of Haskell captures, not all native allocations. A Linux eight-case Valgrind smoke initially retained native threads at process exit despite zero definite/indirect leaks. A bounded Haskell-GC/native-wait teardown prototype removes the possibly-lost TLS allocations: the same smoke has zero errors, zero definite, indirect or possible leaks without suppressions. This prototype must be promoted and replayed on the final candidate before M2 acceptance. These proofs remain valuable and must not be replaced with an unsupported claim of whole-process leak freedom.
 
 ## Decision Log
 

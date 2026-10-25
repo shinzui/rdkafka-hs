@@ -1,5 +1,8 @@
 # Bundle Update Log
 
+## 2026-10-25
+* **Update**: Bind handwritten coverage exceptions to exact source hashes and preserve ownership transfers during expanded qualification.
+
 ## 2026-10-24
 * **updated**: Apply exhaustive coverage and broad matrix policy to deferred qualification under ADR-27
 * **created**: Record user-selected primary release scope and preserve comprehensive qualification in MasterPlan 3

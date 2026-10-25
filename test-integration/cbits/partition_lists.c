@@ -9,7 +9,7 @@
 #include <librdkafka/rdkafka.h>
 static pthread_mutex_t list_lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t list_resume = PTHREAD_COND_INITIALIZER;
-static int tracking, fault, allocated, destroyed, live, entered, released;
+static int tracking, fault, allocated, destroyed, live, entered, released, queue_attempts;
 static rd_kafka_topic_partition_list_t *lists[64], *control;
 #define REAL(name) __typeof__(&name) real = (__typeof__(&name))dlsym(RTLD_NEXT, #name); \
   if (!real) { fprintf(stderr,"partition lists: %s\n",dlerror()); abort(); }
@@ -41,7 +41,7 @@ void rdkafka_hs_test_lists_begin(int value) {
   pthread_mutex_lock(&list_lock);
   if(tracking || control) abort();
   memset(lists,0,sizeof(lists)); fault=value; tracking=1;
-  allocated=destroyed=live=entered=released=0;
+  allocated=destroyed=live=entered=released=queue_attempts=0;
   pthread_mutex_unlock(&list_lock);
 }
 void rdkafka_hs_test_lists_release(void) {
@@ -55,7 +55,7 @@ void rdkafka_hs_test_lists_end(void) {
 }
 int rdkafka_hs_test_lists_stat(int index) {
   pthread_mutex_lock(&list_lock);
-  int value=index==0?allocated:index==1?destroyed:index==2?live:entered;
+  int value=index==0?allocated:index==1?destroyed:index==2?live:index==4?queue_attempts:entered;
   pthread_mutex_unlock(&list_lock); return value;
 }
 rd_kafka_topic_partition_list_t *rd_kafka_topic_partition_list_new(int size) {
@@ -77,8 +77,33 @@ void rd_kafka_topic_partition_list_destroy(rd_kafka_topic_partition_list_t *list
 void rdkafka_hs_test_lists_assignment(rd_kafka_topic_partition_list_t *list) { observe(list,1); }
 rd_kafka_resp_err_t rd_kafka_subscription(rd_kafka_t *client, rd_kafka_topic_partition_list_t **list) {
   REAL(rd_kafka_subscription);
+  pthread_mutex_lock(&list_lock);
+  int selected = tracking && fault == 7 && application(__builtin_return_address(0));
+  pthread_mutex_unlock(&list_lock);
+  if (selected) { *list = NULL; return RD_KAFKA_RESP_ERR__UNKNOWN_GROUP; }
   rd_kafka_resp_err_t result=real(client,list);
   if(result==RD_KAFKA_RESP_ERR_NO_ERROR && application(__builtin_return_address(0))) observe(*list,2);
+  return result;
+}
+rd_kafka_queue_t *rd_kafka_queue_get_partition(rd_kafka_t *client, const char *topic, int32_t partition) {
+  REAL(rd_kafka_queue_get_partition);
+  pthread_mutex_lock(&list_lock);
+  int selected = tracking && fault == 8 && application(__builtin_return_address(0));
+  if (selected) queue_attempts++;
+  pthread_mutex_unlock(&list_lock);
+  return selected ? NULL : real(client, topic, partition);
+}
+rd_kafka_resp_err_t rd_kafka_position(rd_kafka_t *client, rd_kafka_topic_partition_list_t *list) {
+  REAL(rd_kafka_position);
+  rd_kafka_resp_err_t result = real(client, list);
+  pthread_mutex_lock(&list_lock);
+  if (tracking && fault == 6 && application(__builtin_return_address(0))) {
+    const int64_t offsets[] = {RD_KAFKA_OFFSET_BEGINNING, RD_KAFKA_OFFSET_END,
+      RD_KAFKA_OFFSET_STORED, RD_KAFKA_OFFSET_INVALID, -17, 0, INT64_MAX};
+    if (list->cnt != 7 || result != RD_KAFKA_RESP_ERR_NO_ERROR) abort();
+    for (int i = 0; i < 7; ++i) list->elems[i].offset = offsets[i];
+  }
+  pthread_mutex_unlock(&list_lock);
   return result;
 }
 void rdkafka_hs_test_lists_control(int release) {

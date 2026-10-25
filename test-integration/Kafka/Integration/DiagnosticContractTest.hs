@@ -11,6 +11,7 @@ import Kafka.Consumer qualified as C
 import Kafka.DiagnosticTestSupport
 import Kafka.Dump
 import Kafka.Producer qualified as P
+import Kafka.ProducerTestSupport (nativeProducerProperty, withProducerTracking)
 import Kafka.TestEnv
 import System.Directory (getTemporaryDirectory, removeFile)
 import System.IO (Handle, SeekMode (AbsoluteSeek), hClose, hFlush, hIsClosed, hPutStr, hSeek, hTell, openBinaryTempFile)
@@ -76,6 +77,13 @@ tests env =
               M.lookup "message.timeout.ms" topic @?= Just "2345"
               M.lookup "compression.codec" topic @?= Just "gzip"
             mapM diagnosticStat [0, 1] >>= (@?= [200, 200]),
+      testCase "producer constructor log level overrides the global property on the native client" $
+        withTopic env "producer-constructor-log" 1 $ \topic _ ->
+          bracket (P.newProducer (P.brokersList (teBrokers env) <> P.extraProp "log_level" "2" <> P.logLevel P.KafkaLogWarning) >>= either throwIO pure) releaseProducer $ \producer -> withProducerTracking 0 $ do
+            produceTo producer topic 0 "native-log-level"
+            nativeProducerProperty 5 >>= (@?= Just "4")
+            config <- dumpKafkaConf producer
+            M.lookup "log_level" config @?= Just "2",
       testCase "consumer configuration dump preserves global settings after subscription merge" $
         bracket (C.newAssignedConsumer (C.brokersList (teBrokers env) <> C.groupId (makeGroupId env "diagnostic") <> C.extraProp "client.id" "diagnostic-consumer" <> C.callbackPollMode C.CallbackPollModeSync) >>= either throwIO pure) releaseConsumer $ \consumer -> do
           config <- dumpKafkaConf consumer

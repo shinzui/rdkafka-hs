@@ -64,6 +64,20 @@ tests env =
                  balanced 3
                  assign c [part topic] >>= (@?= Nothing)
                  balanced (if mode == CallbackPollModeAsync then 5 else 4),
+               testCase "native logical offsets decode independently without losing partition identity" $ fixture False "logical-offsets" $ \topic c -> withLists 6 $ do
+                 let offsets = [PartitionOffsetBeginning, PartitionOffsetEnd, PartitionOffsetStored, PartitionOffsetInvalid, PartitionOffsetInvalid, PartitionOffset 0, PartitionOffset maxBound]
+                 position c [(topic, PartitionId p) | p <- [0 .. 6]]
+                   >>= (@?= Right [TopicPartition topic (PartitionId p) offset | (p, offset) <- zip [0 ..] offsets])
+                 balanced 1,
+               testCase "missing native partition queue preserves assignment and later forwarding" $ fixture False "missing-queue" $ \topic c -> do
+                 withLists 8 $ do
+                   assign c [part topic] >>= (@?= Nothing)
+                   stat 4 >>= (@?= if mode == CallbackPollModeAsync then 2 else 0)
+                   balanced (if mode == CallbackPollModeAsync then 2 else 1)
+                 withLists 0 $ do
+                   assign c [part topic] >>= (@?= Nothing)
+                   assignment c >>= (@?= Right (Map.singleton topic [PartitionId 0]))
+                   balanced (if mode == CallbackPollModeAsync then 3 else 2),
                testCase "assignment outputs release after exact decoding" $ fixture False "assignment-success" $ \topic c -> do
                  assign c [part topic] >>= (@?= Nothing)
                  withLists 0 $ do
@@ -72,6 +86,9 @@ tests env =
                testCase "subscription outputs release after exact decoding" $ fixture True "subscription-success" $ \topic c -> withLists 0 $ do
                  replicateM_ 3 $ subscription c >>= (@?= Right [(topic, SubscribedPartitionsAll)])
                  balanced 3,
+               testCase "subscription acquisition failure preserves the native error without a list" $ fixture False "subscription-error" $ \_ c -> withLists 7 $ do
+                 subscription c >>= (@?= Left (KafkaResponseError RdKafkaRespErrUnknownGroup))
+                 balanced 0,
                testCase "assignment decoder failure releases the owned output" $ fixture False "assignment-decode" $ \topic c -> do
                  assign c [part topic] >>= (@?= Nothing)
                  withLists 2 $ do

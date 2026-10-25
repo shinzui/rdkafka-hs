@@ -53,7 +53,7 @@ tests env =
              kind <- ["log", "stats"]
            ]
         <> [ testCase (label <> " construction failure releases callbacks: " <> stage) $
-               if stage == "redirect"
+               if stage == "redirect" || stage == "subscribe"
                  then withCallbackTracking 0 $ do
                    weak <- failedConsumerProbe env mode label stage
                    ( do
@@ -63,7 +63,7 @@ tests env =
                      `finally` awaitCollected weak
                  else failedConsumerProbe env mode label stage >>= awaitCollected
            | (label, mode) <- [("async", C.CallbackPollModeAsync), ("sync", C.CallbackPollModeSync)],
-             stage <- ["topic", "native", "redirect"]
+             stage <- ["topic", "native", "redirect", "subscribe"]
            ]
         <> [ testCase "producer native construction failure releases callbacks" $
                failedProducerProbe env >>= awaitCollected
@@ -230,7 +230,10 @@ failedConsumerProbe env mode label stage = do
           <> C.setCallback (C.errorCallback (\_ _ -> atomicModifyIORef' capture (\n -> (n + 1, ()))))
       invalid = C.extraProps (M.fromList [("security.protocol", "sasl_plaintext"), ("sasl.mechanism", "PLAIN")])
       sub = C.extraSubscriptionProps (M.singleton "__ownership.invalid" "x")
-  result <- try @C.KafkaError $ if stage == "topic" then C.newConsumer props sub else C.newAssignedConsumer (if stage == "native" then props <> invalid else props)
+  result <- try @C.KafkaError $ case stage of
+    "topic" -> C.newConsumer props sub
+    "subscribe" -> C.newConsumer props (C.topics [C.TopicName ""])
+    _ -> C.newAssignedConsumer (if stage == "native" then props <> invalid else props)
   case result of
     Left (C.KafkaUnknownConfigurationKey message)
       | stage == "topic" ->
@@ -240,6 +243,8 @@ failedConsumerProbe env mode label stage = do
           assertBool (Text.unpack message) ("sasl.username and sasl.password must be set" `Text.isInfixOf` message)
     Right (Left (C.KafkaResponseError C.RdKafkaRespErrUnknownGroup))
       | stage == "redirect" -> pure ()
+    Right (Left (C.KafkaResponseError C.RdKafkaRespErrInvalidArg))
+      | stage == "subscribe" -> pure ()
     Right (Right consumer) -> C.destroyConsumer consumer >> assertFailure "invalid constructor succeeded"
     other -> assertFailure ("unexpected constructor result: " <> case other of Left e -> show e; Right (Left e) -> show e)
   pure weak

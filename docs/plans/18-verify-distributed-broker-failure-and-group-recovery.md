@@ -11,6 +11,12 @@ provenance:
     model: "gpt-6.1-sol"
     harness: "codex-cli"
     at: 2026-10-24T23:17:06Z
+  revisions:
+    - model: "gpt-6.1-sol"
+      harness: "codex-cli"
+      at: 2026-10-25T00:21:24Z
+      mode: "implement"
+      note: "Use run-owned Apache topology for first observed leader-change integration probe"
 ---
 
 # Verify distributed broker failure and group recovery
@@ -25,7 +31,7 @@ Users can see exactly how producer delivery, consumption, group membership and t
 - [ ] M2: Verify outage/reconnect, group assignment/eviction/pause/seek and transaction recovery in applicable callback modes.
 - [ ] M3: Accept source-bound failure evidence, restored fixtures and broker-policy results for EP-20.
 
-Not Started. This plan preserves deferred requirements and existing evidence; no implementation result is implied.
+In Progress (2026-10-24). A run-owned three-node Apache Kafka 4.4.0 topology is serving the initial Linux tuple. The initial probe observes leader 2 → 3, ISR [3,1], exact records at offsets 0/1 and committed next offset 2 in both callback modes, then restores the stopped broker and three-member ISR. `../testing/broker-failure-evidence.json` binds the probe and outputs. Permanent Cabal scenarios and the remaining distributed recovery acceptance remain open.
 
 ## Surprises & Discoveries
 

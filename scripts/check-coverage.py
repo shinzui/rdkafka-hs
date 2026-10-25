@@ -8,6 +8,10 @@ import sys
 from pathlib import Path
 from coverage_common import ROOT, compiler_exports, fingerprint
 
+# Original repair owners remain valid; the expanded qualification plans own
+# transferred obligations. EP-20 consumes evidence rather than producing it.
+OWNERS = frozenset(range(8, 20))
+
 
 def validate(matrix, exports, evidence, allow_open):
     errors = []
@@ -27,8 +31,10 @@ def validate(matrix, exports, evidence, allow_open):
         for key in ("symbols", "behavior", "inputs", "expected", "modes", "ownership", "owner", "tests", "status"):
             if key not in row or (key not in ("symbols", "tests") and not row[key]):
                 errors.append(f"{rid}: missing {key}")
-        if row.get("owner") not in range(8, 16):
+        if row.get("owner") not in OWNERS:
             errors.append(f"{rid}: invalid child owner")
+        if "previous_owner" in row and (row["previous_owner"] not in range(8, 16) or row.get("owner") not in range(16, 20)):
+            errors.append(f"{rid}: invalid ownership transfer")
         for symbol in row.get("symbols", []):
             if symbol not in symbols:
                 errors.append(f"{rid}: unknown symbol {symbol}")
@@ -90,14 +96,19 @@ def validate(matrix, exports, evidence, allow_open):
                 errors.append("missing runtime coverage artifact")
         exceptions = matrix.get("miss_classifications", {})
         for miss in evidence.get("misses", []):
-            if miss.get("owner") not in range(8, 16):
+            if miss.get("owner") not in OWNERS:
                 errors.append(f"unclassified coverage miss: {miss}")
             if miss.get("contract") not in ids:
                 errors.append(f"coverage miss has no contract row: {miss}")
-            if not allow_open and not miss.get("generated"):
+            if not miss.get("generated"):
                 key = f"{miss['module']}:{miss['line']}:{miss['label']}"
                 classification = exceptions.get(key, {})
-                if classification.get("status") not in ("unreachable", "inapplicable") or not classification.get("rationale"):
+                if classification:
+                    source = ROOT / miss.get("source", "")
+                    if (classification.get("source") != miss.get("source") or not source.is_file()
+                            or classification.get("source_sha256") != hashlib.sha256(source.read_bytes()).hexdigest()):
+                        errors.append(f"stale source classification: {key}")
+                if not allow_open and (classification.get("status") not in ("unreachable", "inapplicable") or not classification.get("rationale")):
                     errors.append(f"unexplained hand-written coverage miss: {key} (EP-{miss.get('owner')})")
     return errors
 

@@ -14,12 +14,13 @@ static pthread_mutex_t producer_lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t producer_resume = PTHREAD_COND_INITIALIZER;
 static int producer_enabled, producer_mode, producer_entered, producer_released;
 static const char *property_names[] = {
-  "client.id", "message.timeout.ms", "compression.codec", "acks", "queue.buffering.max.messages"
+  "client.id", "message.timeout.ms", "compression.codec", "acks", "queue.buffering.max.messages", "log_level"
 };
-static char *property_values[5];
+#define PROPERTY_COUNT (sizeof property_names / sizeof property_names[0])
+static char *property_values[PROPERTY_COUNT];
 
 static void clear_properties(void) {
-  for (size_t i = 0; i < 5; ++i) {
+  for (size_t i = 0; i < PROPERTY_COUNT; ++i) {
     free(property_values[i]);
     property_values[i] = NULL;
   }
@@ -54,7 +55,7 @@ int rdkafka_hs_test_producer_entered(void) {
   return result;
 }
 const char *rdkafka_hs_test_producer_property(int index) {
-  return index >= 0 && index < 5 ? property_values[index] : NULL;
+  return index >= 0 && (size_t)index < PROPERTY_COUNT ? property_values[index] : NULL;
 }
 
 rd_kafka_error_t *rd_kafka_produceva(rd_kafka_t *client, const rd_kafka_vu_t *values, size_t count) {
@@ -66,7 +67,7 @@ rd_kafka_error_t *rd_kafka_produceva(rd_kafka_t *client, const rd_kafka_vu_t *va
     clear_properties();
     const rd_kafka_conf_t *conf = rd_kafka_conf(client);
     rd_kafka_topic_conf_t *topic_conf = rd_kafka_default_topic_conf_dup(client);
-    for (size_t i = 0; i < 5; ++i) {
+    for (size_t i = 0; i < PROPERTY_COUNT; ++i) {
       size_t length = 0;
       int topic_property = rd_kafka_conf_get(conf, property_names[i], NULL, &length) != RD_KAFKA_CONF_OK;
       /* An untouched client need not have an allocated default-topic config.

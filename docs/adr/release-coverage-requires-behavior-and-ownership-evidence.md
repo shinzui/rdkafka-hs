@@ -2,10 +2,10 @@
 type: Architecture Decision Record
 title: Release coverage requires behavior and ownership evidence
 description: Release acceptance requires an explicit tested public-contract and native-ownership inventory, trustworthy fixtures, and source-bound compatibility evidence rather than only passing counts or aggregate coverage.
-timestamp: 2026-10-24T05:37:54Z
+timestamp: 2026-10-25T00:02:36Z
 generated:
   by: codex-cli/gpt-6.1-sol
-  at: "2026-10-24T05:37:54Z"
+  at: "2026-10-25T00:02:36Z"
 docId: ADR-10
 status: Accepted
 date: 2026-10-24
@@ -33,6 +33,8 @@ A release candidate must have an inventory mapping every supported public behavi
 Fixtures must preserve unexpected errors and assert exact records, offsets, counts, and results. Meaningful concurrency and asynchronous-exception windows require observed barriers or state, not merely thread launch followed by cancellation. Generated property tests provide replay seeds and minimized failures; native-resource checks include leak/invalid-access evidence with positive controls proving instrumentation is effective. Deliberate semantic mutations must fail the focused behavioral tests, not just compilation.
 
 Haskell Program Coverage reports expression, alternative, and condition coverage for the hand-written Haskell code. Keep generated binding boilerplate separate and classify uncovered hand-written paths. These metrics do not prove native memory safety. Run normal optimized builds as well as instrumented builds. There is no test-count cap or aggregate percentage that excuses a missing supported behavior.
+
+Every handwritten miss classification carries the exact source path and whole-file SHA-256. Validation rejects a changed or missing source binding even during `--allow-open` development checks; a matching coordinate and a newly collected aggregate fingerprint cannot renew an old applicability proof. Transfer unfinished obligations to their follow-up child while preserving `previous_owner`, and derive fallback miss ownership from the current ledger rather than a hard-coded historical owner.
 
 The final gate rejects open, unowned, stale, skipped-required, or unexplained coverage rows. A not-applicable classification requires a concrete documented precondition or source-proven unreachable path. Tooling or environment unavailability is a blocker, not non-applicability. Newly discovered violations of existing supported contracts require regression tests and repair; expected failures cannot make the release gate green.
 

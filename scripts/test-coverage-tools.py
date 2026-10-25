@@ -84,6 +84,22 @@ class GateControls(unittest.TestCase):
     def test_owned_open_inventory_is_valid_for_development(self):
         self.assertEqual(self.errors(), [])
 
+    def test_transferred_rows_keep_the_original_owner(self):
+        row = self.matrix["contracts"][0]
+        row.update(owner=16, previous_owner=14)
+        self.assertEqual(self.errors(), [])
+        self.assertTrue(any(row["id"] + ": open (EP-16)" == error for error in self.errors(False)))
+        row["previous_owner"] = 99
+        self.assertIn(row["id"] + ": invalid ownership transfer", self.errors())
+
+    def test_unknown_owner_is_rejected_for_rows_and_misses(self):
+        row = self.matrix["contracts"][0]
+        row["owner"] = 99
+        self.evidence["misses"] = [dict(module="Kafka.Version", line=1, label="ExpBox False", generated=False, contract="OWN-source-coverage", owner=99)]
+        errors = self.errors()
+        self.assertIn(row["id"] + ": invalid child owner", errors)
+        self.assertTrue(any("unclassified coverage miss" in error for error in errors))
+
     def test_runtime_supplement_is_required(self):
         self.evidence.pop("supplemental_runs")
         self.assertIn("missing nonthreaded runtime coverage", self.errors())
@@ -144,6 +160,19 @@ class GateControls(unittest.TestCase):
     def test_unexplained_source_miss_is_rejected(self):
         self.evidence["misses"] = [dict(module="Kafka.Version", line=1, label="ExpBox False", generated=False, contract="OWN-source-coverage", owner=14)]
         self.assertTrue(any("unexplained hand-written coverage miss" in e for e in self.errors(False)))
+
+    def test_source_classification_requires_matching_file_bytes(self):
+        key = "Kafka.Version:1:ExpBox False"
+        self.evidence["misses"] = [dict(module="Kafka.Version", line=1, label="ExpBox False", generated=False,
+                                       source="src/Kafka/Version.hs", contract="OWN-source-coverage", owner=16)]
+        classification = dict(status="inapplicable", rationale="Synthetic control", source="src/Kafka/Version.hs",
+                              source_sha256=hashlib.sha256((checker.ROOT / "src/Kafka/Version.hs").read_bytes()).hexdigest())
+        self.matrix["miss_classifications"][key] = classification
+        self.assertEqual(self.errors(), [])
+        classification["source_sha256"] = "previous source"
+        self.assertIn("stale source classification: " + key, self.errors())
+        classification.pop("source_sha256")
+        self.assertIn("stale source classification: " + key, self.errors())
 
     def test_normal_haskell_is_unchanged(self):
         source = "module Example where\nexample = 1\n"

@@ -1,0 +1,55 @@
+{
+  "status": "accepted EP-16 M1 and partial M2 checkpoint; comprehensive qualification remains open",
+  "fingerprint": "91f0344ac7c75b240029fef0d33d1f63dd53356175b53b50c7eb2af665d40da5",
+  "normal": {
+    "unit": 78,
+    "integration": 730,
+    "seconds": [
+      1.47,
+      338.99
+    ]
+  },
+  "mapped": {
+    "unit": 78,
+    "integration": 730,
+    "nonthreaded": 4,
+    "native_wrapper_ticks": 2750
+  },
+  "inventory": {
+    "rows": 181,
+    "tested": 165,
+    "open": 16,
+    "newly_reconciled": 19
+  },
+  "unclassified_handwritten_ticks": 117,
+  "source_classifications": 367,
+  "new_source_audit": "docs/testing/deferred-source-audit.json",
+  "mutations": {
+    "manifest": "dist-mutations/20261025T001512Z-source-edges-91215-0/results.json",
+    "controls": 7,
+    "compiled_faults": 8
+  },
+  "artifacts": {
+    "normal": {
+      "path": "/tmp/rdkafka-mp3-normal-final.log",
+      "sha256": "650b358f4f46046e0497748ab3fd3a9c5b1472017b2a07fed867cef055d4fb66"
+    },
+    "mapped": {
+      "path": "dist-coverage/reports/test.log",
+      "sha256": "e1853ee656c088344ee67a0ceed76646a850ae168fb221998425473f24a68f4e"
+    },
+    "tooling": {
+      "path": "/tmp/rdkafka-mp3-coverage-tools-final.log",
+      "sha256": "de59283957bf02bdcdb0592ef26c13b5ddddff2225d1b8c49e5dc898828b8653"
+    },
+    "mutations": {
+      "path": "dist-mutations/20261025T001512Z-source-edges-91215-0/results.json",
+      "sha256": "a6080376608cd705070d9f11887e885d2f30c212cfdbfaa4da9b20a97fb79177"
+    }
+  },
+  "limits": [
+    "Historical seek trigger remains unknown and its scope question is pending.",
+    "Reachable handwritten paths remain open; strict coverage must continue to fail.",
+    "Linux/broker/native/security results are owned by their separate children and are not inferred from this checkpoint."
+  ]
+}

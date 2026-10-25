@@ -1,0 +1,93 @@
+{
+  "status": "observed first integration prototype; permanent broker/group/transaction scenarios remain open",
+  "source": {
+    "candidate_archive": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/candidate.tar.gz",
+      "sha256": "b02206dc4621d86226f15f6b8b88768e8e9e494b51cb13ec6746805ae1d367ba"
+    },
+    "library_fingerprint": "eb6352fe62c75ec289a0a5f543ed0692106d24f3370ddb46ef31f0188410b14a",
+    "probe": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/LeaderProbe.hs",
+      "sha256": "932cf2bec75d2ed20ed8193a8dd7a0ddc76a0240a79c6b002edd865b298388e9"
+    }
+  },
+  "environment": {
+    "os": "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.5 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo\n",
+    "kernel": "Linux 6.18.15 aarch64",
+    "architecture": "aarch64",
+    "ghc": "9.14.1",
+    "cabal": "3.16.1.0",
+    "loaded_libraries": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/loaded-libraries.log",
+      "sha256": "1eadb3fce16b3a55fd4cc4a9a27eccefc277fd3e664fd3b76c75acccfa846e3a"
+    },
+    "native_binary": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/native-candidate.so.1",
+      "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f"
+    },
+    "native_version": "2.16.0",
+    "loaded_native_identity": {
+      "version": "2.16.0",
+      "number": 34603263,
+      "path": "/opt/librdkafka-2.16.0/lib/librdkafka.so.1",
+      "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f",
+      "observed": "(\"2.16.0\",34603263)"
+    },
+    "broker_version": "Apache Kafka 4.4.0",
+    "broker_topology": "Three owned combined broker/controllers, IDs 1/2/3 on loopback 41092/42092/43092; broker default min ISR 1 for single-replica inherited fixtures; failover topic replication 3 and min ISR 2"
+  },
+  "observations": {
+    "callback_modes": [
+      "async",
+      "sync"
+    ],
+    "old_leader": 2,
+    "new_leader": 3,
+    "replication_factor": 3,
+    "min_insync_replicas": 2,
+    "observed_isr_after_failure": [
+      3,
+      1
+    ],
+    "exact_record_offsets": [
+      0,
+      1
+    ],
+    "exact_committed_next_offset": 2,
+    "stopped_node": 2,
+    "restoration": "Node 2 restarted and ISR returned to three before cleanup in each mode"
+  },
+  "artifacts": {
+    "LeaderProbe.hs": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/LeaderProbe.hs",
+      "sha256": "932cf2bec75d2ed20ed8193a8dd7a0ddc76a0240a79c6b002edd865b298388e9"
+    },
+    "leader-build.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/leader-build.log",
+      "sha256": "e76e214025478ec384c464ceb3edb651bedd5f56d97836ecc6de6bd833117ed2"
+    },
+    "leader-probe.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/leader-probe.log",
+      "sha256": "8f82f2c0f05e3d73b2c5040b3de68b060d25c8d18abdfc29d8b52677183c4cf7"
+    },
+    "restart-one.py": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/restart-one.py",
+      "sha256": "88b578b3e71233c580474dfd890ebafc48a4ed412d76707faea03009a112db55"
+    },
+    "start-kafka.py": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/start-kafka.py",
+      "sha256": "4e3bb507b55624513a7fdd72d10912e754c88620fc9a15e2011a58cb93fb69e8"
+    },
+    "kafka-start.log": {
+      "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/kafka-start.log",
+      "sha256": "e04defe1b1b98ad409439177368842c1c2c2767a44aebe68c77066fa6e4ad02d"
+    }
+  },
+  "remaining": [
+    "Permanent Cabal scenarios and fixture lifecycle/cancellation checks",
+    "Full outage/reconnect and callback/commit/poll recovery",
+    "Eager/cooperative group eviction and actual assignmentLost True",
+    "Broker/coordinator transaction interruption and read-committed recovery",
+    "Actual Apache topic-configuration rejection policy"
+  ]
+}

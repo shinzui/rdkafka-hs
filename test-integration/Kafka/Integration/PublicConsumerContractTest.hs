@@ -3,6 +3,7 @@ module Kafka.Integration.PublicConsumerContractTest (tests, runRebalanceProbe) w
 import Control.Concurrent (forkFinally, forkIOWithUnmask, killThread, threadDelay)
 import Control.Concurrent.MVar (newEmptyMVar, putMVar, readMVar, tryReadMVar)
 import Control.Exception (AsyncException (ThreadKilled), ErrorCall, SomeException, bracket, finally, fromException, throwIO, try)
+import Control.Monad (forM_)
 import Data.Either (isLeft)
 import Data.IORef (modifyIORef', newIORef, readIORef)
 import Data.Map.Strict qualified as M
@@ -86,6 +87,14 @@ tests testEnv =
                    balanced 1
              | (label, mode, fault) <- [("async", CallbackPollModeAsync, 12), ("sync", CallbackPollModeSync, 15)]
              ]
+          <> [ testCase (label <> " attributed error preserves independently absent " <> absent) $
+                 withRecords testEnv (label <> "-absent-" <> absent) mode $ \topic consumer -> withMessageFault fault $ do
+                   pollMessageAttributed consumer (Timeout 10000)
+                     >>= (@?= Left (ConsumerMessageError (KafkaResponseError RdKafkaRespErrBadMsg) (Just topic) partition offset))
+                   balanced 1
+             | (label, mode) <- [("async", CallbackPollModeAsync), ("sync", CallbackPollModeSync)],
+               (absent, fault, partition, offset) <- [("partition-and-offset", 21, Nothing, Nothing), ("offset", 22, Just (PartitionId 0), Nothing), ("partition", 23, Nothing, Just (Offset 0))]
+             ]
           <> [ testCase "callback-event polling cancellation releases a returned message" $
                  withRecords testEnv "events-cancel" CallbackPollModeSync $ \_ consumer ->
                    withMessageFault 13 (cancelled 1 (pollConsumerEvents consumer (Just (Timeout 10000)))),
@@ -131,6 +140,27 @@ tests testEnv =
                    records <- pollMessageBatch consumer (Timeout (-1)) (BatchSize 3)
                    map (fmap crValue) records @?= map (Right . Just) ["first", "second", "third"]
                    balanced 3
+             ]
+          <> [ testCase ("batch capacity " <> show capacity <> " preserves complete ordered records across partial batches") $
+                 withRecords testEnv ("batch-fields-" <> show capacity) CallbackPollModeAsync $ \topic consumer -> withMessageFault 20 $ do
+                   let collect records
+                         | length records == 3 = pure records
+                         | otherwise = do
+                             batch <- pollMessageBatch consumer (Timeout 500) (BatchSize capacity)
+                             assertBool (show batch) (length batch <= capacity)
+                             next <- traverse (either throwIO pure) batch
+                             assertBool (show (records <> next)) (length records + length next <= 3)
+                             collect (records <> next)
+                   records <- bounded (collect [])
+                   forM_ (zip3 records [0 ..] ["first", "second", "third"]) $ \(record, offset, value) -> do
+                     (crTopic record, crPartition record, crOffset record, crKey record, crValue record, crHeaders record)
+                       @?= (topic, PartitionId 0, Offset offset, Nothing, Just value, mempty)
+                     case crTimestamp record of
+                       CreateTime (Millis time) -> assertBool "missing batch timestamp" (time > 0)
+                       other -> assertFailure (show other)
+                   pollMessageBatch consumer (Timeout 0) (BatchSize capacity) >>= (@?= [])
+                   balanced 3
+             | capacity <- [1, 2, 5]
              ]
           <> [ testCase ("invalid batch array size is rejected before native acquisition: " <> show size) $
                  withRecords testEnv ("batch-size-" <> show size) CallbackPollModeAsync $ \_ consumer -> withMessageFault 20 $ do
@@ -223,6 +253,7 @@ rebalanceErrorTests testEnv =
              withTopic testEnv ("cooperative-" <> Text.pack label) 1 $ \topic producer -> do
                produceTo producer topic 0 "cooperative-record"
                events <- newIORef []
+               observedAssignments <- newIORef []
                let partitions = [(topic, PartitionId 0)]
                    props =
                      brokersList (teBrokers testEnv)
@@ -230,12 +261,20 @@ rebalanceErrorTests testEnv =
                        <> noAutoCommit
                        <> callbackPollMode mode
                        <> extraProps (M.singleton "partition.assignment.strategy" "cooperative-sticky")
-                       <> setCallback (rebalanceCallback (\_ event -> modifyIORef' events (<> [event])))
+                       <> setCallback
+                         ( rebalanceCallback
+                             ( \consumer event -> do
+                                 modifyIORef' events (<> [event])
+                                 current <- assignment consumer
+                                 modifyIORef' observedAssignments (<> [current])
+                             )
+                         )
                bracket (newConsumer props (topics [topic] <> offsetReset Earliest) >>= either throwIO pure) releaseConsumer $ \consumer -> do
                  record <- pollMessage consumer (Timeout 10000) >>= either throwIO pure
                  (crOffset record, crValue record) @?= (Offset 0, Just "cooperative-record")
                  readIORef events >>= (@?= [RebalanceBeforeAssign partitions, RebalanceAssign partitions])
                readIORef events >>= (@?= [RebalanceBeforeAssign partitions, RebalanceAssign partitions, RebalanceBeforeRevoke partitions, RebalanceRevoke partitions])
+               readIORef observedAssignments >>= (@?= map Right [M.empty, M.singleton topic [PartitionId 0], M.singleton topic [PartitionId 0], M.empty])
          | (label, mode) <- [("async", CallbackPollModeAsync), ("sync", CallbackPollModeSync)]
          ]
       <> [ testCase (protocol <> " " <> operation <> " " <> poll <> " " <> failure <> " reports failure without a success event") $

@@ -208,8 +208,10 @@ def collect():
             if row is None and module == "Kafka.Internal.CallbackOwner":
                 row = next(r for r in matrix["contracts"] if r["id"] == "F5")
             fallback = "OWN-binding-coverage" if module == "Kafka.Internal.RdKafka" else "OWN-source-coverage"
+            if row is None:
+                row = next(r for r in matrix["contracts"] if r["id"] == fallback)
             misses.append(dict(module=module, source=source, line=source_line, tick=int(index), label=label,
-                               generated=generated, contract=row["id"] if row else fallback, owner=row["owner"] if row else 14))
+                               generated=generated, contract=row["id"], owner=row["owner"]))
     if native_ticks == 0:
         raise ValueError("HPC did not measure hand-written .chs wrappers; refuse inflated report")
     for module in modules:

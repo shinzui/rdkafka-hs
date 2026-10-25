@@ -13,7 +13,7 @@ python3 scripts/check-coverage.py --allow-open
 just coverage-check
 ```
 
-The explicit `--allow-open` check validates exports, registered tests, ownership, artifacts and source freshness while preserving deferred rows; it is also the user-approved primary release inventory check. The strict final comprehensive check rejects those rows and belongs to MasterPlan 3. No test count or percentage closes a contract. To close one, record the exact fully qualified Tasty test names, the measured input `fingerprint`, and `status: tested` only after all of that row's behavior/inputs/expected results pass. Split a row when some cases have different owners or incomplete evidence. Environment rows stay open until actual execution under EP-15. A non-applicable row requires a specific source-backed precondition; inaccessible environments and inconvenient failure injection remain open.
+The explicit `--allow-open` check validates exports, registered tests, ownership, artifacts and source freshness while preserving deferred rows; it is also the user-approved primary release inventory check. The strict final comprehensive check rejects those rows and belongs to MasterPlan 3. No test count or percentage closes a contract. To close one, record the exact fully qualified Tasty test names, the measured input `fingerprint`, and `status: tested` only after all of that row's behavior/inputs/expected results pass. Split a row when some cases have different owners or incomplete evidence. Environment rows stay open until actual execution under EP-17, EP-18 and EP-19. A non-applicable row requires a specific source-backed precondition; inaccessible environments and inconvenient failure injection remain open.
 
 `just coverage` collects both suites into `dist-coverage/`, clears only that build directory's previous TIX data, and forces instrumentation recompilation. It fails if a suite fails, its TIX data is missing, the candidate changes during the run, source mapping is absent, or the measured modules omit library source. The evidence manifest records the revision, source/test/build/tooling content digest (including untracked additions), compiler/native versions, exact command, broker endpoint, complete test names, aggregate pass count, and artifact checksums. Test logs retain failure seeds and diagnostics. Large reports stay ignored. Documentation-only inventory/evidence edits do not change the measured digest; scripts and build recipes do.
 
@@ -23,7 +23,7 @@ GHC 9.12 excludes HPC spans redirected to a different source file by a `LINE` pr
 
 Every uncovered hand-written tick is visible with an owning row. Before the final gate, exercise it or add an exact `module:line:label` entry under `miss_classifications`, with `status: unreachable` or `inapplicable` and a concrete source-backed `rationale`. Critical error/ownership paths require execution and native diagnostics; they cannot be excused by a broad percentage or a successful neighboring case. Generated marshalling misses remain visible separately.
 
-After changing source, tests, build inputs or coverage tooling, rerun both normal and instrumented checks. Missing or modified artifacts, stale fingerprints, removed test names and new exports fail validation. This infrastructure does not run the compatibility matrix; EP-15 supplies that evidence separately.
+After changing source, tests, build inputs or coverage tooling, rerun both normal and instrumented checks. Missing or modified artifacts, stale fingerprints, removed test names and new exports fail validation. This infrastructure does not run the compatibility matrix; EP-17/18/19 produce that evidence and EP-20 integrates it. Historical EP-15 references in the retained manifests describe their original ownership; the ledger records each transferred `previous_owner`.
 
 
 Topic-admin verification inspects the private container with `container exec rdkafka-hs-rp-0 rpk topic describe <run-prefixed-topic> -c`. Isolated external tuples supply `RDKAFKA_TEST_RPK`, configured for their own broker, and `RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY=ignore` or `reject`. Primary Redpanda v26.2.1 accepts unknown topic properties; Apache Kafka's rejection policy must be tested under its own declared fixture. The test checks exact native setter arguments and effective known settings in either policy. The evidence manifest records these non-secret fixture inputs.
@@ -84,3 +84,23 @@ families retain their original threaded invocation. See
 replace final full-candidate mapped coverage.
 
 The accepted primary checkpoint passes 786 registered cases normally and mapped, plus four actual nonthreaded cases and 24 tooling controls. [Primary evidence](primary-validation-evidence.json) records clean package replay and the bounded actual example. The remaining 35 historical open rows and 192 unclassified handwritten ticks are preserved in [the source-bound deferred snapshot](deferred-validation-snapshot.json); the strict checker continues to reject comprehensive incompleteness.
+
+
+EP-16's [current checkpoint](deferred-public-contract-evidence.json) passes
+808 registered cases normally and mapped, plus four actual nonthreaded cases
+and 27 tooling controls. Reconciliation closes 19 historical contract rows;
+16 remain open with concrete owners and missing behaviors. This does not alter
+the accepted earlier primary candidate or close comprehensive qualification.
+
+Every handwritten applicability classification now carries its exact `source`
+and whole-file `source_sha256`. The checker rejects a missing or changed binding
+even with `--allow-open`; new measured evidence cannot silently renew an old
+source proof. Fallback miss ownership comes from the ledger, and transferred rows
+retain their historical `previous_owner`.
+
+`just test-mutations source-edges` passes seven unchanged controls and catches
+eight compiled faults covering absent error attribution, logical offsets, native
+subscription errors, partial topic acquisition, constructor cleanup, complete
+batch order and live producer log level. The log-level assertion reads the actual
+native client at enqueue. `dumpKafkaConf` reads the retained construction
+configuration, so its `log_level` can differ from a subsequent native setter.

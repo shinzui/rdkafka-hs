@@ -82,6 +82,16 @@ tests env =
             assignment consumer >>= (@?= Right M.empty),
           scenario "unknown-position-is-invalid-without-native-error" $ \topic consumer -> do
             position consumer [(topic, PartitionId 42)] >>= (@?= Right [part topic 42 PartitionOffsetInvalid]),
+          scenario "multiple-assigned-partitions-retain-the-exact-topic-map" $ \topic consumer -> do
+            assign consumer [part topic 0 (PartitionOffset 0), part topic 1 (PartitionOffset 0)] >>= (@?= Nothing)
+            fmap (M.map sort) <$> assignment consumer >>= (@?= Right (M.singleton topic [PartitionId 0, PartitionId 1])),
+          scenario "legacy-seek-constructor-failure-does-not-execute-an-earlier-valid-seek" $ \topic consumer -> do
+            assign consumer [part topic 0 (PartitionOffset 0)] >>= (@?= Nothing)
+            record consumer topic 0 0
+            seek consumer (Timeout 200) [part topic 0 (PartitionOffset 2), part (TopicName (Text.replicate 513 "x")) 0 (PartitionOffset 0)]
+              >>= (@?= Just (KafkaError "Local: Invalid argument or configuration"))
+            assignment consumer >>= (@?= Right (M.singleton topic [PartitionId 0]))
+            record consumer topic 0 1,
           scenario "pause-resume-preserves-records" $ \topic consumer -> do
             assign consumer [part topic 0 (PartitionOffset 0)] >>= (@?= Nothing)
             record consumer topic 0 0
@@ -99,7 +109,8 @@ tests env =
             assign consumer [part topic 0 (PartitionOffset 0)] >>= (@?= Nothing)
             pollConsumerEvents consumer (Just (Timeout 1000))
             seekPartitions consumer [part topic 0 (PartitionOffset 2)] (Timeout 2000) >>= (@?= Nothing)
-            record consumer topic 0 2,
+            record consumer topic 0 2
+            position consumer [(topic, PartitionId 0)] >>= (@?= Right [part topic 0 (PartitionOffset 3)]),
           scenario "callback-buffer-reassignment-replaces-pending-records" $ \topic consumer -> do
             assign consumer [part topic 0 (PartitionOffset 0)] >>= (@?= Nothing)
             pollConsumerEvents consumer (Just (Timeout 1000))
