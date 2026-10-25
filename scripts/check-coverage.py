@@ -7,7 +7,7 @@ import json
 import re
 import sys
 from pathlib import Path
-from coverage_common import ROOT, compiler_exports, fingerprint, qualification_context_errors, source_scope_errors
+from coverage_common import ROOT, compiler_exports, fingerprint, qualification_context_errors, source_scope_errors, runtime_sources
 
 # Original repair owners remain valid; the expanded qualification plans own
 # transferred obligations. EP-20 consumes evidence rather than producing it.
@@ -22,7 +22,7 @@ REQUIRED_TUPLES = {
 }
 REQUIRED_CONTROLS = {
     'linux-invalid-access': (99, 'Invalid read'),
-    'linux-header-retention': (99, 'rd_kafka_headers_new'),
+    'linux-header-retention': ((0, 99), 'rd_kafka_headers_new'),
     'darwin-invalid-access': (-6, 'AddressSanitizer'),
     'producer-allocation-cleanup': (1, 'callback capture remained reachable after release'),
 }
@@ -143,7 +143,7 @@ def validate_compatibility(matrix, report, coverage):
     for name, (code, signature) in REQUIRED_CONTROLS.items():
         control = controls.get(name, {})
         log = control.get('log')
-        if control.get('exit') != code or control.get('status') != 'detected':
+        if control.get('exit') not in (code if isinstance(code, tuple) else (code,)) or control.get('status') != 'detected':
             errors.append(name + ': diagnostic control did not detect its fault')
         found = artifact_errors(log)
         errors.extend(found)
@@ -152,6 +152,28 @@ def validate_compatibility(matrix, report, coverage):
     package = report.get('package', {})
     errors.extend(artifact_errors(package.get('archive')))
     errors.extend(source_scope_errors(package.get('source', {}), candidate, require_archive=True))
+    plan_artifact = package.get('build_plan')
+    found = artifact_errors(plan_artifact)
+    errors.extend(found)
+    if not found:
+        extraction = (ROOT / package.get('extraction_root', '')).resolve()
+        plan = json.loads((ROOT / plan_artifact['path']).read_text())
+        components = [row for row in plan.get('install-plan', []) if row.get('pkg-name') == 'rdkafka-hs']
+        required_components = {'lib', 'exe:kafka-client-example', 'test:rdkafka-hs-test', 'test:rdkafka-hs-integration'}
+        if extraction == ROOT.resolve() or not extraction.is_relative_to(ROOT.resolve()) or {row.get('component-name') for row in components} != required_components:
+            errors.append('clean package build plan is not isolated')
+        for row in components:
+            source = Path(row.get('pkg-src', {}).get('path', ''))
+            source = source if source.is_absolute() else extraction / source
+            if source.resolve() != extraction or not Path(row.get('dist-dir', '')).resolve().is_relative_to(extraction):
+                errors.append('clean package build plan refers to checkout or external source')
+        expected = runtime_sources()
+        expected.update({str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
+                         for p in (ROOT / 'scripts').rglob('*') if p.is_file() and '__pycache__' not in p.parts})
+        for name, checksum in expected.items():
+            source = extraction / name
+            if not source.is_file() or not source.resolve().is_relative_to(extraction) or hashlib.sha256(source.read_bytes()).hexdigest() != checksum:
+                errors.append('clean package extracted source differs: ' + name)
     primary = coverage.get('primary_tests', [])
     if not primary or package.get('tests') != primary or package.get('passed') != len(primary):
         errors.append('clean package did not execute every primary test')

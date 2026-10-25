@@ -1,7 +1,7 @@
 {
   "kind": "qualification-context",
   "mode": "--authentication-qualification",
-  "fingerprint": "f9b328dc869217c9d6ca2a309e7877512c286d2eff63d42e93dc53567339898f",
+  "fingerprint": "f8c90d1ecf86b6a03a3d9e9f943ed473e9bec482e7e2f1a7aa4199bd9af34f51",
   "tests": [
     "authentication-contract.verified TLS authenticated delivery and exact consume/commit in both modes",
     "authentication-contract.authenticated identity without topic ACL receives exact produce denial",
@@ -44,31 +44,30 @@
   },
   "source": {
     "project": "mori://shinzui/rdkafka-hs",
-    "candidate_fingerprint": "f9b328dc869217c9d6ca2a309e7877512c286d2eff63d42e93dc53567339898f",
+    "candidate_fingerprint": "4c77de8ed222a2279925f76be3e6922105561ffbfc2de6da5428a5ff79d7a895",
+    "scope_proof": "dist-compatibility/qualification/runtime-source-proof.json",
     "archive": {
-      "path": "dist-compatibility/closure10/rdkafka-hs-1.1.0.0.tar.gz",
-      "sha256": "8f36030cd13c3d0c5856cfa2c82a1b106dc6c9c6f4d1a00077bb5d2ce4e22bdf"
+      "path": "dist-compatibility/final/rdkafka-hs-1.1.0.0.tar.gz",
+      "sha256": "2db8ada6ca2d2cdefc99731bb1fec78892272f2e5b7c84e890ac240868bf07eb"
     },
-    "source_proof": "dist-compatibility/closure10/package-source-proof.json",
-    "note": "Clean source archive; all packaged production, test, example and tooling bytes match the recorded checkout inventory. Omitted development/Nix files do not affect this native Cabal execution."
+    "note": "Executed the exact repaired runtime/test archive. Current qualification tooling adds package-isolation validation; every compiled runtime/test/example byte is source-proven unchanged."
   },
-  "listing": "dist-compatibility/closure10/linux-security-tests.txt",
-  "log": "dist-compatibility/closure10/linux-security.log",
+  "listing": "dist-compatibility/qualification/linux-security-tests.txt",
+  "log": "dist-compatibility/qualification/linux-security.log",
   "artifacts": {
-    "dist-compatibility/closure10/linux-security.log": "bb1513a783e131039659305550a8d973b075874ae2dca5e6c30a2e362cd91ed3",
-    "dist-compatibility/closure10/linux-security-tests.txt": "e011f6a1ed4544904bc4117ebdd30e85339b33c096b3d0619bbff506f5e2e893",
-    "dist-compatibility/closure10/linux-build.log": "74179706cc2788c46396a003066a38041539288cdc318ddaf07b6a267c6521c7",
-    "dist-compatibility/closure10/linux-unit.log": "a055290d7211bf027b1fb1f7a2863d61fd76c5baaf6c5366708f869ac2dc3941",
-    "dist-compatibility/closure10/linux-loaded.log": "3d4059012d54aca4c72a23017af04a4bbf580ea79699dfb2ffdf7985a0e6a567",
-    "dist-compatibility/closure10/linux-allocation.log": "35f6b20d20cda1289dad4102fe5ad14409e49fbc36b77378a3c6a7b3fbd09274",
-    "dist-compatibility/closure10/linux-native-version.txt": "6ec9b644a82e1dd0a2ec1c57250b4e2d3043deb9a608d8384f7ec30026876a93",
-    "dist-compatibility/closure10/linux-native-sha256.txt": "bf7de15c98efcedd1c2d5a4f413c2535f9b9b7d07bcf61e1b8cf0a7957c8c9a0",
-    "dist-compatibility/closure10/linux-ghc-version.txt": "dc89f6ff946d89fc5cab81e90d6a3e961c8f56a6fbdd866671f7bab6fc2f33f7",
-    "dist-compatibility/closure10/linux-cabal-version.txt": "7f93c5e5deae36124ba2f9a8db5c6bc5536cf0e9648fdbcd19cc666d27eabab8",
-    "dist-compatibility/closure10/package-source-proof.json": "fa16b3d68d7e7d920776165421dc2478fa08c4b5d35347915ce3ec077e58f1a9",
-    "dist-compatibility/closure10/rdkafka-hs-1.1.0.0.tar.gz": "8f36030cd13c3d0c5856cfa2c82a1b106dc6c9c6f4d1a00077bb5d2ce4e22bdf",
-    "dist-compatibility/closure10/linux-cleanup.json": "5a46deeae9e47c58be251f365533f4836e086edab8d2a94627d803177c8ae5fd"
+    "dist-compatibility/qualification/linux-security.log": "b48fc30450e818fdc4498abd7f8116da100121839fecf4c8a5a314b2f0eb450e",
+    "dist-compatibility/qualification/linux-security-tests.txt": "e011f6a1ed4544904bc4117ebdd30e85339b33c096b3d0619bbff506f5e2e893",
+    "dist-compatibility/qualification/linux-build.log": "ede46907629e3ff3a0d4c2d274da8f505733eff5153dc6dde5ba21c512f95cc4",
+    "dist-compatibility/qualification/linux-unit.log": "98d2cdf351ae17d2898d95e9156d27f40c417a556cbefe750982cf3dfcdae7cc",
+    "dist-compatibility/qualification/linux-loaded.log": "0df129d4f4a47dde1bdbc74a4763deb5920e909bbde875b4b5e7ccbfe258d9dd",
+    "dist-compatibility/qualification/linux-native-version.txt": "6ec9b644a82e1dd0a2ec1c57250b4e2d3043deb9a608d8384f7ec30026876a93",
+    "dist-compatibility/qualification/linux-native-sha256.txt": "bf7de15c98efcedd1c2d5a4f413c2535f9b9b7d07bcf61e1b8cf0a7957c8c9a0",
+    "dist-compatibility/qualification/linux-ghc-version.txt": "dc89f6ff946d89fc5cab81e90d6a3e961c8f56a6fbdd866671f7bab6fc2f33f7",
+    "dist-compatibility/qualification/linux-cabal-version.txt": "7f93c5e5deae36124ba2f9a8db5c6bc5536cf0e9648fdbcd19cc666d27eabab8",
+    "dist-compatibility/qualification/linux-cleanup.json": "5a46deeae9e47c58be251f365533f4836e086edab8d2a94627d803177c8ae5fd",
+    "dist-compatibility/qualification/runtime-source-proof.json": "219847de739ab803c1ed2806adfd246178f458ea80d41e2dda34ac8d69351e9a",
+    "dist-compatibility/final/rdkafka-hs-1.1.0.0.tar.gz": "2db8ada6ca2d2cdefc99731bb1fec78892272f2e5b7c84e890ac240868bf07eb"
   },
   "previous_evidence": "docs/testing/authentication-evidence.json",
-  "cleanup": "dist-compatibility/closure10/linux-cleanup.json"
+  "cleanup": "dist-compatibility/qualification/linux-cleanup.json"
 }

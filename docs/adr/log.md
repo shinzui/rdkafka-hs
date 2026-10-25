@@ -1,6 +1,7 @@
 # Bundle Update Log
 
 ## 2026-10-25
+* **Update**: Record complete evidence gate, exact runtime reuse proofs, package project isolation and all-kind native header-retention oracle.
 * **Update**: Require native test observers to distinguish live allocations when addresses are reused.
 * **Update**: Record synchronous pinned-allocation failure and callback-root cleanup regression.
 * **Update**: Record the causal historical seek reconstruction: late topic finalization through a reused parent address corrupts a new client; scoped child cleanup retains the parent through completion.

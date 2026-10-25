@@ -51,7 +51,7 @@ The public-coverage audit has different acceptance from real broker failures and
 | 17 | Execute Linux/newer tuples and effective native lifetime diagnostics | [EP-17](../plans/17-validate-linux-and-released-toolchain-native-lifetimes.md) | Accepted primary candidate from MasterPlan 2 | Defines tuple evidence consumed by EP-18/19/20 | Complete |
 | 18 | Prove distributed broker/group/transaction recovery | [EP-18](../plans/18-verify-distributed-broker-failure-and-group-recovery.md) | Accepted primary candidate from MasterPlan 2 | Integrates tuple schema with EP-17 and secure fixture with EP-19 | Complete |
 | 19 | Prove authentication, TLS, ACLs and credential reconnect | [EP-19](../plans/19-verify-authenticated-kafka-and-credential-recovery.md) | Accepted primary candidate from MasterPlan 2 | Can reuse EP-18 Apache fixture; integrates with EP-17 schema | Complete |
-| 20 | Enforce complete source/tuple/package qualification | [EP-20](../plans/20-enforce-the-complete-compatibility-evidence-gate.md) | EP-16, EP-17, EP-18 and EP-19 Complete | Consumes all manifests | In Progress |
+| 20 | Enforce complete source/tuple/package qualification | [EP-20](../plans/20-enforce-the-complete-compatibility-evidence-gate.md) | EP-16, EP-17, EP-18 and EP-19 Complete | Consumes all manifests | Complete |
 
 ## Dependency Graph
 
@@ -87,7 +87,7 @@ Keep all source, test, C fixtures, registration, mutations and documentation fro
 
 ## Progress
 
-EP-16 through EP-19 are Complete. EP-16 passes the strict 181-row source/contract gate with zero open rows or unexplained handwritten ticks. Fresh primary normal/mapped runs each pass 832 cases, with four actual nonthreaded checks; fresh Linux runs pass all nine distributed and seventeen security cases. The allocation failure regression, its effective cleanup mutation and Linux Valgrind close the final two ticks without exemptions. EP-20 is now eligible and owns the remaining comprehensive matrix/package gate. No comprehensive qualification is claimed yet.
+Complete (2026-10-25). All five child plans and the final integration gate are accepted on fingerprint `f8c90d1ecf86b6a03a3d9e9f943ed473e9bec482e7e2f1a7aa4199bd9af34f51`. `just test-compatibility` passes the strict 181-row ledger with zero open rows or unexplained handwritten ticks, all required representative tuples, 43 gate controls and an isolated package replay. Normal/mapped and clean-package suites each pass 78 unit plus 754 integration cases; nine broker and seventeen security cases bring behavior registration to 858. Both required runtimes have four actual nonthreaded checks. Fresh Linux Valgrind and Darwin ASan cohorts each pass 280 cases, with effective controls and documented diagnostic limits. No integration gate remains.
 
 ## Surprises & Discoveries
 
@@ -103,4 +103,4 @@ The earlier expansion combined a release repair with exhaustive public-path audi
 
 ## Outcomes & Retrospective
 
-A comprehensive, independently resumable plan now records the deferred work and its reusable assets. No expanded-environment execution or complete source-path closure is claimed by plan creation. Fill implementation outcomes only after running the children and promote durable decisions through the profiled ADR workflow.
+All deferred obligations are closed through the five accepted children. Historical seek diagnosis, exact source classifications, newer Linux/native execution, actual distributed recovery, real TLS/authentication/authorization and reconnect, and the complete source/tuple/package gate now have source-bound evidence. The integration caught a pointer-reuse defect in the native test observer and an ancestor-project escape in the package replay before accepting either run. ADR-10, ADR-13 and the existing fixture/lifetime decisions retain the durable constraints; execution-specific traces remain in the child plans and evidence. The earlier primary release retains its original scope and evidence.

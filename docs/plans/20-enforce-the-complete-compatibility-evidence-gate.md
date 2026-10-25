@@ -27,15 +27,15 @@ Users and release maintainers get one fail-closed command that checks the entire
 
 ## Progress
 
-- [ ] M1: Implement a complete matrix/inventory gate that rejects missing, unavailable, failed and stale evidence with effective negative controls.
-- [ ] M2: Replay required package/tests/examples from a clean source distribution and integrate all accepted child evidence.
-- [ ] M3: Pass the comprehensive gate on one frozen candidate and publish accurate tested-environment/applicability documentation.
+- [x] M1 (2026-10-25): `just test-compatibility` validates the complete matrix and strict source ledger; 43 controls prove passing and required rejection paths, including ancestor-project escape.
+- [x] M2 (2026-10-25): The isolated source distribution builds all four components and passes 78 unit plus 754 integration cases, including deprecated wrappers. Its actual example independently verifies four exact records, ordered offsets, headers and committed offset 4. All component source/build paths remain inside the extraction.
+- [x] M3 (2026-10-25): The comprehensive gate passes on source/tooling fingerprint `f8c90d1ecf86b6a03a3d9e9f943ed473e9bec482e7e2f1a7aa4199bd9af34f51`: 181 closed rows, zero unexplained ticks, 858 registered behavior cases, all required tuples and effective ownership diagnostics.
 
-In Progress (2026-10-25). The complete gate is implemented in the existing coverage checker and `just test-compatibility`; 42 synthetic controls pass, including all required rejection categories plus omitted test identities, changed configuration, native memory findings and package source/tooling drift. Fresh optimized and clean-package suites each pass 78 unit plus 754 integration cases. Fresh 280-case Linux Valgrind and Darwin ASan cohorts pass; all 16 Linux reports have zero errors and zero definite/indirect/possible losses, with retained native stacks limited to documented process-global SASL initialization. The current mapped run is unaccepted: one cooperative-buffer fixture observed six acquisitions but four releases. Investigation identifies pointer-generation lookup in the test C observer as the next blocker; preserve the failed log before repair and replay. No final comprehensive acceptance is claimed.
+Complete (2026-10-25). [Comprehensive evidence](../testing/comprehensive-validation-evidence.json) binds every required tuple/scenario, raw report and source archive. Primary normal/mapped and isolated package runs each pass 832 cases; 26 fresh Linux broker/security cases extend behavior registration to 858. Four nonthreaded cases run on each required runtime. Fresh Linux Valgrind and Darwin ASan cohorts each pass 280 cases. All 16 Linux reports have zero invalid accesses and zero definite/indirect losses; retained native stacks are exclusively documented process-global SASL initialization. Deliberate native invalid-access, header-retention and producer cleanup faults are detected, and 43 gate controls pass. `just test-compatibility`, repository checks and Nix evaluation pass.
 
 ## Surprises & Discoveries
 
-The mapped run on the gate candidate failed the cooperative-buffer observer at six acquired versus four released messages. The test C observer searched the first historical pointer match, so a newly allocated message at a freed address was mistaken for a duplicate release and destruction was skipped. The observer now selects the live allocation and retires dead matches for uncounted error frames. The existing cooperative regression additionally rejects duplicate-release counts and records native address reuse; all 11 selected cooperative cases pass. The failed full log remains `dist-compatibility/comprehensive/mapped-failed-observer.log`. ADR-10 records the durable observer identity constraint. Full acceptance is recollected after this fixture repair.
+The mapped run on the gate candidate failed the cooperative-buffer observer at six acquired versus four released messages. The test C observer searched the first historical pointer match, so a newly allocated message at a freed address was mistaken for a duplicate release and destruction was skipped. The observer now selects the live allocation and retires dead matches for uncounted error frames. The existing cooperative regression additionally rejects duplicate-release counts and records native address reuse; all 11 selected cooperative cases pass. The failed full log remains `dist-compatibility/comprehensive/mapped-failed-observer.log`. ADR-10 records the durable observer identity constraint. Full acceptance was recollected after this fixture repair.
 
 The current strict coverage checker already rejects open contract rows and unexplained handwritten misses. The user-authorized primary release validates freshness using its explicit --allow-open mode and a transferred-obligation ledger. Do not weaken the strict command or rewrite deferred requirements as passing. This child finishes the broader gate once its producing children have completed.
 
@@ -45,7 +45,7 @@ The current strict coverage checker already rejects open contract rows and unexp
 
 ## Outcomes & Retrospective
 
-Planning only. Record actual results and remaining limits during implementation. Before completion, distill durable applicability, environment and ownership decisions into the profiled ADR bundle.
+The complete declared qualification gate now passes. The final integration repaired a native test observer that confused reused addresses with earlier released allocations, and rejected an initially invalid package replay that inherited the parent checkout project. The accepted package uses an explicit local project, validates all four Cabal component paths and compares every archived/extracted runtime and tooling source byte. Unchanged compiled behavior may be reused after tooling-only changes only through an exact runtime/build/test/example archive proof; the current package and strict coverage tooling are independently executed. ADR-10 records these durable evidence boundaries. Earlier failures and the separately scoped primary release remain historical records. No required MasterPlan 3 work remains; native diagnostic applicability limits are explicit.
 
 ## Context and Orientation
 
@@ -90,7 +90,7 @@ nix develop -c cabal sdist
 nix develop -c just check
 ```
 
-`just test-compatibility` is a planned output, not an existing passing command. Document the clean extraction directory and exact builds/tests in the accepted manifest. Use test tooling controls to prove rejection paths; a printed table with unchecked claims is not a gate.
+`just test-compatibility` is implemented and passes against the recorded complete candidate. Document the clean extraction directory and exact builds/tests in the accepted manifest. Use test tooling controls to prove rejection paths; a printed table with unchecked claims is not a gate.
 
 ## Validation and Acceptance
 

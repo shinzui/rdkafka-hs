@@ -239,5 +239,15 @@
   },
   "limits": [
     "EP-20 comprehensive tuple/package gate remains required. Failed exploratory limits and zero-test selections are not accepted evidence."
-  ]
+  ],
+  "comprehensive_qualification": {
+    "fingerprint": "f8c90d1ecf86b6a03a3d9e9f943ed473e9bec482e7e2f1a7aa4199bd9af34f51",
+    "status": "passed",
+    "evidence": "docs/testing/comprehensive-validation-evidence.json",
+    "contracts": 181,
+    "open": 0,
+    "unexplained_handwritten_ticks": 0,
+    "registered_behavior": 858,
+    "tooling_controls": 43
+  }
 }

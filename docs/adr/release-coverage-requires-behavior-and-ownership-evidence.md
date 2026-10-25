@@ -2,7 +2,7 @@
 type: Architecture Decision Record
 title: Release coverage requires behavior and ownership evidence
 description: Release acceptance requires an explicit tested public-contract and native-ownership inventory, trustworthy fixtures, and source-bound compatibility evidence rather than only passing counts or aggregate coverage.
-timestamp: 2026-10-25T16:54:47Z
+timestamp: 2026-10-25T17:33:07Z
 generated:
   by: codex-cli/gpt-6.1-sol
   at: "2026-10-25T00:02:36Z"
@@ -43,6 +43,21 @@ The final gate rejects open, unowned, stale, skipped-required, or unexplained co
 Record a representative tested-environment matrix covering the current primary Darwin/Redpanda tuple, Linux build and representative broker/native-diagnostic execution, Apache Kafka behavior including leader failover, and a newer compatible released compiler/library tuple when available. Select actual released versions during implementation, verify registry/tag evidence, and record the loaded native-library version. Broad dependency bounds do not establish that every allowed combination is tested. Do not silently narrow supported behavior to avoid a failing matrix case.
 
 All broker disruptions and security tests use run-owned disposable fixtures. The protections in [ADR-5](integration-tests-run-against-a-project-local-redpanda.md) remain: never mutate the machine-global broker. Extending test execution to additional supplied isolated environments does not authorize a general-purpose provisioning system or infrastructure purchases. The implementation must amend environment-specific guidance when those additional fixtures exist. Earlier release distribution and platform history in [ADR-7](first-release-scope-and-distribution.md) remains historical fact.
+
+The complete gate validates required tuple/scenario identities, actual versions,
+configuration and artifact hashes, strict source closure and effective diagnostic
+controls. Package execution must use an extraction-local Cabal project: all four
+component source/build paths and the archived/extracted runtime and tooling bytes
+are checked. Merely running Cabal from a subdirectory does not isolate it from
+ancestor project discovery. Unchanged behavior may be reused after tooling-only
+changes only through exact archive equality of every runtime, build, test and
+example source; the current package must include current tooling.
+
+Inspect all retained native allocation stacks and leak kinds. A conservative RTS
+root can make a deliberately retained native header reachable and leave the
+native tool exit zero. Detect that control through retained header allocation
+stacks, with a stock cohort containing none, and preserve the raw exit value.
+Neither zero exit nor Darwin ASan with leak detection disabled proves leak freedom.
 
 ## Consequences
 

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "scope": "Historical primary release retained; exact current primary, Linux/newer, distributed and security scenarios accepted. Comprehensive qualification remains open.",
-  "fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
+  "scope": "Complete declared source, representative compatibility tuples and clean-package qualification; historical primary release retained separately.",
+  "fingerprint": "f8c90d1ecf86b6a03a3d9e9f943ed473e9bec482e7e2f1a7aa4199bd9af34f51",
   "primary": [
     {
       "os": "macOS 26.7",
@@ -27,54 +27,56 @@
     {
       "id": "linux-native-diagnostics",
       "owner": 17,
-      "status": "passed named expanded scenarios; final EP-20 integration remains open"
+      "status": "Complete and integrated by EP-20"
     },
     {
       "id": "newer-released-toolchain-native",
       "owner": 17,
-      "status": "passed named expanded scenarios; final EP-20 integration remains open"
+      "status": "Complete and integrated by EP-20"
     },
     {
       "id": "apache-distributed-failure-group-transaction",
       "owner": 18,
-      "status": "passed named expanded scenarios; final EP-20 integration remains open"
+      "status": "Complete and integrated by EP-20"
     },
     {
       "id": "sasl-tls-acl-credential-reconnect",
       "owner": 19,
-      "status": "passed named expanded scenarios; final EP-20 integration remains open"
+      "status": "Complete and integrated by EP-20"
     },
     {
       "id": "strict-complete-inventory-matrix-package-gate",
       "owner": 20,
-      "status": "deferred; not qualified"
+      "status": "Complete and integrated by EP-20"
     }
   ],
   "limits": [
-    "No new environment claim follows from broad dependency bounds.",
-    "No comprehensive native leak claim follows from Darwin ASan runs with leak detection disabled.",
-    "Plaintext setter checks do not prove real authentication or credential replacement at a broker."
+    "Only the listed exact OS/compiler/native/broker combinations and named scenarios are qualified; dependency bounds are broader than execution evidence.",
+    "SASL PLAIN is the exercised mechanism.",
+    "Darwin ASan detects invalid accesses with leak detection disabled. Linux inspects every retained native allocation stack; process-global SASL allocations remain intentional.",
+    "Header cleanup omission is detected from retained native stacks across all leak kinds even when conservative RTS roots leave native exit zero."
   ],
   "qualification": {
     "schema_version": 1,
-    "status": "in-progress; EP-16 required source/cause work and EP-20 integration remain open",
-    "candidate_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c",
+    "status": "passed",
+    "candidate_fingerprint": "f8c90d1ecf86b6a03a3d9e9f943ed473e9bec482e7e2f1a7aa4199bd9af34f51",
     "tuple_fields": [
+      "artifacts",
+      "configuration_artifact",
+      "environment",
       "id",
       "owner",
       "required",
-      "status",
-      "source",
-      "environment",
-      "test_configuration",
       "scenarios",
-      "artifacts"
+      "source",
+      "status",
+      "test_configuration"
     ],
     "source_fields": [
       "candidate_fingerprint",
       "revision",
-      "archive_sha256",
-      "configuration_sha256"
+      "archive",
+      "scope_proof when reusing unchanged compiled source"
     ],
     "environment_fields": [
       "os",
@@ -88,14 +90,16 @@
       "broker_topology"
     ],
     "scenario_fields": [
+      "artifacts",
+      "command",
       "id",
+      "limitations",
+      "log",
+      "log_counts",
+      "passed",
       "required",
       "status",
-      "command",
-      "tests",
-      "passed",
-      "artifacts",
-      "limitations"
+      "tests"
     ],
     "artifact_format": "Repository-relative path to immutable output and its SHA-256; credentials and private keys are never fields",
     "status_values": [
@@ -113,9 +117,13 @@
         "required": true,
         "status": "passed",
         "source": {
-          "candidate_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c",
-          "revision": "bfa4f2e plus captured source",
-          "configuration": "Normal and HPC root builds; separate actual nonthreaded build"
+          "candidate_fingerprint": "4c77de8ed222a2279925f76be3e6922105561ffbfc2de6da5428a5ff79d7a895",
+          "scope_proof": "dist-compatibility/qualification/runtime-source-proof.json",
+          "archive": {
+            "path": "dist-compatibility/final/rdkafka-hs-1.1.0.0.tar.gz",
+            "sha256": "2db8ada6ca2d2cdefc99731bb1fec78892272f2e5b7c84e890ac240868bf07eb"
+          },
+          "revision": "6e5641a plus captured qualification tooling"
         },
         "environment": {
           "os": "macOS 26.7",
@@ -124,7 +132,11 @@
           "ghc": "9.12.4",
           "cabal": "3.16.1.0",
           "native_version": "2.15.0",
-          "loaded_native_identity": "(\"2.15.0\",34537727)",
+          "loaded_native_identity": {
+            "observed": "(\"2.15.0\",34537727)",
+            "version": "2.15.0",
+            "path": "/nix/store/azrzlliy1y3hym04g1w42iygvqp8bq13-rdkafka-2.15.0/lib/librdkafka.1.dylib"
+          },
           "broker_version": [
             {
               "node_id": 0,
@@ -144,7 +156,17 @@
             "required": true,
             "status": "passed",
             "command": [
-              "scripts/test-coverage.sh"
+              "cabal",
+              "test",
+              "rdkafka-hs-test",
+              "rdkafka-hs-integration",
+              "-f",
+              "integration",
+              "--enable-coverage",
+              "--builddir=dist-coverage",
+              "--ghc-options=-fforce-recomp -F -pgmF scripts/coverage-preprocess.py",
+              "--test-show-details=direct",
+              "--test-options=--quickcheck-tests=1000 --quickcheck-replay=20261024"
             ],
             "tests": [
               "rdkafka-hs.Callback owner.bridge allocation executes masked before ownership is recorded",
@@ -430,6 +452,7 @@
               "rdkafka-hs-integration.producer-regressions.accepted callback retains its capture until a purged report completes",
               "rdkafka-hs-integration.producer-regressions.throwing global callback preserves per-message delivery and releases capture",
               "rdkafka-hs-integration.producer-regressions.throwing per-message callback reports exception and releases capture",
+              "rdkafka-hs-integration.producer-regressions.pinned argument allocation failure releases callback before native enqueue",
               "rdkafka-hs-integration.producer-regressions.repeated queue-full rejections release every callback capture",
               "rdkafka-hs-integration.producer-regressions.cancellation at a rejected enqueue releases capture before unmasking",
               "rdkafka-hs-integration.producer-regressions.cancellation after native acceptance retains callback until its report",
@@ -979,35 +1002,31 @@
               "rdkafka-hs-integration.broker.Read all topics.should return all the topics",
               "rdkafka-hs-integration.broker.Read all topics.should delete this run's topics"
             ],
-            "passed": 831,
+            "passed": 832,
             "artifacts": {
+              "log": {
+                "path": "dist-coverage/reports/test.log",
+                "sha256": "9bb1a1c52816d388652b6525d8cb7b98f77b6f58e9a2695f0f55e948d1c250f0"
+              },
               "normal": {
-                "path": "dist-compatibility/expanded-source9/primary-normal9.log",
-                "sha256": "0cc78933babadbb7d223879eb76ddd60513010cfab5cd282a0e4ee974a52faeb"
-              },
-              "mapped": {
-                "path": "dist-compatibility/expanded-source9/primary-mapped9.log",
-                "sha256": "563e4fcf86cd2047cea629df6837a502e4795dca676f96671655b9758eacf6c8"
-              },
-              "allow_open": {
-                "path": "dist-compatibility/expanded-source9/coverage-allow-open.log",
-                "sha256": "6aaeb4a62ef5152f0f1adf20bb654b54b8fe12f057b757150972ebe61992fb7a"
-              },
-              "strict": {
-                "path": "dist-compatibility/expanded-source9/coverage-strict.log",
-                "sha256": "542cc685cf514e26aec1535c91dba78ce90b78baacf3eebe98e98afc47a43222"
-              },
-              "tooling": {
-                "path": "dist-compatibility/expanded-source9/coverage-tools.log",
-                "sha256": "d9301ebe380dc7a7bd690c77c4421a8314098575c7200305f60c5fb093bc118a"
+                "path": "dist-compatibility/final/normal.log",
+                "sha256": "e86faa0a1d8745c0231bc916cf920ea55a4ab976468c0acb1f1b391a0b8b6d38"
               },
               "measured": {
-                "path": "dist-compatibility/expanded-source9/primary-measured9-with-contexts.json",
-                "sha256": "9a98d410cbeb3ef8ce0e3d99f39d989dbf145ee434db9aedf7aa771c52922ffe"
+                "path": "dist-compatibility/qualification/measured.json",
+                "sha256": "52d10944728c8c3e381e822cd25ab66b596bd64ecfc1f5989eee39c6476b8570"
               }
             },
             "limitations": [
-              "857 aggregate registrations include 26 separately executed external cases; primary normal/mapped each executes 831."
+              "832 primary cases; 26 separately executed external behavior cases bring registration to 858. Four nonthreaded cases execute separately."
+            ],
+            "log": {
+              "path": "dist-coverage/reports/test.log",
+              "sha256": "9bb1a1c52816d388652b6525d8cb7b98f77b6f58e9a2695f0f55e948d1c250f0"
+            },
+            "log_counts": [
+              78,
+              754
             ]
           },
           {
@@ -1015,12 +1034,8 @@
             "required": true,
             "status": "passed",
             "command": [
-              "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-compatibility/expanded-source9/darwin-native-candidate",
-              "-p",
-              "/producer-regressions/ || /callback-lifetime/ || (/public-contract/ && (/messages/ || /partition-list-ownership/ || /metadata-contract/ || /diagnostics/)) || /transaction-errors/ || /lifecycle/",
-              "+RTS",
-              "-N2",
-              "-RTS"
+              "python3",
+              "/tmp/rdkafka-darwin-final2.py"
             ],
             "tests": [
               "rdkafka-hs-integration.callback-lifetime.async throwing error callback preserves native lifecycle",
@@ -1152,6 +1167,7 @@
               "rdkafka-hs-integration.producer-regressions.accepted callback retains its capture until a purged report completes",
               "rdkafka-hs-integration.producer-regressions.throwing global callback preserves per-message delivery and releases capture",
               "rdkafka-hs-integration.producer-regressions.throwing per-message callback reports exception and releases capture",
+              "rdkafka-hs-integration.producer-regressions.pinned argument allocation failure releases callback before native enqueue",
               "rdkafka-hs-integration.producer-regressions.repeated queue-full rejections release every callback capture",
               "rdkafka-hs-integration.producer-regressions.cancellation at a rejected enqueue releases capture before unmasking",
               "rdkafka-hs-integration.producer-regressions.cancellation after native acceptance retains callback until its report",
@@ -1303,33 +1319,49 @@
               "rdkafka-hs-integration.public-contract.metadata-contract.async group identity lifecycle and supported native states",
               "rdkafka-hs-integration.public-contract.metadata-contract.sync group identity lifecycle and supported native states"
             ],
-            "passed": 279,
+            "passed": 280,
             "artifacts": {
-              "darwin-asan-control.log": {
-                "path": "dist-compatibility/expanded-source9/darwin-asan-control.log",
-                "sha256": "7d3f29e4f75b0cb43aff9c863c81300e2851c4f2b8c958b4bf8c9113b8fb00ee"
-              },
-              "darwin-asan-candidate.log": {
-                "path": "dist-compatibility/expanded-source9/darwin-asan-candidate.log",
-                "sha256": "bed5ff95177992d5ec812468fa79432c938c50d61928bb88344f2a951a4b8d36"
-              },
-              "darwin-native-receipt.json": {
-                "path": "dist-compatibility/expanded-source9/darwin-native-receipt.json",
-                "sha256": "ab74ca68a62aa0a601d7d8f6782807c46fe5437bc102430b85ea79360bbb0b83"
+              "log": {
+                "path": "dist-compatibility/final/darwin-native.log",
+                "sha256": "7609773342db3cba642f50711116fe3865f49e548d7f7f6053aa18aa6e5cebcc"
               }
             },
             "limitations": [
-              "Matched Apple clang AddressSanitizer native runtime; deliberate invalid access aborts and candidate has no findings. Leak detection disabled: no Darwin leak-freedom claim."
+              "Darwin ASan invalid-access coverage; detect_leaks=0, no Darwin leak-freedom claim."
+            ],
+            "log": {
+              "path": "dist-compatibility/final/darwin-native.log",
+              "sha256": "7609773342db3cba642f50711116fe3865f49e548d7f7f6053aa18aa6e5cebcc"
+            },
+            "log_counts": [
+              280
             ]
           }
         ],
         "artifacts": {
-          "measured": {
-            "path": "docs/testing/coverage-evidence.json",
-            "sha256": "9a98d410cbeb3ef8ce0e3d99f39d989dbf145ee434db9aedf7aa771c52922ffe"
+          "complete-normal-and-mapped": {
+            "path": "dist-coverage/reports/test.log",
+            "sha256": "9bb1a1c52816d388652b6525d8cb7b98f77b6f58e9a2695f0f55e948d1c250f0"
+          },
+          "native-invalid-access-complement": {
+            "path": "dist-compatibility/final/darwin-native.log",
+            "sha256": "7609773342db3cba642f50711116fe3865f49e548d7f7f6053aa18aa6e5cebcc"
+          },
+          "runtime_source_proof": {
+            "path": "dist-compatibility/qualification/runtime-source-proof.json",
+            "sha256": "219847de739ab803c1ed2806adfd246178f458ea80d41e2dda34ac8d69351e9a"
+          },
+          "loaded_native": {
+            "path": "dist-compatibility/qualification/darwin-loaded-native.log",
+            "sha256": "6b1d78be1dc337a1f9830b80676ec28b31f04beba9a6638f7d46b7d7ab37d636"
           }
         },
-        "evidence": "docs/testing/deferred-public-contract-evidence.json"
+        "evidence": "docs/testing/comprehensive-validation-evidence.json",
+        "configuration_artifact": {
+          "path": "dist-compatibility/qualification/darwin-arm64-ghc9124-native215-redpanda2621-current-configuration.json",
+          "sha256": "0b320ea4b24d4d352f54ab96672ac962b3323de10f29ba587cd1a24a9740ac6a"
+        },
+        "previous_evidence": "docs/testing/deferred-public-contract-evidence.json"
       },
       {
         "id": "linux-arm64-ghc9141-native2160-apache440",
@@ -1337,46 +1369,13 @@
         "required": true,
         "status": "passed",
         "source": {
-          "project": "mori://shinzui/rdkafka-hs",
-          "candidate_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c",
-          "execution_fingerprint": "74c7156e6fee8653bcec844001fd8f95d703bcf4d8e978a857a9f8f3560b6b0a",
-          "revision": "bfa4f2e plus captured source",
+          "candidate_fingerprint": "4c77de8ed222a2279925f76be3e6922105561ffbfc2de6da5428a5ff79d7a895",
+          "scope_proof": "dist-compatibility/qualification/runtime-source-proof.json",
           "archive": {
-            "path": "dist-compatibility/expanded-source9/candidate.tar.gz",
-            "sha256": "a70e4839d24c5e5179ff9a8be48643951e185d604cd8ba3401587730279f3b22"
+            "path": "dist-compatibility/final/rdkafka-hs-1.1.0.0.tar.gz",
+            "sha256": "2db8ada6ca2d2cdefc99731bb1fec78892272f2e5b7c84e890ac240868bf07eb"
           },
-          "root_file_inventory": {
-            "path": "dist-compatibility/expanded-source9/root-functional-files.json",
-            "sha256": "69506c90cfc124f3a175a664873f5d8b49aff62a7426265c56c3dd64fcc84c21"
-          },
-          "archive_file_inventory": {
-            "path": "dist-compatibility/expanded-source9/phase9-functional-files.json",
-            "sha256": "d0e5d59aa49833ecd1305410c839cbebdbbb418679cecc6de0c2548b142dca4b"
-          },
-          "archive_comparison": {
-            "changed_files": [],
-            "added_files": [],
-            "omitted_development_files": [
-              ".envrc",
-              "cabal.project",
-              "flake.lock",
-              "flake.module.nix",
-              "flake.nix",
-              "justfile",
-              "nix/haskell.nix",
-              "nix/pre-commit.nix",
-              "nix/redpanda.nix",
-              "nix/treefmt.nix"
-            ],
-            "omitted_project_configuration": {
-              "path": "cabal.project",
-              "content": "packages: .\n",
-              "replacement": "Cabal implicit single package in clean extraction; same package set, no solver/compiler constraints in omitted file"
-            },
-            "execution_fingerprint": "74c7156e6fee8653bcec844001fd8f95d703bcf4d8e978a857a9f8f3560b6b0a",
-            "root_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c"
-          },
-          "configuration_sha256": "c6c0771e7da58c35d40170db3ec18cdd2439997e223ef4c088ac3f4e793707f9"
+          "revision": "6e5641a plus captured qualification tooling"
         },
         "environment": {
           "os": "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.5 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo",
@@ -1390,7 +1389,8 @@
           "loaded_native_identity": {
             "observed": "(\"2.16.0\",34603263)",
             "path": "/opt/librdkafka-2.16.0/lib/librdkafka.so.1",
-            "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f"
+            "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f",
+            "version": "2.16.0"
           },
           "broker_topology": "Three owned combined broker/controllers for inherited cases; separate ephemeral three-node fault and one-node secure fixtures. RF3/min ISR2 on fault topics."
         },
@@ -1420,11 +1420,10 @@
             "min_ISR": 2
           },
           "security": "SASL/PLAIN over verified TLS, ephemeral users/ACLs/CA; secrets intentionally absent",
-          "recipes": {
-            "test-integration/Kafka/Compatibility/KafkaFixture.hs": "b3ffe1aab36ba7ba8523075383228676c5f4d7e5f837592dbbb32844beab4e1a",
-            "test-integration/Kafka/Compatibility/SecurityFixture.hs": "bd46bf52a1919dee7042721820365f5765cd8c787a727ee3d9b7a8e541644921",
-            "test-integration/Kafka/TestEnv.hs": "f82b4306c90317e713f7de107cd7bc281626c04fd7327ae421a49de10b1dc91a"
-          }
+          "recipes": [
+            "/evidence/final-qualification.sh",
+            "/evidence/final-native-final.sh"
+          ]
         },
         "scenarios": [
           {
@@ -1434,11 +1433,7 @@
             "command": [
               "cabal",
               "test",
-              "rdkafka-hs-test",
-              "-f",
-              "integration",
-              "--test-show-details=direct",
-              "--test-options=--quickcheck-tests=1000 --quickcheck-replay=20261024"
+              "rdkafka-hs-test"
             ],
             "tests": [
               "rdkafka-hs.Callback owner.bridge allocation executes masked before ownership is recorded",
@@ -1522,28 +1517,19 @@
             ],
             "passed": 78,
             "artifacts": {
-              "phase9-unit.log": {
-                "path": "dist-compatibility/expanded-source9/phase9-unit.log",
-                "sha256": "1e9125e7cda4a5a18944f368fde934dc8a4b1900d981189931e1fa0632fe7f09"
-              },
-              "phase9-build.log": {
-                "path": "dist-compatibility/expanded-source9/phase9-build.log",
-                "sha256": "15848881c353039514fedb23424160586241f4cc00332ac11283b414d901675d"
-              },
-              "phase9-package-check.log": {
-                "path": "dist-compatibility/expanded-source9/phase9-package-check.log",
-                "sha256": "a19b4064f1acadadad1e1f24beae3785b778a6c5baabde7f333e4dacb7191d30"
-              },
-              "phase9-loaded.log": {
-                "path": "dist-compatibility/expanded-source9/phase9-loaded.log",
-                "sha256": "0ea352a045eddd425369467d19eef2c60d2ca235538e1335b9557897a003d120"
-              },
-              "phase9-version.log": {
-                "path": "dist-compatibility/expanded-source9/phase9-version.log",
-                "sha256": "6ec9b644a82e1dd0a2ec1c57250b4e2d3043deb9a608d8384f7ec30026876a93"
+              "log": {
+                "path": "dist-compatibility/qualification/linux-unit.log",
+                "sha256": "98d2cdf351ae17d2898d95e9156d27f40c417a556cbefe750982cf3dfcdae7cc"
               }
             },
-            "limitations": []
+            "limitations": [],
+            "log": {
+              "path": "dist-compatibility/qualification/linux-unit.log",
+              "sha256": "98d2cdf351ae17d2898d95e9156d27f40c417a556cbefe750982cf3dfcdae7cc"
+            },
+            "log_counts": [
+              78
+            ]
           },
           {
             "id": "native-ownership-diagnostics",
@@ -1551,19 +1537,13 @@
             "status": "passed",
             "command": [
               "valgrind",
-              "--suppressions=/evidence/ghc914-rts.supp",
-              "--error-exitcode=99",
+              "--trace-children=yes",
               "--leak-check=full",
               "--show-leak-kinds=all",
               "--errors-for-leak-kinds=definite,indirect",
-              "--trace-children=yes",
-              "--log-file=/evidence/native-phase9.%p.valgrind",
-              "/evidence/native-phase9-binary",
+              "/work/closure10/dist-newstyle/build/aarch64-linux/ghc-9.14.1/rdkafka-hs-1.1.0.0/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
               "-p",
-              "/producer-regressions/ || /callback-lifetime/ || (/public-contract/ && (/messages/ || /partition-list-ownership/ || /metadata-contract/ || /diagnostics/)) || /transaction-errors/ || /lifecycle/",
-              "+RTS",
-              "-N2",
-              "-RTS"
+              "/producer-regressions/ || /callback-lifetime/ || (/public-contract/ && (/messages/ || /partition-list-ownership/ || /metadata-contract/ || /diagnostics/)) || /transaction-errors/ || /lifecycle/"
             ],
             "tests": [
               "rdkafka-hs-integration.callback-lifetime.async throwing error callback preserves native lifecycle",
@@ -1695,6 +1675,7 @@
               "rdkafka-hs-integration.producer-regressions.accepted callback retains its capture until a purged report completes",
               "rdkafka-hs-integration.producer-regressions.throwing global callback preserves per-message delivery and releases capture",
               "rdkafka-hs-integration.producer-regressions.throwing per-message callback reports exception and releases capture",
+              "rdkafka-hs-integration.producer-regressions.pinned argument allocation failure releases callback before native enqueue",
               "rdkafka-hs-integration.producer-regressions.repeated queue-full rejections release every callback capture",
               "rdkafka-hs-integration.producer-regressions.cancellation at a rejected enqueue releases capture before unmasking",
               "rdkafka-hs-integration.producer-regressions.cancellation after native acceptance retains callback until its report",
@@ -1846,33 +1827,92 @@
               "rdkafka-hs-integration.public-contract.metadata-contract.async group identity lifecycle and supported native states",
               "rdkafka-hs-integration.public-contract.metadata-contract.sync group identity lifecycle and supported native states"
             ],
-            "passed": 279,
+            "passed": 280,
             "artifacts": {
-              "native-phase9.log": {
-                "path": "dist-compatibility/expanded-source9/native-phase9.log",
-                "sha256": "951b4b7b5d1b30800ea4699fe604aaf4a9e04a5a290570ff02afc1283569faf3"
+              "log": {
+                "path": "dist-compatibility/qualification/linux-native.log",
+                "sha256": "9bfa2f3721e779bdadfd5a0b1b938e325a78cb8324b5a19d8f6df5acf9c47fcb"
               },
-              "native-invalid9.valgrind": {
-                "path": "dist-compatibility/expanded-source9/native-invalid9.valgrind",
-                "sha256": "c5897519cc5a1b81b9bb0abd329746f2d1e80dd3d844b43da2344def8f8f10cb"
-              },
-              "native-header-stock9.valgrind": {
-                "path": "dist-compatibility/expanded-source9/native-header-stock9.valgrind",
-                "sha256": "b30e9245641fa29f53468b1b491ad4c62436ce4502a9ad9a6579ab54b78208c6"
-              },
-              "native-header-mutant9.valgrind": {
-                "path": "dist-compatibility/expanded-source9/native-header-mutant9.valgrind",
-                "sha256": "8501cc160b066a23f74d0c79ac66f7c3a61407b5db4c61fa62dbb85bc5098337"
-              },
-              "phase9-diagnostic-identity.log": {
-                "path": "dist-compatibility/expanded-source9/phase9-diagnostic-identity.log",
-                "sha256": "b5e947e38cfa999d968be7abd53685be88beb01ac33c6191db9c34ec24554a6d"
+              "memory_review": {
+                "path": "dist-compatibility/qualification/native-memory-review.json",
+                "sha256": "f0ade54b938502749405ef63dd2d34af399221663e5b8685227b892ab7b6249d"
               }
             },
             "limitations": [
-              "Only detached GHC worker-thread TLS stacks remain possibly lost (304 bytes per affected child); exact GHC 9.14.1 Task.c and posix/OSThreads.c are retained. The pure forkOn baseline did not reproduce this timing-dependent TLS observation. No project/native per-client stack is suppressed.",
-              "All retained stacks containing librdkafka allocation frames lead exclusively through rd_kafka_sasl_cyrus_global_init into Cyrus SASL process-global initialization. Tagged 2.16.0 source intentionally omits sasl_done because another application may share SASL. These are not per-message/client owners.",
-              "Diagnostic native differs only by three private test error-flag exports; exact identity and diff are recorded."
+              "Every retained native stack is inspected. Only intentional process-global Cyrus SASL initialization remains; no per-client/header retention. Exact RTS startup suppression only. No whole-process leak-freedom claim."
+            ],
+            "log": {
+              "path": "dist-compatibility/qualification/linux-native.log",
+              "sha256": "9bfa2f3721e779bdadfd5a0b1b938e325a78cb8324b5a19d8f6df5acf9c47fcb"
+            },
+            "log_counts": [
+              280
+            ],
+            "diagnostic_reports": [
+              {
+                "path": "dist-compatibility/qualification/native.236071.valgrind",
+                "sha256": "936f9015125d5587e895dd4665bd2c25e76d96c295e3214ab0e6190aa35f23a9"
+              },
+              {
+                "path": "dist-compatibility/qualification/native.236086.valgrind",
+                "sha256": "9d9e82407f9efe30636a8ec03198ae90c3ddecda72575ddbb5147ed91855b7ea"
+              },
+              {
+                "path": "dist-compatibility/qualification/native.236109.valgrind",
+                "sha256": "117495674802601efedc41a710c5c6fa45a4fbda5cafb8f0b78e0a596d0870b4"
+              },
+              {
+                "path": "dist-compatibility/qualification/native.236129.valgrind",
+                "sha256": "fe1b49b6ca5f77d4912ca8a103ae458f10846bf33ce7f6dafe9a0ff095d72505"
+              },
+              {
+                "path": "dist-compatibility/qualification/native.236150.valgrind",
+                "sha256": "9b61210a6965ff50545466c9d607ed88564a760f10ae6df1b6561b5513f8d06b"
+              },
+              {
+                "path": "dist-compatibility/qualification/native.236178.valgrind",
+                "sha256": "22393b2d28debde9590b82a18fa488e36597ef65b1a1263d6c4d7c08a9555eb1"
+              },
+              {
+                "path": "dist-compatibility/qualification/native.236205.valgrind",
+                "sha256": "d4d698652f00eac49b87e23f87d0d5534dbca53dee84f1e7ea5079c44b9be5de"
+              },
+              {
+                "path": "dist-compatibility/qualification/native.236228.valgrind",
+                "sha256": "c3d291659316e8fa0b8f1757c9edf4b7ac085480730742e3eaa3159e148bfc77"
+              },
+              {
+                "path": "dist-compatibility/qualification/native.236248.valgrind",
+                "sha256": "91aed95dbd7ed9c20aeaea4fc21eeb2e721ced5a6f45df7570c5725ef5439419"
+              },
+              {
+                "path": "dist-compatibility/qualification/native.236268.valgrind",
+                "sha256": "89717d85b0328f83a0a7d99d6ed3de0e10dd196467814fc9a72f14b633321f6d"
+              },
+              {
+                "path": "dist-compatibility/qualification/native.236295.valgrind",
+                "sha256": "dfa5d3ee65920ccc4cd7b9544996aed8e7851cbf693480a45485dbc2705b0ce0"
+              },
+              {
+                "path": "dist-compatibility/qualification/native.237364.valgrind",
+                "sha256": "09b2a43346649980d6205c25d9ec60b8e92c5a4fa36859b6f6034616b01abf97"
+              },
+              {
+                "path": "dist-compatibility/qualification/native.237385.valgrind",
+                "sha256": "17e0d6e3a9fbbc0196c855c853c142b4f0d7b8b149a3a8140243a2baa98f3f5e"
+              },
+              {
+                "path": "dist-compatibility/qualification/native.237404.valgrind",
+                "sha256": "792fa21eeebc014745b330f907f3fe35d691940f8b2ac235f57af09cef9ed697"
+              },
+              {
+                "path": "dist-compatibility/qualification/native.238856.valgrind",
+                "sha256": "5d85d107c5449fe7e65e81d2c102700411d725ea9678a60fe744809f0dd7f943"
+              },
+              {
+                "path": "dist-compatibility/qualification/native.238879.valgrind",
+                "sha256": "34fa9863db6e7a5a6be1df727abf498ae16692058d49d4f91932b7fda74caf1a"
+              }
             ]
           },
           {
@@ -1880,7 +1920,7 @@
             "required": true,
             "status": "passed",
             "command": [
-              "/work/phase9/dist-nonthreaded/build/aarch64-linux/ghc-9.14.1/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+              "rdkafka-hs-integration",
               "-p",
               "/runtime-contract/"
             ],
@@ -1892,27 +1932,30 @@
             ],
             "passed": 4,
             "artifacts": {
-              "nonthreaded-runtime9.log": {
-                "path": "dist-compatibility/expanded-source9/nonthreaded-runtime9.log",
-                "sha256": "64f2de222b1848528141d2f18cf942adeedf21ade725229e19805a236d33f516"
+              "log": {
+                "path": "dist-compatibility/qualification/linux-nonthreaded.log",
+                "sha256": "7f8062ce01c20364a69ef06c08f4dd3dcdc323b7bbb4ea99f92884c4a04133d5"
               },
-              "nonthreaded-build9.log": {
-                "path": "dist-compatibility/expanded-source9/nonthreaded-build9.log",
-                "sha256": "367db75d4bd65ea9f4e08a4836567f2f60183e3fa7c14595da5c79e212b3a16f"
-              },
-              "nonthreaded-info9.log": {
-                "path": "dist-compatibility/expanded-source9/nonthreaded-info9.log",
+              "actual_rts": {
+                "path": "dist-compatibility/qualification/linux-nonthreaded-info.log",
                 "sha256": "4624cb69ac272748f36b86dca2969623bb2ce1a54d2f66dbbf5226ff74f36e3d"
               }
             },
-            "limitations": []
+            "limitations": [],
+            "log": {
+              "path": "dist-compatibility/qualification/linux-nonthreaded.log",
+              "sha256": "7f8062ce01c20364a69ef06c08f4dd3dcdc323b7bbb4ea99f92884c4a04133d5"
+            },
+            "log_counts": [
+              4
+            ]
           },
           {
             "id": "apache-topic-configuration-reject",
             "required": true,
             "status": "passed",
             "command": [
-              "/evidence/native-phase9-binary",
+              "/work/closure10/dist-newstyle/build/aarch64-linux/ghc-9.14.1/rdkafka-hs-1.1.0.0/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
               "-p",
               "/unsupported configuration follows/"
             ],
@@ -1921,26 +1964,41 @@
             ],
             "passed": 1,
             "artifacts": {
-              "apache-policy9.log": {
-                "path": "dist-compatibility/expanded-source9/apache-policy9.log",
-                "sha256": "619f1dacc2a5c8f5e4fa510ce8d50ef9490183a6e2a9078da8c6a023eaecec7c"
+              "log": {
+                "path": "dist-compatibility/qualification/linux-apache-policy.log",
+                "sha256": "00cc085d8dc2ba7742d9c23a6efad9b01459c56552e1d387df6ccca5bb57b76b"
               }
             },
-            "limitations": []
+            "limitations": [],
+            "log": {
+              "path": "dist-compatibility/qualification/linux-apache-policy.log",
+              "sha256": "00cc085d8dc2ba7742d9c23a6efad9b01459c56552e1d387df6ccca5bb57b76b"
+            },
+            "log_counts": [
+              1
+            ]
           }
         ],
         "artifacts": {
-          "configuration.json": {
-            "path": "dist-compatibility/expanded-source9/configuration.json",
-            "sha256": "c6c0771e7da58c35d40170db3ec18cdd2439997e223ef4c088ac3f4e793707f9"
+          "released-linux-unit-build": {
+            "path": "dist-compatibility/qualification/linux-unit.log",
+            "sha256": "98d2cdf351ae17d2898d95e9156d27f40c417a556cbefe750982cf3dfcdae7cc"
           },
-          "qualification9-results.json": {
-            "path": "dist-compatibility/expanded-source9/qualification9-results.json",
-            "sha256": "e0915ee5d4e748697d3ddab61599eea0ff74ea3db67aa1ae5c4e2b747491a7d1"
+          "native-ownership-diagnostics": {
+            "path": "dist-compatibility/qualification/linux-native.log",
+            "sha256": "9bfa2f3721e779bdadfd5a0b1b938e325a78cb8324b5a19d8f6df5acf9c47fcb"
           },
-          "fixture-cleanup.json": {
-            "path": "dist-compatibility/expanded-source9/fixture-cleanup.json",
-            "sha256": "22a1434a32c0b23c77e8cb0f788c46ca45dc4129ff55add57033437db77be5aa"
+          "actual-nonthreaded-runtime": {
+            "path": "dist-compatibility/qualification/linux-nonthreaded.log",
+            "sha256": "7f8062ce01c20364a69ef06c08f4dd3dcdc323b7bbb4ea99f92884c4a04133d5"
+          },
+          "apache-topic-configuration-reject": {
+            "path": "dist-compatibility/qualification/linux-apache-policy.log",
+            "sha256": "00cc085d8dc2ba7742d9c23a6efad9b01459c56552e1d387df6ccca5bb57b76b"
+          },
+          "runtime_source_proof": {
+            "path": "dist-compatibility/qualification/runtime-source-proof.json",
+            "sha256": "219847de739ab803c1ed2806adfd246178f458ea80d41e2dda34ac8d69351e9a"
           }
         },
         "diagnostic_native": {
@@ -1956,7 +2014,12 @@
             "sha256": "b5e947e38cfa999d968be7abd53685be88beb01ac33c6191db9c34ec24554a6d"
           }
         },
-        "evidence": "docs/testing/linux-tuple-evidence.json"
+        "evidence": "docs/testing/comprehensive-validation-evidence.json",
+        "configuration_artifact": {
+          "path": "dist-compatibility/qualification/linux-arm64-ghc9141-native2160-apache440-configuration.json",
+          "sha256": "49960529952609a5a3aebe805861c2a8e7976370f9fb765dedb174f2603a810f"
+        },
+        "previous_evidence": "docs/testing/linux-tuple-evidence.json"
       },
       {
         "id": "linux-arm64-ghc9141-native2160-apache440-18",
@@ -1964,46 +2027,13 @@
         "required": true,
         "status": "passed",
         "source": {
-          "project": "mori://shinzui/rdkafka-hs",
-          "candidate_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c",
-          "execution_fingerprint": "74c7156e6fee8653bcec844001fd8f95d703bcf4d8e978a857a9f8f3560b6b0a",
-          "revision": "bfa4f2e plus captured source",
+          "candidate_fingerprint": "4c77de8ed222a2279925f76be3e6922105561ffbfc2de6da5428a5ff79d7a895",
+          "scope_proof": "dist-compatibility/qualification/runtime-source-proof.json",
           "archive": {
-            "path": "dist-compatibility/expanded-source9/candidate.tar.gz",
-            "sha256": "a70e4839d24c5e5179ff9a8be48643951e185d604cd8ba3401587730279f3b22"
+            "path": "dist-compatibility/final/rdkafka-hs-1.1.0.0.tar.gz",
+            "sha256": "2db8ada6ca2d2cdefc99731bb1fec78892272f2e5b7c84e890ac240868bf07eb"
           },
-          "root_file_inventory": {
-            "path": "dist-compatibility/expanded-source9/root-functional-files.json",
-            "sha256": "69506c90cfc124f3a175a664873f5d8b49aff62a7426265c56c3dd64fcc84c21"
-          },
-          "archive_file_inventory": {
-            "path": "dist-compatibility/expanded-source9/phase9-functional-files.json",
-            "sha256": "d0e5d59aa49833ecd1305410c839cbebdbbb418679cecc6de0c2548b142dca4b"
-          },
-          "archive_comparison": {
-            "changed_files": [],
-            "added_files": [],
-            "omitted_development_files": [
-              ".envrc",
-              "cabal.project",
-              "flake.lock",
-              "flake.module.nix",
-              "flake.nix",
-              "justfile",
-              "nix/haskell.nix",
-              "nix/pre-commit.nix",
-              "nix/redpanda.nix",
-              "nix/treefmt.nix"
-            ],
-            "omitted_project_configuration": {
-              "path": "cabal.project",
-              "content": "packages: .\n",
-              "replacement": "Cabal implicit single package in clean extraction; same package set, no solver/compiler constraints in omitted file"
-            },
-            "execution_fingerprint": "74c7156e6fee8653bcec844001fd8f95d703bcf4d8e978a857a9f8f3560b6b0a",
-            "root_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c"
-          },
-          "configuration_sha256": "c6c0771e7da58c35d40170db3ec18cdd2439997e223ef4c088ac3f4e793707f9"
+          "revision": "6e5641a plus captured qualification tooling"
         },
         "environment": {
           "os": "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.5 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo",
@@ -2017,7 +2047,8 @@
           "loaded_native_identity": {
             "observed": "(\"2.16.0\",34603263)",
             "path": "/opt/librdkafka-2.16.0/lib/librdkafka.so.1",
-            "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f"
+            "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f",
+            "version": "2.16.0"
           },
           "broker_topology": "run-owned three-node combined broker/controllers; ephemeral loopback ports; RF3/min ISR2 fault topics"
         },
@@ -2047,11 +2078,10 @@
             "min_ISR": 2
           },
           "security": "SASL/PLAIN over verified TLS, ephemeral users/ACLs/CA; secrets intentionally absent",
-          "recipes": {
-            "test-integration/Kafka/Compatibility/KafkaFixture.hs": "b3ffe1aab36ba7ba8523075383228676c5f4d7e5f837592dbbb32844beab4e1a",
-            "test-integration/Kafka/Compatibility/SecurityFixture.hs": "bd46bf52a1919dee7042721820365f5765cd8c787a727ee3d9b7a8e541644921",
-            "test-integration/Kafka/TestEnv.hs": "f82b4306c90317e713f7de107cd7bc281626c04fd7327ae421a49de10b1dc91a"
-          }
+          "recipes": [
+            "/evidence/final-qualification.sh",
+            "/evidence/final-native-final.sh"
+          ]
         },
         "scenarios": [
           {
@@ -2059,7 +2089,7 @@
             "required": true,
             "status": "passed",
             "command": [
-              "/evidence/native-phase9-binary",
+              "/work/closure10/dist-newstyle/build/aarch64-linux/ghc-9.14.1/rdkafka-hs-1.1.0.0/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
               "--broker-qualification"
             ],
             "tests": [
@@ -2075,29 +2105,37 @@
             ],
             "passed": 9,
             "artifacts": {
-              "broker-final9.log": {
-                "path": "dist-compatibility/expanded-source9/broker-final9.log",
-                "sha256": "f9236628ae671ffa549c4c9ce17ba8ba1acaf5f69e066acfe4ebfe94bd303681"
-              },
-              "broker-final9-tests.txt": {
-                "path": "dist-compatibility/expanded-source9/broker-final9-tests.txt",
-                "sha256": "1b2270f302280d667a9a755787ee368fce03adc8f849ef070c54f02d99919b84"
-              },
-              "fixture-cleanup.json": {
-                "path": "dist-compatibility/expanded-source9/fixture-cleanup.json",
-                "sha256": "22a1434a32c0b23c77e8cb0f788c46ca45dc4129ff55add57033437db77be5aa"
+              "log": {
+                "path": "dist-compatibility/qualification/linux-broker.log",
+                "sha256": "7cae093c726c4cd9bee11be160c8d77160e38be1d82cdca59dedc81ed79fe006"
               }
             },
-            "limitations": []
+            "limitations": [],
+            "log": {
+              "path": "dist-compatibility/qualification/linux-broker.log",
+              "sha256": "7cae093c726c4cd9bee11be160c8d77160e38be1d82cdca59dedc81ed79fe006"
+            },
+            "log_counts": [
+              9
+            ]
           }
         ],
         "artifacts": {
-          "context": {
-            "path": "docs/testing/broker-qualification-context.json",
-            "sha256": "d080bb062d1afed7d5a5b71ab37ed9b70b83fbe114d44650253af3999cc56c36"
+          "distributed-failure-recovery": {
+            "path": "dist-compatibility/qualification/linux-broker.log",
+            "sha256": "7cae093c726c4cd9bee11be160c8d77160e38be1d82cdca59dedc81ed79fe006"
+          },
+          "runtime_source_proof": {
+            "path": "dist-compatibility/qualification/runtime-source-proof.json",
+            "sha256": "219847de739ab803c1ed2806adfd246178f458ea80d41e2dda34ac8d69351e9a"
           }
         },
-        "evidence": "docs/testing/broker-failure-evidence.json"
+        "evidence": "docs/testing/comprehensive-validation-evidence.json",
+        "configuration_artifact": {
+          "path": "dist-compatibility/qualification/linux-arm64-ghc9141-native2160-apache440-18-configuration.json",
+          "sha256": "49960529952609a5a3aebe805861c2a8e7976370f9fb765dedb174f2603a810f"
+        },
+        "previous_evidence": "docs/testing/broker-failure-evidence.json"
       },
       {
         "id": "linux-arm64-ghc9141-native2160-apache440-19",
@@ -2105,46 +2143,13 @@
         "required": true,
         "status": "passed",
         "source": {
-          "project": "mori://shinzui/rdkafka-hs",
-          "candidate_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c",
-          "execution_fingerprint": "74c7156e6fee8653bcec844001fd8f95d703bcf4d8e978a857a9f8f3560b6b0a",
-          "revision": "bfa4f2e plus captured source",
+          "candidate_fingerprint": "4c77de8ed222a2279925f76be3e6922105561ffbfc2de6da5428a5ff79d7a895",
+          "scope_proof": "dist-compatibility/qualification/runtime-source-proof.json",
           "archive": {
-            "path": "dist-compatibility/expanded-source9/candidate.tar.gz",
-            "sha256": "a70e4839d24c5e5179ff9a8be48643951e185d604cd8ba3401587730279f3b22"
+            "path": "dist-compatibility/final/rdkafka-hs-1.1.0.0.tar.gz",
+            "sha256": "2db8ada6ca2d2cdefc99731bb1fec78892272f2e5b7c84e890ac240868bf07eb"
           },
-          "root_file_inventory": {
-            "path": "dist-compatibility/expanded-source9/root-functional-files.json",
-            "sha256": "69506c90cfc124f3a175a664873f5d8b49aff62a7426265c56c3dd64fcc84c21"
-          },
-          "archive_file_inventory": {
-            "path": "dist-compatibility/expanded-source9/phase9-functional-files.json",
-            "sha256": "d0e5d59aa49833ecd1305410c839cbebdbbb418679cecc6de0c2548b142dca4b"
-          },
-          "archive_comparison": {
-            "changed_files": [],
-            "added_files": [],
-            "omitted_development_files": [
-              ".envrc",
-              "cabal.project",
-              "flake.lock",
-              "flake.module.nix",
-              "flake.nix",
-              "justfile",
-              "nix/haskell.nix",
-              "nix/pre-commit.nix",
-              "nix/redpanda.nix",
-              "nix/treefmt.nix"
-            ],
-            "omitted_project_configuration": {
-              "path": "cabal.project",
-              "content": "packages: .\n",
-              "replacement": "Cabal implicit single package in clean extraction; same package set, no solver/compiler constraints in omitted file"
-            },
-            "execution_fingerprint": "74c7156e6fee8653bcec844001fd8f95d703bcf4d8e978a857a9f8f3560b6b0a",
-            "root_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c"
-          },
-          "configuration_sha256": "c6c0771e7da58c35d40170db3ec18cdd2439997e223ef4c088ac3f4e793707f9"
+          "revision": "6e5641a plus captured qualification tooling"
         },
         "environment": {
           "os": "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.5 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo",
@@ -2158,7 +2163,8 @@
           "loaded_native_identity": {
             "observed": "(\"2.16.0\",34603263)",
             "path": "/opt/librdkafka-2.16.0/lib/librdkafka.so.1",
-            "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f"
+            "sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f",
+            "version": "2.16.0"
           },
           "broker_topology": "run-owned one-node combined broker/controller; ephemeral SASL_SSL listener; verified localhost CA; ephemeral PLAIN users and ACLs"
         },
@@ -2182,7 +2188,7 @@
             "required": true,
             "status": "passed",
             "command": [
-              "/evidence/native-phase9-binary",
+              "/work/closure10/dist-newstyle/build/aarch64-linux/ghc-9.14.1/rdkafka-hs-1.1.0.0/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
               "--authentication-qualification"
             ],
             "tests": [
@@ -2206,31 +2212,39 @@
             ],
             "passed": 17,
             "artifacts": {
-              "authentication-final9.log": {
-                "path": "dist-compatibility/expanded-source9/authentication-final9.log",
-                "sha256": "a9cc23df591ca6608c613090bf42ae57ece89c1dc3e3ede7bbc0dee1cbcd2457"
-              },
-              "authentication-final9-tests.txt": {
-                "path": "dist-compatibility/expanded-source9/authentication-final9-tests.txt",
-                "sha256": "e011f6a1ed4544904bc4117ebdd30e85339b33c096b3d0619bbff506f5e2e893"
-              },
-              "fixture-cleanup.json": {
-                "path": "dist-compatibility/expanded-source9/fixture-cleanup.json",
-                "sha256": "22a1434a32c0b23c77e8cb0f788c46ca45dc4129ff55add57033437db77be5aa"
+              "log": {
+                "path": "dist-compatibility/qualification/linux-security.log",
+                "sha256": "b48fc30450e818fdc4498abd7f8116da100121839fecf4c8a5a314b2f0eb450e"
               }
             },
             "limitations": [
               "SASL PLAIN only; no other SASL mechanism claim."
+            ],
+            "log": {
+              "path": "dist-compatibility/qualification/linux-security.log",
+              "sha256": "b48fc30450e818fdc4498abd7f8116da100121839fecf4c8a5a314b2f0eb450e"
+            },
+            "log_counts": [
+              17
             ]
           }
         ],
         "artifacts": {
-          "context": {
-            "path": "docs/testing/authentication-qualification-context.json",
-            "sha256": "bbd1b7edc15934382e7b7f4e516ecce5688f257c0ee9eb19277e3b42ef26c730"
+          "authentication-tls-acl-reconnect": {
+            "path": "dist-compatibility/qualification/linux-security.log",
+            "sha256": "b48fc30450e818fdc4498abd7f8116da100121839fecf4c8a5a314b2f0eb450e"
+          },
+          "runtime_source_proof": {
+            "path": "dist-compatibility/qualification/runtime-source-proof.json",
+            "sha256": "219847de739ab803c1ed2806adfd246178f458ea80d41e2dda34ac8d69351e9a"
           }
         },
-        "evidence": "docs/testing/authentication-evidence.json"
+        "evidence": "docs/testing/comprehensive-validation-evidence.json",
+        "configuration_artifact": {
+          "path": "dist-compatibility/qualification/linux-arm64-ghc9141-native2160-apache440-19-configuration.json",
+          "sha256": "6f0fae0980356476f6eb8e5a77dd65c44ae2b1ad70f500357b2f31e79fe087ad"
+        },
+        "previous_evidence": "docs/testing/authentication-evidence.json"
       }
     ],
     "previous_checkpoint": {

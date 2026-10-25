@@ -461,25 +461,27 @@ Design decisions are recorded in [docs/adr/](docs/adr/index.md).
 
 ## Integration tests
 
-The current functional candidate passes 78 unit and 753 integration cases in both
-normal and Haskell coverage runs on macOS 26.7/arm64, GHC 9.12.4,
-librdkafka 2.15.0 and private Redpanda 26.2.1. Four additional runtime checks
-run in an actual nonthreaded executable.
+The comprehensive qualification gate passes 181 closed contract rows with zero
+unexplained handwritten coverage ticks. On macOS 26.7/arm64, GHC 9.12.4,
+librdkafka 2.15.0 and private Redpanda 26.2.1, normal and mapped suites each
+pass 78 unit plus 754 integration cases. A clean source distribution independently
+builds all components and passes the same suites and the actual example.
 
-A clean source archive also builds the library, examples and suites on Ubuntu
-24.04.5/aarch64 with GHC 9.14.1, librdkafka 2.16.0 and Apache Kafka 4.4.0.
-That tuple passes 78 unit, four nonthreaded and 279 native-lifetime cases,
-nine distributed leader/group/outage/transaction cases, and seventeen
-SASL PLAIN/TLS/ACL/credential-reconnect cases. Linux diagnostics detect deliberate
-invalid-access and native-header retention controls; complementary Darwin ASan
-covers invalid access with leak detection disabled. These are named scenario
-results, with diagnostic limits recorded in the
-[compatibility matrix](docs/testing/compatibility-matrix.json).
+Ubuntu 24.04.5/aarch64 with GHC 9.14.1, librdkafka 2.16.0 and Apache Kafka 4.4.0
+passes the newer tuple requirements, nine distributed recovery cases and
+seventeen SASL PLAIN/TLS/ACL/credential-reconnect cases. Both required runtimes
+have four actual nonthreaded checks. Linux Valgrind and Darwin ASan each cover
+280 native-lifetime cases with effective fault controls. Darwin leak detection is
+disabled; intentional process-global SASL allocations and diagnostic limits are
+recorded in the [compatibility matrix](docs/testing/compatibility-matrix.json).
 
-Comprehensive qualification remains open: two producer exception-path coverage ticks and the final all-evidence/package gate
-are tracked by the [follow-up plan](docs/masterplans/3-complete-deferred-coverage-and-compatibility-validation.md).
-The [historical primary release record](docs/testing/primary-validation-evidence.json)
-retains its own exact source and package results.
+Run `nix develop -c just test-compatibility` to verify the exact source, complete
+matrix, retained evidence hashes, diagnostic controls and isolated package replay.
+It fails when required evidence is missing or stale. The
+[comprehensive evidence](docs/testing/comprehensive-validation-evidence.json)
+records 858 distinct behavior registrations and 43 gate controls; the
+[historical primary release record](docs/testing/primary-validation-evidence.json)
+retains its original exact source and scope.
 
 The integration suite `rdkafka-hs-integration` needs a running Kafka broker and
 is disabled unless the manual `integration` flag is set, so `cabal build all`,

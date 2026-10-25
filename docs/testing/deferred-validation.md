@@ -1,34 +1,38 @@
 # Deferred validation and preserved work
 
-On 2026-10-24 the user explicitly narrowed the immediate release to the demonstrated primary environment and requested a comprehensive follow-up without losing started work. [ADR-27](../adr/release-validation-has-explicit-primary-and-expanded-scopes.md) records the boundary. [MasterPlan 3](../masterplans/3-complete-deferred-coverage-and-compatibility-validation.md) and its five children own the work below. Plan creation does not begin that implementation or claim it passed.
+On 2026-10-24 the user explicitly narrowed the immediate release to the demonstrated primary environment and requested a comprehensive follow-up without losing started work. [ADR-27](../adr/release-validation-has-explicit-primary-and-expanded-scopes.md) records the boundary. [MasterPlan 3](../masterplans/3-complete-deferred-coverage-and-compatibility-validation.md) and its five children own the work below. The follow-up has since been implemented and accepted; its original transfer scope remains documented here.
 
-The frozen checkpoint `060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e` passes 78 unit and 708 integration cases normally and mapped, plus four actual nonthreaded runtime cases. The full report measures 2,750 handwritten native-wrapper ticks. Its remaining 192 unclassified handwritten ticks are preserved by exact keys/counts in [the snapshot](deferred-validation-snapshot.json), with all raw misses and artifact hashes in [coverage evidence](coverage-evidence.json). The inventory retains 146 tested and 35 open historical rows. Many open rows already have new passing cases and need reconciliation, not duplicate implementations.
+This transfer ledger is now historical: [MasterPlan 3](../masterplans/3-complete-deferred-coverage-and-compatibility-validation.md)
+is Complete. The [comprehensive manifest](comprehensive-validation-evidence.json)
+records the accepted exact candidate, 181 closed rows, zero unexplained handwritten
+ticks, 858 behavior registrations, all required representative tuples, effective
+native controls and an isolated source-package replay. `just test-compatibility`
+passes without `--allow-open`. The original transfer snapshot and primary release
+evidence below retain their historical identities; no failed or deferred result
+has been relabeled as an earlier success.
 
-## Current implementation checkpoint
+## Final qualification checkpoint
 
-The historical snapshot above remains unchanged. The current functional source
-`2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c`
-passes 78 unit and 753 integration cases normally and mapped, plus four separate
-nonthreaded cases. Nine actual distributed-broker and seventeen actual security
-cases contribute source-validated behavior registrations, without contributing
-HPC ticks: 857 aggregate registered cases. The inventory now has 180 tested and
-one open row; 401 exact source classifications leave two unexplained handwritten
-producer exception-cleanup ticks. See [current public evidence](deferred-public-contract-evidence.json).
+The final source/tooling fingerprint is
+`f8c90d1ecf86b6a03a3d9e9f943ed473e9bec482e7e2f1a7aa4199bd9af34f51`.
+Normal/mapped and isolated package suites each pass 78 unit plus 754 integration
+cases. Nine distributed and seventeen security cases extend behavior registration
+to 858 without importing external HPC ticks. Four actual nonthreaded checks run
+on both required platforms. The ledger has 181 tested rows and no open row or
+unexplained handwritten tick; 401 exact source classifications remain.
 
-EP-17, EP-18 and EP-19 are Complete for the named source-bound scenarios in the
-[compatibility matrix](compatibility-matrix.json). EP-16 still requires the two source ticks. The user-required historical seek
-investigation is accepted through a causal late-topic-finalizer reconstruction
-and an isolated 182-case differential with the already implemented scoped lifetime fix.
-EP-20 remains Not Started because its whole-child EP-16 prerequisite is unmet.
-The tables below preserve the original handoff, not the current row statuses.
+All five children are Complete. The historical seek requirement is accepted
+through the causal late-topic-finalizer reconstruction and the isolated 182-case
+differential. The earlier partial checkpoint and original transfer tables below
+remain historical records, not current blockers.
 
 ## Release boundary
 
 The current release retains all fixes and tests, complete primary normal/mapped runs, generated seeds, native diagnostic controls and semantic mutations. Primary inventory validation uses the explicit `--allow-open` mode; strict `just coverage-check` still rejects comprehensive gaps. New code changes must not be excused as deferred if they leave a known failing regression. Broader execution and exhaustive closure are not claimed by broad bounds, source inspection or this deferral.
 
-## Deferred scope
+## Original deferred scope (now complete)
 
-| Owner | Work still required | Existing work to reuse |
+| Owner | Original obligation | Preserved work |
 |---|---|---|
 | [EP-16](../plans/16-close-deferred-public-contract-and-source-coverage-gaps.md) | Reconcile every remaining public contract, close reachable source/binding gaps, audit exact-span applicability, and investigate the historical inactive-fetcher transition | All 786 registered tests, four nonthreaded checks, compiler export/miss tooling, four partial source audits, coordinate remap and legacy-seek evidence |
 | [EP-17](../plans/17-validate-linux-and-released-toolchain-native-lifetimes.md) | Actual Linux and newer released compiler/native tuples; effective leak/invalid-access proof for client/bridge/header/message/metadata/partition lifetimes; complementary Darwin allocation evidence | Existing native counters, barriers, weak references, sanitizer control and focused instrumented runs; current Darwin ASan leak detection is disabled |
@@ -38,7 +42,7 @@ The current release retains all fixes and tests, complete primary normal/mapped 
 
 ## Exact historical open-row handoff
 
-These rows retain their original status/owner in `coverage-matrix.json` for provenance. The follow-up owner below is the responsible child in MasterPlan 3. The snapshot includes every original behavior/input/expected/ownership field; none was removed to make the primary release green.
+The transfer snapshot retains the original status/owner and every behavior/input/expected/ownership field. The current `coverage-matrix.json` records accepted closures and preserves transferred `previous_owner` values. The table names the child that closed each original obligation; none was removed to make the primary release green.
 
 | Original row | Follow-up owner |
 |---|---|
@@ -82,7 +86,7 @@ These rows retain their original status/owner in `coverage-matrix.json` for prov
 
 All source/test/C fixtures and Haskell mutation families remain registered. Recent retained commits are `4daa8a6` (queue payload/constructor boundaries), `2137727` (partial partition-list cleanup) and `b740b72` (fresh inherited seek fixtures). Do not reset them, delete existing cases, recreate the four replaced Python mutation runners, or overwrite historical rejected-run notes.
 
-Keep `legacy-seek-evidence.json` and its hash of `dist-coverage/failures/ep8-sync-seek-state.log`. The log proves State after an older assignment observation but does not identify its native transition; the max-poll hypothesis did not reproduce State. Existing tests preserve exact native State and recovery, and all ten positive scenarios now observe real delivery immediately before seeking. Further forensics belongs to EP-16, not an invented release explanation.
+Keep `legacy-seek-evidence.json` and its hash of `dist-coverage/failures/ep8-sync-seek-state.log`. The log proves State after an older assignment observation but does not identify its native transition; the max-poll hypothesis did not reproduce State. Existing tests preserve exact native State and recovery, and all ten positive scenarios now observe real delivery immediately before seeking. EP-16 closed the investigation through preserved causal native-identity reconstruction and the isolated lifetime-repair differential; the untraced original event remains unavailable retrospectively. See [the seek evidence](legacy-seek-evidence.json).
 
 Source audit reuse is conditional on the exact source. `coverage-classification-remap.json` preserved all 334 classifications and moved 33 coordinates only through identical source lines. A new change needs another source-coordinate review. `callback-native-diagnostics.json` retains a failing invalid-access control; `partition-list-evidence.json` retains the four failing pre-fix encoding cases and 19 passing scoped ownership cases. These are started/completed assets, not backlog to repeat blindly.
 

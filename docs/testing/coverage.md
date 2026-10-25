@@ -83,14 +83,31 @@ families retain their original threaded invocation. See
 [runtime evidence](runtime-evidence.json). Focused instrumented results do not
 replace final full-candidate mapped coverage.
 
-The accepted primary checkpoint passes 786 registered cases normally and mapped, plus four actual nonthreaded cases and 24 tooling controls. [Primary evidence](primary-validation-evidence.json) records clean package replay and the bounded actual example. The remaining 35 historical open rows and 192 unclassified handwritten ticks are preserved in [the source-bound deferred snapshot](deferred-validation-snapshot.json); the strict checker continues to reject comprehensive incompleteness.
+The accepted primary checkpoint passes 786 registered cases normally and mapped, plus four actual nonthreaded cases and 24 tooling controls. [Primary evidence](primary-validation-evidence.json) records clean package replay and the bounded actual example. At that historical checkpoint, 35 open rows and 192 unclassified ticks remained; [the source-bound transfer snapshot](deferred-validation-snapshot.json) preserves them. The later comprehensive qualification below closes those obligations.
 
 
-EP-16's [current checkpoint](deferred-public-contract-evidence.json) passes
-808 registered cases normally and mapped, plus four actual nonthreaded cases
-and 27 tooling controls. Reconciliation closes 19 historical contract rows;
-16 remain open with concrete owners and missing behaviors. This does not alter
-the accepted earlier primary candidate or close comprehensive qualification.
+[Complete qualification](comprehensive-validation-evidence.json) closes all 181
+rows and every unexplained handwritten tick. Primary normal/mapped and the
+isolated package each pass 832 cases; external broker/security executions add
+26 registered behaviors. Four actual nonthreaded checks remain separate runtime
+executions. `just test-compatibility` combines strict coverage, all required tuple
+and scenario identities, loaded versions, configuration/artifact hashes, memory
+reports, effective controls and the clean source-package proof. Forty-three
+controls cover passing evidence and rejection paths.
+
+The package gate checks every Cabal component's source/build directory against
+the extraction, avoiding accidental discovery of an ancestor checkout project.
+It also compares archived and extracted runtime/tooling bytes. Behavior from an
+unchanged compiled archive can survive a tooling-only revision only when every
+runtime, build declaration, test and example byte still matches. The package
+itself must contain the current qualification tooling.
+
+Native observers distinguish live allocations when addresses are reused. Linux
+memory acceptance inspects all retained native stacks and all leak kinds, not
+only the exit status. The deliberate header-cleanup omission is detected even
+when conservative RTS roots leave its native exit zero. Stock native cohorts
+retain no header/test-seam allocation stacks. Intentional SASL process globals
+and Darwin ASan's disabled leak detection remain explicit limits.
 
 Every handwritten applicability classification now carries its exact `source`
 and whole-file `source_sha256`. The checker rejects a missing or changed binding

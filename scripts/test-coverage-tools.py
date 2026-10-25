@@ -5,6 +5,7 @@ import importlib.util
 import json
 import sys
 import subprocess
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -329,12 +330,19 @@ class CompatibilityControls(unittest.TestCase):
         for name, (code, signature) in checker.REQUIRED_CONTROLS.items():
             log = self.root / (name + '.log')
             log.write_text(signature)
-            controls[name] = dict(status='detected', exit=code, log=self.artifact(log))
+            controls[name] = dict(status='detected', exit=code[-1] if isinstance(code, tuple) else code, log=self.artifact(log))
         log = self.root / 'package.log'
         log.write_text('All 1 tests passed\nAll 3 tests passed\n')
         example = self.root / 'example.log'
         example.write_text('EXAMPLE VERIFIED: four exact records, ordered offsets, fancy header and committed offset 4')
-        self.report = dict(schema_version=1, status='passed', fingerprint='candidate', controls=controls, package=dict(archive=self.artifact(archive), source=dict(candidate_fingerprint='candidate', scope_proof='proof.json'), tests=primary, passed=4, log_counts=[1, 3], log=self.artifact(log), built_examples=True, example=dict(records=4, committed_offset=4, log=self.artifact(example))), artifacts={'proof': self.artifact(self.root / 'proof.json')})
+        extraction = self.root / 'extracted'
+        for name in files:
+            target = extraction / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(self.root / name, target)
+        plan = self.root / 'plan.json'
+        plan.write_text(json.dumps({'install-plan': [dict(**{'pkg-name': 'rdkafka-hs', 'component-name': name, 'pkg-src': {'path': str(extraction)}, 'dist-dir': str(extraction / 'dist-newstyle' / name)}) for name in ['lib', 'exe:kafka-client-example', 'test:rdkafka-hs-test', 'test:rdkafka-hs-integration']]}))
+        self.report = dict(schema_version=1, status='passed', fingerprint='candidate', controls=controls, package=dict(build_plan=self.artifact(plan), extraction_root='extracted', archive=self.artifact(archive), source=dict(candidate_fingerprint='candidate', scope_proof='proof.json'), tests=primary, passed=4, log_counts=[1, 3], log=self.artifact(log), built_examples=True, example=dict(records=4, committed_offset=4, log=self.artifact(example))), artifacts={'proof': self.artifact(self.root / 'proof.json')})
 
     def errors(self):
         return checker.validate_compatibility(self.matrix, self.report, self.coverage)
@@ -353,6 +361,15 @@ class CompatibilityControls(unittest.TestCase):
     def test_stale_source_fails(self):
         self.matrix['qualification']['tuples'][0]['source']['candidate_fingerprint'] = 'old'
         self.assertTrue(any('source-scope proof' in e for e in self.errors()))
+
+    def test_ancestor_project_build_is_rejected(self):
+        plan = self.root / 'plan.json'
+        data = json.loads(plan.read_text())
+        data['install-plan'][0]['pkg-src']['path'] = str(self.root)
+        data['install-plan'][0]['dist-dir'] = str(self.root / 'dist-newstyle')
+        plan.write_text(json.dumps(data))
+        self.report['package']['build_plan'] = self.artifact(plan)
+        self.assertIn('clean package build plan refers to checkout or external source', self.errors())
 
     def test_configuration_change_fails(self):
         self.matrix['qualification']['tuples'][0]['test_configuration']['fixture'] = 'other'
