@@ -1,9 +1,9 @@
 {
-  "status": "Approved and verified release candidate; ready for GitHub/tag publication",
+  "status": "Published GitHub/tag release; remote tag, fetched downstream dependency and all downloaded assets verified",
   "version": "1.1.0.0",
   "release_date": "2026-10-24",
   "cutoff_revision": "68ae3c6",
-  "publication_performed": false,
+  "publication_performed": true,
   "publication_destination": "GitHub/tag only",
   "release_scope": "Explicit user-selected release before MasterPlan 3 completion; ADR-27 primary release gate. No waiver of the two source-coverage ticks or EP-20 integration.",
   "version_rationale": "Major PVP 1.1 for changed subscription composition precedence and observable error/callback/runtime semantics; no dependency floor or bounds raised.",
@@ -265,7 +265,10 @@
     "source_workspace_changed": false,
     "build": "passed",
     "broker_free_tests": 44,
-    "test": "passed"
+    "test": "passed",
+    "remote_pin": "https://github.com/shinzui/rdkafka-hs.git at v1.1.0.0",
+    "remote_fetched_commit": "d5124e5e79e5cf11713f2f7fe72ff79b7c3092d7",
+    "remote_test": "passed; all 44 broker-free tests"
   },
   "preserved_followup": {
     "master_plan": "docs/masterplans/3-complete-deferred-coverage-and-compatibility-validation.md",
@@ -373,6 +376,10 @@
     "approved-check.log": {
       "path": "dist-release-1.1.0.0/approved-check.log",
       "sha256": "eccb513fade467fde5ce79f493b8a096eb9479d4920534e676796f83149ca5d5"
+    },
+    "remote-downstream.log": {
+      "path": "dist-release-1.1.0.0/remote-downstream.log",
+      "sha256": "7732b20bad6f5c5149b0ab1e1b0ce0394bd3eba96c27ca8d90cf6ebac61681e4"
     }
   },
   "metadata_artifacts": {
@@ -411,9 +418,17 @@
     "clean-example-result.json": {
       "path": "dist-release-1.1.0.0/clean-example-result.json",
       "sha256": "335776ec3e53485278c38d9818431c2e55706940cefc9afcd5c1dfe9422f508d"
+    },
+    "remote-proof.json": {
+      "path": "dist-release-1.1.0.0/remote-proof.json",
+      "sha256": "4275828113c5a5561f744bde31ab166ac5c0afc942c1f3890ec234b70a41aa1a"
+    },
+    "github-release.json": {
+      "path": "dist-release-1.1.0.0/github-release.json",
+      "sha256": "8c87fcd471ba2cf49d4dc67ce704399aaf0c453658c638024a60aae4ba9357f8"
     }
   },
-  "review": "Concrete release diff approved by user before release commit and tag creation.",
+  "review": "User approved the concrete release diffs with \"looks good continue\" before release commit, annotated tag creation, push and GitHub publication.",
   "accepted_commands": [
     {
       "label": "cabal-check",
@@ -595,5 +610,36 @@
     "unit_tests": 78,
     "docs_bindings_nix_build_flake_checks": "passed",
     "package_source": "163 selected archive files byte-identical to approved checkout"
+  },
+  "hackage_publication_performed": false,
+  "publication": {
+    "destination": "GitHub/tag only",
+    "url": "https://github.com/shinzui/rdkafka-hs/releases/tag/v1.1.0.0",
+    "published_at": "2026-10-25T03:51:28Z",
+    "release_id": 423133621,
+    "release_commit": "d5124e5e79e5cf11713f2f7fe72ff79b7c3092d7",
+    "annotated_tag_object": "59296df10a81fd103aef80deebecd952a29ae114",
+    "assets": [
+      {
+        "name": "rdkafka-hs-1.1.0.0-docs.tar.gz",
+        "url": "https://github.com/shinzui/rdkafka-hs/releases/download/v1.1.0.0/rdkafka-hs-1.1.0.0-docs.tar.gz",
+        "sha256": "68782c14c7f144c484f2308945e0e0e508c6743fc9c364fab22f3ae94805243b",
+        "size": 502825
+      },
+      {
+        "name": "rdkafka-hs-1.1.0.0.tar.gz",
+        "url": "https://github.com/shinzui/rdkafka-hs/releases/download/v1.1.0.0/rdkafka-hs-1.1.0.0.tar.gz",
+        "sha256": "4afcb8fa14a2597c8cf2378a9711e07bf05694fc1ddb475d2a35fe81fa8afb55",
+        "size": 463527
+      },
+      {
+        "name": "SHA256SUMS",
+        "url": "https://github.com/shinzui/rdkafka-hs/releases/download/v1.1.0.0/SHA256SUMS",
+        "sha256": "03253240e7b990eee3b92de2c98eb7111b01795c337f12b9c251d8cd285b7250",
+        "size": 189
+      }
+    ],
+    "download_verification": "All three downloaded release assets are byte-identical to the approved local artifacts; archive SHA-256 values also match SHA256SUMS.",
+    "remote_downstream_tests": 44
   }
 }
