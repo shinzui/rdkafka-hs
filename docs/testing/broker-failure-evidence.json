@@ -1,5 +1,5 @@
 {
-  "status": "observed first integration prototype; permanent broker/group/transaction scenarios remain open",
+  "status": "Permanent M1 leader-change scenarios pass in both callback modes; remaining group/outage/transaction qualification open",
   "source": {
     "candidate_archive": {
       "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/candidate.tar.gz",
@@ -84,10 +84,37 @@
     }
   },
   "remaining": [
-    "Permanent Cabal scenarios and fixture lifecycle/cancellation checks",
+    "Fixture lifecycle/cancellation acceptance and fresh candidate replay",
     "Full outage/reconnect and callback/commit/poll recovery",
     "Eager/cooperative group eviction and actual assignmentLost True",
     "Broker/coordinator transaction interruption and read-committed recovery",
     "Actual Apache topic-configuration rejection policy"
-  ]
+  ],
+  "permanent_m1": {
+    "test_cases": 2,
+    "source_fingerprint": "35f44f61ae9c18f7e7e0e085f3258081e1d391fc2c934c9bf112a64ab0d8cf00",
+    "configuration": "Owned three-node Apache Kafka 4.4.0, RF3 topic and min ISR2; actual loaded librdkafka 2.16.0",
+    "command": "rdkafka-hs-integration --broker-qualification",
+    "observations": {
+      "async_leader": [
+        1,
+        2
+      ],
+      "sync_leader": [
+        3,
+        1
+      ],
+      "records": [
+        0,
+        1
+      ],
+      "committed_next": 2,
+      "ISR": "Exact [1,2,3] before stop, exact remaining two after election, exact [1,2,3] after owned node restart"
+    },
+    "log": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/broker-policy.log",
+      "sha256": "bf13d5b8e73c44c17788214b953afcc4e21d17dc06724011ce2885077f92d7b1"
+    },
+    "remaining": "Fresh full candidate replay and interruption acceptance are distinct from the passing M1 behaviors."
+  }
 }

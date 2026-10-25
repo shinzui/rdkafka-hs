@@ -99,3 +99,22 @@ Each run uses a unique prefix and restores only resources it owns. Close/destroy
 Whole accepted primary candidate from MasterPlan 2 is the hard prerequisite. Integration dependencies with EP-17, EP-18 and EP-19 are evidence schema and current source fingerprints, not whole-child blocking dependencies. Own `docs/testing/coverage-matrix.json`, source audit manifests and any needed coverage-checker schema changes. EP-20 consumes these outputs and enforces complete closure. Update `docs/testing/coverage.md` and relevant ADRs when a durable applicability or ownership rule is established.
 
 Commits use Conventional Commits with `MasterPlan: docs/masterplans/3-complete-deferred-coverage-and-compatibility-validation.md`, `ExecPlan: docs/plans/16-close-deferred-public-contract-and-source-coverage-gaps.md` and `Intention: intention_01m5p37ej8e3h92gkf2wp9j6qa`. Preserve original provenance and append later author/reviewer entries through the plan skill scripts.
+
+2026-10-25 checkpoint: after the EP-19 credential repairs, all 813 primary
+normal/mapped cases, four nonthreaded cases and 27 tooling controls pass.
+The checker accepts --allow-open and the strict checker still rejects 16 open
+rows and 70 unexplained handwritten ticks. Exact unchanged lines in four
+credential/documentation-touched source files retain their audited proofs with
+new whole-file hashes; 23 additional precise classifications cover native
+constructor/dump/header guarantees, unused callback arguments and discarded pure
+values. Both released native 2.15.0/2.16.0 sources back the relevant guarantees.
+Arbitrary rebalance errors remain executable work: the native header explicitly
+permits them and requires unassignment. EP-19 hands off 17 named clean-package
+security behaviors; supplemental-context registration/reconciliation is still
+needed before its two public setter rows can close in this ledger.
+
+The checkpoint commit hook sorted the three new Cabal module registrations
+after measurement. This is a formatting-only change, but its bytes change the
+content fingerprint. Preserve the accepted abbf4e69 checkpoint as measured; do
+not relabel it current or silently rewrite fingerprints. The next implementation
+pass must collect fresh normal/mapped evidence after its additional source work.

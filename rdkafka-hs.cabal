@@ -179,6 +179,8 @@ test-suite rdkafka-hs-integration
     Kafka.AdminTestSupport
     Kafka.CallbackLifetimeSupport
     Kafka.CallbackTestSupport
+    Kafka.Compatibility.KafkaFixture
+    Kafka.Compatibility.SecurityFixture
     Kafka.ConsumerStateSupport
     Kafka.DiagnosticTestSupport
     Kafka.FaultTestSupport
@@ -186,7 +188,9 @@ test-suite rdkafka-hs-integration
     Kafka.FixtureSupportTest
     Kafka.Integration.AssignOnlyTest
     Kafka.Integration.AttributedErrorTest
+    Kafka.Integration.AuthenticationTest
     Kafka.Integration.BatchTest
+    Kafka.Integration.BrokerFailureTest
     Kafka.Integration.CallbackLifetimeTest
     Kafka.Integration.ConfigStringContractTest
     Kafka.Integration.ConfigurationTest

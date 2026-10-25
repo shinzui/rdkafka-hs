@@ -27,11 +27,11 @@ Users can see exactly how producer delivery, consumption, group membership and t
 
 ## Progress
 
-- [ ] M1: Create a run-owned Apache Kafka topology and prove a representative leader-change roundtrip with exact record accounting.
+- [x] M1: Create a run-owned Apache Kafka topology and prove a representative leader-change roundtrip with exact record accounting.
 - [ ] M2: Verify outage/reconnect, group assignment/eviction/pause/seek and transaction recovery in applicable callback modes.
 - [ ] M3: Accept source-bound failure evidence, restored fixtures and broker-policy results for EP-20.
 
-In Progress (2026-10-24). A run-owned three-node Apache Kafka 4.4.0 topology is serving the initial Linux tuple. The initial probe observes leader 2 → 3, ISR [3,1], exact records at offsets 0/1 and committed next offset 2 in both callback modes, then restores the stopped broker and three-member ISR. `../testing/broker-failure-evidence.json` binds the probe and outputs. Permanent Cabal scenarios and the remaining distributed recovery acceptance remain open.
+In Progress (2026-10-25). M1 is accepted: both permanent Cabal leader-change cases pass on the released Linux/native/Apache tuple. Async observes leader 1 → 2; sync observes 3 → 1. They assert exact replica and ISR sets, records at offsets 0/1, committed next offset 2, no extra record, and restored three-member ISR before owned-process/data cleanup. `../testing/broker-failure-evidence.json` retains both initial and permanent results. M2/M3 and fresh current-candidate replay remain open.
 
 ## Surprises & Discoveries
 
@@ -84,7 +84,7 @@ Implement test modules such as `test-integration/Kafka/Integration/BrokerFailure
 
 ```bash
 cabal build rdkafka-hs-integration -f integration
-cabal test rdkafka-hs-integration -f integration --test-show-details=direct --test-options='-p /broker-failure/'
+cabal test rdkafka-hs-integration -f integration --test-show-details=direct --test-options='--broker-qualification -p /broker-failure/'
 cabal test rdkafka-hs-integration -f integration --test-show-details=direct --test-options='-p /rebalance-contract/'
 ```
 

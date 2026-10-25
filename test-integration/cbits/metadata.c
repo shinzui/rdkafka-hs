@@ -51,7 +51,11 @@ rd_kafka_resp_err_t rd_kafka_metadata(rd_kafka_t *rk, int all_topics, rd_kafka_t
     }
     if (mode == 19) {
       struct rd_kafka_metadata *frame = (struct rd_kafka_metadata *)(void *)metadata;
-      if (frame->broker_cnt != 1 || frame->topic_cnt != 1 || frame->topics[0].partition_cnt != 1 || strlen(frame->brokers[0].host) < 2) abort();
+      if (frame->broker_cnt < 1 || frame->topic_cnt != 1 || frame->topics[0].partition_cnt != 1 || strlen(frame->brokers[0].host) < 2) abort();
+      /* Select one broker from the real, single-allocation native frame. The
+       * decoder control must work on both single-node and distributed brokers;
+       * metadata_destroy still owns and frees the complete allocation. */
+      frame->broker_cnt = 1;
       frame->brokers[0].id = 7; frame->brokers[0].port = 19092;
       strcpy(frame->brokers[0].host, "λ");
       frame->orig_broker_id = 19;

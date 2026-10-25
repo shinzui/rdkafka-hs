@@ -268,6 +268,8 @@ purgeProducer kp flags =
 -- authentications (@rd_kafka_sasl_set_credentials@); existing connections
 -- are not re-authenticated. librdkafka stores the credentials whether or not
 -- SASL is configured.
+-- Embedded NUL in either credential returns 'KafkaBadSpecification' before
+-- changing the native credentials.
 setSaslCredentials ::
   (MonadIO m) =>
   KafkaProducer ->

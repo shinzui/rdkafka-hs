@@ -211,6 +211,13 @@ families "rebalance" =
   ]
   where
     r label change test = mutation "public-contract" label "src/Kafka/Consumer/Callbacks.hs" change test
+families "credentials" =
+  [ control "unchanged-credentials-control" integration "setSaslCredentials",
+    mutation "lifecycle" "nul-username-truncated" "src/Kafka/Internal/Shared.hs" (replace "validateCStringInput \"SASL username\" username" "Nothing") "setSaslCredentials rejects NUL in username without changing producer or consumer identity",
+    mutation "lifecycle" "nul-password-truncated" "src/Kafka/Internal/Shared.hs" (replace "validateCStringInput \"SASL password\" password" "Nothing") "setSaslCredentials rejects NUL in password without changing producer or consumer identity",
+    mutation "lifecycle" "credential-acquisition-unmasked" "src/Kafka/Internal/RdKafka.chs" (replace "rdKafkaSaslSetCredentials k username password = mask_ $ do" "rdKafkaSaslSetCredentials k username password = do") "setSaslCredentials cancellation at error acquisition releases the owned error",
+    mutation "lifecycle" "credential-error-retained" "src/Kafka/Internal/RdKafka.chs" (replace "else rdKafkaErrorCode err `finally` rdKafkaErrorDestroy err" "else rdKafkaErrorCode err") "setSaslCredentials releases each actual native error after decoding its exact code"
+  ]
 families "source-edges" =
   [ control "unchanged-message-control" integration "independently absent",
     control "unchanged-offset-control" integration "native logical offsets decode independently",

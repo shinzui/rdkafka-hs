@@ -352,5 +352,254 @@
       "path": "dist-compatibility/linux-arm64-ghc9141-native2160-apache440/valgrind-smoke.stdout",
       "sha256": "eee1b4e4cb52fb11a371d421fa8db3c5096243e673683ab5904af4a701902aa2"
     }
+  },
+  "continued_diagnostic_work": {
+    "status": "partial cohorts not accepted; final replay required",
+    "private_native_symbols": "Stock Linux exports hide three private error-flag setters required by inherited controls; diagnostic-only linker map exports exactly those three without copying opaque objects. Haskell preflight now fails explicitly if they are absent.",
+    "metadata_fixture": "Distinct-field control now selects one broker from a real multi-node frame instead of aborting on broker_cnt > 1. Full native allocation retains its actual owner.",
+    "runtime_baseline": "GHC 9.14.1 minimal main=pure() reproduces the same 20 definite bytes in five CapIOManager allocations. Exact upstream IOManager.c and a ten-frame suppression match only the RTS initialization stack; no project allocation or positive control is suppressed.",
+    "interrupted_run": "The owned VM became unresponsive during concurrent Valgrind and Java cohorts; only that VM restarted. Neither partial cohort is accepted. Remaining cohorts run sequentially.",
+    "artifacts": {
+      "RtsBaseline.hs": {
+        "path": "dist-compatibility/owned-fixture-checkpoint/RtsBaseline.hs",
+        "sha256": "667b93357c3b851e3b4944dc2d8400540580440be59d5b75e9e6a12eb546e585"
+      },
+      "rts-baseline.log": {
+        "path": "dist-compatibility/owned-fixture-checkpoint/rts-baseline.log",
+        "sha256": "b853dc070bcd72d34eba8d220959b39b619086318aed79a6f890fdbb870326b9"
+      },
+      "rts-baseline-suppressed.log": {
+        "path": "dist-compatibility/owned-fixture-checkpoint/rts-baseline-suppressed.log",
+        "sha256": "7a20a2b619bce7ac929f70b7db4225cc3013298d3a0651511ba6397552cbf4a5"
+      },
+      "ghc914-IOManager.c": {
+        "path": "dist-compatibility/owned-fixture-checkpoint/ghc914-IOManager.c",
+        "sha256": "75b19a43809b3155ba6265c6c4bc73fab86ddfed4d17312ce5422fe4227714dc"
+      },
+      "ghc914-rts.supp": {
+        "path": "dist-compatibility/owned-fixture-checkpoint/ghc914-rts.supp",
+        "sha256": "c9b04b1b79da557d62a4183c4108a636646feadb4f025ff4439ae026121e48f4"
+      },
+      "native-diagnostic-exports.diff": {
+        "path": "dist-compatibility/owned-fixture-checkpoint/native-diagnostic-exports.diff",
+        "sha256": "ff6312086bba73e0e6891060f48f02540b38174dbcbc26c080b12b8655bceafb"
+      },
+      "diagnostic-export-symbols.txt": {
+        "path": "dist-compatibility/owned-fixture-checkpoint/diagnostic-export-symbols.txt",
+        "sha256": "b959a9d7f9aab8245708a13d9d605c7e32b01930ecc91372f5d848094830f873"
+      },
+      "native-full.stdout": {
+        "path": "dist-compatibility/owned-fixture-checkpoint/native-full.stdout",
+        "sha256": "d9a93a21c5b34100767a43ea4eb4074330d3f80f9c9215a9731631d57cb2828d"
+      },
+      "native-phase4.stdout": {
+        "path": "dist-compatibility/owned-fixture-checkpoint/native-phase4.stdout",
+        "sha256": "03686ed592108efc49b895798d98c38183bda1ad68f4662396ff9a04cbb465d9"
+      }
+    },
+    "clean_archive_cohort": {
+      "selected": 268,
+      "test_failures": 2,
+      "status": "failed, not accepted",
+      "findings": [
+        "A pending cancellation at final transaction decoder stage was observed after the worker had already stored a result; fixture handshake must define an explicit interrupt point.",
+        "Apache abort-recovery path returns PURGE_QUEUE then abort-required OUT_OF_ORDER_SEQUENCE_NUMBER on its first small recovery record. Independent C API probe reproduces it without Haskell or test interposers.",
+        "31 retained environment bytes are RDKAFKA_TEST_NATIVE_LIFETIME=1, created by Haskell setEnv/putenv; next heap cohort provides the flag externally instead of suppressing an allocation."
+      ],
+      "artifacts": {
+        "native-phase5.54289.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/native-phase5.54289.log",
+          "sha256": "1ff9de6272d75f19f03a24bd72eb3610a73b294203c21adbc3cffe4eb0f2f71b"
+        },
+        "native-phase5.54470.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/native-phase5.54470.log",
+          "sha256": "09dd094ec398ef23b14816d2aabdfa44bac520fd3e4acd7a966325883917d14f"
+        },
+        "native-phase5.54302.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/native-phase5.54302.log",
+          "sha256": "19d63b73e78c2979e3982ccf0aa7993aaec579cda05cec3c0338fbda2ae06e46"
+        },
+        "native-phase5.55633.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/native-phase5.55633.log",
+          "sha256": "889e3d084e244c52b90a5cfe9972f29edb1b2f9c4ed5a85a4dcd2d000e6686fc"
+        },
+        "native-phase5.56955.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/native-phase5.56955.log",
+          "sha256": "50c086a03468e58b5e9a1b5feb70b28157745661345dffd626fee200b8e734d4"
+        },
+        "native-phase5.54402.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/native-phase5.54402.log",
+          "sha256": "bae84b013bb96aa386406ed1fca149fef407fa5ee64450499605c08e08efddde"
+        },
+        "native-phase5.54374.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/native-phase5.54374.log",
+          "sha256": "eaf812713e5b4080747ca471c10e23ed0f617ab1282b3b90ecc66408d375b82a"
+        },
+        "native-phase5.54558.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/native-phase5.54558.log",
+          "sha256": "0d7d311e98837dadf039c301a3e3555012ca6cc7ae5aed1c417dc433db359a64"
+        },
+        "native-phase5.54346.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/native-phase5.54346.log",
+          "sha256": "c7b0dfd11351870cdede662c26049d2eb8423cb505007d0c288020baa1e61d0f"
+        },
+        "native-phase5.56977.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/native-phase5.56977.log",
+          "sha256": "0a6ae6a8ac87ced7b93d0c0138f60df9a1c27a577370c8f5c7a974b0772791ae"
+        },
+        "native-phase5.54431.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/native-phase5.54431.log",
+          "sha256": "15ced8329395c7b33cf620ffa9504a6ea55f6c341289b25ed30355f819b8c5b6"
+        },
+        "native-phase5.54326.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/native-phase5.54326.log",
+          "sha256": "bf04c98c0d8286f413068be0ec423d267553ad119406dd1e8dcfc2fa6b69e982"
+        },
+        "native-phase5.54450.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/native-phase5.54450.log",
+          "sha256": "b274f53115c62fbcca424718a34f0c565bac54651697b1b3ed19a96e7096f632"
+        },
+        "native-phase5.55610.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/native-phase5.55610.log",
+          "sha256": "ea71d6504459718e55e5a8fe4d50c00f0fc5fd2ade54d50bc9ea45f8bd9a8364"
+        },
+        "native-phase5.54490.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/native-phase5.54490.log",
+          "sha256": "eaace94dd5eba3bd1e1f1090c3aeb335d07e81c32afa7438bc51dbbc991c8a30"
+        },
+        "isolate-lifecycle.59405.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/isolate-lifecycle.59405.log",
+          "sha256": "8295567961f0deb9d4a777dac10da4091fd0902f15c160cd009b0f68c92f22d5"
+        },
+        "isolate-lifecycle.59363.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/isolate-lifecycle.59363.log",
+          "sha256": "7721c4ec46fbdd594702fd5117fb62147466888b036adc417382e8669ed9e894"
+        },
+        "isolate-lifecycle.60694.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/isolate-lifecycle.60694.log",
+          "sha256": "93e9e48cea94ec805c624f8f6125a68536fa48f4b12e53073389d3b28dc7dc64"
+        },
+        "isolate-lifecycle.59348.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/isolate-lifecycle.59348.log",
+          "sha256": "280ba3cac72a7ee78589383ff788afbcce7958af1e36df0385246f2826a41417"
+        },
+        "isolate-messages.58561.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/isolate-messages.58561.log",
+          "sha256": "343d35a8a013cea36c874648d00d06f05fdfe489ffa490d04002b9761fc7f50c"
+        },
+        "isolate-lifecycle.60241.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/isolate-lifecycle.60241.log",
+          "sha256": "5bf87ffa48f287ce56a54bef0d636e87d7ec9f9115f21f031e043074b24a41a0"
+        },
+        "isolate-lists.59019.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/isolate-lists.59019.log",
+          "sha256": "d21ea314cfb41a7b915aa52ed819649c9dd54c51430166a5f7e1866dce032817"
+        },
+        "isolate-lifecycle.60281.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/isolate-lifecycle.60281.log",
+          "sha256": "014a87d2f379ecea749f5b69b7dfef9e532d40149f1c46885e55fe668d8daac6"
+        },
+        "isolate-metadata.58456.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/isolate-metadata.58456.log",
+          "sha256": "72b2fd39e174769390708b5a6f10655b6cdbd061c84ada04367e3097216c137a"
+        },
+        "isolate-external-transactions.62344.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/isolate-external-transactions.62344.log",
+          "sha256": "bbe825949243755b215aee777979aec9d3af17c06a4181c777fe65330076a5c5"
+        },
+        "isolate-diagnostics.58502.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/isolate-diagnostics.58502.log",
+          "sha256": "9f7f761c2f4e31b5a4e29e69ea497679d2305e45de1fd8b82a0878189e31e1a2"
+        },
+        "isolate-transactions.57081.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/isolate-transactions.57081.log",
+          "sha256": "73cb0ba634b1f15fe30de275bb78dcd3a527e27e12d49d22df96a831d700ccbf"
+        },
+        "isolate-producer.57837.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/isolate-producer.57837.log",
+          "sha256": "9198f653f10e5778af5e1d36d1c9a8462c2897d9cfce83179e117b836b403215"
+        },
+        "isolate-producer.57765.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/isolate-producer.57765.log",
+          "sha256": "250f65a3ec6d0ad66f7b2c0e69118ef41b2cd209b69d2d2b365de3dbc5ccdba9"
+        },
+        "isolate-lifecycle.60221.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/isolate-lifecycle.60221.log",
+          "sha256": "a34b72f4779a76b55e0aedb6ed39204ddfbb7c022f73b1988872ca7bd23f77c0"
+        },
+        "isolate-metadata.58389.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/isolate-metadata.58389.log",
+          "sha256": "b218b7841a36d20130f0182920c26401e6a43f7b8118950e149101f5223c40f8"
+        },
+        "isolate-lifecycle.59453.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/isolate-lifecycle.59453.log",
+          "sha256": "136a0f762453d550061bb5f6d945b947377a09afbe7d9fbfca24c81e0de3e0a9"
+        },
+        "isolate-producer.57815.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/isolate-producer.57815.log",
+          "sha256": "8d09079cd2986c7db8aa568c096af9e31c58868c7f63d7c6bba34f598002accf"
+        },
+        "isolate-metadata.58275.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/isolate-metadata.58275.log",
+          "sha256": "d8b50d15af85fdbdb36c984a1976ed5de56a4ec6e4ed8a0d17226abb77110928"
+        },
+        "isolate-lifecycle.59426.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/isolate-lifecycle.59426.log",
+          "sha256": "abc5311a0135013f494a6e14a08c139f99b03b6afd85896251e14d255a158ffe"
+        },
+        "isolate-lifecycle.60261.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/isolate-lifecycle.60261.log",
+          "sha256": "168a701aa1cc75720e08bdb3330ca8b6016ccedfb6ee96a892c5f215c17173a2"
+        },
+        "isolate-lifecycle.59385.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/isolate-lifecycle.59385.log",
+          "sha256": "d5fa6f375e3036e7e3754e73b5eb13a48ea06c36879abe30e45eb8f71a0885bc"
+        },
+        "native-phase5.stdout": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/native-phase5.stdout",
+          "sha256": "ddf3389e4d786c804fd3420d917ed87ef859cc57f91404cc544226f9a7d067cd"
+        },
+        "native-phase5-command.json": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/native-phase5-command.json",
+          "sha256": "4a3afd041d6ed5eb0b5d03e6334783aff35a14c4bd8e8d68d4c32b0528278b04"
+        },
+        "native-phase5-tests.json": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/native-phase5-tests.json",
+          "sha256": "bfc155dd99daabf5a6cd53f56cc771bcafee3a7ec1505806bb54ef68a47ba438"
+        },
+        "native-isolate-progress.log": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/native-isolate-progress.log",
+          "sha256": "caddaa7b6230dd3446bf4b0f55b1805131343a00739ee0894b63a26b7a28af46"
+        },
+        "native-isolate-results.json": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/native-isolate-results.json",
+          "sha256": "b33cc0a95a64bc42c66c0b8241f1396e9e6463964a7a5d9fe955454e4f6339ea"
+        },
+        "trace31.c": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/trace31.c",
+          "sha256": "4a69e06daf876ee4ede244dfc459aeee62d8ab65fd9bc8c82587c9c5b5bd188e"
+        },
+        "trace31.stdout": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/trace31.stdout",
+          "sha256": "5e30339161d4d0669c82c6627aa1c8f7a8a97be3611fd925f30e8cae6b7d3582"
+        },
+        "ghc914-Environment.hs": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/ghc914-Environment.hs",
+          "sha256": "7d815aa6f55e3b93e057506ebdf45824a331369b3c6630575d6de85a76c72863"
+        },
+        "TxProbe.c": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/TxProbe.c",
+          "sha256": "ece677f4d542ff4bf6b242b30a79976ec7048d7bfdb342bedd0fae3b6afabb8e"
+        },
+        "tx-c-probe-recovery.stdout": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/tx-c-probe-recovery.stdout",
+          "sha256": "69e00b25f7c6e95bbc7630378453d05ce8abf6af0deb07c2167a0ba33f5e01ab"
+        },
+        "kafka440-features.txt": {
+          "path": "dist-compatibility/owned-fixture-checkpoint/kafka440-features.txt",
+          "sha256": "ae488e65d55150668e17b768cca3ee4bbda5fb44a77a534b201d5c177b15e3a9"
+        }
+      }
+    }
   }
 }

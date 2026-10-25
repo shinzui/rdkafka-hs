@@ -1,0 +1,287 @@
+{
+  "status": "passed: clean source archive authentication, TLS, ACL, reconnect and automated interruption qualification",
+  "environment": {
+    "os": "Ubuntu 24.04.5 LTS aarch64",
+    "ghc": "9.14.1",
+    "cabal": "3.16.1.0",
+    "native": "2.16.0",
+    "native_sha256": "e4ebf0b82581b51a86a0d861a90c07004b0b1fec67ab71e409b572594846154f",
+    "broker": "Apache Kafka 4.4.0",
+    "mechanism": "SASL PLAIN over verified TLS",
+    "endpoint_verification": "https; generated CA; localhost SAN; verification never disabled",
+    "topology": "One owned Apache broker/controller. Separate internal loopback health/controller listener; explicit secure public listener used by all authentication clients."
+  },
+  "source": {
+    "candidate_fingerprint": "abbf4e69f7806356c083acb0bb163c3e24f1fc7b4b1b5d78d1f469b0653a8993",
+    "execution_fingerprint": "2571e68979f3fd59c2b2e85c07c8e986787de49042d4b7645b59b17ea240cf49",
+    "revision": "e29e2f7 plus captured uncommitted source",
+    "archive": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/candidate-phase5.tar.gz",
+      "sha256": "07b996694a93bd7fd1a19d649a64c7456adc0522adc66b5d31919b232a5d7167"
+    },
+    "root_file_inventory": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/root-fingerprint-files.json",
+      "sha256": "4e82164f2a0fa9c56a85c2372aaa78eb79185770a0fe22f7e94cdb8a8bda9821"
+    },
+    "archive_file_inventory": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/phase5-fingerprint-files.json",
+      "sha256": "479ad262d71dd40d6edfd9c1db3069744b8e26898f8d1f588d2db08cde38bda2"
+    },
+    "archive_comparison": {
+      "changed_files": [],
+      "added_files": [],
+      "omitted_development_files": [
+        ".envrc",
+        "flake.lock",
+        "flake.module.nix",
+        "flake.nix",
+        "justfile",
+        "nix/haskell.nix",
+        "nix/pre-commit.nix",
+        "nix/redpanda.nix",
+        "nix/treefmt.nix"
+      ]
+    },
+    "configuration_sha256": "029db047ce9030f57c90485d05305cee35c9031f2651304434c226d586fcb653"
+  },
+  "results": {
+    "authentication_cases": 17,
+    "primary_setter_cases": 7,
+    "compiled_credential_mutations": 4,
+    "mutation_control_cases": 7,
+    "mutation_manifest": {
+      "path": "dist-mutations/20261025T010428Z-credentials-39063-0/results.json",
+      "sha256": "5aa5d6b7833f9f5c2405218e4cc90ba7f43a4cf5d656636932495ccf5b4fa795",
+      "fingerprint": "3849c13e1816569ebea01785af4a0d074f2e5d891df13313d8016a340dd63f44"
+    },
+    "outcomes": [
+      "Exact authenticated delivery, complete records and committed next offset in async/sync modes",
+      "Exact AUTHENTICATION for wrong passwords and SSL for missing CA or hostname mismatch; producer delivery ultimately MSG_TIMED_OUT",
+      "Topic ACL permits Describe but denies Read/Write, yielding exact TOPIC_AUTHORIZATION_FAILED",
+      "Denied group FindCoordinator is audited by the broker and native synchronous commit returns WAIT_COORD; 6-second session limit",
+      "Exact topic creation authorization error and allowed administration by ephemeral admin",
+      "Invalid replacement is observed after owned broker restart, then corrected second identity performs its exclusive topic action; producer and both consumer modes",
+      "NUL username/password rejected before native setter; real native errors destroyed once during ordinary return and pending acquisition/decoder cancellation"
+    ],
+    "tests": [
+      "authentication-contract.verified TLS authenticated delivery and exact consume/commit in both modes",
+      "authentication-contract.authenticated identity without topic ACL receives exact produce denial",
+      "authentication-contract.invalid-password producer reports the exact connection failure and no delivery",
+      "authentication-contract.untrusted-CA producer reports the exact connection failure and no delivery",
+      "authentication-contract.hostname-mismatch producer reports the exact connection failure and no delivery",
+      "authentication-contract.invalid-password async consumer reports the exact connection failure",
+      "authentication-contract.invalid-password sync consumer reports the exact connection failure",
+      "authentication-contract.untrusted-CA async consumer reports the exact connection failure",
+      "authentication-contract.untrusted-CA sync consumer reports the exact connection failure",
+      "authentication-contract.hostname-mismatch async consumer reports the exact connection failure",
+      "authentication-contract.hostname-mismatch sync consumer reports the exact connection failure",
+      "authentication-contract.async exact topic/group/admin authorization denials",
+      "authentication-contract.sync exact topic/group/admin authorization denials",
+      "authentication-contract.producer credential replacement authenticates a new identity after observed reconnect and recovers from invalid replacement",
+      "authentication-contract.async consumer credential replacement authenticates after observed reconnect and recovers from invalid replacement",
+      "authentication-contract.sync consumer credential replacement authenticates after observed reconnect and recovers from invalid replacement",
+      "authentication-contract.interruption destroys owned secure processes, credentials, ACL state and private keys"
+    ],
+    "clean_archive_command": [
+      "rdkafka-hs-integration",
+      "--authentication-qualification"
+    ]
+  },
+  "cleanup": {
+    "normal": "Owned Java exited, broker state and credential/JAAS files removed; retained textual logs checked against generated passwords",
+    "interrupted_prototype": "Run-owned VM became unresponsive with concurrent diagnostic/distributed workloads. Only that VM was restarted; prototype secrets/data removed and retained logs sanitized. Interrupted scenarios are not accepted.",
+    "remaining": [],
+    "interruption": "The final case creates an independently owned authenticated secure fixture, cancels its active bracket, observes ThreadKilled, and asserts all owned process handles exited and secret/config/data directories were removed."
+  },
+  "mechanisms": {
+    "PLAIN": "tested with TLS, ACLs and reconnect",
+    "SCRAM-SHA-256/SCRAM-SHA-512": "No mechanism-specific support promise in README/public Haddock; property maps pass native configuration through. Not claimed tested by this checkpoint.",
+    "GSSAPI/OAUTHBEARER": "No project implementation or support promise; outside the username/password setter qualification."
+  },
+  "artifacts": {
+    "candidate-phase4.tar.gz": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/candidate-phase4.tar.gz",
+      "sha256": "dc5c41a11cac52b49499d7a07e63c7a19c19e24526a34f620820c95bdf0806b8"
+    },
+    "security-current.tar": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/security-current.tar",
+      "sha256": "486f90a0cb0933de71ed7d7747dc6017e69f96c46c66650c0b91c84060cfe26e"
+    },
+    "security-policy.tar": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/security-policy.tar",
+      "sha256": "7765655f2b4783d5943c6aef86f62890bec26acfa88c7c8cba9857b7f21c1ed2"
+    },
+    "security-policy-build.log": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/security-policy-build.log",
+      "sha256": "7d5b7edb43e7c5fec848613cafeedc33d85ba379a08a9631265393aca4aa72b0"
+    },
+    "security-policy.log": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/security-policy.log",
+      "sha256": "86fcfd19ffe9f5cfa9b8f366e26d94fbe5c186d85828d7fc47ac395a6fa5e84a"
+    },
+    "security-policy-fingerprint.txt": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/security-policy-fingerprint.txt",
+      "sha256": "d4f30d1f8ee1db854e25ee0dc24c26956db705fea5ccfce4e0e99dd576386f63"
+    },
+    "security-policy-source-hashes.txt": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/security-policy-source-hashes.txt",
+      "sha256": "af512a813cda384c18aa94a6d04aa82d3642ae7c4435f1bc2df04b3f57fd67ba"
+    },
+    "security-policy-cleanup.txt": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/security-policy-cleanup.txt",
+      "sha256": "c61ecc0ace7c1ea9b3c58333a7fe9d871fea828c3f79de0b4ef8c901e585976d"
+    },
+    "security-policy-process-cleanup.txt": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/security-policy-process-cleanup.txt",
+      "sha256": "72dfa2a664784e9e0959c0c8b820ea8ccfb2bda33afb6e606f5d2bbabe666157"
+    },
+    "security-policy-ldd.txt": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/security-policy-ldd.txt",
+      "sha256": "b9f2442e48a14f37fb7c0038f1bcdff5db7de01aaa27e6d92145c24dac7e1f36"
+    },
+    "broker-policy.log": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/broker-policy.log",
+      "sha256": "bf13d5b8e73c44c17788214b953afcc4e21d17dc06724011ce2885077f92d7b1"
+    },
+    "permanent-broker.log": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/permanent-broker.log",
+      "sha256": "e1c106d4035053ed8469d832a752cc5a1f492870598064e56f4b8dcb495ba3c4"
+    },
+    "permanent-auth.log": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/permanent-auth.log",
+      "sha256": "36d380e36186348986ff3f93d235fea5882d2dc993e50686ee44e45eadaf1e1d"
+    },
+    "RtsBaseline.hs": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/RtsBaseline.hs",
+      "sha256": "667b93357c3b851e3b4944dc2d8400540580440be59d5b75e9e6a12eb546e585"
+    },
+    "rts-baseline.log": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/rts-baseline.log",
+      "sha256": "b853dc070bcd72d34eba8d220959b39b619086318aed79a6f890fdbb870326b9"
+    },
+    "rts-baseline-suppressed.log": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/rts-baseline-suppressed.log",
+      "sha256": "7a20a2b619bce7ac929f70b7db4225cc3013298d3a0651511ba6397552cbf4a5"
+    },
+    "ghc914-IOManager.c": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/ghc914-IOManager.c",
+      "sha256": "75b19a43809b3155ba6265c6c4bc73fab86ddfed4d17312ce5422fe4227714dc"
+    },
+    "ghc914-rts.supp": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/ghc914-rts.supp",
+      "sha256": "c9b04b1b79da557d62a4183c4108a636646feadb4f025ff4439ae026121e48f4"
+    },
+    "native-diagnostic-exports.diff": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/native-diagnostic-exports.diff",
+      "sha256": "ff6312086bba73e0e6891060f48f02540b38174dbcbc26c080b12b8655bceafb"
+    },
+    "diagnostic-export-symbols.txt": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/diagnostic-export-symbols.txt",
+      "sha256": "b959a9d7f9aab8245708a13d9d605c7e32b01930ecc91372f5d848094830f873"
+    },
+    "native-full.stdout": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/native-full.stdout",
+      "sha256": "d9a93a21c5b34100767a43ea4eb4074330d3f80f9c9215a9731631d57cb2828d"
+    },
+    "native-phase4.stdout": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/native-phase4.stdout",
+      "sha256": "03686ed592108efc49b895798d98c38183bda1ad68f4662396ff9a04cbb465d9"
+    },
+    "auth-variants-restart.log": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/auth-variants-restart.log",
+      "sha256": "a80f767b754629d8d1bdfc85a53fa2069f46db5b823eca27239aac36e9225e87"
+    },
+    "security-current.log": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/security-current.log",
+      "sha256": "bced9033bd01f585405853d666130fc890185995f77a9e9475ea874203ab1b91"
+    },
+    "security-describe.log": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/security-describe.log",
+      "sha256": "3f0b2f8730d3adc5beaa336d5bc3b5361181dc9ccb22b2624bb58ab6a4d42893"
+    },
+    "sasl-before": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/sasl-before.log",
+      "sha256": "53377a7555c0993829a5df8bf6fdcf8078477dab95c86d39bf80d1f30f305a42"
+    },
+    "sasl-acquire-before": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/sasl-acquire-before.log",
+      "sha256": "4554a90b12ecd6373a23720e93fa513fffa17dd8418bc778c4864002cabefd32"
+    },
+    "sasl-after": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/sasl-after.log",
+      "sha256": "79cbdc9f157beff14f68d77fa376d59d0b3d0579840670a1dea6eabcc0ed0055"
+    },
+    "candidate-phase5.tar.gz": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/candidate-phase5.tar.gz",
+      "sha256": "07b996694a93bd7fd1a19d649a64c7456adc0522adc66b5d31919b232a5d7167"
+    },
+    "phase5-build.log": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/phase5-build.log",
+      "sha256": "e2cb907393ef68a061bbd2bbb2406a369de8edf14678681b69f75042d4da1b4a"
+    },
+    "phase5-fingerprint.txt": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/phase5-fingerprint.txt",
+      "sha256": "11f543eac0f314bd059eed35c4e325d0ab07d4aa131424287bc3ebadaefcf66e"
+    },
+    "phase5-fingerprint-files.json": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/phase5-fingerprint-files.json",
+      "sha256": "479ad262d71dd40d6edfd9c1db3069744b8e26898f8d1f588d2db08cde38bda2"
+    },
+    "root-fingerprint-files.json": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/root-fingerprint-files.json",
+      "sha256": "4e82164f2a0fa9c56a85c2372aaa78eb79185770a0fe22f7e94cdb8a8bda9821"
+    },
+    "phase5-normal-ldd.txt": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/phase5-normal-ldd.txt",
+      "sha256": "ab1041dc9d2c9d876d269ca135985451af58aa02ac61b754d8f706a2363900c3"
+    },
+    "security-phase5.log": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/security-phase5.log",
+      "sha256": "79d2d93b7ec51860ef21c0947fe4993f94a513c63e6cb84f6881b5bbea4c8810"
+    },
+    "security-phase5-tests.txt": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/security-phase5-tests.txt",
+      "sha256": "e011f6a1ed4544904bc4117ebdd30e85339b33c096b3d0619bbff506f5e2e893"
+    },
+    "security-phase5-cleanup.txt": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/security-phase5-cleanup.txt",
+      "sha256": "e5881de7257c9d5594697bdc4ad6628ca1c54b2ee1ddda0fa84b5b76a8f2b4b0"
+    },
+    "broker-phase5.log": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/broker-phase5.log",
+      "sha256": "172c7b476e1e4868a75c17a54226fa1f4c2b57a3e05ce2bd7c58b15f746a4570"
+    },
+    "broker-phase5-tests.txt": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/broker-phase5-tests.txt",
+      "sha256": "506f5bff1a6a34e7b328321480bb5cb7fc97cfee2ca1c7864dd270e0a37e50a4"
+    }
+  },
+  "historical_incremental_source": {
+    "execution": "sdist extraction plus explicit incremental overlays; final clean archive replay still required",
+    "fingerprint": "35f44f61ae9c18f7e7e0e085f3258081e1d391fc2c934c9bf112a64ab0d8cf00",
+    "root_current_fingerprint": "d8c7d0519912a75a841fe905d68d35f7a0f021d29b666c77cb169ff4ce2835af",
+    "qualification_overlays": [
+      "candidate-phase4.tar.gz",
+      "security-current.tar",
+      "security-policy.tar"
+    ],
+    "source_hashes": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/security-policy-source-hashes.txt",
+      "sha256": "af512a813cda384c18aa94a6d04aa82d3642ae7c4435f1bc2df04b3f57fd67ba"
+    }
+  },
+  "test_configuration": {
+    "mode": "--authentication-qualification",
+    "callback_modes": [
+      "async",
+      "sync"
+    ],
+    "SASL": "PLAIN",
+    "security_protocol": "SASL_SSL",
+    "TLS_hostname_verification": "https",
+    "server_SAN": "DNS:localhost",
+    "credentials": "ephemeral, local private files only",
+    "authorization": "Separate original/replacement writer/reader ACLs; Describe-only denied identity; group denial audited at FindCoordinator; admin allow/deny",
+    "cleanup": "Owned ProcessHandles stopped, broker state/JAAS/passwords/private keys removed, retained textual logs scanned for generated passwords"
+  }
+}

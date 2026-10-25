@@ -1,9 +1,16 @@
 module Main (main) where
 
+import Control.Concurrent (threadDelay)
+import Control.Exception (finally)
+import Foreign.C.Types (CInt (..))
+import Kafka.Compatibility.KafkaFixture qualified as KafkaFixture
+import Kafka.Compatibility.SecurityFixture qualified as SecurityFixture
 import Kafka.FixtureSupportTest qualified as FixtureSupportTest
 import Kafka.Integration.AssignOnlyTest qualified as AssignOnlyTest
 import Kafka.Integration.AttributedErrorTest qualified as AttributedErrorTest
+import Kafka.Integration.AuthenticationTest qualified as AuthenticationTest
 import Kafka.Integration.BatchTest qualified as BatchTest
+import Kafka.Integration.BrokerFailureTest qualified as BrokerFailureTest
 import Kafka.Integration.CallbackLifetimeTest qualified as CallbackLifetimeTest
 import Kafka.Integration.ConfigurationTest qualified as ConfigurationTest
 import Kafka.Integration.ConsumerPropertyTest qualified as ConsumerPropertyTest
@@ -24,20 +31,40 @@ import Kafka.Integration.TopicConfigurationTest qualified as TopicConfigurationT
 import Kafka.Integration.TopicTest qualified as TopicTest
 import Kafka.Integration.TransactionErrorTest qualified as TransactionErrorTest
 import Kafka.TestEnv (checkBrokerReachable, newTestEnv, resolveBrokers)
-import System.Environment (getArgs, lookupEnv)
+import System.Environment (getArgs, lookupEnv, setEnv, withArgs)
 import System.Exit (die)
-import Test.Tasty (DependencyType (AllFinish), defaultMain, dependentTestGroup, localOption, mkTimeout, testGroup)
+import System.Mem (performGC)
+import System.Timeout (timeout)
+import Test.Tasty (DependencyType (AllFinish), defaultMain, dependentTestGroup, localOption, mkTimeout, testGroup, withResource)
 import Test.Tasty.Runners (NumThreads (..))
 
 main :: IO ()
-main =
+main = do
+  nativeLifetime <- lookupEnv "RDKAFKA_TEST_NATIVE_LIFETIME"
+  if nativeLifetime == Just "1" then dispatch `finally` quiesceNativeClients else dispatch
+
+dispatch :: IO ()
+dispatch =
   getArgs >>= \case
     ["--producer-callback-probe", mode] -> ProducerRegressionTest.runCallbackProbe mode
     ["--lifetime-callback-probe", kind, label] -> CallbackLifetimeTest.runThrowingProbe kind label
     ["--rebalance-error-probe", protocol, operation, poll, failure] -> PublicConsumerContractTest.runRebalanceProbe protocol operation poll failure
     ["--metadata-cancellation-probe", kind] -> MetadataContractTest.runCancellationProbe kind
     ["--callback-lifetime-native-control"] -> CallbackLifetimeTest.runInvalidAccessControl
+    "--native-lifetime" : args -> setEnv "RDKAFKA_TEST_NATIVE_LIFETIME" "1" >> withArgs args main
+    "--broker-qualification" : args -> withArgs args brokerMain
+    "--authentication-qualification" : args -> withArgs args authenticationMain
     _ -> integrationMain
+
+brokerMain :: IO ()
+brokerMain =
+  defaultMain . localOption (NumThreads 1) . localOption (mkTimeout 120000000) $
+    withResource KafkaFixture.createKafkaFixture KafkaFixture.destroyKafkaFixture BrokerFailureTest.tests
+
+authenticationMain :: IO ()
+authenticationMain =
+  defaultMain . localOption (NumThreads 1) . localOption (mkTimeout 120000000) $
+    withResource SecurityFixture.createSecurityFixture SecurityFixture.destroySecurityFixture AuthenticationTest.tests
 
 integrationMain :: IO ()
 integrationMain = do
@@ -78,3 +105,16 @@ integrationMain = do
             TopicTest.tests env
           ]
       ]
+
+foreign import ccall safe "rd_kafka_wait_destroyed" waitDestroyed :: CInt -> IO CInt
+
+-- Heap diagnostics must observe completed native destruction, including clients
+-- whose managed Haskell wrappers became unreachable at the end of a test.
+-- This mode never suppresses findings or treats a shutdown timeout as success.
+quiesceNativeClients :: IO ()
+quiesceNativeClients = do
+  let drain = do
+        performGC
+        result <- waitDestroyed 100
+        if result == 0 then pure () else threadDelay 10000 >> drain
+  timeout 10000000 drain >>= maybe (die "native clients did not quiesce before heap diagnostics") pure

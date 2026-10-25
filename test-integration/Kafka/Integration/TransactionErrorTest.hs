@@ -87,7 +87,8 @@ tests testEnv =
                if operation == "offset" then metadataBalanced else pure ()
          | operation <- operations
          ]
-      <> [ testCase (operation <> " copies native flag combination " <> show bits <> " before destruction") $
+      <> [ testCase (operation <> " copies native flag combination " <> show bits <> " before destruction") $ do
+             when (bits /= 0) requireNativeFlagDiagnostics
              withClients testEnv ("flags-" <> operation <> show bits) $ \producer consumer -> withTxFault (100 + bits) $ do
                result <- if operation == "commit" then T.commitTransaction producer (C.Timeout 1000) else T.commitOffsetMessageTransaction producer consumer dummy (C.Timeout 1000)
                checkTx C.RdKafkaRespErrState (odd bits, odd (bits `div` 2), odd (bits `div` 4)) result

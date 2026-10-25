@@ -1,7 +1,7 @@
 {
   "status": "partial source audit; reachable branches and historical seek remain open",
   "baseline_fingerprint": "060dade4e8a9c764dabee54df3030fa6d857be3ea1404a2bc680a45ddadd5e4e",
-  "proof_boundary": "Exact module/line/label keys only. Production src bytes still match the accepted primary candidate. Unforced private field conversions and discarded unit literals do not exempt native IO reads, allocation, cleanup or error paths.",
+  "proof_boundary": "Exact module/line/label keys only. Original audited production bytes match checkpoint e29e2f7; later exact-line/source-hash renewals are recorded in coverage-classification-remap.json. Unforced private field conversions and discarded unit literals do not exempt native IO reads, allocation, cleanup or error paths.",
   "keys": [
     "Kafka.Consumer:866:ExpBox False",
     "Kafka.Consumer:870:ExpBox False",
@@ -36,5 +36,86 @@
     "Kafka.Internal.Shared:171:BinBox GuardBinBox False",
     "Kafka.Producer:290:BinBox GuardBinBox False",
     "Kafka.Producer:158:ExpBox False"
+  ],
+  "continuations": [
+    {
+      "status": "precise source-backed applicability additions; full coverage still required",
+      "keys": [
+        "Kafka.Consumer.Convert:170:ExpBox True",
+        "Kafka.Dump:82:ExpBox False",
+        "Kafka.Dump:82:ExpBox True",
+        "Kafka.Internal.RdKafka:323:ExpBox False",
+        "Kafka.Internal.RdKafka:382:ExpBox False",
+        "Kafka.Internal.RdKafka:427:ExpBox False",
+        "Kafka.Internal.RdKafka:459:ExpBox False",
+        "Kafka.Internal.RdKafka:474:ExpBox False",
+        "Kafka.Internal.RdKafka:1127:ExpBox False",
+        "Kafka.Internal.RdKafka:1444:BinBox CondBinBox True",
+        "Kafka.Internal.RdKafka:1445:ExpBox False",
+        "Kafka.Internal.RdKafka:1445:ExpBox True",
+        "Kafka.Topic:65:ExpBox True",
+        "Kafka.Topic:66:ExpBox False",
+        "Kafka.Topic:107:ExpBox False",
+        "Kafka.Topic:107:ExpBox True",
+        "Kafka.Topic:114:ExpBox False",
+        "Kafka.Topic:114:ExpBox True",
+        "Kafka.Topic:196:ExpBox False",
+        "Kafka.Internal.Shared:103:ExpBox False",
+        "Kafka.Internal.Shared:103:TopLevelBox [\"maybeToLeft\"]",
+        "Kafka.Internal.Shared:148:ExpBox False",
+        "Kafka.Internal.Shared:148:ExpBox True"
+      ],
+      "native_sources": {
+        "v215-admin.c": {
+          "project": "mori://confluentinc/librdkafka",
+          "version": "2.15.0",
+          "project_relative_path": "src/rdkafka_admin.c",
+          "artifact_uri": "source-artifact URI pending",
+          "path": "dist-compatibility/owned-fixture-checkpoint/v215-admin.c",
+          "sha256": "8ed0e410007040262668e3b7b83dacf69241a8184ba174e7d32ab1d9dd4b1179"
+        },
+        "v215-conf.c": {
+          "project": "mori://confluentinc/librdkafka",
+          "version": "2.15.0",
+          "project_relative_path": "src/rdkafka_conf.c",
+          "artifact_uri": "source-artifact URI pending",
+          "path": "dist-compatibility/owned-fixture-checkpoint/v215-conf.c",
+          "sha256": "7464c3e6fa9a95fb9618d9b7b3117693cf08b972042a880dd23eb25c9d8f1fba"
+        },
+        "v215-header.c": {
+          "project": "mori://confluentinc/librdkafka",
+          "version": "2.15.0",
+          "project_relative_path": "src/rdkafka_header.c",
+          "artifact_uri": "source-artifact URI pending",
+          "path": "dist-compatibility/owned-fixture-checkpoint/v215-header.c",
+          "sha256": "c82403e08653d0d19b39b5740a9477a838575361eab3c83451effaa809bf2175"
+        },
+        "v216-admin.c": {
+          "project": "mori://confluentinc/librdkafka",
+          "version": "2.16.0",
+          "project_relative_path": "src/rdkafka_admin.c",
+          "artifact_uri": "source-artifact URI pending",
+          "path": "dist-compatibility/owned-fixture-checkpoint/v216-admin.c",
+          "sha256": "266e0ecabac608c165ec51cb97efe23ccf821cb34adcbfbd42bf61a5c9517fc8"
+        },
+        "v216-conf.c": {
+          "project": "mori://confluentinc/librdkafka",
+          "version": "2.16.0",
+          "project_relative_path": "src/rdkafka_conf.c",
+          "artifact_uri": "source-artifact URI pending",
+          "path": "dist-compatibility/owned-fixture-checkpoint/v216-conf.c",
+          "sha256": "7464c3e6fa9a95fb9618d9b7b3117693cf08b972042a880dd23eb25c9d8f1fba"
+        },
+        "v216-header.c": {
+          "project": "mori://confluentinc/librdkafka",
+          "version": "2.16.0",
+          "project_relative_path": "src/rdkafka_header.c",
+          "artifact_uri": "source-artifact URI pending",
+          "path": "dist-compatibility/owned-fixture-checkpoint/v216-header.c",
+          "sha256": "c82403e08653d0d19b39b5740a9477a838575361eab3c83451effaa809bf2175"
+        }
+      },
+      "method": "Inspect exact missed HPC spans and all repository callers; verify native constructor/dump/header guarantees independently against released 2.15.0 and 2.16.0 source. Arbitrary rebalance errors remain open because the native header explicitly permits them."
+    }
   ]
 }

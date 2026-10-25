@@ -46,10 +46,13 @@ import Kafka.Types (Headers, KafkaError (..), Millis (..), PartitionId (..), Tim
 -- | Replace a client's SASL username and password
 -- (@rd_kafka_sasl_set_credentials@).
 setSaslCredentials' :: (HasKafka a) => a -> Text -> Text -> IO (Maybe KafkaError)
-setSaslCredentials' a username password =
-  let Kafka k = getKafka a
-   in kafkaErrorToMaybe . KafkaResponseError
-        <$> rdKafkaSaslSetCredentials k (Text.unpack username) (Text.unpack password)
+setSaslCredentials' a username password
+  | Just err <- validateCStringInput "SASL username" username = pure (Just err)
+  | Just err <- validateCStringInput "SASL password" password = pure (Just err)
+  | otherwise =
+      let Kafka k = getKafka a
+       in kafkaErrorToMaybe . KafkaResponseError
+            <$> rdKafkaSaslSetCredentials k (Text.unpack username) (Text.unpack password)
 
 pollEvents :: (HasKafka a) => a -> Maybe Timeout -> IO ()
 pollEvents a tm =

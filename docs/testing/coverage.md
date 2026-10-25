@@ -104,3 +104,38 @@ subscription errors, partial topic acquisition, constructor cleanup, complete
 batch order and live producer log level. The log-level assertion reads the actual
 native client at enqueue. `dumpKafkaConf` reads the retained construction
 configuration, so its `log_level` can differ from a subsequent native setter.
+
+Expanded qualification uses explicit executable modes. With a released Apache
+distribution, Java and OpenSSL available, run:
+
+```bash
+export RDKAFKA_TEST_KAFKA_HOME=/path/to/apache-kafka
+cabal run rdkafka-hs-integration -f integration -- --broker-qualification
+cabal run rdkafka-hs-integration -f integration -- --authentication-qualification
+```
+
+These modes create and destroy their own broker processes and ephemeral ports;
+missing prerequisites fail. Ordinary primary tests still use their private
+Redpanda. The shared fixture owns processes; the security extension owns
+ephemeral CA/keys, identities, TLS settings and ACLs. No credentials belong in
+logs or evidence. [Authentication evidence](authentication-evidence.json) records
+its incremental behavioral checkpoint and remaining clean/interruption gates.
+
+`--native-lifetime` wraps any selected executable mode with bounded Haskell GC
+and native client-destruction drain. Child probes inherit that mode through
+`RDKAFKA_TEST_NATIVE_LIFETIME`. A timeout fails; nothing is silently suppressed.
+The transaction flag controls additionally need a diagnostic native build that
+exports `rd_kafka_error_set_fatal`, `rd_kafka_error_set_retriable` and
+`rd_kafka_error_set_txn_requires_abort`. Standard Linux symbol maps hide them.
+The fixture checks their availability before allocating control clients and
+fails explicitly if absent. [Linux evidence](linux-tuple-evidence.json) retains
+the exact linker-map diff; only these three exports change, not native object
+layout or function bodies. Normal public/native compatibility paths need no
+private symbol.
+
+`just test-mutations credentials` passes the seven focused setter controls and
+rejects four compiled faults: NUL username/password truncation, unmasked native
+error acquisition, and omitted error destruction. Pending cancellation is
+observed at native acquisition and decoder boundaries, with one real native
+allocation and one destruction. These ownership checks complement actual
+authentication and replacement-only ACL observations after reconnect.

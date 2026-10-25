@@ -1,11 +1,11 @@
 ---
 type: Architecture Decision Record
 title: Integration tests run against a project-local Redpanda
-description: The integration suite runs only against this project's private Redpanda on Apple Container, behind a manual Cabal flag, and refuses the machine-global broker.
-timestamp: 2026-10-22T00:36:35Z
+description: The integration suite uses a private primary Redpanda or explicitly selected run-owned Apache processes and refuses shared broker mutation.
+timestamp: 2026-10-25T01:04:47Z
 generated:
-  by: claude-code/claude-opus-5-5
-  at: "2026-10-22T00:36:35Z"
+  by: codex-cli/gpt-6.1-sol
+  at: "2026-10-25T01:04:47Z"
 docId: ADR-5
 status: Accepted
 date: 2026-10-21
@@ -48,10 +48,29 @@ Every topic and consumer group carries a random per-run prefix, and topic
 administration deletes only this run's topics. `just test-it` starts the broker if
 needed and runs the suite.
 
+Expanded qualification has two explicit Tasty entry points: `--broker-qualification`
+creates three Apache broker/controller processes, and `--authentication-qualification`
+creates one SASL/TLS broker with ephemeral identities and ACLs. Both require
+`RDKAFKA_TEST_KAFKA_HOME`; missing prerequisites fail rather than skip. One shared
+fixture owns reserved ephemeral loopback ports, data directories, bounded command
+processes and broker ProcessHandles. It signals only handles returned by its own
+createProcess calls. Security supplies configuration/lifecycle hooks to that runner;
+it does not introduce a separate process owner. The secure public listener verifies
+its generated CA and hostname. Internal loopback health/controller listeners are
+fixture plumbing, not a production deployment recommendation.
+
+Each fixture directory is private (0700). Credentials/configuration are private
+files (0600); configuration dumps are disabled. Cleanup stops all owned processes,
+removes broker state and security material, and checks retained textual logs for
+ephemeral passwords. Failed/interrupted runs retain sanitized diagnostics and are
+not accepted as successful recovery. Primary Redpanda and shared machine-global
+resources are never stopped or reconfigured by these entry points.
+
 ## Consequences
 
-Integration tests run only on Apple Silicon Macs; Linux broker orchestration and
-continuous integration are outside the first release. Tests added by later work
+The first release demonstrated the primary Apple Silicon fixture. Expanded
+qualification additionally runs actual Linux executables and explicitly selected
+Apache Kafka distributions. Continuous integration remains outside this change. Tests added by later work
 register in `test-integration/Main.hs`, use the `TestEnv` fixtures and run prefix,
 and never hard-code port 9092. Repeated or aborted runs on the same broker do not
 interfere; `just redpanda-purge` resets the broker's state when needed.

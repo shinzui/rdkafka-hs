@@ -11,6 +11,12 @@ provenance:
     model: "gpt-6.1-sol"
     harness: "codex-cli"
     at: 2026-10-24T23:17:06Z
+  revisions:
+    - model: "gpt-6.1-sol"
+      harness: "codex-cli"
+      at: 2026-10-25T00:41:55Z
+      mode: "implement"
+      note: "Prepare first ephemeral SASL TLS and authorization integration proof"
 ---
 
 # Verify authenticated Kafka and credential recovery
@@ -21,15 +27,17 @@ Users can rely on demonstrated authenticated connections, TLS validation and aut
 
 ## Progress
 
-- [ ] M1: Provision isolated ephemeral security resources and prove a real authenticated produce/consume plus an actual denied operation.
-- [ ] M2: Verify invalid/valid credentials, TLS failures, ACL effects and setter-driven authentication after controlled reconnect for producer and consumer.
-- [ ] M3: Accept scrubbed, source-bound security evidence and restored credentials/certificates/ACLs for EP-20.
+- [x] M1: Provision isolated ephemeral security resources and prove a real authenticated produce/consume plus an actual denied operation.
+- [x] M2: Verify invalid/valid credentials, TLS failures, ACL effects and setter-driven authentication after controlled reconnect for producer and consumer.
+- [x] M3: Accept scrubbed, source-bound security evidence and restored credentials/certificates/ACLs for EP-20.
 
-Not Started. This plan preserves deferred requirements and existing evidence; no implementation result is implied.
+Complete (2026-10-25). The clean source archive builds the library/examples/both suites on Linux/GHC 9.14.1/librdkafka 2.16.0/Apache Kafka 4.4.0 and passes all 17 permanent security cases, including cancellation of an active independently owned authenticated fixture. Seven primary setter regressions pass; four compiled semantic mutations fail their intended assertions. `../testing/authentication-evidence.json` records exact test names, archive/source/configuration hashes, loaded native identity, commands, sanitized results and both cleanup attestations. The compatibility matrix accepts this specific PLAIN/TLS/security scenario; broader tuple qualification remains EP-17/18/20 work.
 
 ## Surprises & Discoveries
 
 Both public setSaslCredentials functions currently have setter/error-object checks, but those clients are not authenticated and no credential replacement was proven at a broker. The native setter affects future authentications; it does not promise immediate reauthentication of existing connections. Preserve that semantics. No real TLS, authorization or reconnect success may be inferred from the existing plaintext setter cases.
+
+The expanded tests reproduce two existing setter defects: embedded NUL silently truncated credentials while returning success, and cancellation during native error acquisition leaked the returned native object. Representation validation and a masked acquisition/decoding cleanup transfer repair them. The compiled mutation family reintroduces each defect and checks exact ownership counts. A Describe-only ACL is needed to test fetch authorization separately from topic visibility. For the selected native release, denied group FindCoordinator makes synchronous commit return WaitCoord; the test asserts both that exact result and the broker's exact denied group request rather than guessing GroupAuthorizationFailed.
 
 ## Decision Log
 
@@ -37,7 +45,7 @@ Both public setSaslCredentials functions currently have setter/error-object chec
 
 ## Outcomes & Retrospective
 
-Planning only. Record actual results and remaining limits during implementation. Before completion, distill durable applicability, environment and ownership decisions into the profiled ADR bundle.
+Actual authentication, verified TLS rejection/success, operation authorization and replacement credentials are now reproducible in Cabal/Tasty with source-bound clean-package evidence. Cancellation removes every owned Java process, secret/configuration file and broker state. ADR-5 records shared fixture ownership and the secure lifecycle; ADR-26 records credential identity validation and cancellation-safe error transfer. Native setters preserve future-authentication semantics. SASL PLAIN is demonstrated; SCRAM/GSSAPI/OAuth are not expanded support claims. Supplemental behavior names and manifest are handed to EP-16; final all-child qualification remains EP-20.
 
 ## Context and Orientation
 
@@ -76,7 +84,7 @@ Add/register `test-integration/Kafka/Integration/AuthenticationTest.hs` and a fi
 
 ```bash
 cabal build rdkafka-hs-integration -f integration
-cabal test rdkafka-hs-integration -f integration --test-show-details=direct --test-options='-p /authentication-contract/'
+cabal test rdkafka-hs-integration -f integration --test-show-details=direct --test-options='--authentication-qualification -p /authentication-contract/'
 ```
 
 Make missing credentials/secure fixture a preflight failure for this qualification run. Confirm the expected nonzero test list, actual authenticated broker identity and required TLS verification before accepting results. Extend the existing Haskell mutation runner only for a concrete uncovered semantic sensitivity; do not create a separate permanent Python security runner.

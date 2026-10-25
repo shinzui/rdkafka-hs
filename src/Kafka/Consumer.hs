@@ -411,6 +411,8 @@ setConsumerQueueIOEvent c@(KafkaConsumer _ (KafkaConf _ qr statusVar _ _ _)) eve
 -- authentications (@rd_kafka_sasl_set_credentials@); existing connections
 -- are not re-authenticated. librdkafka stores the credentials whether or not
 -- SASL is configured.
+-- Embedded NUL in either credential returns 'KafkaBadSpecification' before
+-- changing the native credentials.
 setSaslCredentials ::
   (MonadIO m) =>
   KafkaConsumer ->

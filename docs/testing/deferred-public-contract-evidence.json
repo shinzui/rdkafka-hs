@@ -1,19 +1,20 @@
 {
   "status": "accepted EP-16 M1 and partial M2 checkpoint; comprehensive qualification remains open",
-  "fingerprint": "91f0344ac7c75b240029fef0d33d1f63dd53356175b53b50c7eb2af665d40da5",
+  "fingerprint": "abbf4e69f7806356c083acb0bb163c3e24f1fc7b4b1b5d78d1f469b0653a8993",
   "normal": {
     "unit": 78,
-    "integration": 730,
+    "integration": 735,
     "seconds": [
-      1.47,
-      338.99
+      1.0,
+      332.5
     ]
   },
   "mapped": {
     "unit": 78,
-    "integration": 730,
+    "integration": 735,
     "nonthreaded": 4,
-    "native_wrapper_ticks": 2750
+    "tooling_controls": 27,
+    "native_wrapper_ticks": 2752
   },
   "inventory": {
     "rows": 181,
@@ -21,8 +22,8 @@
     "open": 16,
     "newly_reconciled": 19
   },
-  "unclassified_handwritten_ticks": 117,
-  "source_classifications": 367,
+  "unclassified_handwritten_ticks": 70,
+  "source_classifications": 390,
   "new_source_audit": "docs/testing/deferred-source-audit.json",
   "mutations": {
     "manifest": "dist-mutations/20261025T001512Z-source-edges-91215-0/results.json",
@@ -31,25 +32,85 @@
   },
   "artifacts": {
     "normal": {
-      "path": "/tmp/rdkafka-mp3-normal-final.log",
-      "sha256": "650b358f4f46046e0497748ab3fd3a9c5b1472017b2a07fed867cef055d4fb66"
+      "path": "dist-compatibility/owned-fixture-checkpoint/primary-phase5-normal.log",
+      "sha256": "f88e7453eb9fe561d9b08db2ee062c101c0eaa10ee23309c0e17607332297173"
     },
     "mapped": {
-      "path": "dist-coverage/reports/test.log",
-      "sha256": "e1853ee656c088344ee67a0ceed76646a850ae168fb221998425473f24a68f4e"
+      "path": "dist-compatibility/owned-fixture-checkpoint/primary-phase5-mapped.log",
+      "sha256": "00365edde70161aa36232659be4181b60db999709bba2432559fc86eca59bb11"
     },
-    "tooling": {
-      "path": "/tmp/rdkafka-mp3-coverage-tools-final.log",
-      "sha256": "de59283957bf02bdcdb0592ef26c13b5ddddff2225d1b8c49e5dc898828b8653"
+    "allow_open": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/primary-phase5-allow_open.log",
+      "sha256": "e942254489b57cbfb27bccae0805b9a1a46bc36847777c9596433a9f0d7d9aa7"
     },
-    "mutations": {
-      "path": "dist-mutations/20261025T001512Z-source-edges-91215-0/results.json",
-      "sha256": "a6080376608cd705070d9f11887e885d2f30c212cfdbfaa4da9b20a97fb79177"
+    "strict": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/primary-phase5-strict.log",
+      "sha256": "beea750daca56559d29ad310e526e7f758df8028462ac78605d17e5388e6d96d"
+    },
+    "measured": {
+      "path": "dist-compatibility/owned-fixture-checkpoint/primary-phase5-measured.json",
+      "sha256": "4a3fc998e574923920befbf4f82b09cae9dd4bf8be563aff8d7b33fe7696fbaa"
     }
   },
   "limits": [
     "Historical seek trigger remains unknown and its scope question is pending.",
     "Reachable handwritten paths remain open; strict coverage must continue to fail.",
     "Linux/broker/native/security results are owned by their separate children and are not inferred from this checkpoint."
-  ]
+  ],
+  "previous_checkpoint": {
+    "status": "accepted EP-16 M1 and partial M2 checkpoint; comprehensive qualification remains open",
+    "fingerprint": "91f0344ac7c75b240029fef0d33d1f63dd53356175b53b50c7eb2af665d40da5",
+    "normal": {
+      "unit": 78,
+      "integration": 730,
+      "seconds": [
+        1.47,
+        338.99
+      ]
+    },
+    "mapped": {
+      "unit": 78,
+      "integration": 730,
+      "nonthreaded": 4,
+      "native_wrapper_ticks": 2750
+    },
+    "inventory": {
+      "rows": 181,
+      "tested": 165,
+      "open": 16,
+      "newly_reconciled": 19
+    },
+    "unclassified_handwritten_ticks": 117,
+    "source_classifications": 367,
+    "new_source_audit": "docs/testing/deferred-source-audit.json",
+    "mutations": {
+      "manifest": "dist-mutations/20261025T001512Z-source-edges-91215-0/results.json",
+      "controls": 7,
+      "compiled_faults": 8
+    },
+    "artifacts": {
+      "normal": {
+        "path": "/tmp/rdkafka-mp3-normal-final.log",
+        "sha256": "650b358f4f46046e0497748ab3fd3a9c5b1472017b2a07fed867cef055d4fb66"
+      },
+      "mapped": {
+        "path": "dist-coverage/reports/test.log",
+        "sha256": "e1853ee656c088344ee67a0ceed76646a850ae168fb221998425473f24a68f4e"
+      },
+      "tooling": {
+        "path": "/tmp/rdkafka-mp3-coverage-tools-final.log",
+        "sha256": "de59283957bf02bdcdb0592ef26c13b5ddddff2225d1b8c49e5dc898828b8653"
+      },
+      "mutations": {
+        "path": "dist-mutations/20261025T001512Z-source-edges-91215-0/results.json",
+        "sha256": "a6080376608cd705070d9f11887e885d2f30c212cfdbfaa4da9b20a97fb79177"
+      }
+    },
+    "limits": [
+      "Historical seek trigger remains unknown and its scope question is pending.",
+      "Reachable handwritten paths remain open; strict coverage must continue to fail.",
+      "Linux/broker/native/security results are owned by their separate children and are not inferred from this checkpoint."
+    ]
+  },
+  "post_measurement_note": "The commit formatter subsequently sorted the new Cabal module registrations. This measured fingerprint remains the exact pre-format checkpoint; fresh current-candidate evidence is required and is not inferred from formatting equivalence."
 }

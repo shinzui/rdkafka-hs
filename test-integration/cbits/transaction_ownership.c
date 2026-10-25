@@ -94,14 +94,18 @@ static int current_mode(void) {
   pthread_mutex_unlock(&lock);
   return value;
 }
+static const char *flag_setter_names[] = {"rd_kafka_error_set_fatal", "rd_kafka_error_set_retriable", "rd_kafka_error_set_txn_requires_abort"};
+int rdkafka_hs_test_tx_flag_diagnostics_available(void) {
+  for (int bit = 0; bit < 3; ++bit) if (!dlsym(RTLD_NEXT, flag_setter_names[bit])) return 0;
+  return 1;
+}
 static rd_kafka_error_t *fixture(int value) {
   rd_kafka_error_t *error = rd_kafka_error_new(value == 200 ? (rd_kafka_resp_err_t)32767 : RD_KAFKA_RESP_ERR__STATE,
                                              "%s", "native transaction fixture");
   /* These actual native setters are private diagnostic symbols. No opaque
    * structure layout is copied. Ordinary/compatibility paths do not use them. */
-  const char *names[] = {"rd_kafka_error_set_fatal", "rd_kafka_error_set_retriable", "rd_kafka_error_set_txn_requires_abort"};
   for (int bit = 0; bit < 3; ++bit) if (value >= 100 && value < 108 && ((value - 100) & (1 << bit))) {
-    void (*set)(rd_kafka_error_t *) = (void (*)(rd_kafka_error_t *))dlsym(RTLD_NEXT, names[bit]);
+    void (*set)(rd_kafka_error_t *) = (void (*)(rd_kafka_error_t *))dlsym(RTLD_NEXT, flag_setter_names[bit]);
     if (!set) { fprintf(stderr, "transaction native fixture: %s\n", dlerror()); abort(); }
     set(error);
   }
@@ -133,6 +137,19 @@ rd_kafka_error_t *rd_kafka_send_offsets_to_transaction(rd_kafka_t *client,
   if (enabled && offsets && offsets->cnt == 1) counts[12] = offsets->elems[0].offset;
   pthread_mutex_unlock(&lock);
   return track(client, overridden(value) ? (value == 201 ? NULL : fixture(value)) : real(client, offsets, metadata, timeout));
+}
+rd_kafka_error_t *rd_kafka_sasl_set_credentials(rd_kafka_t *client,
+    const char *username, const char *password) {
+  REAL(rd_kafka_sasl_set_credentials); int value = current_mode();
+  /* The public Haskell arguments are non-NULL. Ask the real native function
+   * for its actual invalid-argument object to exercise the owned error path. */
+  rd_kafka_error_t *error = track(client, value == 300 || value == 301 || value == 20 ? real(client, NULL, NULL) : real(client, username, password));
+  if (value == 301) {
+    pthread_mutex_lock(&lock); counts[9]++;
+    while (!released) pthread_cond_wait(&resume, &lock);
+    pthread_mutex_unlock(&lock);
+  }
+  return error;
 }
 rd_kafka_resp_err_t rd_kafka_error_code(const rd_kafka_error_t *error) {
   REAL(rd_kafka_error_code); reading(error, 2); return real(error);

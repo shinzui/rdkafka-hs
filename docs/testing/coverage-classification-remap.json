@@ -184,5 +184,145 @@
       "before_sha256": "1731e25b9b2afade15f0018291d033d7b4527c6538b4153a337736d3ef3b07e5",
       "after_sha256": "1731e25b9b2afade15f0018291d033d7b4527c6538b4153a337736d3ef3b07e5"
     }
-  }
+  },
+  "continuations": [
+    {
+      "baseline_revision": "e29e2f7",
+      "reason": "Credential NUL validation and masked native error acquisition; consumer/producer Haddock describes representability. Full diff reviewed: previously classified functions and constant/unused expressions are otherwise unchanged. No classified changed source line is renewed.",
+      "preserved_keys": 367,
+      "moved": [
+        {
+          "before": "Kafka.Internal.Shared:70:ExpBox False",
+          "after": "Kafka.Internal.Shared:73:ExpBox False"
+        },
+        {
+          "before": "Kafka.Internal.Shared:71:ExpBox False",
+          "after": "Kafka.Internal.Shared:74:ExpBox False"
+        },
+        {
+          "before": "Kafka.Internal.Shared:72:ExpBox False",
+          "after": "Kafka.Internal.Shared:75:ExpBox False"
+        },
+        {
+          "before": "Kafka.Internal.Shared:72:ExpBox True",
+          "after": "Kafka.Internal.Shared:75:ExpBox True"
+        },
+        {
+          "before": "Kafka.Internal.Shared:73:ExpBox False",
+          "after": "Kafka.Internal.Shared:76:ExpBox False"
+        },
+        {
+          "before": "Kafka.Internal.Shared:73:ExpBox True",
+          "after": "Kafka.Internal.Shared:76:ExpBox True"
+        },
+        {
+          "before": "Kafka.Internal.Shared:69:ExpBox False",
+          "after": "Kafka.Internal.Shared:72:ExpBox False"
+        },
+        {
+          "before": "Kafka.Internal.Shared:69:TopLevelBox [\"throwOnError\"]",
+          "after": "Kafka.Internal.Shared:72:TopLevelBox [\"throwOnError\"]"
+        },
+        {
+          "before": "Kafka.Internal.Shared:76:ExpBox False",
+          "after": "Kafka.Internal.Shared:79:ExpBox False"
+        },
+        {
+          "before": "Kafka.Internal.Shared:77:ExpBox True",
+          "after": "Kafka.Internal.Shared:80:ExpBox True"
+        },
+        {
+          "before": "Kafka.Internal.Shared:78:ExpBox True",
+          "after": "Kafka.Internal.Shared:81:ExpBox True"
+        },
+        {
+          "before": "Kafka.Internal.Shared:76:TopLevelBox [\"hasError\"]",
+          "after": "Kafka.Internal.Shared:79:TopLevelBox [\"hasError\"]"
+        },
+        {
+          "before": "Kafka.Internal.Shared:88:ExpBox False",
+          "after": "Kafka.Internal.Shared:91:ExpBox False"
+        },
+        {
+          "before": "Kafka.Internal.Shared:89:ExpBox False",
+          "after": "Kafka.Internal.Shared:92:ExpBox False"
+        },
+        {
+          "before": "Kafka.Internal.Shared:89:ExpBox True",
+          "after": "Kafka.Internal.Shared:92:ExpBox True"
+        },
+        {
+          "before": "Kafka.Internal.Shared:90:ExpBox False",
+          "after": "Kafka.Internal.Shared:93:ExpBox False"
+        },
+        {
+          "before": "Kafka.Internal.Shared:90:ExpBox True",
+          "after": "Kafka.Internal.Shared:93:ExpBox True"
+        },
+        {
+          "before": "Kafka.Internal.Shared:88:TopLevelBox [\"kafkaErrorToEither\"]",
+          "after": "Kafka.Internal.Shared:91:TopLevelBox [\"kafkaErrorToEither\"]"
+        },
+        {
+          "before": "Kafka.Consumer:866:ExpBox False",
+          "after": "Kafka.Consumer:868:ExpBox False"
+        },
+        {
+          "before": "Kafka.Consumer:870:ExpBox False",
+          "after": "Kafka.Consumer:872:ExpBox False"
+        },
+        {
+          "before": "Kafka.Consumer:827:ExpBox False",
+          "after": "Kafka.Consumer:829:ExpBox False"
+        },
+        {
+          "before": "Kafka.Consumer:879:ExpBox False",
+          "after": "Kafka.Consumer:881:ExpBox False"
+        },
+        {
+          "before": "Kafka.Consumer:883:ExpBox False",
+          "after": "Kafka.Consumer:885:ExpBox False"
+        },
+        {
+          "before": "Kafka.Consumer:524:ExpBox False",
+          "after": "Kafka.Consumer:526:ExpBox False"
+        },
+        {
+          "before": "Kafka.Consumer:765:BinBox GuardBinBox False",
+          "after": "Kafka.Consumer:767:BinBox GuardBinBox False"
+        },
+        {
+          "before": "Kafka.Internal.Shared:159:BinBox GuardBinBox False",
+          "after": "Kafka.Internal.Shared:162:BinBox GuardBinBox False"
+        },
+        {
+          "before": "Kafka.Internal.Shared:171:BinBox GuardBinBox False",
+          "after": "Kafka.Internal.Shared:174:BinBox GuardBinBox False"
+        },
+        {
+          "before": "Kafka.Producer:290:BinBox GuardBinBox False",
+          "after": "Kafka.Producer:292:BinBox GuardBinBox False"
+        }
+      ],
+      "dropped": [],
+      "sources": {
+        "src/Kafka/Internal/RdKafka.chs": {
+          "previous_sha256": "95633699b8e19f1140bdb6154a2521ab6e27902b4fda4fc1f4a60dfa89b9a991",
+          "sha256": "869947169916ead0bf7254a9ecceeecbe9ec8600be80d29e724c2dc1e53c1fcf"
+        },
+        "src/Kafka/Internal/Shared.hs": {
+          "previous_sha256": "80f31071820c2ead3f90f3ffd6b3275d16375fe4d11eaec01a3a617ee3cc6d7b",
+          "sha256": "fb9eb7755af2a3da0db73b665a0e09a7c6ee3b1381aaac9e658a78f1ebd7e100"
+        },
+        "src/Kafka/Consumer.hs": {
+          "previous_sha256": "66c4a21584ca6681523cd415be01f9ceb4cd8df13184bb884b70d6670050e39d",
+          "sha256": "170ea8259f8b0279db807c48799f323a268e7636efcbc929ade003cd4e4bb70a"
+        },
+        "src/Kafka/Producer.hs": {
+          "previous_sha256": "b433ed35ead2ec4504d3c392eb8f8958e23c4ceb83b9411682a71b3a30c9beb0",
+          "sha256": "cce48116f5c80ea4c7d3c2af3bc3723e3e19dfd14c3c4a362a166c18201f93fc"
+        }
+      }
+    }
+  ]
 }

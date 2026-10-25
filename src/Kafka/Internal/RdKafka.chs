@@ -1161,7 +1161,7 @@ data RdKafkaErrorT
 -- A NULL error object means success; a non-NULL one is destroyed after its
 -- code is read.
 rdKafkaSaslSetCredentials :: RdKafkaTPtr -> String -> String -> IO RdKafkaRespErrT
-rdKafkaSaslSetCredentials k username password = do
+rdKafkaSaslSetCredentials k username password = mask_ $ do
     err <- rdKafkaSaslSetCredentials' k username password
     if err == nullPtr
         then pure RdKafkaRespErrNoError
