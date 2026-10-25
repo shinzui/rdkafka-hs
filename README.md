@@ -15,7 +15,13 @@ instead of being silently swallowed in the default callback poll mode. See
 
 ## Installation
 
-rdkafka-hs is not on Hackage; depend on a release tag. In `cabal.project`:
+Add the Hackage package to each component's `build-depends`:
+
+```cabal
+build-depends: rdkafka-hs >=1.1 && <1.2
+```
+
+To depend on a release tag instead, add this fallback to `cabal.project`:
 
 ```cabal
 source-repository-package
@@ -24,19 +30,13 @@ source-repository-package
   tag: v1.1.0.0
 ```
 
-and in each component's `build-depends`:
-
-```cabal
-build-depends: rdkafka-hs >=1.1 && <1.2
-```
-
 The modules are `Kafka.Consumer`, `Kafka.Producer`, `Kafka.Metadata`,
 `Kafka.Topic`, `Kafka.Transaction` and `Kafka.Version`.
 
 ## Migrating from hw-kafka-client
 
-Replace any `hw-kafka-client` pin in `cabal.project` with the stanza above.
-Then, in every component that depends on it (libraries, executables, test
+Remove an old `hw-kafka-client` source pin when using Hackage, or replace it
+with the fallback above. In every component that depends on it (libraries, executables, test
 suites and benchmarks), replace the dependency and its bounds; keeping
 `>=5.3 && <6` would exclude rdkafka-hs's restarted version line:
 

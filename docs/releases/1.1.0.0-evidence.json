@@ -1,10 +1,10 @@
 {
-  "status": "Published GitHub/tag release; remote tag, fetched downstream dependency and all downloaded assets verified",
+  "status": "Published on GitHub and Hackage; source archive, Cabal metadata and uploaded API documentation verified publicly",
   "version": "1.1.0.0",
   "release_date": "2026-10-24",
   "cutoff_revision": "68ae3c6",
   "publication_performed": true,
-  "publication_destination": "GitHub/tag only",
+  "publication_destination": "GitHub and Hackage",
   "release_scope": "Explicit user-selected release before MasterPlan 3 completion; ADR-27 primary release gate. No waiver of the two source-coverage ticks or EP-20 integration.",
   "version_rationale": "Major PVP 1.1 for changed subscription composition precedence and observable error/callback/runtime semantics; no dependency floor or bounds raised.",
   "source": {
@@ -279,7 +279,7 @@
     "EP19": "Complete at retained source-bound tuple",
     "EP20": "Not Started; whole-child EP-16 prerequisite remains unmet"
   },
-  "credentials": "No Hackage credentials were configured during preflight. This release uses GitHub/tag distribution; no Hackage upload is performed.",
+  "credentials": "The first preflight checked explicit credential fields only and did not detect the global authentication configuration. Cabal successfully authenticated using the global configuration for both actual uploads. No credential values are retained.",
   "artifacts": {
     "package-unit.log": {
       "path": "dist-release-1.1.0.0/package-unit.log",
@@ -426,6 +426,10 @@
     "github-release.json": {
       "path": "dist-release-1.1.0.0/github-release.json",
       "sha256": "8c87fcd471ba2cf49d4dc67ce704399aaf0c453658c638024a60aae4ba9357f8"
+    },
+    "github-release-with-hackage.json": {
+      "path": "dist-release-1.1.0.0/github-release-with-hackage.json",
+      "sha256": "ac29dcffbd0371982920e243eb91ad9fbddaca0b57c8d1c6240dd00126078bcd"
     }
   },
   "review": "User approved the concrete release diffs with \"looks good continue\" before release commit, annotated tag creation, push and GitHub publication.",
@@ -580,7 +584,7 @@
         "sha256": "097ce5c889d642763530fa6d78f17e827fdeb118e65178499550d5f730ac13f8"
       },
       "README": "Hackage becomes primary, git-tag fallback retained",
-      "prerequisite": "Configure Hackage credentials locally; none were present during preflight"
+      "prerequisite": "Global Cabal authentication was confirmed by successful source and documentation uploads. The published source uses the unchanged GitHub archive; this variant supplied the post-publication README update only."
     }
   ],
   "variant_equivalence": {
@@ -603,7 +607,9 @@
   "approval": {
     "user_message": "looks good continue",
     "version_and_changelog": "approved",
-    "destination_basis": "Continue existing GitHub/tag distribution. Hackage credentials were unavailable; first Hackage publication remains unperformed."
+    "destination_basis": "Continue existing GitHub/tag distribution. Hackage credentials were unavailable; first Hackage publication remains unperformed.",
+    "hackage_user_message": "let's release, it's configure globallly so don't worry about that",
+    "hackage_publication": "Explicitly authorized after GitHub publication; same 1.1.0.0 source archive and existing documentation uploaded without a new version or tag."
   },
   "final_checks": {
     "format": "passed; zero changes",
@@ -611,7 +617,7 @@
     "docs_bindings_nix_build_flake_checks": "passed",
     "package_source": "163 selected archive files byte-identical to approved checkout"
   },
-  "hackage_publication_performed": false,
+  "hackage_publication_performed": true,
   "publication": {
     "destination": "GitHub/tag only",
     "url": "https://github.com/shinzui/rdkafka-hs/releases/tag/v1.1.0.0",
@@ -641,5 +647,63 @@
     ],
     "download_verification": "All three downloaded release assets are byte-identical to the approved local artifacts; archive SHA-256 values also match SHA256SUMS.",
     "remote_downstream_tests": 44
-  }
+  },
+  "hackage": {
+    "url": "https://hackage.haskell.org/package/rdkafka-hs-1.1.0.0",
+    "source_published_at": "2026-10-25T03:57:01Z",
+    "source_upload_command": [
+      "cabal",
+      "upload",
+      "--publish",
+      "dist-release-1.1.0.0/github-only/rdkafka-hs-1.1.0.0.tar.gz"
+    ],
+    "documentation_upload_command": [
+      "cabal",
+      "upload",
+      "--publish",
+      "--documentation",
+      "dist-release-1.1.0.0/rdkafka-hs-1.1.0.0-docs.tar.gz"
+    ],
+    "source_upload": {
+      "exit": 0,
+      "result": "Package successfully published"
+    },
+    "documentation_upload": {
+      "exit": 0,
+      "result": "Package documentation successfully published"
+    },
+    "downloaded_source": {
+      "path": "dist-release-1.1.0.0/hackage-source-download.tar.gz",
+      "sha256": "4afcb8fa14a2597c8cf2378a9711e07bf05694fc1ddb475d2a35fe81fa8afb55"
+    },
+    "source_identical_to_github_release": true,
+    "public_cabal_metadata": {
+      "path": "dist-release-1.1.0.0/hackage-published.cabal",
+      "sha256": "5ae6c3a04fa92fca20fd78fce9dc40a2fbcee4e39b89c94f638b102c8b291ed0"
+    },
+    "package_page": {
+      "path": "dist-release-1.1.0.0/hackage-package.html",
+      "sha256": "5eaa911aac3ef272d05c99cce036ae9b80f8bb43d8dcf98a70bb61c13d558c4d"
+    },
+    "documentation": [
+      {
+        "url": "https://hackage.haskell.org/package/rdkafka-hs-1.1.0.0/docs/Kafka-Consumer.html",
+        "download": {
+          "path": "dist-release-1.1.0.0/hackage-Kafka-Consumer.html",
+          "sha256": "b0817a17ba9b20d297d64b0c18839c813d789828eda663f892a646624ae63f75"
+        }
+      },
+      {
+        "url": "https://hackage.haskell.org/package/rdkafka-hs-1.1.0.0/docs/doc-index.html",
+        "download": {
+          "path": "dist-release-1.1.0.0/hackage-doc-index.html",
+          "sha256": "63dd86adf54bb43954d01cae328041e6e597fef41ad7c0a88d088047344c1bba"
+        }
+      }
+    ],
+    "verification": "Source tarball is byte-identical to the validated GitHub source asset; Cabal metadata matches the release. Public module documentation and symbol index match the uploaded Haddock files after removing the single Hackage-injected synopsis CSS rule. Hackage reports documentation available.",
+    "documentation_server_injected_css": "<style type=\"text/css\">#synopsis details:not([open]) > ul { visibility: hidden; }</style>",
+    "github_release_notes_link_verified": true
+  },
+  "post_publication_documentation_change": "README on master now presents Hackage as the primary installation method, using the already reviewed Hackage variant. The immutable v1.1.0.0 tag and both published source archives remain unchanged and byte-identical."
 }
