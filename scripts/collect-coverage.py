@@ -106,7 +106,7 @@ def collect(context_paths=()):
     tests = []
     artifacts = [log, zeros, *runtime_artifacts]
     children = sorted(child_directory.glob("*.tix"))
-    for mode in ("global", "message"):
+    for mode in ("global", "message", "allocation"):
         if len(list(child_directory.glob("producer-" + mode + "-*.tix"))) != 1:
             raise ValueError("missing or ambiguous successful producer callback child coverage: " + mode)
     for kind in ("error", "log", "stats", "rebalance", "commit"):

@@ -16,6 +16,11 @@ provenance:
       at: 2026-10-24T23:51:40Z
       mode: "implement"
       note: "Start EP-16 against accepted primary candidate and reconcile deferred contract evidence"
+    - model: "gpt-6.1-sol"
+      harness: "codex-cli"
+      at: 2026-10-25T04:12:10Z
+      mode: "implement"
+      note: "Resume remaining source coverage and final qualification gate"
 ---
 
 # Complete deferred coverage and compatibility validation
@@ -42,7 +47,7 @@ The public-coverage audit has different acceptance from real broker failures and
 
 | # | Deliverable | Path | Hard dependencies | Soft/integration dependencies | Status |
 |---|---|---|---|---|---|
-| 16 | Finish public contracts, handwritten coverage and seek investigation | [EP-16](../plans/16-close-deferred-public-contract-and-source-coverage-gaps.md) | Accepted primary candidate from MasterPlan 2 | Integrates all later tuple results | In Progress |
+| 16 | Finish public contracts, handwritten coverage and seek investigation | [EP-16](../plans/16-close-deferred-public-contract-and-source-coverage-gaps.md) | Accepted primary candidate from MasterPlan 2 | Integrates all later tuple results | Complete |
 | 17 | Execute Linux/newer tuples and effective native lifetime diagnostics | [EP-17](../plans/17-validate-linux-and-released-toolchain-native-lifetimes.md) | Accepted primary candidate from MasterPlan 2 | Defines tuple evidence consumed by EP-18/19/20 | Complete |
 | 18 | Prove distributed broker/group/transaction recovery | [EP-18](../plans/18-verify-distributed-broker-failure-and-group-recovery.md) | Accepted primary candidate from MasterPlan 2 | Integrates tuple schema with EP-17 and secure fixture with EP-19 | Complete |
 | 19 | Prove authentication, TLS, ACLs and credential reconnect | [EP-19](../plans/19-verify-authenticated-kafka-and-credential-recovery.md) | Accepted primary candidate from MasterPlan 2 | Can reuse EP-18 Apache fixture; integrates with EP-17 schema | Complete |
@@ -82,7 +87,7 @@ Keep all source, test, C fixtures, registration, mutations and documentation fro
 
 ## Progress
 
-EP-17, EP-18 and EP-19 are Complete on the captured functional candidate `2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c`; EP-16 remains In Progress. Primary normal/mapped runs each pass 78 unit plus 753 integration cases, with four separate nonthreaded runtime checks. Source-bound external registration adds nine broker and seventeen security cases (857 aggregate behavior cases), without importing HPC ticks. The 181-row ledger has 180 tested and one open row. Two handwritten producer exception-cleanup ticks remain unexplained. The user-required historical seek investigation is accepted: native pointer/finalizer traces reproduce late old-topic destruction through reused client memory, removal of the current topic from lookup, and State on a second never-started partition. Applying only the existing scoped-lifetime repair to the historical scenario passes all 182 tests. Linux/newer GHC/native execution, effective 279-case native diagnostics, all nine distributed cases and all seventeen security cases are accepted with owned fixture cleanup and documented diagnostic limitations. EP-20 cannot start until EP-16 is Complete. No comprehensive qualification or publication is claimed.
+EP-16 through EP-19 are Complete. EP-16 passes the strict 181-row source/contract gate with zero open rows or unexplained handwritten ticks. Fresh primary normal/mapped runs each pass 832 cases, with four actual nonthreaded checks; fresh Linux runs pass all nine distributed and seventeen security cases. The allocation failure regression, its effective cleanup mutation and Linux Valgrind close the final two ticks without exemptions. EP-20 is now eligible and owns the remaining comprehensive matrix/package gate. No comprehensive qualification is claimed yet.
 
 ## Surprises & Discoveries
 

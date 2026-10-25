@@ -2,7 +2,7 @@ module Kafka.Integration.ProducerRegressionTest (tests, runCallbackProbe) where
 
 import Control.Concurrent (forkFinally, killThread, runInBoundThread, threadDelay)
 import Control.Concurrent.MVar (MVar, newEmptyMVar, putMVar, readMVar, takeMVar, tryPutMVar, tryReadMVar)
-import Control.Exception (AsyncException (ThreadKilled), MaskingState (Unmasked), SomeException, bracket, finally, fromException, getMaskingState, throwIO, try)
+import Control.Exception (AsyncException (HeapOverflow, ThreadKilled), MaskingState (Unmasked), SomeException, bracket, evaluate, finally, fromException, getMaskingState, throwIO, try)
 import Control.Monad (forM_, replicateM, void)
 import Data.ByteString qualified as BS
 import Data.IORef (IORef, atomicModifyIORef', mkWeakIORef, newIORef, readIORef)
@@ -59,6 +59,8 @@ tests env =
           callbackChild "global",
         testCase "throwing per-message callback reports exception and releases capture" $
           callbackChild "message",
+        testCase "pinned argument allocation failure releases callback before native enqueue" $
+          callbackChild "allocation",
         testCase "repeated queue-full rejections release every callback capture" $
           withProducer (extraProp "queue.buffering.max.messages" "1") $ \producer -> do
             produceMessage producer record >>= (@?= Nothing)
@@ -437,7 +439,7 @@ callbackChild mode = do
   nonce <- randomIO :: IO Word
   let output = directory <> "/producer-" <> mode <> "-" <> show nonce <> ".tix"
       process =
-        (proc executable ["--producer-callback-probe", mode, "+RTS", "--read-tix-file=no", "-RTS"])
+        (proc executable (["--producer-callback-probe", mode, "+RTS", "--read-tix-file=no"] <> (if mode == "allocation" then ["-N1", "-A64m"] else []) <> ["-RTS"]))
           { env = Just (("HPCTIXFILE", output) : filter ((/= "HPCTIXFILE") . fst) environment)
           }
   result <- timeout 15000000 (readCreateProcessWithExitCode process "")
@@ -446,6 +448,24 @@ callbackChild mode = do
     other -> assertFailure ("callback probe failed: " <> show other)
 
 runCallbackProbe :: String -> IO ()
+runCallbackProbe "allocation" =
+  bracket (newProducer (brokersList [BrokerAddress "127.0.0.1:1"]) >>= either (assertFailure . show) pure) releaseProducer $ \producer ->
+    withProducerTracking 8 $ do
+      calls <- newIORef 0
+      ready <- newEmptyMVar
+      -- Each borrowed header is small, but the final native union array is
+      -- larger than the 64 KiB limit. Force the list before limiting RTS.
+      let headers = headersFromList (replicate 2048 ("name", "value"))
+          record = ProducerRecord (TopicName "producer-allocation-probe") (SpecifiedPartition 0) Nothing (Just "payload") headers
+      evaluate (length (headersToList headers)) >>= (@?= 2048)
+      outcome <- try @SomeException (enqueueAllocationCapture producer record calls ready)
+      case outcome of
+        Left exception -> fromException exception @?= Just HeapOverflow
+        Right result -> assertFailure ("allocation unexpectedly succeeded: " <> show result)
+      enqueueBoundaryEntered >>= (@?= False)
+      takeWithin ready >>= awaitCollected
+      readIORef calls >>= (@?= 0)
+      flushProducerTimeout producer (Timeout 0) >>= (@?= Nothing)
 runCallbackProbe mode = do
   reported <- newEmptyMVar
   bracket getUncaughtExceptionHandler setUncaughtExceptionHandler $ \_ -> do
@@ -465,6 +485,16 @@ runCallbackProbe mode = do
       assertBool exception (("producer-" <> mode <> "-probe") `isInfixOf` exception)
       awaitCollected weak
       readIORef calls >>= (@?= 1)
+
+{-# NOINLINE enqueueAllocationCapture #-}
+enqueueAllocationCapture :: KafkaProducer -> ProducerRecord -> IORef Int -> MVar (Weak (IORef Int)) -> IO (Either ImmediateError ())
+enqueueAllocationCapture producer record calls ready = do
+  captured <- newIORef (42 :: Int)
+  weak <- mkWeakIORef captured (pure ())
+  putMVar ready weak
+  withPinnedAllocationLimit $ produceMessage' producer record $ \_ -> do
+    readIORef captured >>= (@?= 42)
+    atomicModifyIORef' calls (\n -> (n + 1, ()))
 
 {-# NOINLINE enqueueThrowingCapture #-}
 enqueueThrowingCapture :: KafkaProducer -> ProducerRecord -> IORef Int -> MVar DeliveryReport -> Bool -> IO (Weak (IORef Int))

@@ -1,4 +1,4 @@
-module Kafka.ProducerTestSupport (withProducerTracking, awaitEnqueueBoundary, releaseEnqueueBoundary, nativeProducerProperty, triggerNullDelivery, enqueueWithoutOpaque, ProducerMock, withProducerMock, delayMockProduce, mockReceivedProduce) where
+module Kafka.ProducerTestSupport (withProducerTracking, withPinnedAllocationLimit, enqueueBoundaryEntered, awaitEnqueueBoundary, releaseEnqueueBoundary, nativeProducerProperty, triggerNullDelivery, enqueueWithoutOpaque, ProducerMock, withProducerMock, delayMockProduce, mockReceivedProduce) where
 
 import Control.Concurrent (threadDelay)
 import Control.Exception (bracket, bracket_)
@@ -16,6 +16,17 @@ foreign import ccall unsafe "rdkafka_hs_test_producer_begin" begin :: CInt -> IO
 foreign import ccall unsafe "rdkafka_hs_test_producer_end" end :: IO ()
 
 foreign import ccall unsafe "rdkafka_hs_test_producer_entered" entered :: IO CInt
+
+foreign import ccall unsafe "rdkafka_hs_test_producer_heap_limit_begin" heapLimitBegin :: IO ()
+
+foreign import ccall unsafe "rdkafka_hs_test_producer_heap_limit_end" heapLimitEnd :: IO ()
+
+-- Only call in the isolated single-capability allocation probe.
+withPinnedAllocationLimit :: IO a -> IO a
+withPinnedAllocationLimit = bracket_ heapLimitBegin heapLimitEnd
+
+enqueueBoundaryEntered :: IO Bool
+enqueueBoundaryEntered = (== 1) <$> entered
 
 foreign import ccall unsafe "rdkafka_hs_test_producer_release" releaseEnqueueBoundary :: IO ()
 

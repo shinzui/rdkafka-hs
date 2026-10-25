@@ -9,6 +9,20 @@
 #include <string.h>
 #include <librdkafka/rdkafka.h>
 #include <librdkafka/rdkafka_mock.h>
+#include <Rts.h>
+
+/* Isolated allocation probe only. Small pinned buffers still fit the pinned-object block;
+ * the final produceva array exceeds 64 KiB. Let the real RTS allocator
+ * reject that request and raise its own synchronous HeapOverflow. Restore the
+ * process-wide setting before assertions, GC, or client teardown. */
+static uint32_t saved_max_heap;
+void rdkafka_hs_test_producer_heap_limit_begin(void) {
+  saved_max_heap = RtsFlags.GcFlags.maxHeapSize;
+  RtsFlags.GcFlags.maxHeapSize = (64 * 1024) / BLOCK_SIZE;
+}
+void rdkafka_hs_test_producer_heap_limit_end(void) {
+  RtsFlags.GcFlags.maxHeapSize = saved_max_heap;
+}
 
 static pthread_mutex_t producer_lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t producer_resume = PTHREAD_COND_INITIALIZER;
@@ -111,6 +125,7 @@ rd_kafka_error_t *rd_kafka_produceva(rd_kafka_t *client, const rd_kafka_vu_t *va
   if (!real) { fprintf(stderr, "producer ownership: %s\n", dlerror()); abort(); }
   pthread_mutex_lock(&producer_lock);
   int enabled = producer_enabled, mode = producer_mode;
+  if (enabled && mode == 8) producer_entered = 1;
   if (enabled) {
     clear_properties();
     const rd_kafka_conf_t *conf = rd_kafka_conf(client);

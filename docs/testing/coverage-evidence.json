@@ -6,9 +6,9 @@
     "RDKAFKA_TEST_UNKNOWN_TOPIC_CONFIG_POLICY": null
   },
   "schema_version": 1,
-  "revision": "bfa4f2ea641272ae71c7a3afa0fd056bb1add407",
-  "fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c",
-  "at": "2026-10-25T02:44:33.486542+00:00",
+  "revision": "c53fee7bb9c137e904c4b71a8cf6f528d815e1cf",
+  "fingerprint": "f9b328dc869217c9d6ca2a309e7877512c286d2eff63d42e93dc53567339898f",
+  "at": "2026-10-25T04:27:44.834065+00:00",
   "command": [
     "cabal",
     "test",
@@ -310,6 +310,7 @@
     "rdkafka-hs-integration.producer-regressions.accepted callback retains its capture until a purged report completes",
     "rdkafka-hs-integration.producer-regressions.throwing global callback preserves per-message delivery and releases capture",
     "rdkafka-hs-integration.producer-regressions.throwing per-message callback reports exception and releases capture",
+    "rdkafka-hs-integration.producer-regressions.pinned argument allocation failure releases callback before native enqueue",
     "rdkafka-hs-integration.producer-regressions.repeated queue-full rejections release every callback capture",
     "rdkafka-hs-integration.producer-regressions.cancellation at a rejected enqueue releases capture before unmasking",
     "rdkafka-hs-integration.producer-regressions.cancellation after native acceptance retains callback until its report",
@@ -885,8 +886,8 @@
     "authentication-contract.sync consumer credential replacement authenticates after observed reconnect and recovers from invalid replacement",
     "authentication-contract.interruption destroys owned secure processes, credentials, ACL state and private keys"
   ],
-  "passed_test_count": 857,
-  "primary_passed_test_count": 831,
+  "passed_test_count": 858,
+  "primary_passed_test_count": 832,
   "primary_tests": [
     "rdkafka-hs.Callback owner.bridge allocation executes masked before ownership is recorded",
     "rdkafka-hs.Callback owner.installed and replaced bridges release exactly once",
@@ -1171,6 +1172,7 @@
     "rdkafka-hs-integration.producer-regressions.accepted callback retains its capture until a purged report completes",
     "rdkafka-hs-integration.producer-regressions.throwing global callback preserves per-message delivery and releases capture",
     "rdkafka-hs-integration.producer-regressions.throwing per-message callback reports exception and releases capture",
+    "rdkafka-hs-integration.producer-regressions.pinned argument allocation failure releases callback before native enqueue",
     "rdkafka-hs-integration.producer-regressions.repeated queue-full rejections release every callback capture",
     "rdkafka-hs-integration.producer-regressions.cancellation at a rejected enqueue releases capture before unmasking",
     "rdkafka-hs-integration.producer-regressions.cancellation after native acceptance retains callback until its report",
@@ -1724,7 +1726,7 @@
     {
       "kind": "qualification-context",
       "mode": "--broker-qualification",
-      "fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c",
+      "fingerprint": "f9b328dc869217c9d6ca2a309e7877512c286d2eff63d42e93dc53567339898f",
       "tests": [
         "broker-failure.async observed leader election preserves exact records and commits",
         "broker-failure.sync observed leader election preserves exact records and commits",
@@ -1738,7 +1740,7 @@
       ],
       "passed": 9,
       "command": [
-        "/evidence/native-phase9-binary",
+        "/work/closure10/dist-newstyle/build/aarch64-linux/ghc-9.14.1/rdkafka-hs-1.1.0.0/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
         "--broker-qualification"
       ],
       "environment": {
@@ -1759,65 +1761,38 @@
       },
       "source": {
         "project": "mori://shinzui/rdkafka-hs",
-        "candidate_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c",
-        "execution_fingerprint": "74c7156e6fee8653bcec844001fd8f95d703bcf4d8e978a857a9f8f3560b6b0a",
-        "revision": "bfa4f2e plus captured source",
+        "candidate_fingerprint": "f9b328dc869217c9d6ca2a309e7877512c286d2eff63d42e93dc53567339898f",
         "archive": {
-          "path": "dist-compatibility/expanded-source9/candidate.tar.gz",
-          "sha256": "a70e4839d24c5e5179ff9a8be48643951e185d604cd8ba3401587730279f3b22"
+          "path": "dist-compatibility/closure10/rdkafka-hs-1.1.0.0.tar.gz",
+          "sha256": "8f36030cd13c3d0c5856cfa2c82a1b106dc6c9c6f4d1a00077bb5d2ce4e22bdf"
         },
-        "root_file_inventory": {
-          "path": "dist-compatibility/expanded-source9/root-functional-files.json",
-          "sha256": "69506c90cfc124f3a175a664873f5d8b49aff62a7426265c56c3dd64fcc84c21"
-        },
-        "archive_file_inventory": {
-          "path": "dist-compatibility/expanded-source9/phase9-functional-files.json",
-          "sha256": "d0e5d59aa49833ecd1305410c839cbebdbbb418679cecc6de0c2548b142dca4b"
-        },
-        "archive_comparison": {
-          "changed_files": [],
-          "added_files": [],
-          "omitted_development_files": [
-            ".envrc",
-            "cabal.project",
-            "flake.lock",
-            "flake.module.nix",
-            "flake.nix",
-            "justfile",
-            "nix/haskell.nix",
-            "nix/pre-commit.nix",
-            "nix/redpanda.nix",
-            "nix/treefmt.nix"
-          ],
-          "omitted_project_configuration": {
-            "path": "cabal.project",
-            "content": "packages: .\n",
-            "replacement": "Cabal implicit single package in clean extraction; same package set, no solver/compiler constraints in omitted file"
-          },
-          "execution_fingerprint": "74c7156e6fee8653bcec844001fd8f95d703bcf4d8e978a857a9f8f3560b6b0a",
-          "root_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c"
-        },
-        "configuration_sha256": "c6c0771e7da58c35d40170db3ec18cdd2439997e223ef4c088ac3f4e793707f9"
+        "source_proof": "dist-compatibility/closure10/package-source-proof.json",
+        "note": "Clean source archive; all packaged production, test, example and tooling bytes match the recorded checkout inventory. Omitted development/Nix files do not affect this native Cabal execution."
       },
-      "listing": "dist-compatibility/expanded-source9/broker-final9-tests.txt",
-      "log": "dist-compatibility/expanded-source9/broker-final9.log",
+      "listing": "dist-compatibility/closure10/linux-broker-tests.txt",
+      "log": "dist-compatibility/closure10/linux-broker.log",
       "artifacts": {
-        "dist-compatibility/expanded-source9/broker-final9-tests.txt": "1b2270f302280d667a9a755787ee368fce03adc8f849ef070c54f02d99919b84",
-        "dist-compatibility/expanded-source9/broker-final9.log": "f9236628ae671ffa549c4c9ce17ba8ba1acaf5f69e066acfe4ebfe94bd303681",
-        "dist-compatibility/expanded-source9/candidate.tar.gz": "a70e4839d24c5e5179ff9a8be48643951e185d604cd8ba3401587730279f3b22",
-        "dist-compatibility/expanded-source9/root-functional-files.json": "69506c90cfc124f3a175a664873f5d8b49aff62a7426265c56c3dd64fcc84c21",
-        "dist-compatibility/expanded-source9/phase9-functional-files.json": "d0e5d59aa49833ecd1305410c839cbebdbbb418679cecc6de0c2548b142dca4b",
-        "dist-compatibility/expanded-source9/source-comparison.json": "635403f708e286d4461d40a3d86842d4c670ac70862a9688e2b5fbd72801ace5",
-        "dist-compatibility/expanded-source9/configuration.json": "c6c0771e7da58c35d40170db3ec18cdd2439997e223ef4c088ac3f4e793707f9",
-        "dist-compatibility/expanded-source9/fixture-cleanup.json": "22a1434a32c0b23c77e8cb0f788c46ca45dc4129ff55add57033437db77be5aa",
-        "dist-compatibility/expanded-source9/phase9-loaded.log": "0ea352a045eddd425369467d19eef2c60d2ca235538e1335b9557897a003d120",
-        "dist-compatibility/expanded-source9/phase9-version.log": "6ec9b644a82e1dd0a2ec1c57250b4e2d3043deb9a608d8384f7ec30026876a93"
-      }
+        "dist-compatibility/closure10/linux-broker.log": "12084e25bf893f3f5027afde77e9090407d62085c50bef35228feac4a5a0eda3",
+        "dist-compatibility/closure10/linux-broker-tests.txt": "1b2270f302280d667a9a755787ee368fce03adc8f849ef070c54f02d99919b84",
+        "dist-compatibility/closure10/linux-build.log": "74179706cc2788c46396a003066a38041539288cdc318ddaf07b6a267c6521c7",
+        "dist-compatibility/closure10/linux-unit.log": "a055290d7211bf027b1fb1f7a2863d61fd76c5baaf6c5366708f869ac2dc3941",
+        "dist-compatibility/closure10/linux-loaded.log": "3d4059012d54aca4c72a23017af04a4bbf580ea79699dfb2ffdf7985a0e6a567",
+        "dist-compatibility/closure10/linux-allocation.log": "35f6b20d20cda1289dad4102fe5ad14409e49fbc36b77378a3c6a7b3fbd09274",
+        "dist-compatibility/closure10/linux-native-version.txt": "6ec9b644a82e1dd0a2ec1c57250b4e2d3043deb9a608d8384f7ec30026876a93",
+        "dist-compatibility/closure10/linux-native-sha256.txt": "bf7de15c98efcedd1c2d5a4f413c2535f9b9b7d07bcf61e1b8cf0a7957c8c9a0",
+        "dist-compatibility/closure10/linux-ghc-version.txt": "dc89f6ff946d89fc5cab81e90d6a3e961c8f56a6fbdd866671f7bab6fc2f33f7",
+        "dist-compatibility/closure10/linux-cabal-version.txt": "7f93c5e5deae36124ba2f9a8db5c6bc5536cf0e9648fdbcd19cc666d27eabab8",
+        "dist-compatibility/closure10/package-source-proof.json": "fa16b3d68d7e7d920776165421dc2478fa08c4b5d35347915ce3ec077e58f1a9",
+        "dist-compatibility/closure10/rdkafka-hs-1.1.0.0.tar.gz": "8f36030cd13c3d0c5856cfa2c82a1b106dc6c9c6f4d1a00077bb5d2ce4e22bdf",
+        "dist-compatibility/closure10/linux-cleanup.json": "5a46deeae9e47c58be251f365533f4836e086edab8d2a94627d803177c8ae5fd"
+      },
+      "previous_evidence": "docs/testing/broker-evidence.json",
+      "cleanup": "dist-compatibility/closure10/linux-cleanup.json"
     },
     {
       "kind": "qualification-context",
       "mode": "--authentication-qualification",
-      "fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c",
+      "fingerprint": "f9b328dc869217c9d6ca2a309e7877512c286d2eff63d42e93dc53567339898f",
       "tests": [
         "authentication-contract.verified TLS authenticated delivery and exact consume/commit in both modes",
         "authentication-contract.authenticated identity without topic ACL receives exact produce denial",
@@ -1839,7 +1814,7 @@
       ],
       "passed": 17,
       "command": [
-        "/evidence/native-phase9-binary",
+        "/work/closure10/dist-newstyle/build/aarch64-linux/ghc-9.14.1/rdkafka-hs-1.1.0.0/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
         "--authentication-qualification"
       ],
       "environment": {
@@ -1860,60 +1835,33 @@
       },
       "source": {
         "project": "mori://shinzui/rdkafka-hs",
-        "candidate_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c",
-        "execution_fingerprint": "74c7156e6fee8653bcec844001fd8f95d703bcf4d8e978a857a9f8f3560b6b0a",
-        "revision": "bfa4f2e plus captured source",
+        "candidate_fingerprint": "f9b328dc869217c9d6ca2a309e7877512c286d2eff63d42e93dc53567339898f",
         "archive": {
-          "path": "dist-compatibility/expanded-source9/candidate.tar.gz",
-          "sha256": "a70e4839d24c5e5179ff9a8be48643951e185d604cd8ba3401587730279f3b22"
+          "path": "dist-compatibility/closure10/rdkafka-hs-1.1.0.0.tar.gz",
+          "sha256": "8f36030cd13c3d0c5856cfa2c82a1b106dc6c9c6f4d1a00077bb5d2ce4e22bdf"
         },
-        "root_file_inventory": {
-          "path": "dist-compatibility/expanded-source9/root-functional-files.json",
-          "sha256": "69506c90cfc124f3a175a664873f5d8b49aff62a7426265c56c3dd64fcc84c21"
-        },
-        "archive_file_inventory": {
-          "path": "dist-compatibility/expanded-source9/phase9-functional-files.json",
-          "sha256": "d0e5d59aa49833ecd1305410c839cbebdbbb418679cecc6de0c2548b142dca4b"
-        },
-        "archive_comparison": {
-          "changed_files": [],
-          "added_files": [],
-          "omitted_development_files": [
-            ".envrc",
-            "cabal.project",
-            "flake.lock",
-            "flake.module.nix",
-            "flake.nix",
-            "justfile",
-            "nix/haskell.nix",
-            "nix/pre-commit.nix",
-            "nix/redpanda.nix",
-            "nix/treefmt.nix"
-          ],
-          "omitted_project_configuration": {
-            "path": "cabal.project",
-            "content": "packages: .\n",
-            "replacement": "Cabal implicit single package in clean extraction; same package set, no solver/compiler constraints in omitted file"
-          },
-          "execution_fingerprint": "74c7156e6fee8653bcec844001fd8f95d703bcf4d8e978a857a9f8f3560b6b0a",
-          "root_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c"
-        },
-        "configuration_sha256": "c6c0771e7da58c35d40170db3ec18cdd2439997e223ef4c088ac3f4e793707f9"
+        "source_proof": "dist-compatibility/closure10/package-source-proof.json",
+        "note": "Clean source archive; all packaged production, test, example and tooling bytes match the recorded checkout inventory. Omitted development/Nix files do not affect this native Cabal execution."
       },
-      "listing": "dist-compatibility/expanded-source9/authentication-final9-tests.txt",
-      "log": "dist-compatibility/expanded-source9/authentication-final9.log",
+      "listing": "dist-compatibility/closure10/linux-security-tests.txt",
+      "log": "dist-compatibility/closure10/linux-security.log",
       "artifacts": {
-        "dist-compatibility/expanded-source9/authentication-final9-tests.txt": "e011f6a1ed4544904bc4117ebdd30e85339b33c096b3d0619bbff506f5e2e893",
-        "dist-compatibility/expanded-source9/authentication-final9.log": "a9cc23df591ca6608c613090bf42ae57ece89c1dc3e3ede7bbc0dee1cbcd2457",
-        "dist-compatibility/expanded-source9/candidate.tar.gz": "a70e4839d24c5e5179ff9a8be48643951e185d604cd8ba3401587730279f3b22",
-        "dist-compatibility/expanded-source9/root-functional-files.json": "69506c90cfc124f3a175a664873f5d8b49aff62a7426265c56c3dd64fcc84c21",
-        "dist-compatibility/expanded-source9/phase9-functional-files.json": "d0e5d59aa49833ecd1305410c839cbebdbbb418679cecc6de0c2548b142dca4b",
-        "dist-compatibility/expanded-source9/source-comparison.json": "635403f708e286d4461d40a3d86842d4c670ac70862a9688e2b5fbd72801ace5",
-        "dist-compatibility/expanded-source9/configuration.json": "c6c0771e7da58c35d40170db3ec18cdd2439997e223ef4c088ac3f4e793707f9",
-        "dist-compatibility/expanded-source9/fixture-cleanup.json": "22a1434a32c0b23c77e8cb0f788c46ca45dc4129ff55add57033437db77be5aa",
-        "dist-compatibility/expanded-source9/phase9-loaded.log": "0ea352a045eddd425369467d19eef2c60d2ca235538e1335b9557897a003d120",
-        "dist-compatibility/expanded-source9/phase9-version.log": "6ec9b644a82e1dd0a2ec1c57250b4e2d3043deb9a608d8384f7ec30026876a93"
-      }
+        "dist-compatibility/closure10/linux-security.log": "bb1513a783e131039659305550a8d973b075874ae2dca5e6c30a2e362cd91ed3",
+        "dist-compatibility/closure10/linux-security-tests.txt": "e011f6a1ed4544904bc4117ebdd30e85339b33c096b3d0619bbff506f5e2e893",
+        "dist-compatibility/closure10/linux-build.log": "74179706cc2788c46396a003066a38041539288cdc318ddaf07b6a267c6521c7",
+        "dist-compatibility/closure10/linux-unit.log": "a055290d7211bf027b1fb1f7a2863d61fd76c5baaf6c5366708f869ac2dc3941",
+        "dist-compatibility/closure10/linux-loaded.log": "3d4059012d54aca4c72a23017af04a4bbf580ea79699dfb2ffdf7985a0e6a567",
+        "dist-compatibility/closure10/linux-allocation.log": "35f6b20d20cda1289dad4102fe5ad14409e49fbc36b77378a3c6a7b3fbd09274",
+        "dist-compatibility/closure10/linux-native-version.txt": "6ec9b644a82e1dd0a2ec1c57250b4e2d3043deb9a608d8384f7ec30026876a93",
+        "dist-compatibility/closure10/linux-native-sha256.txt": "bf7de15c98efcedd1c2d5a4f413c2535f9b9b7d07bcf61e1b8cf0a7957c8c9a0",
+        "dist-compatibility/closure10/linux-ghc-version.txt": "dc89f6ff946d89fc5cab81e90d6a3e961c8f56a6fbdd866671f7bab6fc2f33f7",
+        "dist-compatibility/closure10/linux-cabal-version.txt": "7f93c5e5deae36124ba2f9a8db5c6bc5536cf0e9648fdbcd19cc666d27eabab8",
+        "dist-compatibility/closure10/package-source-proof.json": "fa16b3d68d7e7d920776165421dc2478fa08c4b5d35347915ce3ec077e58f1a9",
+        "dist-compatibility/closure10/rdkafka-hs-1.1.0.0.tar.gz": "8f36030cd13c3d0c5856cfa2c82a1b106dc6c9c6f4d1a00077bb5d2ce4e22bdf",
+        "dist-compatibility/closure10/linux-cleanup.json": "5a46deeae9e47c58be251f365533f4836e086edab8d2a94627d803177c8ae5fd"
+      },
+      "previous_evidence": "docs/testing/authentication-evidence.json",
+      "cleanup": "dist-compatibility/closure10/linux-cleanup.json"
     }
   ],
   "supplemental_runs": [
@@ -1928,7 +1876,7 @@
       ],
       "passed": 4,
       "command": [
-        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-coverage-nonthreaded/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
+        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-coverage-nonthreaded/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.1.0.0/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
         "-p",
         "/runtime-contract/",
         "+RTS",
@@ -26447,26 +26395,6 @@
     {
       "module": "Kafka.Producer",
       "source": "src/Kafka/Producer.hs",
-      "line": 204,
-      "tick": 201,
-      "label": "ExpBox False",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 16
-    },
-    {
-      "module": "Kafka.Producer",
-      "source": "src/Kafka/Producer.hs",
-      "line": 204,
-      "tick": 202,
-      "label": "ExpBox False",
-      "generated": false,
-      "contract": "OWN-source-coverage",
-      "owner": 16
-    },
-    {
-      "module": "Kafka.Producer",
-      "source": "src/Kafka/Producer.hs",
       "line": 158,
       "tick": 277,
       "label": "ExpBox False",
@@ -28892,100 +28820,74 @@
   },
   "measured_native_wrapper_ticks": 2752,
   "artifacts": {
-    "dist-coverage/reports/test.log": "26bb750822aaad387120303d6c0f39724fca933f5439d10440e340548d6da96a",
-    "dist-coverage/reports/unlinked-zero.tix": "6cac1eec544576f04eb7e830d6652339e5679cde2167c272fea2976ff45f470b",
-    "dist-coverage/reports/nonthreaded-build.log": "491fc61f34626e69c8bb2925429142d66030e50201d3b7e1a9ce9cecd07dc5eb",
+    "dist-coverage/reports/test.log": "9d7546d7cf1059a168b1b5e407b23c67ed51bcf9c556c60b9b2353f3821c9660",
+    "dist-coverage/reports/unlinked-zero.tix": "6b8b975fb15a5578cda81ae8e30cf5f2c7e2c21537058e8d895b57053107a160",
+    "dist-coverage/reports/nonthreaded-build.log": "79406d1c83f9da0827b61041d7cf42a878983e9e40e5e1de8e8f554ea3f739be",
     "dist-coverage/reports/nonthreaded-rts.txt": "e30f15edf898c4f023cbf2f49a34315dfefee8daf9edb50281a7fa588c9f1638",
-    "dist-coverage/reports/nonthreaded-runtime.log": "78784f276f037d38cda9bacf2e13ebd0ca999a913d9da9646a4d3fc042597126",
-    "dist-coverage/reports/nonthreaded-runtime.tix": "ab3ec628261937eefbaf234fecc9e885aba6a93bb6fc105e671a295c305203df",
-    "dist-coverage/reports/nonthreaded-consumer.tix": "edfbcb8d8b3d7d8f65fbaef63e8a7d1fb629217b659bd2dad085f4f008d238f9",
-    "dist-coverage/children/lifetime-commit-async-3445840867802964827.tix": "21dd74c971992e54e0def5b71e3d2e3027d38d42250a785cac4cdf9d7815fda8",
-    "dist-coverage/children/lifetime-commit-sync-1427711464913245544.tix": "21c494fde541be23934e8d0ac373ebd361d2dcb725314b9d82335b3c65fbfddf",
-    "dist-coverage/children/lifetime-error-async-2153874117919261256.tix": "7930f08c6654ee788ad78d3010ef2d9f159f8c3f94cf1834080dd7eccf769c46",
-    "dist-coverage/children/lifetime-error-sync-11445752217852166514.tix": "537327e6510367e7c2c8616d364e5586afe8984dee682276734e02f44240b65a",
-    "dist-coverage/children/lifetime-log-async-14572504187711751284.tix": "a72b642581278b29477a419e2862e1384b0ab2d130ed4cac012d8c43ae8cda13",
-    "dist-coverage/children/lifetime-log-sync-4345383553621594798.tix": "d39a706909abdceb6ee2a02441136a2a0d2ed1a6769a92c6391a8c8088c2a7b8",
-    "dist-coverage/children/lifetime-rebalance-async-8190188771811667777.tix": "2f559a1dc44e5c56cbd41004646920f702db79723eda36ece36bc26b4fe744d4",
-    "dist-coverage/children/lifetime-rebalance-sync-17149997365443858423.tix": "bf751e6df3b94839f63df4be97620846ea11e70a96384d3a84f0f16bc37b8852",
-    "dist-coverage/children/lifetime-stats-async-7686762392776489018.tix": "5b7962230e73c18424c1793b2e6434f223e95a4e9b3a7d185eb5ac7f94fa3e4f",
-    "dist-coverage/children/lifetime-stats-sync-7783921844223599292.tix": "9cba32eff42cf087132cf00b4c5de523eefe97b3ed00d3c1ce510f52640a2819",
-    "dist-coverage/children/metadata-groups-5710435570244437146.tix": "7eec2b6399d7cde7e079d6cfe55fc841477835d32217404aae07254893039b5f",
-    "dist-coverage/children/metadata-metadata-3627255582609216499.tix": "2fcb47357d614e67aade029d9c1ec541ecc656892ec40e4f685f390e83841404",
-    "dist-coverage/children/producer-global-14694924957554744759.tix": "73adb06d2df5a4cef9d1bbaedf380eb9522eb0b0b247fb9217317220c2e3831e",
-    "dist-coverage/children/producer-message-3347577244058732037.tix": "1ffc197d550d8ae150dae0cc3f21b6c791a63851b68483237b7f5d9067586873",
-    "dist-coverage/children/rebalance-cooperative-assign-async-decode-11429113694600619038.tix": "50cf9c7eec53cd92570a96c85c9edb9f2223105451daafcda50d07f650c246f7",
-    "dist-coverage/children/rebalance-cooperative-assign-async-native-16636766166812799660.tix": "72b40759d76fccf5b7cb19fc883da40c67c070b0cd4142a6044be5fd2cd6a20b",
-    "dist-coverage/children/rebalance-cooperative-assign-sync-decode-11527071196657719464.tix": "30efa89d53bf89378519539657ce43b882d8624fb8fbe48a8440582fae6be879",
-    "dist-coverage/children/rebalance-cooperative-assign-sync-native-241441106163866813.tix": "54f9fc47ccf99f752e6dd8a56b3c3ecf0d013f313c73c8b22f5f1621e1b58240",
-    "dist-coverage/children/rebalance-cooperative-revoke-async-decode-9567704991314952527.tix": "da6095b2afa65577a25904ef702d3a3c4f3b7f05c1dcea4bb974c32315d3ba76",
-    "dist-coverage/children/rebalance-cooperative-revoke-async-native-8369675418354549437.tix": "61ec19008d4c479e44cc427a9b3c49727c47e864a24924ff72716d476ee58be0",
-    "dist-coverage/children/rebalance-cooperative-revoke-sync-decode-17475852808267486359.tix": "84cfbee785d5c07eb5a379ae760c0f41acd1aabdc697d89e92460801d95dfa2b",
-    "dist-coverage/children/rebalance-cooperative-revoke-sync-native-14925682060783270698.tix": "943801b29a9f35e0b5910ebdfccde533d84310b74fc606f00943b7f1692751e9",
-    "dist-coverage/children/rebalance-eager-assign-async-native-17096385521698601121.tix": "1149ce490af9119397f45fd9b303cc118fef3809e97b2ef9b782ee9ba3948c97",
-    "dist-coverage/children/rebalance-eager-assign-sync-native-16867040414742754414.tix": "7b0e4be45ededa0ea8bdce9571732c8281ab2e50ea8f277074ca10e673624b3f",
-    "dist-coverage/children/rebalance-eager-revoke-async-native-14526171231388420411.tix": "4619fa63aaaa83071608ae14b8f0356003e1c37487bb677fc420277484cc12de",
-    "dist-coverage/children/rebalance-eager-revoke-sync-native-17648468782693871658.tix": "b0b6c7ee4a69952b4358e7d9aad1ef41be18a8f834dae6c992dc7f65488dcd33",
-    "dist-coverage/children/rebalance-unexpected-async-native-1454587398926348834.tix": "6479d545923960310389bad46a65e85d617d425cda35ef6d5a30361a65bcd4dc",
-    "dist-coverage/children/rebalance-unexpected-async-reset-failure-8979534833077043535.tix": "953fdbe7f9192dc2c3036f8234959107a7fba044fbf8c3a6e8c67e73d3fbc16f",
-    "dist-coverage/children/rebalance-unexpected-sync-native-16000384628216553118.tix": "c7f891ffce987b043848aae2959b92a68a85abce677220727a19b0522b9d9d5d",
-    "dist-coverage/children/rebalance-unexpected-sync-reset-failure-16094562768818342740.tix": "f452b60a5a8bcee718c4bc67cabc477a889df47973aa1e56678ad30f448f60ae",
-    "dist-coverage/reports/rdkafka-hs-test.tix": "5b9364f563e093477222834e61cd993f3565e2ceb8f1aaa442b86b85077cf5d4",
-    "dist-coverage/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-test/hpc/vanilla/tix/rdkafka-hs-test.tix": "7deba9fb301363be9ac532b25533c70f56aa6a8d09d810d9321945631325115c",
-    "dist-coverage/reports/rdkafka-hs-test.txt": "007d458e3ae0249e5c0a4b7206b2a5c1a2fb193e8688d6d32532d4445910ade7",
-    "dist-coverage/reports/rdkafka-hs-integration.tix": "697f15cad6076821123947f115e16db597fbd7dc55dfb1739c07827bdd2a1d28",
-    "dist-coverage/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/hpc/vanilla/tix/rdkafka-hs-integration.tix": "c733527a322463aee7dd2bc7bf0f9693ba8af3855e0bd6dc86a1fcaadb68b32f",
-    "dist-coverage/reports/rdkafka-hs-integration.txt": "6244456fc79405f0e905a205ae28ff086bb422f29679ce2639fbbe01d4d569c7",
-    "dist-coverage/reports/combined.tix": "860b5130828b9b3e66e87bb371b29a2958a16741821aa158150b920ebfc6b270",
-    "dist-coverage/reports/combined.txt": "ab73ce2a398ba6ee90edc2b388ee02e4c2ab9d50dbb240ddf0203503b5f3c453",
-    "dist-coverage/reports/combined.xml": "2e1c5351a29e6a6ebacb2195dce71af2cc59958fb52650f925430230c0b62d55",
-    "dist-coverage/reports/ticks.txt": "1ec22a94f25f02fa01aa87c87c4d4fe06faa891fd0c23474ee0255f656c14bd8",
-    "dist-coverage/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/build/Kafka/Internal/RdKafka.hs.coverage-map.json": "bae27da1702bc7f779573b43f79af0d874bdfeb94dcb56200b9d17842892fe1e",
-    "dist-coverage/reports/classified-metrics.json": "df125856ebb63c844a32a3c16cf7bdbbcf5f0cc9c883fd3a7af9de51cbd7ea15",
+    "dist-coverage/reports/nonthreaded-runtime.log": "8608a820501a1f1c7ed30a8c112a923dd7e120ae472286c61862bd59a25c949e",
+    "dist-coverage/reports/nonthreaded-runtime.tix": "22f2e66c0139379bd2ce7333a8effa820cb1847a31eaf1f24b2b3d2db3bc7e0d",
+    "dist-coverage/reports/nonthreaded-consumer.tix": "902bebf23a23341112d9df72f77f88b102b2b7a3f1b8e6029ba2219e93f7f217",
+    "dist-coverage/children/lifetime-commit-async-2186581779658857041.tix": "3fab14cedf642da7f2932db809321f2191d2196d937131b8471aa200a9f66cf5",
+    "dist-coverage/children/lifetime-commit-sync-15465983801413763973.tix": "3072655ae8f9584c167c5dd119e7e8eefb12bb1a7c7eb2daf0dcaa39b735e023",
+    "dist-coverage/children/lifetime-error-async-2873955266702777908.tix": "b4aa88eee86aba82679eea423210f141a4bfcfbc3dc17cf5dcf32246856d1bc5",
+    "dist-coverage/children/lifetime-error-sync-15576373255017507886.tix": "ffa9f9a7d65d01ead1ed34f500ff554a480be8149413207f831de9d435e119c2",
+    "dist-coverage/children/lifetime-log-async-15163639176055241615.tix": "68a8eca31d86d79cea2a31c58801c9667c6c6d7a68414dcaaf539b026cf972dd",
+    "dist-coverage/children/lifetime-log-sync-16414298589636794567.tix": "76c6a1c45121e15c14ef7fa8371d380c5a84cef80b6b1395efb3de18178372d8",
+    "dist-coverage/children/lifetime-rebalance-async-2197719133727887006.tix": "dad161f92ad1d0bd4a46ddff0ac02ff989a92f7d64f2fb77e2c711226429ab8f",
+    "dist-coverage/children/lifetime-rebalance-sync-12528786348945272216.tix": "e7ff4df30edea2a0fbb56bf65ab214a51a5c11c751165d915599e35de1966db4",
+    "dist-coverage/children/lifetime-stats-async-8519529514154367339.tix": "5d3e677b042f627ebe5e16d1526972dab34dee9c4d96c2280db22673b69ea8e4",
+    "dist-coverage/children/lifetime-stats-sync-14500896683398257092.tix": "2e991db32bcef9982033f5c840bd59e7ec9373a962b49cc554294ebc2106aff5",
+    "dist-coverage/children/metadata-groups-1872353652224513531.tix": "6dba00527632c3f50fdc21336a4c232494ef294933ba5d28b3726002006b7135",
+    "dist-coverage/children/metadata-metadata-15006872428679296860.tix": "621503bb750efcd43995d7163c669521e0ee0a21172eff3f898c2a0cad0a6434",
+    "dist-coverage/children/producer-allocation-4482537762143080898.tix": "3d6b7ea88c4f199c7ea2f54e4d84f2d8ad6bccdef95f60b2ef8d2f1ce9d40a5c",
+    "dist-coverage/children/producer-global-16282553701222252472.tix": "6e58e2352679db9700ae8b269c0748582dd211e368ba288616c9b32a7b53f292",
+    "dist-coverage/children/producer-message-2227301625633055561.tix": "e48607f96a6b5c91f3d49cfdc5ccbd03ba9b4d8d3f1c345b85d9bd8cb4107f9a",
+    "dist-coverage/children/rebalance-cooperative-assign-async-decode-5685806624445718839.tix": "3c6d9f23c2968a7cd236f2da74e46447cb180f9f3f320100026bf338d86a8e5a",
+    "dist-coverage/children/rebalance-cooperative-assign-async-native-2970367955693323964.tix": "8c98affd897b42ecdf68aca00ab14d2519dfc84435e1b2610e09edf8a657a241",
+    "dist-coverage/children/rebalance-cooperative-assign-sync-decode-18340966810764751467.tix": "ce56ef056f3039e4a71d455800d4bddef6419d68fcaa6064d69c280478251368",
+    "dist-coverage/children/rebalance-cooperative-assign-sync-native-10375144091214585075.tix": "f2b5787bd1198c8c8eec2b3f7b3d3c74e4b896bd690a6838a9cb3114657d9917",
+    "dist-coverage/children/rebalance-cooperative-revoke-async-decode-11079658335746822338.tix": "05a3e581a037ba3a0db390a0a4214e7bc16462119e54c1691decf6b0c2b32623",
+    "dist-coverage/children/rebalance-cooperative-revoke-async-native-11363302944675165345.tix": "75f8c283ffdc720c11e0edecb73721734e4259bb8376a62c170dec4076a6ec5b",
+    "dist-coverage/children/rebalance-cooperative-revoke-sync-decode-16181772468021950063.tix": "4efb671b2f39d8b5cbc6063be28c1f2f0046e206b7ad7751c4093f3730b52356",
+    "dist-coverage/children/rebalance-cooperative-revoke-sync-native-9952394074831055385.tix": "25e4e0d4e5391c423d3e677b8fefc4743792946d1ea0311642e16bbd0fa4450b",
+    "dist-coverage/children/rebalance-eager-assign-async-native-9154383110853223274.tix": "aa522e61a1b0c4a5b30d7e923d4438c0e1ba6d15d45022556500878e500f886f",
+    "dist-coverage/children/rebalance-eager-assign-sync-native-2806261182514614963.tix": "61330c9828e35ccb09c382e9c21f36b5f4b3111e638dd1d4f0edb88af2c2c332",
+    "dist-coverage/children/rebalance-eager-revoke-async-native-2187297160653023338.tix": "1f9a86f765f70f43e08b9e5f6c7942429500fa27e4db92e52573779fb62a52d7",
+    "dist-coverage/children/rebalance-eager-revoke-sync-native-9980455945048721606.tix": "293541227a7434b2c73e45dfc91a81d5365932221ccea7acfceb1406011dccb9",
+    "dist-coverage/children/rebalance-unexpected-async-native-6841784491232759107.tix": "7caa7035dfdba4c77420fbd21ce322c556add138058c1719546803ec98cb8bb5",
+    "dist-coverage/children/rebalance-unexpected-async-reset-failure-7422548923778859642.tix": "8d2820511291684651f0e64112540402e1234c163aa28b116e71f824b28d5386",
+    "dist-coverage/children/rebalance-unexpected-sync-native-15978645002861155260.tix": "77477f8dabe4ab8fa8fea9e9e4c344c6a2534a95ed036c632160db61ac418468",
+    "dist-coverage/children/rebalance-unexpected-sync-reset-failure-12443055006269602601.tix": "8c7fa63288f736ed0050abc442bae42b0ea89e580b5ec481633db60cf3e1648b",
+    "dist-coverage/reports/rdkafka-hs-test.tix": "5c9887fb9938d443b9f5e125b63c1e6a794033e4dbb7ca0426f38a33151e3bc6",
+    "dist-coverage/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.1.0.0/t/rdkafka-hs-test/hpc/vanilla/tix/rdkafka-hs-test.tix": "7d79bc2e2eb6168d8f7130e1cf5cafe057e728fe9300095c4712c470c4c870d1",
+    "dist-coverage/reports/rdkafka-hs-test.txt": "c45da1fc14181267e3e8aa48110877fbae899e63c790544e47d7c392ce02b364",
+    "dist-coverage/reports/rdkafka-hs-integration.tix": "d2935ad31177720f953cc7b25e87d891720f44aad8ba6a308e41053c21219a2a",
+    "dist-coverage/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.1.0.0/t/rdkafka-hs-integration/hpc/vanilla/tix/rdkafka-hs-integration.tix": "d488e34d33c28ebacd49cc277959ed22e01b56cd4af99c2fb54b161ad5f9941d",
+    "dist-coverage/reports/rdkafka-hs-integration.txt": "07d85cad6b261e279297c08209530ff6c44a9cfba59e9ca476279f57c3707f38",
+    "dist-coverage/reports/combined.tix": "4f3ec1f7e5a7856f5526725a18c8c49579c157decdddc7b5ef61c50521e39b69",
+    "dist-coverage/reports/combined.txt": "7fa6c6cfa0dbd7841f6c5791ab8cbbd3d25d672e9a264426981a3d9242a7ad26",
+    "dist-coverage/reports/combined.xml": "d1e99513a340b8131b78254105abeee1d7f0afbe8efad3dd7d813bd92b590faa",
+    "dist-coverage/reports/ticks.txt": "37f4a1c078a729300c5187f7c2bc6ed026afefb3450581e60acfb86e655d3674",
+    "dist-coverage/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.1.0.0/build/Kafka/Internal/RdKafka.hs.coverage-map.json": "bae27da1702bc7f779573b43f79af0d874bdfeb94dcb56200b9d17842892fe1e",
+    "dist-coverage/reports/classified-metrics.json": "556d7ff4a689c1c64a5d18d6c9f19a6b587ce40f9b4baa765955a2c4416e348b",
     "dist-coverage/reports/unexercised-functions.json": "d847c1ccdd19e2c0f1a479d50fa9aaa702748b405087e1870591b5ceab9f99c3",
-    "dist-coverage/reports/misses.json": "8e77977577cf0332efeda04cde874b69c498b567edd911ecc45eaff86f8daae2",
-    "docs/testing/broker-qualification-context.json": "d080bb062d1afed7d5a5b71ab37ed9b70b83fbe114d44650253af3999cc56c36",
-    "dist-compatibility/expanded-source9/broker-final9-tests.txt": "1b2270f302280d667a9a755787ee368fce03adc8f849ef070c54f02d99919b84",
-    "dist-compatibility/expanded-source9/broker-final9.log": "f9236628ae671ffa549c4c9ce17ba8ba1acaf5f69e066acfe4ebfe94bd303681",
-    "dist-compatibility/expanded-source9/candidate.tar.gz": "a70e4839d24c5e5179ff9a8be48643951e185d604cd8ba3401587730279f3b22",
-    "dist-compatibility/expanded-source9/root-functional-files.json": "69506c90cfc124f3a175a664873f5d8b49aff62a7426265c56c3dd64fcc84c21",
-    "dist-compatibility/expanded-source9/phase9-functional-files.json": "d0e5d59aa49833ecd1305410c839cbebdbbb418679cecc6de0c2548b142dca4b",
-    "dist-compatibility/expanded-source9/source-comparison.json": "635403f708e286d4461d40a3d86842d4c670ac70862a9688e2b5fbd72801ace5",
-    "dist-compatibility/expanded-source9/configuration.json": "c6c0771e7da58c35d40170db3ec18cdd2439997e223ef4c088ac3f4e793707f9",
-    "dist-compatibility/expanded-source9/fixture-cleanup.json": "22a1434a32c0b23c77e8cb0f788c46ca45dc4129ff55add57033437db77be5aa",
-    "dist-compatibility/expanded-source9/phase9-loaded.log": "0ea352a045eddd425369467d19eef2c60d2ca235538e1335b9557897a003d120",
-    "dist-compatibility/expanded-source9/phase9-version.log": "6ec9b644a82e1dd0a2ec1c57250b4e2d3043deb9a608d8384f7ec30026876a93",
-    "docs/testing/authentication-qualification-context.json": "bbd1b7edc15934382e7b7f4e516ecce5688f257c0ee9eb19277e3b42ef26c730",
-    "dist-compatibility/expanded-source9/authentication-final9-tests.txt": "e011f6a1ed4544904bc4117ebdd30e85339b33c096b3d0619bbff506f5e2e893",
-    "dist-compatibility/expanded-source9/authentication-final9.log": "a9cc23df591ca6608c613090bf42ae57ece89c1dc3e3ede7bbc0dee1cbcd2457"
-  },
-  "qualification_registration": {
-    "at": "2026-10-25T03:02:42.103167+00:00",
-    "commands": [
-      [
-        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-coverage/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
-        "--broker-qualification",
-        "--list-tests",
-        "+RTS",
-        "--read-tix-file=no",
-        "-RTS"
-      ],
-      [
-        "/Users/shinzui/Keikaku/bokuno/rdkafka-hs/dist-coverage/build/aarch64-osx/ghc-9.12.4/rdkafka-hs-1.0.0.1/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
-        "--authentication-qualification",
-        "--list-tests",
-        "+RTS",
-        "--read-tix-file=no",
-        "-RTS"
-      ]
-    ],
-    "method": "Validate source-identical external behavior logs/listings against the actual primary binary registration; import no HPC ticks",
-    "reproduce": [
-      "python3",
-      "scripts/collect-coverage.py",
-      "--context",
-      "docs/testing/broker-qualification-context.json",
-      "--context",
-      "docs/testing/authentication-qualification-context.json"
-    ]
+    "dist-coverage/reports/misses.json": "2dc4943af4caa4e42d2f631ba2cc67b070a27bc7bffcb90d0e37e7d065c24372",
+    "docs/testing/broker-qualification-context.json": "9e07fed3c8b29e238dd4b6647705249284e055d282c38b0c82beebfc28df87a9",
+    "dist-compatibility/closure10/linux-broker.log": "12084e25bf893f3f5027afde77e9090407d62085c50bef35228feac4a5a0eda3",
+    "dist-compatibility/closure10/linux-broker-tests.txt": "1b2270f302280d667a9a755787ee368fce03adc8f849ef070c54f02d99919b84",
+    "dist-compatibility/closure10/linux-build.log": "74179706cc2788c46396a003066a38041539288cdc318ddaf07b6a267c6521c7",
+    "dist-compatibility/closure10/linux-unit.log": "a055290d7211bf027b1fb1f7a2863d61fd76c5baaf6c5366708f869ac2dc3941",
+    "dist-compatibility/closure10/linux-loaded.log": "3d4059012d54aca4c72a23017af04a4bbf580ea79699dfb2ffdf7985a0e6a567",
+    "dist-compatibility/closure10/linux-allocation.log": "35f6b20d20cda1289dad4102fe5ad14409e49fbc36b77378a3c6a7b3fbd09274",
+    "dist-compatibility/closure10/linux-native-version.txt": "6ec9b644a82e1dd0a2ec1c57250b4e2d3043deb9a608d8384f7ec30026876a93",
+    "dist-compatibility/closure10/linux-native-sha256.txt": "bf7de15c98efcedd1c2d5a4f413c2535f9b9b7d07bcf61e1b8cf0a7957c8c9a0",
+    "dist-compatibility/closure10/linux-ghc-version.txt": "dc89f6ff946d89fc5cab81e90d6a3e961c8f56a6fbdd866671f7bab6fc2f33f7",
+    "dist-compatibility/closure10/linux-cabal-version.txt": "7f93c5e5deae36124ba2f9a8db5c6bc5536cf0e9648fdbcd19cc666d27eabab8",
+    "dist-compatibility/closure10/package-source-proof.json": "fa16b3d68d7e7d920776165421dc2478fa08c4b5d35347915ce3ec077e58f1a9",
+    "dist-compatibility/closure10/rdkafka-hs-1.1.0.0.tar.gz": "8f36030cd13c3d0c5856cfa2c82a1b106dc6c9c6f4d1a00077bb5d2ce4e22bdf",
+    "dist-compatibility/closure10/linux-cleanup.json": "5a46deeae9e47c58be251f365533f4836e086edab8d2a94627d803177c8ae5fd",
+    "docs/testing/authentication-qualification-context.json": "7f567f44536e7cbd9b463f66b57a74a1cfef131fa7733fec94ade4aac2c48d2a",
+    "dist-compatibility/closure10/linux-security.log": "bb1513a783e131039659305550a8d973b075874ae2dca5e6c30a2e362cd91ed3",
+    "dist-compatibility/closure10/linux-security-tests.txt": "e011f6a1ed4544904bc4117ebdd30e85339b33c096b3d0619bbff506f5e2e893"
   }
 }

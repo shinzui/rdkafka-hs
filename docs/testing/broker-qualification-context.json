@@ -1,7 +1,7 @@
 {
   "kind": "qualification-context",
   "mode": "--broker-qualification",
-  "fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c",
+  "fingerprint": "f9b328dc869217c9d6ca2a309e7877512c286d2eff63d42e93dc53567339898f",
   "tests": [
     "broker-failure.async observed leader election preserves exact records and commits",
     "broker-failure.sync observed leader election preserves exact records and commits",
@@ -15,7 +15,7 @@
   ],
   "passed": 9,
   "command": [
-    "/evidence/native-phase9-binary",
+    "/work/closure10/dist-newstyle/build/aarch64-linux/ghc-9.14.1/rdkafka-hs-1.1.0.0/t/rdkafka-hs-integration/build/rdkafka-hs-integration/rdkafka-hs-integration",
     "--broker-qualification"
   ],
   "environment": {
@@ -36,58 +36,31 @@
   },
   "source": {
     "project": "mori://shinzui/rdkafka-hs",
-    "candidate_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c",
-    "execution_fingerprint": "74c7156e6fee8653bcec844001fd8f95d703bcf4d8e978a857a9f8f3560b6b0a",
-    "revision": "bfa4f2e plus captured source",
+    "candidate_fingerprint": "f9b328dc869217c9d6ca2a309e7877512c286d2eff63d42e93dc53567339898f",
     "archive": {
-      "path": "dist-compatibility/expanded-source9/candidate.tar.gz",
-      "sha256": "a70e4839d24c5e5179ff9a8be48643951e185d604cd8ba3401587730279f3b22"
+      "path": "dist-compatibility/closure10/rdkafka-hs-1.1.0.0.tar.gz",
+      "sha256": "8f36030cd13c3d0c5856cfa2c82a1b106dc6c9c6f4d1a00077bb5d2ce4e22bdf"
     },
-    "root_file_inventory": {
-      "path": "dist-compatibility/expanded-source9/root-functional-files.json",
-      "sha256": "69506c90cfc124f3a175a664873f5d8b49aff62a7426265c56c3dd64fcc84c21"
-    },
-    "archive_file_inventory": {
-      "path": "dist-compatibility/expanded-source9/phase9-functional-files.json",
-      "sha256": "d0e5d59aa49833ecd1305410c839cbebdbbb418679cecc6de0c2548b142dca4b"
-    },
-    "archive_comparison": {
-      "changed_files": [],
-      "added_files": [],
-      "omitted_development_files": [
-        ".envrc",
-        "cabal.project",
-        "flake.lock",
-        "flake.module.nix",
-        "flake.nix",
-        "justfile",
-        "nix/haskell.nix",
-        "nix/pre-commit.nix",
-        "nix/redpanda.nix",
-        "nix/treefmt.nix"
-      ],
-      "omitted_project_configuration": {
-        "path": "cabal.project",
-        "content": "packages: .\n",
-        "replacement": "Cabal implicit single package in clean extraction; same package set, no solver/compiler constraints in omitted file"
-      },
-      "execution_fingerprint": "74c7156e6fee8653bcec844001fd8f95d703bcf4d8e978a857a9f8f3560b6b0a",
-      "root_fingerprint": "2ec6cfbb3416926925e68ad8e96da1322be55ec292821543a8279040762cd98c"
-    },
-    "configuration_sha256": "c6c0771e7da58c35d40170db3ec18cdd2439997e223ef4c088ac3f4e793707f9"
+    "source_proof": "dist-compatibility/closure10/package-source-proof.json",
+    "note": "Clean source archive; all packaged production, test, example and tooling bytes match the recorded checkout inventory. Omitted development/Nix files do not affect this native Cabal execution."
   },
-  "listing": "dist-compatibility/expanded-source9/broker-final9-tests.txt",
-  "log": "dist-compatibility/expanded-source9/broker-final9.log",
+  "listing": "dist-compatibility/closure10/linux-broker-tests.txt",
+  "log": "dist-compatibility/closure10/linux-broker.log",
   "artifacts": {
-    "dist-compatibility/expanded-source9/broker-final9-tests.txt": "1b2270f302280d667a9a755787ee368fce03adc8f849ef070c54f02d99919b84",
-    "dist-compatibility/expanded-source9/broker-final9.log": "f9236628ae671ffa549c4c9ce17ba8ba1acaf5f69e066acfe4ebfe94bd303681",
-    "dist-compatibility/expanded-source9/candidate.tar.gz": "a70e4839d24c5e5179ff9a8be48643951e185d604cd8ba3401587730279f3b22",
-    "dist-compatibility/expanded-source9/root-functional-files.json": "69506c90cfc124f3a175a664873f5d8b49aff62a7426265c56c3dd64fcc84c21",
-    "dist-compatibility/expanded-source9/phase9-functional-files.json": "d0e5d59aa49833ecd1305410c839cbebdbbb418679cecc6de0c2548b142dca4b",
-    "dist-compatibility/expanded-source9/source-comparison.json": "635403f708e286d4461d40a3d86842d4c670ac70862a9688e2b5fbd72801ace5",
-    "dist-compatibility/expanded-source9/configuration.json": "c6c0771e7da58c35d40170db3ec18cdd2439997e223ef4c088ac3f4e793707f9",
-    "dist-compatibility/expanded-source9/fixture-cleanup.json": "22a1434a32c0b23c77e8cb0f788c46ca45dc4129ff55add57033437db77be5aa",
-    "dist-compatibility/expanded-source9/phase9-loaded.log": "0ea352a045eddd425369467d19eef2c60d2ca235538e1335b9557897a003d120",
-    "dist-compatibility/expanded-source9/phase9-version.log": "6ec9b644a82e1dd0a2ec1c57250b4e2d3043deb9a608d8384f7ec30026876a93"
-  }
+    "dist-compatibility/closure10/linux-broker.log": "12084e25bf893f3f5027afde77e9090407d62085c50bef35228feac4a5a0eda3",
+    "dist-compatibility/closure10/linux-broker-tests.txt": "1b2270f302280d667a9a755787ee368fce03adc8f849ef070c54f02d99919b84",
+    "dist-compatibility/closure10/linux-build.log": "74179706cc2788c46396a003066a38041539288cdc318ddaf07b6a267c6521c7",
+    "dist-compatibility/closure10/linux-unit.log": "a055290d7211bf027b1fb1f7a2863d61fd76c5baaf6c5366708f869ac2dc3941",
+    "dist-compatibility/closure10/linux-loaded.log": "3d4059012d54aca4c72a23017af04a4bbf580ea79699dfb2ffdf7985a0e6a567",
+    "dist-compatibility/closure10/linux-allocation.log": "35f6b20d20cda1289dad4102fe5ad14409e49fbc36b77378a3c6a7b3fbd09274",
+    "dist-compatibility/closure10/linux-native-version.txt": "6ec9b644a82e1dd0a2ec1c57250b4e2d3043deb9a608d8384f7ec30026876a93",
+    "dist-compatibility/closure10/linux-native-sha256.txt": "bf7de15c98efcedd1c2d5a4f413c2535f9b9b7d07bcf61e1b8cf0a7957c8c9a0",
+    "dist-compatibility/closure10/linux-ghc-version.txt": "dc89f6ff946d89fc5cab81e90d6a3e961c8f56a6fbdd866671f7bab6fc2f33f7",
+    "dist-compatibility/closure10/linux-cabal-version.txt": "7f93c5e5deae36124ba2f9a8db5c6bc5536cf0e9648fdbcd19cc666d27eabab8",
+    "dist-compatibility/closure10/package-source-proof.json": "fa16b3d68d7e7d920776165421dc2478fa08c4b5d35347915ce3ec077e58f1a9",
+    "dist-compatibility/closure10/rdkafka-hs-1.1.0.0.tar.gz": "8f36030cd13c3d0c5856cfa2c82a1b106dc6c9c6f4d1a00077bb5d2ce4e22bdf",
+    "dist-compatibility/closure10/linux-cleanup.json": "5a46deeae9e47c58be251f365533f4836e086edab8d2a94627d803177c8ae5fd"
+  },
+  "previous_evidence": "docs/testing/broker-evidence.json",
+  "cleanup": "dist-compatibility/closure10/linux-cleanup.json"
 }

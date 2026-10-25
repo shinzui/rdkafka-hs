@@ -17,6 +17,11 @@ provenance:
       at: 2026-10-24T23:51:40Z
       mode: "implement"
       note: "Reconcile deferred public contracts and source coverage against preserved primary evidence"
+    - model: "gpt-6.1-sol"
+      harness: "codex-cli"
+      at: 2026-10-25T04:12:10Z
+      mode: "implement"
+      note: "Exercise real RTS pinned allocation failure before producer enqueue"
 ---
 
 # Close deferred public-contract and source-coverage gaps
@@ -28,10 +33,10 @@ Users can inspect every public API contract and every uncovered handwritten path
 ## Progress
 
 - [x] M1 (2026-10-24): Reconciled all 35 historical open rows; 19 close on exact existing assertions and 16 retain explicit follow-up owners/missing behavior. The current whole candidate passes 808 normal/mapped cases, four nonthreaded cases and 27 gate controls; see `../testing/deferred-public-contract-evidence.json`.
-- [ ] M2: Close reachable handwritten source/binding gaps with exact regressions and effective semantic/ownership controls; preserve justified exceptions.
-- [ ] M3: Investigate the historical seek transition and pass the strict full inventory/coverage gate, with no unresolved owned path.
+- [x] M2 (2026-10-25): Every reachable handwritten miss is exercised or individually source-proven inapplicable; the final producer exception cleanup passes an actual pinned-array HeapOverflow probe, a cleanup-removal mutation and Linux Valgrind.
+- [x] M3 (2026-10-25): Historical seek diagnosis remains accepted; the strict 181-row inventory passes with zero open rows and zero unexplained handwritten ticks.
 
-In Progress (2026-10-25). M1 is accepted; current primary normal/mapped runs each pass 831 cases plus four separate nonthreaded checks, and source-validated broker/security contexts add 26 behavior registrations. The ledger now has 180 tested and one open row. Partial M2 leaves only two unexplained ticks at `Kafka.Producer` line 204's pre-enqueue exception cleanup; allocator failure has neither been tested nor exempted. Arbitrary rebalance errors now check native unassignment before resetting copied state, with four old-code failures and six compiled semantic faults detected. Eleven further exact source classifications (401 total) cover ignored Storable arguments, discarded units and private call domains. M3 remains open only because strict source closure still fails. Its historical requirement is accepted: native-only identity tracing reproduces late topic finalization after parent destruction, corruption of a new client at the reused address, and seek on a new never-started partition. Only scoped topic cleanup/parent retention is applied to the historical source for the differential, which passes all 182 tests in 99.41 seconds; the current implementation already has this repair. Current artifacts and limits are in [public evidence](../testing/deferred-public-contract-evidence.json) and [seek evidence](../testing/legacy-seek-evidence.json).
+Complete (2026-10-25). Fresh normal/mapped primary runs each pass 78 unit plus 754 integration cases; four actual nonthreaded runtime cases and 26 fresh Linux broker/security registrations bring aggregate behavior registration to 858. All 181 ledger rows are tested, 401 exact source classifications remain, and strict validation passes without `--allow-open`. The final two cleanup ticks execute in an isolated real RTS allocation failure. Removing the cleanup fails callback collection; Linux Valgrind reports zero errors and zero definite/indirect/possible losses for that new path. Evidence, source identities, artifacts and historical checkpoints are preserved in [public evidence](../testing/deferred-public-contract-evidence.json). EP-20 now owns the final comprehensive gate.
 
 ## Surprises & Discoveries
 
@@ -45,7 +50,7 @@ The earlier full checkpoint `d466235` had 35 open contract rows and 255 unexplai
 
 ## Outcomes & Retrospective
 
-M1 closes 19 historical rows using retained evidence and preserves the remaining 16 obligations. Partial M2 strengthens source/ownership assertions, binds every applicability explanation to source bytes and proves eight semantic faults are caught. Historical seek diagnosis is accepted through the causal reconstruction and isolated differential. Full source closure remains outstanding: tagged GHC pinned-allocation failure can raise synchronous HeapOverflow inside the masked action, so the two exception-handler ticks are retained rather than exempted. Before completion, distill durable applicability, environment and ownership decisions into the profiled ADR bundle.
+All three milestones are accepted. The causal historical seek reconstruction and isolated differential remain preserved. Source closure adds no blanket exemption: the actual pinned allocator failure reaches the protected callback-root window, and the semantic mutation proves cleanup sensitivity. Masking asynchronous exceptions does not rule out synchronous allocator exceptions; ADR-13 records this durable ownership constraint. The strict report preserves generated bindings separately and all 401 source-bound applicability proofs. Comprehensive tuple/package acceptance remains with EP-20.
 
 ## Context and Orientation
 

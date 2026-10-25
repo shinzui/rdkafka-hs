@@ -56,6 +56,10 @@ mutation :: String -> String -> FilePath -> (String -> String) -> String -> Muta
 mutation group label file change test = Mutation label integration ("/" <> group <> "/&&/" <> test <> "/") (Just test) [(file, change)] False Nothing
 
 families :: String -> [Mutation]
+families "producer-allocation" =
+  [ control "unchanged-allocation-control" integration "pinned argument allocation failure releases callback before native enqueue",
+    mutation "producer-regressions" "allocation-root-retained" producer (replace "`onException` freeStablePtr callbackPtr" "") "pinned argument allocation failure releases callback before native enqueue"
+  ]
 families "producer" =
   control "unchanged-control" integration "producer-regressions"
     : [ p "topic-settings-dropped" producer (replace setting "") "explicit topic timeout expires an accepted message",
